@@ -66,7 +66,7 @@ const Goals = () => {
 
   // Tab configurations
   const tabs = [
-    { value: Tab.yearly, title: `${year} Goals`, shortTitle: "Yearly" },
+    { value: Tab.yearly, title: year, shortTitle: "Yearly" },
     { value: Tab.q1, title: "Jan - Mar", shortTitle: "Q1" },
     { value: Tab.q2, title: "Apr - Jun", shortTitle: "Q2" },
     { value: Tab.q3, title: "Jul - Sep", shortTitle: "Q3" },
