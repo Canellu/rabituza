@@ -29,7 +29,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-title" content="Rabituza" />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-pattern min-h-screen`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-pattern pb-20 min-h-screen`}
       >
         {children}
       </body>
