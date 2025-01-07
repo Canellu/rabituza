@@ -27,7 +27,7 @@ const Menu = () => {
   const currentPath = usePathname();
   return (
     <header>
-      <div className="bg-zinc-900/80 backdrop-blur-sm gap-1 fixed inset-x-0 bottom-0 w-full flex items-center justify-around">
+      <div className="bg-zinc-950/90 backdrop-blur-sm gap-1 fixed inset-x-0 bottom-0 w-full flex items-center justify-around">
         {Routes.map((route) => {
           const isActive = currentPath === route.path;
           return (
