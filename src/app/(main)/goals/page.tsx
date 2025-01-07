@@ -17,6 +17,7 @@ enum Tab {
 }
 
 interface Goal {
+  id: string;
   text: string;
   completed: boolean;
 }
@@ -47,31 +48,61 @@ const Goals = () => {
     const ref = refs[tab];
     const goalText = ref.current?.value;
     if (goalText?.trim()) {
+      const newGoal = {
+        id: `${Date.now()}`, // Generate a unique ID using the current timestamp
+        text: goalText,
+        completed: false,
+      };
       setGoals((prev) => ({
         ...prev,
-        [tab]: [...prev[tab], { text: goalText, completed: false }],
+        [tab]: [...prev[tab], newGoal],
       }));
       if (ref.current) ref.current.value = ""; // Clear the input
     }
   };
 
   // Handler for toggling the completed state of a goal
-  const toggleGoalCompletion = (tab: Tab, index: number) => {
+  const toggleGoalCompletion = (tab: Tab, id: string) => {
     setGoals((prev) => ({
       ...prev,
-      [tab]: prev[tab].map((goal, i) =>
-        i === index ? { ...goal, completed: !goal.completed } : goal
+      [tab]: prev[tab].map((goal) =>
+        goal.id === id ? { ...goal, completed: !goal.completed } : goal
       ),
     }));
   };
 
   // Tab configurations
   const tabs = [
-    { value: Tab.yearly, title: year, shortTitle: "Yearly" },
-    { value: Tab.q1, title: "Jan - Mar", shortTitle: "Q1" },
-    { value: Tab.q2, title: "Apr - Jun", shortTitle: "Q2" },
-    { value: Tab.q3, title: "Jul - Sep", shortTitle: "Q3" },
-    { value: Tab.q4, title: "Oct - Dec", shortTitle: "Q4" },
+    {
+      value: Tab.yearly,
+      title: year,
+      shortTitle: "Yearly",
+      emptyText: "Seems a bit empty here... 🥲",
+    },
+    {
+      value: Tab.q1,
+      title: "Jan - Mar",
+      shortTitle: "Q1",
+      emptyText: "Atleast set one goal for this quarter! 🎯",
+    },
+    {
+      value: Tab.q2,
+      title: "Apr - Jun",
+      shortTitle: "Q2",
+      emptyText: "Hmm, need help setting goals? 🤔",
+    },
+    {
+      value: Tab.q3,
+      title: "Jul - Sep",
+      shortTitle: "Q3",
+      emptyText: "Cmon, you can do it! 💪",
+    },
+    {
+      value: Tab.q4,
+      title: "Oct - Dec",
+      shortTitle: "Q4",
+      emptyText: "Set a goal, achieve it, gitgud! 🚀",
+    },
   ];
 
   return (
@@ -95,14 +126,16 @@ const Goals = () => {
                 <CardTitle>{tab.title}</CardTitle>
               </CardHeader>
               <CardContent>
-                {goals[tab.value].map((goal, index) => (
-                  <div key={index} className="flex items-center gap-2">
+                {goals[tab.value].length === 0 && <span>{tab.emptyText}</span>}
+                {goals[tab.value].map((goal) => (
+                  <div key={goal.id} className="flex gap-2">
                     <Checkbox
-                      id={`goal-${index}`}
+                      id={`goal-${goal.id}`}
                       defaultChecked={goal.completed}
-                      onChange={() => toggleGoalCompletion(tab.value, index)}
+                      onChange={() => toggleGoalCompletion(tab.value, goal.id)}
+                      className="w-5 h-5 border-2 mt-0.5"
                     />
-                    <label htmlFor={`goal-${index}`} className="flex-grow">
+                    <label htmlFor={`goal-${goal.id}`} className="flex-grow">
                       {goal.text}
                     </label>
                   </div>
