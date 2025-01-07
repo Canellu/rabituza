@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus } from "lucide-react";
@@ -96,24 +97,23 @@ const Goals = () => {
               <CardContent>
                 {goals[tab.value].map((goal, index) => (
                   <div key={index} className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={goal.completed}
+                    <Checkbox
+                      id={`goal-${index}`}
+                      defaultChecked={goal.completed}
                       onChange={() => toggleGoalCompletion(tab.value, index)}
                     />
-                    <span
-                      className={
-                        goal.completed ? "line-through text-gray-500" : ""
-                      }
-                    >
+                    <label htmlFor={`goal-${index}`} className="flex-grow">
                       {goal.text}
-                    </span>
+                    </label>
                   </div>
                 ))}
                 <div className="flex gap-2 mt-4">
                   <Input
                     ref={refs[tab.value]}
                     placeholder="Type your goal here..."
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") handleAddGoal(tab.value);
+                    }}
                   />
                   <Button
                     className="rounded-sm aspect-square"
