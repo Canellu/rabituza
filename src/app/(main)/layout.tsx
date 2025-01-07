@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
-import Menu from "../components/Menu";
-import PageTitle from "../components/PageTitle";
+import Menu from "./Menu";
+import PageTitle from "./PageTitle";
 
 const Layout = ({ children }: { children: ReactNode }) => {
   return (
