@@ -15,6 +15,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Rabituza",
   description: "Track & Train",
+  appleWebApp: true,
 };
 
 export default function RootLayout({
@@ -24,6 +25,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <meta name="apple-mobile-web-app-title" content="Rabituza" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-pattern pb-32 border border-red-200 min-h-screen`}
       >

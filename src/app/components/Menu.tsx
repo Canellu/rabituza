@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { BicepsFlexed, Goal, ListCheck, User } from "lucide-react";
+import { Goal, ListCheck, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -26,15 +26,7 @@ const Routes = [
 const Menu = () => {
   const currentPath = usePathname();
   return (
-    <header className="">
-      <Link href="#" className="flex items-center p-4">
-        <div className="bg-black/5 p-3 rounded-full">
-          <BicepsFlexed />
-        </div>
-        <span className="font-bold uppercase tracking-wide sr-only sm:not-sr-only">
-          Rabituza
-        </span>
-      </Link>
+    <header>
       <div className="bg-zinc-900/80 backdrop-blur-sm gap-1 fixed inset-x-0 bottom-0 w-full flex items-center justify-around">
         {Routes.map((route) => {
           const isActive = currentPath === route.path;
@@ -45,7 +37,7 @@ const Menu = () => {
               className={cn(
                 "px-4 py-3 transition duration-200 ease items-center justify-center flex flex-col font-semibold text-sm w-24",
                 isActive
-                  ? "text-lime-400 border-t-2 border-lime-400"
+                  ? "text-primary border-t-2 border-primary"
                   : "text-zinc-200"
               )}
             >
