@@ -72,6 +72,10 @@ body {
     @apply bg-background text-foreground;
   }
 
+  .geist-mono {
+    font-family: var(--font-geist-mono);
+  }
+
   input {
     caret-color: var(--primary);
   }
