@@ -1,12 +1,13 @@
+"use client";
+
 import {
-  getKindeServerSession,
   LogoutLink,
-} from "@kinde-oss/kinde-auth-nextjs/server";
+  useKindeBrowserClient,
+} from "@kinde-oss/kinde-auth-nextjs";
 import Image from "next/image";
 
-const Profile = async () => {
-  const { getUser } = getKindeServerSession();
-  const user = await getUser();
+const Profile = () => {
+  const { user } = useKindeBrowserClient();
 
   return (
     <div className="flex items-center border border-red-200 flex-col gap-4">
