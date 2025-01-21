@@ -64,9 +64,7 @@ const Menu = () => {
       {/* Tab Content */}
       {tabs.map((tab) => (
         <TabsContent key={tab.value} value={tab.value} className="mt-0">
-          <div className="p-4 border border-teal-500 h-[calc(100dvh-80px)]">
-            {tab.content}
-          </div>
+          <div className="p-4 h-[calc(100dvh-80px)]">{tab.content}</div>
         </TabsContent>
       ))}
     </Tabs>

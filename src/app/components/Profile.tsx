@@ -12,7 +12,7 @@ const Profile = () => {
   const { user } = useKindeBrowserClient();
 
   return (
-    <div className="flex items-center flex-col gap-4 border border-red-400 h-full">
+    <div className="flex items-center flex-col gap-4h-full">
       {!user?.picture ? (
         <Spinner
           size="size-8"

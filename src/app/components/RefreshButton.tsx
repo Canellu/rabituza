@@ -1,10 +1,8 @@
-"use client"; // This is necessary to indicate that the component runs on the client-side
-
+"use client";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import React from "react";
 
-const RefreshButton: React.FC = () => {
+const RefreshButton = () => {
   const router = useRouter();
 
   const handleRefresh = () => {
