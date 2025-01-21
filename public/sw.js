@@ -1,22 +1,27 @@
-self.addEventListener("push", function (event) {
-  if (event.data) {
-    const data = event.data.json();
-    const options = {
-      body: data.body,
-      icon: data.icon || "/icon.png",
-      badge: "/badge.png",
-      vibrate: [100, 50, 100],
-      data: {
-        dateOfArrival: Date.now(),
-        primaryKey: "2",
-      },
-    };
-    event.waitUntil(self.registration.showNotification(data.title, options));
-  }
+self.addEventListener("install", () => {
+  console.log("Service Worker installed.");
 });
 
-self.addEventListener("notificationclick", function (event) {
-  console.log("Notification click received.");
-  event.notification.close();
-  event.waitUntil(clients.openWindow("https://rabituza.vercel.app"));
+self.addEventListener("activate", () => {
+  console.log("Service Worker activated.");
+  return self.clients.claim();
+});
+
+self.addEventListener("fetch", (event) => {
+  event.respondWith(
+    caches.open("pwa-cache").then((cache) => {
+      return fetch(event.request)
+        .then((response) => {
+          cache.put(event.request, response.clone());
+          return response;
+        })
+        .catch(() => cache.match(event.request));
+    })
+  );
+});
+
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
 });
