@@ -6,7 +6,7 @@ import { ArrowRight } from "lucide-react";
 import useVibrate from "./hooks/useVibrate";
 
 const Login = () => {
-  const vibrationPattern = [3000, 500, 3000];
+  const vibrationPattern = [300, 50, 300];
 
   const vibrate = useVibrate(vibrationPattern);
 
