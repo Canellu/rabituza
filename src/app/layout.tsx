@@ -35,6 +35,10 @@ export default async function RootLayout({
     <AuthProvider>
       <html lang="en">
         <head>
+          {/* <script
+            src="https://unpkg.com/react-scan/dist/auto.global.js"
+            async
+          /> */}
           <meta name="apple-mobile-web-app-title" content="Rabituza" />
           <meta
             name="apple-mobile-web-app-status-bar-style"
