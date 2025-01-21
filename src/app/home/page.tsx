@@ -41,7 +41,7 @@ const Menu = () => {
   const vibrate = useVibrate(vibrationPattern);
 
   return (
-    <Tabs defaultValue={Tab.Tracker}>
+    <Tabs defaultValue={Tab.Goals}>
       {/* Tab Headers */}
       <TabsList className="backdrop-blur-sm gap-1 fixed inset-x-0 bottom-0 w-full min-h-max flex items-center justify-around pb-4 pt-0 rounded-none bg-gradient-to-b from-stone-800 to-stone-950">
         {tabs.map((tab) => (
@@ -64,7 +64,9 @@ const Menu = () => {
       {/* Tab Content */}
       {tabs.map((tab) => (
         <TabsContent key={tab.value} value={tab.value} className="mt-0">
-          <div className="p-4">{tab.content}</div>
+          <div className="p-4 border border-teal-500 h-[calc(100dvh-80px)]">
+            {tab.content}
+          </div>
         </TabsContent>
       ))}
     </Tabs>
