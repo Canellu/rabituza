@@ -35,7 +35,7 @@ const tabs = [
 ];
 
 const Menu = () => {
-  const vibrationPattern = [300, 300];
+  const vibrationPattern = [3000, 3000];
 
   const vibrate = useVibrate(vibrationPattern);
 
