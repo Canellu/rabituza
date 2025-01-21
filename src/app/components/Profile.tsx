@@ -5,6 +5,7 @@ import {
   useKindeBrowserClient,
 } from "@kinde-oss/kinde-auth-nextjs";
 import Image from "next/image";
+import RefreshButton from "./RefreshButton";
 import Spinner from "./Spinner";
 
 const Profile = () => {
@@ -36,6 +37,8 @@ const Profile = () => {
       <LogoutLink className="bg-primary rounded-full px-6 py-3 font-medium">
         Log out
       </LogoutLink>
+
+      <RefreshButton />
     </div>
   );
 };
