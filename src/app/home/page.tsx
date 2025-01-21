@@ -1,11 +1,11 @@
 "use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { cn } from "@/lib/utils";
 import { Goal, ListCheck, User } from "lucide-react";
 import Goals from "../components/Goals";
 import Profile from "../components/Profile";
 import Tracker from "../components/Tracker";
+import useVibrate from "../hooks/useVibrate";
 
 enum Tab {
   Tracker = "tracker",
@@ -35,19 +35,20 @@ const tabs = [
 ];
 
 const Menu = () => {
+  const vibrationPattern = [3000, 500, 3000];
+
+  const vibrate = useVibrate(vibrationPattern);
+
   return (
     <Tabs defaultValue={Tab.Tracker}>
       {/* Tab Headers */}
-      <TabsList className=" backdrop-blur-sm gap-1 fixed inset-x-0 bottom-0 w-full min-h-max flex items-center justify-around pb-4 pt-0 rounded-none bg-gradient-to-b from-stone-800 to-stone-950">
+      <TabsList className="w-full justify-evenly bg-stone-950/90 backdrop-blur-sm fixed inset-x-0 bottom-0 flex items-center pb-6">
         {tabs.map((tab) => (
           <TabsTrigger
             key={tab.value}
             value={tab.value}
-            className={cn(
-              "bg-transparent border-none rounded-none px-4 py-3 transition duration-200 ease items-center justify-center flex flex-col text-xs w-24 text-stone-500",
-              "data-[state=active]:bg-transparent data-[state=active]:shadow-sm",
-              "data-[state=active]:text-primary"
-            )}
+            className="flex-grow"
+            onClick={vibrate}
           >
             <tab.icon className="w-5 h-5 mx-auto mb-1" />
             <span>{tab.title}</span>
@@ -58,7 +59,7 @@ const Menu = () => {
       {/* Tab Content */}
       {tabs.map((tab) => (
         <TabsContent key={tab.value} value={tab.value}>
-          <main className="p-4 max-w-7xl mx-auto">{tab.content}</main>
+          <div className="p-4">{tab.content}</div>
         </TabsContent>
       ))}
     </Tabs>
