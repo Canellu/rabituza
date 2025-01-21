@@ -5,13 +5,19 @@ import {
   useKindeBrowserClient,
 } from "@kinde-oss/kinde-auth-nextjs";
 import Image from "next/image";
+import Spinner from "./Spinner";
 
 const Profile = () => {
   const { user } = useKindeBrowserClient();
 
   return (
-    <div className="flex items-center border border-red-200 flex-col gap-4">
-      {user?.picture && (
+    <div className="flex items-center flex-col gap-4">
+      {!user?.picture ? (
+        <Spinner
+          size="size-8"
+          className="size-24 place-items-center place-content-center"
+        />
+      ) : (
         <Image
           src={user.picture}
           width={96}
