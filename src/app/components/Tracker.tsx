@@ -39,7 +39,7 @@ const Tracker = () => {
           <div className="flex flex-col items-center justify-center bg-stone-100 flex-grow rounded-xl m-2">
             SOME STUFF
           </div>
-          <DrawerFooter>
+          <DrawerFooter className="mb-6">
             <DrawerClose>Add</DrawerClose>
           </DrawerFooter>
         </DrawerContent>
