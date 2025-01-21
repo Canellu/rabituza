@@ -18,7 +18,7 @@ const Profile = () => {
         {!user ? (
           <Spinner
             size="size-10"
-            className="size-[168px] place-content-center place-items-center"
+            className="size-[168px] flex items-center justify-center"
           />
         ) : (
           <motion.div
