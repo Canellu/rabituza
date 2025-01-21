@@ -38,14 +38,15 @@ const Menu = () => {
   return (
     <Tabs defaultValue={Tab.Tracker}>
       {/* Tab Headers */}
-      <TabsList className="bg-zinc-950/90 backdrop-blur-sm gap-1 fixed inset-x-0 bottom-0 w-full min-h-max flex items-center justify-around pb-6 pt-0">
+      <TabsList className=" backdrop-blur-sm gap-1 fixed inset-x-0 bottom-0 w-full min-h-max flex items-center justify-around pb-4 pt-0 rounded-none bg-gradient-to-b from-stone-800 to-stone-950">
         {tabs.map((tab) => (
           <TabsTrigger
             key={tab.value}
             value={tab.value}
             className={cn(
-              "bg-transparent border-none rounded-none px-4 py-3 transition duration-200 ease items-center justify-center flex flex-col font-semibold text-sm w-24 text-zinc-200",
-              "data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-sm"
+              "bg-transparent border-none rounded-none px-4 py-3 transition duration-200 ease items-center justify-center flex flex-col text-xs w-24 text-stone-500",
+              "data-[state=active]:bg-transparent data-[state=active]:shadow-sm",
+              "data-[state=active]:text-primary"
             )}
           >
             <tab.icon className="w-5 h-5 mx-auto mb-1" />
