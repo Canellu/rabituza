@@ -5,9 +5,11 @@ import { LoaderCircle } from "lucide-react"; // Import the loader icon from luci
 const Spinner = ({
   className,
   size = "size-8",
+  color = "text-stone-300",
 }: {
   className?: string;
-  size: string;
+  size?: string;
+  color?: string;
 }) => {
   return (
     <motion.div
@@ -17,7 +19,7 @@ const Spinner = ({
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <LoaderCircle className={cn("animate-spin text-stone-300", size)} />
+      <LoaderCircle className={cn("animate-spin", size, color)} />
     </motion.div>
   );
 };
