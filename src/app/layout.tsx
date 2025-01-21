@@ -46,7 +46,7 @@ export default async function RootLayout({
           />
         </head>
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased bg-pattern `}
+          className={`${geistSans.variable} ${geistMono.variable} antialiased bg-stone-50`}
         >
           {!(await isAuthenticated()) ? (
             <div className="flex items-center justify-center min-h-screen flex-col gap-8">

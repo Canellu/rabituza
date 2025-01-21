@@ -1,5 +1,6 @@
 "use client";
 
+import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { Goal, ListCheck, User } from "lucide-react";
@@ -64,7 +65,11 @@ const Menu = () => {
       {/* Tab Content */}
       {tabs.map((tab) => (
         <TabsContent key={tab.value} value={tab.value} className="mt-0">
-          <div className="p-4 h-[calc(100dvh-80px)]">{tab.content}</div>
+          <main className="p-4 h-[calc(100dvh-80px)]">
+            <h1 className="font-bold text-2xl text-stone-800">{tab.title}</h1>
+            <Separator className="my-3" />
+            {tab.content}
+          </main>
         </TabsContent>
       ))}
     </Tabs>

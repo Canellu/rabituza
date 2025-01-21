@@ -121,19 +121,21 @@ const Goals = () => {
         </TabsList>
         {tabs.map((tab) => (
           <TabsContent key={tab.value} value={tab.value}>
-            <Card>
+            <Card className="">
               <CardHeader>
                 <CardTitle>{tab.title}</CardTitle>
               </CardHeader>
               <CardContent>
-                {goals[tab.value].length === 0 && <span>{tab.emptyText}</span>}
+                {goals[tab.value].length === 0 && (
+                  <span className="text-sm">{tab.emptyText}</span>
+                )}
                 {goals[tab.value].map((goal) => (
                   <div key={goal.id} className="flex gap-2">
                     <Checkbox
                       id={`goal-${goal.id}`}
                       defaultChecked={goal.completed}
                       onChange={() => toggleGoalCompletion(tab.value, goal.id)}
-                      className="w-5 h-5 border-2 mt-0.5"
+                      className="size-5 border-2 mt-0.5"
                     />
                     <label htmlFor={`goal-${goal.id}`} className="flex-grow">
                       {goal.text}
@@ -147,6 +149,7 @@ const Goals = () => {
                     onKeyDown={(e) => {
                       if (e.key === "Enter") handleAddGoal(tab.value);
                     }}
+                    className="text-sm"
                   />
                   <Button
                     className="rounded-sm aspect-square"

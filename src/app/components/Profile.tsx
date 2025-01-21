@@ -44,7 +44,7 @@ const Profile = () => {
             </div>
           </motion.div>
         )}
-        <LogoutLink className="bg-primary rounded-full px-6 py-3 font-medium">
+        <LogoutLink className="border border-primary rounded-full px-4 py-2 text-sm">
           Log out
         </LogoutLink>
       </div>
