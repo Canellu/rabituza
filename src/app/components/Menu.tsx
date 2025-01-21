@@ -2,6 +2,7 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Goal, ListCheck, User } from "lucide-react";
+import useVibrate from "../hooks/useVibrate";
 import Goals from "./Goals";
 import Profile from "./Profile";
 import Tracker from "./Tracker";
@@ -34,12 +35,21 @@ const tabs = [
 ];
 
 const Menu = () => {
+  const vibrationPattern = [300, 300];
+
+  const vibrate = useVibrate(vibrationPattern);
+
   return (
     <Tabs defaultValue={Tab.Tracker}>
       {/* Tab Headers */}
       <TabsList className="w-full justify-evenly bg-zinc-950/90 backdrop-blur-sm fixed inset-x-0 bottom-0 flex items-center pb-6">
         {tabs.map((tab) => (
-          <TabsTrigger key={tab.value} value={tab.value} className="flex-grow">
+          <TabsTrigger
+            key={tab.value}
+            value={tab.value}
+            className="flex-grow"
+            onClick={vibrate}
+          >
             <tab.icon className="w-5 h-5 mx-auto mb-1" />
             <span>{tab.title}</span>
           </TabsTrigger>
