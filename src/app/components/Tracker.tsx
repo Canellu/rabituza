@@ -16,7 +16,7 @@ const Tracker = () => {
   return (
     <div className="h-full">
       <Drawer>
-        <DrawerTrigger className="fixed bottom-28 right-8 px-4 p-2 rounded-full bg-primary flex gap-1 items-center justify-center">
+        <DrawerTrigger className="fixed bottom-28 right-8 px-4 py-3 rounded-full bg-primary flex gap-1 items-center justify-center">
           <Plus className="size-4 text-stone-800" />
           Add exercise
         </DrawerTrigger>
