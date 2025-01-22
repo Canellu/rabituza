@@ -1,11 +1,11 @@
-import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
-import { LoaderCircle } from "lucide-react"; // Import the loader icon from lucide-react
+import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
+import { LoaderCircle } from 'lucide-react'; // Import the loader icon from lucide-react
 // Import the motion component from framer-motion
 const Spinner = ({
   className,
-  size = "size-8",
-  color = "text-stone-300",
+  size = 'size-8',
+  color = 'text-stone-400',
 }: {
   className?: string;
   size?: string;
@@ -19,7 +19,7 @@ const Spinner = ({
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <LoaderCircle className={cn("animate-spin", size, color)} />
+      <LoaderCircle className={cn('animate-spin', size, color)} />
     </motion.div>
   );
 };

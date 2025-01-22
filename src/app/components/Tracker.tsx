@@ -25,9 +25,9 @@ const Tracker = () => {
         activeSnapPoint={snap}
         setActiveSnapPoint={setSnap}
       >
-        <DrawerTrigger className="fixed bottom-28 right-8 px-4 py-3 rounded-full bg-primary flex gap-1 items-center justify-center">
+        <DrawerTrigger className="fixed bottom-28 right-8 px-4 py-2 rounded-full bg-primary flex gap-1 items-center justify-center">
           <Plus className="size-4 text-stone-800" />
-          Add exercise
+          Add
         </DrawerTrigger>
         <DrawerContent className="fixed flex flex-col bg-white border border-gray-200 border-b-none rounded-t-[10px] bottom-0 left-0 right-0 h-full max-h-[97%] mx-[-1px]">
           <DrawerHeader>

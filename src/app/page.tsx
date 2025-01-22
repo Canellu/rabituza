@@ -1,18 +1,81 @@
-import { LoginLink } from "@kinde-oss/kinde-auth-nextjs/components";
-import { ArrowRight } from "lucide-react";
+'use client';
 
-const Login = () => {
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { cn } from '@/lib/utils';
+import { Goal, ListCheck, User } from 'lucide-react';
+import Goals from './components/Goals';
+import Profile from './components/Profile';
+import Tracker from './components/Tracker';
+import useVibrate from './hooks/useVibrate';
+
+enum Tab {
+  Tracker = 'tracker',
+  Goals = 'goals',
+  Profile = 'profile',
+}
+
+const tabs = [
+  {
+    value: Tab.Tracker,
+    icon: ListCheck,
+    title: 'Tracker',
+    content: <Tracker />,
+  },
+  {
+    value: Tab.Goals,
+    icon: Goal,
+    title: 'Goals',
+    content: <Goals />,
+  },
+  {
+    value: Tab.Profile,
+    icon: User,
+    title: 'Profile',
+    content: <Profile />,
+  },
+];
+
+const Menu = () => {
+  const vibrationPattern = [50, 10, 50];
+
+  const vibrate = useVibrate(vibrationPattern);
+
   return (
-    <div className="flex items-center justify-center h-screen flex-col gap-8">
-      <LoginLink
-        postLoginRedirectURL="/home"
-        className="bg-primary rounded-full px-6 py-3 font-medium flex gap-3"
-      >
-        Sign in
-        <ArrowRight className="bg-white rounded-full p-1" />
-      </LoginLink>
-    </div>
+    <Tabs defaultValue={Tab.Goals}>
+      {/* Tab Headers */}
+      <TabsList className="backdrop-blur-sm gap-1 fixed inset-x-0 bottom-0 w-full min-h-max flex items-center justify-around pb-4 pt-0 rounded-none bg-gradient-to-b from-stone-800 to-stone-950">
+        {tabs.map((tab) => (
+          <TabsTrigger
+            key={tab.value}
+            value={tab.value}
+            className={cn(
+              'bg-transparent border-none rounded-none px-4 py-3 transition duration-200 ease items-center justify-center flex flex-col text-xs w-24 text-stone-500',
+              'data-[state=active]:bg-transparent data-[state=active]:shadow-sm',
+              'data-[state=active]:text-primary'
+            )}
+            onClick={vibrate}
+          >
+            <tab.icon className="w-5 h-5 mx-auto mb-1" />
+            <span>{tab.title}</span>
+          </TabsTrigger>
+        ))}
+      </TabsList>
+
+      {/* Tab Content */}
+      {tabs.map((tab) => (
+        <TabsContent key={tab.value} value={tab.value} className="mt-0">
+          <div className="h-[calc(100dvh-80px)] overflow-auto flex flex-col ">
+            <section className="sticky top-0  bg-gradient-to-b from-stone-100 to-transparent backdrop-blur-sm border-b p-4 after:inset-0 after:absolute after:bg-white/80 after:-z-10">
+              <h1 className=" font-bold text-2xl text-stone-800">
+                {tab.title}
+              </h1>
+            </section>
+            <section className="p-4 grow">{tab.content}</section>
+          </div>
+        </TabsContent>
+      ))}
+    </Tabs>
   );
 };
 
-export default Login;
+export default Menu;
