@@ -37,6 +37,7 @@ const Profile = () => {
     );
   if (error) return <div>Error: {(error as Error).message}</div>;
 
+  console.log(dbUser);
   return (
     <div className="flex items-center justify-between flex-col h-full gap-6">
       <div className="flex items-center flex-col gap-4">
@@ -67,7 +68,6 @@ const Profile = () => {
         </motion.div>
       </div>
 
-      {dbUser.age && <div>Age: {dbUser.age}</div>}
       {dbUser.height && <div>Height: {dbUser.height} cm</div>}
       {dbUser.bio && <div>{dbUser.bio}</div>}
 

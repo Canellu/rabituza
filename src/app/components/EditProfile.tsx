@@ -28,39 +28,53 @@ import {
 } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
 import { Textarea } from '@/components/ui/textarea';
+import { months } from '@/constants/months';
+import { useCreateOrUpdateUser } from '@/lib/database/user/createOrUpdate';
+import { useGetUser } from '@/lib/database/user/get';
 import { cn } from '@/lib/utils';
+import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs';
+import { useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { CalendarIcon, UserPen } from 'lucide-react';
-import { useState } from 'react';
-
-const months = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
-];
+import { useEffect, useState } from 'react';
 
 const EditProfile = () => {
+  const { user } = useKindeBrowserClient();
+  const queryClient = useQueryClient();
+  const { data: userData, isLoading, error } = useGetUser(user?.id || '');
+
   const [date, setDate] = useState<Date>();
   const [viewYear, setViewYear] = useState(new Date().getFullYear());
   const [viewMonth, setViewMonth] = useState(new Date().getMonth());
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [gender, setGender] = useState('');
   const [height, setHeight] = useState(170);
+  const [weight, setWeight] = useState<number | undefined>(undefined);
+  const [bio, setBio] = useState('');
+  const [username, setUsername] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+
+  const { mutate } = useCreateOrUpdateUser();
 
   const currentYear = new Date().getFullYear();
   const years = Array.from(
-    { length: 65 + 1 }, // Generate years fo to 65
+    { length: 65 + 1 }, // Generate years to 65
     (_, i) => currentYear - i
   );
+
+  useEffect(() => {
+    if (userData) {
+      setFirstName(userData.first_name || '');
+      setLastName(userData.last_name || '');
+      setDate(userData.dob ? new Date(userData.dob) : undefined);
+      setGender(userData.gender || '');
+      setHeight(userData.height || 170);
+      setWeight(userData.weight || undefined);
+      setBio(userData.bio || '');
+      setUsername(userData.username || '');
+    }
+  }, [userData]);
 
   const handleMonthChange = (monthIndex: number) => {
     setViewMonth(monthIndex);
@@ -75,6 +89,27 @@ const EditProfile = () => {
     if (selectedDate) {
       setPopoverOpen(false);
     }
+  };
+
+  const handleSaveProfile = () => {
+    if (user?.id === undefined) return;
+
+    const updatedUser = {
+      id: user.id,
+      first_name: firstName,
+      last_name: lastName,
+      dob: date,
+      height,
+      gender,
+      weight,
+      bio,
+    };
+
+    mutate(updatedUser, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['user', user.id] });
+      },
+    });
   };
 
   return (
@@ -99,19 +134,37 @@ const EditProfile = () => {
           {/* Username */}
           <div className="grid w-full items-center gap-2">
             <Label htmlFor="username">Username</Label>
-            <Input type="text" id="username" placeholder="Username" />
+            <Input
+              type="text"
+              id="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Username"
+            />
           </div>
 
           {/* First name */}
           <div className="grid w-full items-center gap-2">
             <Label htmlFor="first_name">Fist name</Label>
-            <Input type="text" id="first_name" placeholder="Fist name" />
+            <Input
+              type="text"
+              id="first_name"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              placeholder="Fist name"
+            />
           </div>
 
           {/* Last name */}
           <div className="grid w-full items-center gap-2">
             <Label htmlFor="last_name">Last name</Label>
-            <Input type="text" id="last_name" placeholder="Last name" />
+            <Input
+              type="text"
+              id="last_name"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              placeholder="Last name"
+            />
           </div>
 
           {/* Date of Birth */}
@@ -216,7 +269,16 @@ const EditProfile = () => {
           {/* Weight */}
           <div className="grid w-full items-center gap-2">
             <Label htmlFor="weight">Weight (kg)</Label>
-            <Input type="number" id="weight" placeholder="Weight" />
+            <Input
+              type="number"
+              id="weight"
+              value={weight ? weight : ''}
+              onChange={(e) => {
+                const value = e.target.value;
+                setWeight(value ? Number(value) : undefined);
+              }}
+              placeholder="Weight"
+            />
           </div>
 
           {/* Height */}
@@ -241,6 +303,8 @@ const EditProfile = () => {
             <Textarea
               rows={6}
               id="bio"
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
               placeholder="Get personalized messages based on your bio."
             />
           </div>
@@ -248,7 +312,10 @@ const EditProfile = () => {
 
         {/* Save button */}
         <DrawerFooter className="mb-6">
-          <DrawerClose className="bg-primary py-2 rounded-full">
+          <DrawerClose
+            onClick={() => handleSaveProfile()}
+            className="bg-primary py-2 rounded-full"
+          >
             Save
           </DrawerClose>
         </DrawerFooter>

@@ -35,15 +35,12 @@ export default async function RootLayout({
 
   const user = await getUser();
 
-  // Call the Firestore user creation function
   if ((await isAuthenticated()) && user) {
     const userPayload = {
       id: user.id,
-      profileData: {
-        email: user.email || '',
-        first_name: user.given_name || '',
-        last_name: user.family_name || '',
-      },
+      email: user.email || '',
+      first_name: user.given_name || '',
+      last_name: user.family_name || '',
     };
 
     // Create or update user in Firestore

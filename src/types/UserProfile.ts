@@ -1,12 +1,12 @@
 export type User = {
   id: string;
-  profileData: {
-    first_name: string;
-    last_name: string;
-    email: string;
-    age?: number;
-    height?: number;
-    gender?: string;
-    bio?: string;
-  };
+  username?: string;
+  first_name?: string;
+  last_name?: string;
+  email?: string;
+  dob?: Date;
+  gender?: string;
+  height?: number;
+  weight?: number;
+  bio?: string;
 };

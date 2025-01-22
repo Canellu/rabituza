@@ -6,10 +6,8 @@ import { db } from '../firebaseConfig';
 // Function to create or update user in Firestore
 export const createOrUpdateUser = async (user: User): Promise<void> => {
   try {
-    await setDoc(doc(db, 'users', user.id), user.profileData, { merge: true });
-    console.log('User profile successfully saved!');
+    await setDoc(doc(db, 'users', user.id), user, { merge: true });
   } catch (error) {
-    console.error('Error saving user profile:', error);
     throw error;
   }
 };
