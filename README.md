@@ -1,3 +1,3 @@
 ## Rabituza
 
-#### Keep track of your goals
+#### Keep track of your goals.
