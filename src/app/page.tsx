@@ -1,7 +1,7 @@
 'use client';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/tailwind';
 import { Goal, ListCheck, User } from 'lucide-react';
 import Goals from './components/Goals';
 import Profile from './components/Profile';

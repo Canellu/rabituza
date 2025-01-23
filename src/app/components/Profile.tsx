@@ -1,43 +1,28 @@
 'use client';
 
-import { getUser } from '@/lib/database/user/get';
-import {
-  LogoutLink,
-  useKindeBrowserClient,
-} from '@kinde-oss/kinde-auth-nextjs';
-import { useQuery } from '@tanstack/react-query';
+import { Button } from '@/components/ui/button';
+import { User } from '@/types/UserProfile';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { useAuth } from '../hooks/useAuth';
 import EditProfile from './EditProfile';
 import RefreshButton from './RefreshButton';
 import Spinner from './Spinner';
 
 const Profile = () => {
-  const { user } = useKindeBrowserClient();
+  const { user: dbUser, loading, error, logout } = useAuth();
 
-  const userId = user?.id; // Handle possible null user here
+  const user = dbUser as User;
 
-  const {
-    data: dbUser,
-    error,
-    isLoading,
-  } = useQuery({
-    queryKey: ['user', userId],
-    queryFn: () => getUser(userId!),
-    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
-    enabled: !!userId,
-  });
-
-  if (isLoading || !dbUser)
+  if (loading || !user)
     return (
       <div className="flex items-center justify-center flex-col grow gap-8">
         <Spinner />
         <span className="text-stone-500">Fetching user profile...</span>
       </div>
     );
-  if (error) return <div>Error: {(error as Error).message}</div>;
+  if (error) return <div>Error: {error}</div>;
 
-  console.log(dbUser);
   return (
     <div className="flex items-center justify-between flex-col h-full gap-6">
       <div className="flex items-center flex-col gap-4">
@@ -58,24 +43,27 @@ const Profile = () => {
           )}
           <div className="flex flex-col items-center gap-1">
             <span className="text-2xl font-semibold">
-              {dbUser.username
-                ? dbUser.username
-                : `${dbUser.first_name} ${dbUser.last_name}`}
+              {user.username
+                ? user.username
+                : `${user.first_name} ${user.last_name}`}
             </span>
-            <span className="text-stone-500 text-xs">{dbUser.email}</span>
+            <span className="text-stone-500 text-xs">{user.email}</span>
           </div>
           <EditProfile />
         </motion.div>
       </div>
 
-      {dbUser.height && <div>Height: {dbUser.height} cm</div>}
-      {dbUser.bio && <div>{dbUser.bio}</div>}
+      {user.height && <div>Height: {user.height} cm</div>}
+      {user.bio && <div>{user.bio}</div>}
 
       <div className="flex flex-col gap-4">
         <RefreshButton />
-        <LogoutLink className="border border-primary rounded-full px-4 py-2 text-sm items-center justify-center flex">
+        <Button
+          onClick={logout}
+          className="border border-primary rounded-full px-4 py-2 text-sm items-center justify-center flex"
+        >
           Log out
-        </LogoutLink>
+        </Button>
       </div>
     </div>
   );

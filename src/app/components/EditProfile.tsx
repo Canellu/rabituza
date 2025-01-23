@@ -29,19 +29,18 @@ import {
 import { Slider } from '@/components/ui/slider';
 import { Textarea } from '@/components/ui/textarea';
 import { months } from '@/constants/months';
-import { useCreateOrUpdateUser } from '@/lib/database/user/createOrUpdate';
-import { useGetUser } from '@/lib/database/user/get';
-import { cn } from '@/lib/utils';
-import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs';
+
+import { cn } from '@/lib/utils/tailwind';
 import { useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { CalendarIcon, UserPen } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useAuth } from '../hooks/useAuth';
+import useCreateOrUpdateUser from '../hooks/useCreateOrUpdateUser';
 
 const EditProfile = () => {
-  const { user } = useKindeBrowserClient();
   const queryClient = useQueryClient();
-  const { data: userData, isLoading, error } = useGetUser(user?.id || '');
+  const { user } = useAuth();
 
   const [date, setDate] = useState<Date>();
   const [viewYear, setViewYear] = useState(new Date().getFullYear());
@@ -64,17 +63,23 @@ const EditProfile = () => {
   );
 
   useEffect(() => {
-    if (userData) {
-      setFirstName(userData.first_name || '');
-      setLastName(userData.last_name || '');
-      setDate(userData.dob ? new Date(userData.dob) : undefined);
-      setGender(userData.gender || '');
-      setHeight(userData.height || 170);
-      setWeight(userData.weight || undefined);
-      setBio(userData.bio || '');
-      setUsername(userData.username || '');
+    if (user) {
+      setFirstName(user.first_name || '');
+      setLastName(user.last_name || '');
+      setGender(user.gender || '');
+      setHeight(user.height || 170);
+      setWeight(user.weight || undefined);
+      setBio(user.bio || '');
+      setUsername(user.username || '');
+
+      const dob = user.dob ? new Date(user.dob) : undefined;
+      if (dob) {
+        setDate(dob);
+        setViewYear(dob.getFullYear());
+        setViewMonth(dob.getMonth());
+      }
     }
-  }, [userData]);
+  }, [user]);
 
   const handleMonthChange = (monthIndex: number) => {
     setViewMonth(monthIndex);
@@ -92,10 +97,9 @@ const EditProfile = () => {
   };
 
   const handleSaveProfile = () => {
-    if (user?.id === undefined) return;
-
     const updatedUser = {
       id: user.id,
+      code: user.code,
       first_name: firstName,
       last_name: lastName,
       dob: date,
@@ -176,8 +180,8 @@ const EditProfile = () => {
                   id="dob"
                   variant={'outline'}
                   className={cn(
-                    'w-full justify-start text-left font-normal',
-                    !date && 'text-muted-foreground'
+                    'w-full justify-start text-left font-normal hover:bg-white',
+                    !date && 'text-muted-foreground '
                   )}
                 >
                   <CalendarIcon />
@@ -313,7 +317,7 @@ const EditProfile = () => {
         {/* Save button */}
         <DrawerFooter className="mb-6">
           <DrawerClose
-            onClick={() => handleSaveProfile()}
+            // onClick={() => handleSaveProfile()}
             className="bg-primary py-2 rounded-full"
           >
             Save
