@@ -1,3 +1,5 @@
+'use client';
+
 import { User } from '@/types/UserProfile';
 
 const SESSION_KEY = 'auth_session';
