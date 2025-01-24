@@ -14,7 +14,9 @@ const Profile = () => {
 
   const user = dbUser as User;
 
-  if (loading || !user)
+  console.log(JSON.stringify(dbUser));
+
+  if (loading)
     return (
       <div className="flex items-center justify-center flex-col grow gap-8">
         <Spinner />

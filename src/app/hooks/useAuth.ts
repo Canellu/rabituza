@@ -1,20 +1,11 @@
 'use client';
 
-import verifyLogin from '@/lib/auth/verifyLogin';
-import {
-  clearSession,
-  getSession,
-  storeSession,
-} from '@/lib/utils/authSession';
+import { verifyUserCode, verifyUserIdentifier } from '@/lib/auth/verifyLogin';
+import { clearSession, getSession } from '@/lib/utils/authSession';
 import { User } from '@/types/UserProfile';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-
-interface LoginCredentials {
-  identifier: string; // Email or username
-  code: string; // 6-digit code
-}
 
 export function useAuth() {
   const queryClient = useQueryClient();
@@ -26,46 +17,70 @@ export function useAuth() {
   useEffect(() => {
     const session = getSession();
     if (session) {
-      queryClient.setQueryData(['user'], session);
+      queryClient.setQueryData(['user'], session); // Set user in React Query if session exists
+    } else {
+      // If session has expired or doesn't exist, clear React Query cache and localStorage
+      queryClient.removeQueries({ queryKey: ['user'] });
+      clearSession();
     }
   }, [queryClient]);
 
-  // Login mutation
-  const loginMutation = useMutation({
-    mutationFn: async (credentials: LoginCredentials) => {
-      const user = await verifyLogin(credentials.identifier, credentials.code);
-      return user;
+  // Mutation for verifying user identifier
+  const verifyIdentifierMutation = useMutation({
+    mutationFn: async (identifier: string): Promise<boolean> => {
+      const user = await verifyUserIdentifier(identifier);
+      return user ? true : false; // Return true if user found, false otherwise
     },
-    onSuccess: (user) => {
-      queryClient.setQueryData(['user'], user); // Store user in React Query cache
-      storeSession(user); // Store session in localStorage
-      setError(null);
+    onSuccess: () => {
+      setError(null); // Clear error on success
     },
-    onError: (err: Error) => {
-      setError(err.message);
+    onError: (err) => {
+      setError(err.message || 'An error occurred while verifying identifier.');
+    },
+  });
+
+  // Mutation for verifying user code
+  const verifyCodeMutation = useMutation({
+    mutationFn: async (code: string): Promise<boolean> => {
+      const user = queryClient.getQueryData(['user']) as User;
+      if (!user) throw new Error('No user found in session.');
+      const isCodeValid = await verifyUserCode(user, code);
+      return isCodeValid ? true : false; // Return true if code matches, false otherwise
+    },
+    onSuccess: () => {
+      setError(null); // Clear error on success
+    },
+    onError: (err) => {
+      setError(err.message || 'An error occurred while verifying code.');
     },
   });
 
   // Logout function
   const logout = () => {
-    clearSession();
-    queryClient.removeQueries({ queryKey: ['user'] }); // Clear user data from React Query
-    router.refresh();
+    clearSession(); // Clear session from localStorage
+    queryClient.removeQueries({ queryKey: ['user'] }); // Clear user data from React Query cache
+    router.refresh(); // Refresh the page
   };
 
+  // Check if user is logged in by either checking localStorage or React Query cache
+  const isLoggedIn = !!getSession() || !!queryClient.getQueryData(['user']);
+
   return {
-    login: (credentials: LoginCredentials) => {
+    verifyUserIdentifier: async (identifier: string): Promise<boolean> => {
       setLoading(true);
-      loginMutation.mutate(credentials, {
-        onSettled: () => {
-          setLoading(false);
-          router.refresh();
-        },
-      });
+      const result = await verifyIdentifierMutation.mutateAsync(identifier);
+      setLoading(false);
+      return result;
+    },
+    verifyUserCode: async (code: string): Promise<boolean> => {
+      setLoading(true);
+      const result = await verifyCodeMutation.mutateAsync(code);
+      setLoading(false);
+      return result;
     },
     logout,
-    isLoggedIn: !!getSession(), // Check if session exists
-    user: queryClient.getQueryData(['user']) as User, // Get the current user from React Query cache
+    isLoggedIn,
+    user: queryClient.getQueryData(['user']) as User,
     loading,
     error,
   };

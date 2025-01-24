@@ -98,8 +98,8 @@ const EditProfile = () => {
 
   const handleSaveProfile = () => {
     const updatedUser = {
-      id: user.id,
-      code: user.code,
+      ...user,
+      username: username,
       first_name: firstName,
       last_name: lastName,
       dob: date,
@@ -317,7 +317,7 @@ const EditProfile = () => {
         {/* Save button */}
         <DrawerFooter className="mb-6">
           <DrawerClose
-            // onClick={() => handleSaveProfile()}
+            onClick={() => handleSaveProfile()}
             className="bg-primary py-2 rounded-full"
           >
             Save

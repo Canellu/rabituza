@@ -1,7 +1,5 @@
 'use client';
 
-import { Label } from '@/components/ui/label';
-
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -10,17 +8,37 @@ import {
   InputOTPSeparator,
   InputOTPSlot,
 } from '@/components/ui/input-otp';
+import { Label } from '@/components/ui/label';
 import { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 
 const Login = () => {
-  const { login, loading, error } = useAuth();
+  const { verifyUserIdentifier, verifyUserCode, loading, error } = useAuth();
   const [identifier, setIdentifier] = useState('');
   const [code, setCode] = useState('');
   const [step, setStep] = useState(0);
 
-  const handleLogin = () => {
-    login({ identifier, code });
+  const handleVerifyIdentifier = () => {
+    verifyUserIdentifier(identifier); // Trigger identifier verification mutation
+
+    // Using mutation's onSuccess and onError to control step transition
+    if (error) {
+      console.error(error); // Handle any error during identifier verification
+      setStep(0); // Keep the user on the identifier step
+    } else {
+      setStep(1); // Move to step 1 if identifier is successfully verified
+    }
+  };
+
+  const handleVerifyCode = () => {
+    verifyUserCode(code); // Trigger code verification mutation
+
+    // Check for any error in code verification
+    if (error) {
+      console.error(error); // Handle error during code verification
+    } else {
+      alert('Code verified successfully!'); // Add any post-verification logic here
+    }
   };
 
   return (
@@ -38,11 +56,13 @@ const Login = () => {
             />
           </div>
           <Button
-            onClick={() => setStep(1)}
+            onClick={handleVerifyIdentifier}
             className="from-primary to-primary/70 via-primary/90 bg-gradient-to-b rounded-full"
+            disabled={loading} // Disable button while loading
           >
-            Continue
+            {loading ? 'Verifying...' : 'Continue'}
           </Button>
+          {error && <p className="text-red-500">Error: {error}</p>}
         </section>
       )}
       {step === 1 && (
@@ -56,7 +76,7 @@ const Login = () => {
               id="code"
               value={code}
               onChange={(value) => setCode(value)}
-              onComplete={handleLogin}
+              onComplete={handleVerifyCode}
             >
               <InputOTPGroup>
                 <InputOTPSlot index={0} />
@@ -71,11 +91,18 @@ const Login = () => {
               </InputOTPGroup>
             </InputOTP>
 
+            <Button
+              onClick={handleVerifyCode}
+              className="from-primary to-primary/70 via-primary/90 bg-gradient-to-b rounded-full"
+              disabled={loading} // Disable button while loading
+            >
+              {loading ? 'Verifying...' : 'Verify Code'}
+            </Button>
             {loading && (
               <p className="text-stone-700">Trying to log you in...</p>
             )}
             {error && (
-              <p className="text-stone-700">
+              <p className="text-red-500">
                 Unable to log you in, reason: {error}
               </p>
             )}

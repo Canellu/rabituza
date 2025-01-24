@@ -14,25 +14,29 @@ export type VerifyLoginError =
   | { type: 'CodeMismatchError'; message: string }
   | { type: 'FirestoreError'; message: string; details?: string };
 
-// Helper function to simulate OR behavior
+// Helper function to simulate OR behavior (Firestore doesn't support OR queries)
 async function getUserByIdentifier(identifier: string) {
+  // Convert identifier to lowercase to ensure case-insensitive comparison
+  const normalizedIdentifier = identifier.toLowerCase();
+
+  // Create Firestore queries for username and email (converted to lowercase)
   const usernameQuery = query(
     collection(db, 'users'),
-    where('username', '==', identifier)
+    where('username', '==', normalizedIdentifier)
   );
 
   const emailQuery = query(
     collection(db, 'users'),
-    where('email', '==', identifier)
+    where('email', '==', normalizedIdentifier)
   );
 
-  // Execute both queries
+  // Execute both queries in parallel
   const [usernameSnapshot, emailSnapshot] = await Promise.all([
     getDocs(usernameQuery),
     getDocs(emailQuery),
   ]);
 
-  // Combine the results in a Set to avoid duplicates
+  // Combine results to avoid duplicates (using a Set)
   const users = new Set();
 
   usernameSnapshot.forEach((doc) => users.add(doc.data()));
@@ -41,20 +45,20 @@ async function getUserByIdentifier(identifier: string) {
   return Array.from(users);
 }
 
-export async function verifyLogin(
-  identifier: string,
-  code: string
-): Promise<User> {
-  if (!identifier || !code) {
+/**
+ * Verifies the user identifier (username or email) and retrieves the user.
+ */
+export async function verifyUserIdentifier(identifier: string): Promise<User> {
+  if (!identifier) {
     const error: VerifyLoginError = {
       type: 'ValidationError',
-      message: 'Identifier and code are required.',
+      message: 'Identifier is required.',
     };
     throw error;
   }
 
   try {
-    // Fetch user by username or email
+    // Get the user by normalized identifier (case-insensitive)
     const users = await getUserByIdentifier(identifier);
 
     if (users.length === 0) {
@@ -65,23 +69,15 @@ export async function verifyLogin(
       throw error;
     }
 
-    // We assume the first match is the user (you may want to handle cases where multiple users match)
+    // Assume the first user match is the correct one
     const tmpUser = users[0] as User;
-    // Convert Firestore Timestamp to Date
+
+    // Convert Firestore Timestamp to Date if necessary
     const userData = {
       ...tmpUser,
       dob:
         tmpUser.dob instanceof Timestamp ? tmpUser.dob.toDate() : tmpUser.dob,
     };
-
-    // Validate the provided code
-    if (userData.code !== code) {
-      const error: VerifyLoginError = {
-        type: 'CodeMismatchError',
-        message: 'The provided code is incorrect.',
-      };
-      throw error;
-    }
 
     return userData;
   } catch (err: unknown) {
@@ -97,4 +93,25 @@ export async function verifyLogin(
   }
 }
 
-export default verifyLogin;
+/**
+ * Verifies the provided code for the user.
+ */
+export function verifyUserCode(user: User, code: string): User {
+  if (!code) {
+    const error: VerifyLoginError = {
+      type: 'ValidationError',
+      message: 'Code is required.',
+    };
+    throw error;
+  }
+
+  if (user.code !== code) {
+    const error: VerifyLoginError = {
+      type: 'CodeMismatchError',
+      message: 'The provided code is incorrect.',
+    };
+    throw error;
+  }
+
+  return user;
+}
