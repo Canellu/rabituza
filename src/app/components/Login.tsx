@@ -9,11 +9,13 @@ import {
   InputOTPSlot,
 } from '@/components/ui/input-otp';
 import { Label } from '@/components/ui/label';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 
 const Login = () => {
   const { verifyUserIdentifier, verifyUserCode, loading, error } = useAuth();
+  const router = useRouter();
   const [identifier, setIdentifier] = useState('');
   const [code, setCode] = useState('');
   const [step, setStep] = useState(0);
@@ -29,7 +31,10 @@ const Login = () => {
 
   const handleVerifyCode = async () => {
     try {
-      await verifyUserCode(code); // Trigger code verification mutation
+      const valid = await verifyUserCode(code); // Trigger code verification mutation
+      if (valid) {
+        router.refresh();
+      }
     } catch (error) {
       console.error(error); // Handle any error during identifier verification
     }
@@ -97,9 +102,7 @@ const Login = () => {
               <p className="text-stone-700">Trying to log you in...</p>
             )}
             {error && (
-              <p className="text-red-500">
-                Unable to log you in, reason: {error}
-              </p>
+              <p className="text-red-600 bg-red-100 rounded-md p-3">{error}</p>
             )}
           </div>
         </section>

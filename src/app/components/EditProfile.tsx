@@ -100,7 +100,7 @@ const EditProfile = () => {
   const handleSaveProfile = () => {
     const updatedUser = {
       ...user,
-      username: username,
+      username: username.toLowerCase(),
       first_name: firstName,
       last_name: lastName,
       dob: date,
@@ -183,7 +183,7 @@ const EditProfile = () => {
                   id="dob"
                   variant={'outline'}
                   className={cn(
-                    'w-full justify-start text-left font-normal hover:bg-white',
+                    'w-full justify-start text-left font-normal hover:bg-white text-base',
                     !date && 'text-muted-foreground '
                   )}
                 >

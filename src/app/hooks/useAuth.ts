@@ -1,7 +1,11 @@
 'use client';
 
 import { verifyUserCode, verifyUserIdentifier } from '@/lib/auth/verifyLogin';
-import { clearSession, getSession } from '@/lib/utils/authSession';
+import {
+  clearSession,
+  getSession,
+  storeSession,
+} from '@/lib/utils/authSession';
 import { User } from '@/types/UserProfile';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
@@ -30,6 +34,10 @@ export function useAuth() {
     mutationFn: async (identifier: string): Promise<boolean> => {
       setLoading(true);
       const user = await verifyUserIdentifier(identifier);
+      if (user) {
+        queryClient.setQueryData(['user'], user);
+        storeSession(user);
+      }
       return user ? true : false; // Return true if user found, false otherwise
     },
     onSuccess: () => {
@@ -85,5 +93,6 @@ export function useAuth() {
     user: queryClient.getQueryData(['user']) as User,
     loading,
     error,
+    setError,
   };
 }
