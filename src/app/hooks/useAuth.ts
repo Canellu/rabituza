@@ -28,6 +28,7 @@ export function useAuth() {
   // Mutation for verifying user identifier
   const verifyIdentifierMutation = useMutation({
     mutationFn: async (identifier: string): Promise<boolean> => {
+      setLoading(true);
       const user = await verifyUserIdentifier(identifier);
       return user ? true : false; // Return true if user found, false otherwise
     },
@@ -37,11 +38,15 @@ export function useAuth() {
     onError: (err) => {
       setError(err.message || 'An error occurred while verifying identifier.');
     },
+    onSettled: () => {
+      setLoading(false); // Clear loading state on success or error
+    },
   });
 
   // Mutation for verifying user code
   const verifyCodeMutation = useMutation({
     mutationFn: async (code: string): Promise<boolean> => {
+      setLoading(true);
       const user = queryClient.getQueryData(['user']) as User;
       if (!user) throw new Error('No user found in session.');
       const isCodeValid = await verifyUserCode(user, code);
@@ -52,6 +57,9 @@ export function useAuth() {
     },
     onError: (err) => {
       setError(err.message || 'An error occurred while verifying code.');
+    },
+    onSettled: () => {
+      setLoading(false); // Clear loading state on success or error
     },
   });
 
@@ -67,16 +75,10 @@ export function useAuth() {
 
   return {
     verifyUserIdentifier: async (identifier: string): Promise<boolean> => {
-      setLoading(true);
-      const result = await verifyIdentifierMutation.mutateAsync(identifier);
-      setLoading(false);
-      return result;
+      return await verifyIdentifierMutation.mutateAsync(identifier);
     },
     verifyUserCode: async (code: string): Promise<boolean> => {
-      setLoading(true);
-      const result = await verifyCodeMutation.mutateAsync(code);
-      setLoading(false);
-      return result;
+      return await verifyCodeMutation.mutateAsync(code);
     },
     logout,
     isLoggedIn,

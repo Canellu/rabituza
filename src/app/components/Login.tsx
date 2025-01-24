@@ -18,26 +18,20 @@ const Login = () => {
   const [code, setCode] = useState('');
   const [step, setStep] = useState(0);
 
-  const handleVerifyIdentifier = () => {
-    verifyUserIdentifier(identifier); // Trigger identifier verification mutation
-
-    // Using mutation's onSuccess and onError to control step transition
-    if (error) {
+  const handleVerifyIdentifier = async () => {
+    try {
+      const valid = await verifyUserIdentifier(identifier); // Trigger identifier verification mutation
+      if (valid) setStep(1); // Keep the user on the identifier step
+    } catch (error) {
       console.error(error); // Handle any error during identifier verification
-      setStep(0); // Keep the user on the identifier step
-    } else {
-      setStep(1); // Move to step 1 if identifier is successfully verified
     }
   };
 
-  const handleVerifyCode = () => {
-    verifyUserCode(code); // Trigger code verification mutation
-
-    // Check for any error in code verification
-    if (error) {
-      console.error(error); // Handle error during code verification
-    } else {
-      alert('Code verified successfully!'); // Add any post-verification logic here
+  const handleVerifyCode = async () => {
+    try {
+      await verifyUserCode(code); // Trigger code verification mutation
+    } catch (error) {
+      console.error(error); // Handle any error during identifier verification
     }
   };
 
@@ -53,6 +47,7 @@ const Login = () => {
               value={identifier}
               onChange={(e) => setIdentifier(e.target.value)}
               placeholder="Rabituza"
+              onKeyDown={(e) => e.key === 'Enter' && handleVerifyIdentifier()}
             />
           </div>
           <Button

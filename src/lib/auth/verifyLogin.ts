@@ -49,7 +49,7 @@ async function getUserByIdentifier(identifier: string) {
  * Verifies the user identifier (username or email) and retrieves the user.
  */
 export async function verifyUserIdentifier(identifier: string): Promise<User> {
-  if (!identifier) {
+  if (!identifier.trim()) {
     const error: VerifyLoginError = {
       type: 'ValidationError',
       message: 'Identifier is required.',

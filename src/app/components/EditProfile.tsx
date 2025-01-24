@@ -37,6 +37,7 @@ import { CalendarIcon, UserPen } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import useCreateOrUpdateUser from '../hooks/useCreateOrUpdateUser';
+import { DatePickerDemo } from './DatePickerDemo';
 
 const EditProfile = () => {
   const queryClient = useQueryClient();
@@ -170,6 +171,8 @@ const EditProfile = () => {
               placeholder="Last name"
             />
           </div>
+
+          <DatePickerDemo />
 
           {/* Date of Birth */}
           <div className="grid w-full items-center gap-2">
