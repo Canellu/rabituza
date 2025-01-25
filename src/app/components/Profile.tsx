@@ -1,28 +1,29 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { User } from '@/types/UserProfile';
+import { getUser } from '@/lib/database/user/get';
+import { getSession } from '@/lib/utils/userSession';
+import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { useAuth } from '../hooks/useAuth';
+import { useState } from 'react';
 import EditProfile from './EditProfile';
+import LogoutButton from './LogoutButton';
 import RefreshButton from './RefreshButton';
-import Spinner from './Spinner';
 
 const Profile = () => {
-  const { user: dbUser, loading, error, logout } = useAuth();
-  const user = dbUser as User;
+  const [editable, setEditable] = useState(false);
 
-  console.log(JSON.stringify(dbUser));
-
-  if (loading)
-    return (
-      <div className="flex items-center justify-center flex-col grow gap-8">
-        <Spinner />
-        <span className="text-stone-500">Fetching user profile...</span>
-      </div>
-    );
-  if (error) return <div>Error: {error}</div>;
+  const userId = getSession();
+  const { data: user, error } = useQuery({
+    queryKey: ['user', userId],
+    queryFn: () => {
+      if (!userId) {
+        throw new Error('User ID is null');
+      }
+      return getUser(userId);
+    },
+    enabled: !!userId, // Ensure query only runs when userId is truthy
+  });
 
   return (
     <div className="flex items-center justify-between flex-col h-full gap-6">
@@ -59,7 +60,7 @@ const Profile = () => {
             </span>
             <span className="text-stone-500 text-xs">{user?.email}</span>
           </div>
-          <EditProfile />
+          <EditProfile editable={editable} setEditable={setEditable} />
         </motion.div>
       </div>
 
@@ -68,12 +69,7 @@ const Profile = () => {
 
       <div className="flex flex-col gap-4">
         <RefreshButton />
-        <Button
-          onClick={logout}
-          className="border border-primary rounded-full px-4 py-2 text-sm items-center justify-center flex"
-        >
-          Log out
-        </Button>
+        <LogoutButton />
       </div>
     </div>
   );

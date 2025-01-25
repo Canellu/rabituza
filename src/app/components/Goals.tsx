@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus } from "lucide-react";
-import { useRef, useState } from "react";
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Plus } from 'lucide-react';
+import { useRef, useState } from 'react';
 
 enum Tab {
-  yearly = "yearly",
-  q1 = "q1",
-  q2 = "q2",
-  q3 = "q3",
-  q4 = "q4",
+  yearly = 'yearly',
+  q1 = 'q1',
+  q2 = 'q2',
+  q3 = 'q3',
+  q4 = 'q4',
 }
 
 interface Goal {
@@ -57,7 +57,7 @@ const Goals = () => {
         ...prev,
         [tab]: [...prev[tab], newGoal],
       }));
-      if (ref.current) ref.current.value = ""; // Clear the input
+      if (ref.current) ref.current.value = ''; // Clear the input
     }
   };
 
@@ -76,32 +76,32 @@ const Goals = () => {
     {
       value: Tab.yearly,
       title: year,
-      shortTitle: "Yearly",
-      emptyText: "Seems a bit empty here... 🥲",
+      shortTitle: 'Yearly',
+      emptyText: 'Seems a bit empty here... 🥲',
     },
     {
       value: Tab.q1,
-      title: "Jan - Mar",
-      shortTitle: "Q1",
-      emptyText: "Atleast set one goal for this quarter! 🎯",
+      title: 'Jan - Mar',
+      shortTitle: 'Q1',
+      emptyText: 'Atleast set one goal for this quarter! 🎯',
     },
     {
       value: Tab.q2,
-      title: "Apr - Jun",
-      shortTitle: "Q2",
-      emptyText: "Hmm, need help setting goals? 🤔",
+      title: 'Apr - Jun',
+      shortTitle: 'Q2',
+      emptyText: 'Hmm, need help setting goals? 🤔',
     },
     {
       value: Tab.q3,
-      title: "Jul - Sep",
-      shortTitle: "Q3",
-      emptyText: "Cmon, you can do it! 💪",
+      title: 'Jul - Sep',
+      shortTitle: 'Q3',
+      emptyText: 'Cmon, you can do it! 💪',
     },
     {
       value: Tab.q4,
-      title: "Oct - Dec",
-      shortTitle: "Q4",
-      emptyText: "Set a goal, achieve it, gitgud! 🚀",
+      title: 'Oct - Dec',
+      shortTitle: 'Q4',
+      emptyText: 'Set a goal, achieve it, gitgud! 🚀',
     },
   ];
 
@@ -147,12 +147,11 @@ const Goals = () => {
                     ref={refs[tab.value]}
                     placeholder="Type your goal here..."
                     onKeyDown={(e) => {
-                      if (e.key === "Enter") handleAddGoal(tab.value);
+                      if (e.key === 'Enter') handleAddGoal(tab.value);
                     }}
-                    className="text-sm"
                   />
                   <Button
-                    className="rounded-sm aspect-square"
+                    className="rounded-md aspect-square"
                     onClick={() => handleAddGoal(tab.value)}
                     size="icon"
                   >

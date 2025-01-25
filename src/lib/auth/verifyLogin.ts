@@ -1,11 +1,5 @@
 import { User } from '@/types/UserProfile';
-import {
-  collection,
-  getDocs,
-  query,
-  Timestamp,
-  where,
-} from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../database/firebaseConfig';
 
 export type VerifyLoginError =
@@ -15,7 +9,7 @@ export type VerifyLoginError =
   | { type: 'FirestoreError'; message: string; details?: string };
 
 // Helper function to simulate OR behavior (Firestore doesn't support OR queries)
-async function getUserByIdentifier(identifier: string) {
+export async function getUserByIdentifier(identifier: string) {
   // Convert identifier to lowercase to ensure case-insensitive comparison
   const normalizedIdentifier = identifier.toLowerCase();
 
@@ -42,55 +36,7 @@ async function getUserByIdentifier(identifier: string) {
   usernameSnapshot.forEach((doc) => users.add(doc.data()));
   emailSnapshot.forEach((doc) => users.add(doc.data()));
 
-  return Array.from(users);
-}
-
-/**
- * Verifies the user identifier (username or email) and retrieves the user.
- */
-export async function verifyUserIdentifier(identifier: string): Promise<User> {
-  if (!identifier.trim()) {
-    const error: VerifyLoginError = {
-      type: 'ValidationError',
-      message: 'Identifier is required.',
-    };
-    throw error;
-  }
-
-  try {
-    // Get the user by normalized identifier (case-insensitive)
-    const users = await getUserByIdentifier(identifier);
-
-    if (users.length === 0) {
-      const error: VerifyLoginError = {
-        type: 'UserNotFoundError',
-        message: 'User not found.',
-      };
-      throw error;
-    }
-
-    // Assume the first user match is the correct one
-    const tmpUser = users[0] as User;
-
-    // Convert Firestore Timestamp to Date if necessary
-    const userData = {
-      ...tmpUser,
-      dob:
-        tmpUser.dob instanceof Timestamp ? tmpUser.dob.toDate() : tmpUser.dob,
-    };
-
-    return userData;
-  } catch (err: unknown) {
-    if (err instanceof Error) {
-      const error: VerifyLoginError = {
-        type: 'FirestoreError',
-        message: 'An error occurred while querying Firestore.',
-        details: err.message,
-      };
-      throw error;
-    }
-    throw err;
-  }
+  return Array.from(users) as User[];
 }
 
 /**

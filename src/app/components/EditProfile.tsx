@@ -20,18 +20,32 @@ import { Slider } from '@/components/ui/slider';
 import { Textarea } from '@/components/ui/textarea';
 import { months } from '@/constants/months';
 
+import { getUser } from '@/lib/database/user/get';
 import { cn } from '@/lib/utils/tailwind';
-import { useQueryClient } from '@tanstack/react-query';
+import { getSession } from '@/lib/utils/userSession';
+import { useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { CalendarIcon, UserPen } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { useAuth } from '../hooks/useAuth';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import useCreateOrUpdateUser from '../hooks/useCreateOrUpdateUser';
 
-const EditProfile = () => {
-  const queryClient = useQueryClient();
-  const { user } = useAuth();
+interface EditProfileProps {
+  editable: boolean;
+  setEditable: Dispatch<SetStateAction<boolean>>;
+}
 
+const EditProfile = ({ editable, setEditable }: EditProfileProps) => {
+  const userId = getSession();
+  const { data: user } = useQuery({
+    queryKey: ['user', userId],
+    queryFn: () => {
+      if (!userId) {
+        throw new Error('User ID is null');
+      }
+      return getUser(userId);
+    },
+    enabled: !!userId, // Ensure query only runs when userId is truthy
+  });
   const [date, setDate] = useState<Date>();
   const [viewYear, setViewYear] = useState(new Date().getFullYear());
   const [viewMonth, setViewMonth] = useState(new Date().getMonth());
@@ -43,9 +57,8 @@ const EditProfile = () => {
   const [username, setUsername] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [editable, setEditable] = useState(false);
 
-  const { mutate } = useCreateOrUpdateUser();
+  const { mutate: createOrUpdate } = useCreateOrUpdateUser();
 
   const currentYear = new Date().getFullYear();
   const years = Array.from(
@@ -88,8 +101,10 @@ const EditProfile = () => {
   };
 
   const handleSaveProfile = () => {
+    if (!userId) return;
     const updatedUser = {
       ...user,
+      id: userId,
       username: username.toLowerCase(),
       first_name: firstName,
       last_name: lastName,
@@ -100,12 +115,8 @@ const EditProfile = () => {
       bio,
     };
 
-    mutate(updatedUser, {
-      onSuccess: () => {
-        queryClient.setQueryData(['user', user.id], updatedUser);
-        queryClient.invalidateQueries({ queryKey: ['user'] });
-      },
-    });
+    createOrUpdate(updatedUser);
+    setEditable(false);
   };
 
   return (
@@ -120,7 +131,7 @@ const EditProfile = () => {
       </Button>
 
       {/* Editable */}
-      {
+      {editable && (
         <div
           className={cn(
             ' rounded-md relative border border-transparent w-full'
@@ -349,7 +360,7 @@ const EditProfile = () => {
 
             {/* Save button */}
             <Button
-              onClick={() => handleSaveProfile()}
+              onClick={handleSaveProfile}
               className="bg-primary my-4 rounded-full"
               disabled={!editable}
             >
@@ -357,7 +368,7 @@ const EditProfile = () => {
             </Button>
           </section>
         </div>
-      }
+      )}
     </>
   );
 };

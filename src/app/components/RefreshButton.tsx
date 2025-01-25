@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import Spinner from "./Spinner";
+import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import Spinner from './Spinner';
 
 const RefreshButton = () => {
   const router = useRouter();
@@ -21,10 +21,10 @@ const RefreshButton = () => {
     <Button className="rounded-full" onClick={handleRefresh}>
       {isLoading ? (
         <>
-          <Spinner color="text-stone-800" /> Refreshing...
+          <Spinner color="text-stone-800" /> Updating...
         </>
       ) : (
-        "Refresh Content"
+        'Update app'
       )}
     </Button>
   );

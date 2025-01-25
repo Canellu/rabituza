@@ -1,20 +1,18 @@
-import { User } from '@/types/UserProfile';
-
 const SESSION_KEY = 'auth_session';
 const EXPIRY_DURATION = 24 * 60 * 60 * 1000 * 7; // 7 days in milliseconds
 
 const isClientSide = typeof window !== 'undefined';
 
-export const storeSession = (user: User) => {
+export const setSession = (userId: string) => {
   if (!isClientSide) return;
   const session = {
-    user,
+    userId,
     expiry: Date.now() + EXPIRY_DURATION,
   };
   localStorage.setItem(SESSION_KEY, JSON.stringify(session));
 };
 
-export const getSession = (): User | null => {
+export const getSession = (): string | null => {
   if (!isClientSide) return null;
   const session = localStorage.getItem(SESSION_KEY);
   if (!session) return null;
@@ -26,7 +24,7 @@ export const getSession = (): User | null => {
     return null;
   }
 
-  return parsedSession.user;
+  return parsedSession.userId;
 };
 
 export const clearSession = () => {

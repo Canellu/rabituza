@@ -9,73 +9,116 @@ import {
   InputOTPSlot,
 } from '@/components/ui/input-otp';
 import { Label } from '@/components/ui/label';
+import {
+  getUserByIdentifier,
+  VerifyLoginError,
+  verifyUserCode,
+} from '@/lib/auth/verifyLogin';
+import { cn } from '@/lib/utils/tailwind';
+import { setSession } from '@/lib/utils/userSession';
+import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { useAuth } from '../hooks/useAuth';
+import Spinner from './Spinner';
 
 const Login = () => {
-  const { verifyUserIdentifier, verifyUserCode, loading, error } = useAuth();
   const router = useRouter();
   const [identifier, setIdentifier] = useState('');
   const [code, setCode] = useState('');
   const [step, setStep] = useState(0);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleVerifyIdentifier = async () => {
-    try {
-      const valid = await verifyUserIdentifier(identifier); // Trigger identifier verification mutation
-      if (valid) setStep(1); // Keep the user on the identifier step
-    } catch (error) {
-      console.error(error); // Handle any error during identifier verification
+  const { data: user } = useQuery({
+    queryKey: ['user', identifier],
+    queryFn: () => getUserByIdentifier(identifier),
+  });
+
+  const handleVerifyUser = () => {
+    if (user && user.length !== 0 && !error) {
+      setStep(1);
+    } else {
+      setError('User not found');
     }
   };
 
-  const handleVerifyCode = async () => {
-    try {
-      const valid = await verifyUserCode(code); // Trigger code verification mutation
-      if (valid) {
-        router.refresh();
-      }
-    } catch (error) {
-      console.error(error); // Handle any error during identifier verification
+  const handleVerifyCode = () => {
+    if (code.length !== 6) {
+      setError('Code must be 6 digits long');
+      return;
+    }
+
+    setLoading(true);
+    if (!loading) {
+      setTimeout(() => {
+        try {
+          verifyUserCode(user![0], code);
+          setSession(user![0].id);
+          router.refresh();
+        } catch (error) {
+          setLoading(false);
+          setError((error as VerifyLoginError).message);
+        }
+      }, 500);
     }
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen">
       {step === 0 && (
-        <section className="flex items-center justify-center flex-col gap-6 p-4">
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="username">Enter your email or username</Label>
+        <section className="flex items-center justify-center flex-col gap-12 p-4">
+          <Label
+            htmlFor="username"
+            className="text-xl max-w-48 text-center text-stone-700"
+          >
+            Enter your email or username
+          </Label>
+
+          <div className="flex flex-col gap-2 relative">
             <Input
               type="text"
               id="username"
               value={identifier}
               onChange={(e) => setIdentifier(e.target.value)}
               placeholder="Rabituza"
-              onKeyDown={(e) => e.key === 'Enter' && handleVerifyIdentifier()}
+              onKeyDown={(e) => e.key === 'Enter' && handleVerifyUser()}
+              onFocus={() => setError('')}
             />
+
+            <p
+              className={cn(
+                'absolute -bottom-8 text-red-500 bg-red-100  rounded-md py-1 px-3 w-full text-center',
+                error ? 'visible' : 'invisible'
+              )}
+            >
+              {error}
+            </p>
           </div>
           <Button
-            onClick={handleVerifyIdentifier}
+            onClick={handleVerifyUser}
             className="from-primary to-primary/70 via-primary/90 bg-gradient-to-b rounded-full"
-            disabled={loading} // Disable button while loading
+            disabled={loading}
           >
             {loading ? 'Verifying...' : 'Continue'}
           </Button>
-          {error && <p className="text-red-500">Error: {error}</p>}
         </section>
       )}
       {step === 1 && (
-        <section className="flex items-center justify-center flex-col gap-6 p-4">
-          <div className="flex flex-col gap-16 items-center justify-center">
-            <Label htmlFor="code" className="text-xl text-stone-700">
-              Enter code provided
-            </Label>
+        <section className="flex items-center justify-center flex-col gap-12 p-4">
+          <Label
+            htmlFor="code"
+            className="text-xl max-w-48 text-center text-stone-700"
+          >
+            Enter code provided
+          </Label>
+
+          <div className="relative">
             <InputOTP
               maxLength={6}
               id="code"
               value={code}
               onChange={(value) => setCode(value)}
+              onFocus={() => setError('')}
               autoFocus
               onComplete={handleVerifyCode}
             >
@@ -91,21 +134,24 @@ const Login = () => {
                 <InputOTPSlot index={5} />
               </InputOTPGroup>
             </InputOTP>
-
-            <Button
-              onClick={handleVerifyCode}
-              className="from-primary to-primary/70 via-primary/90 bg-gradient-to-b rounded-full"
-              disabled={loading} // Disable button while loading
+            <p
+              className={cn(
+                'absolute -bottom-9 text-red-500 bg-red-100  rounded-md py-1 px-3 w-full text-center',
+                error ? 'visible' : 'invisible'
+              )}
             >
-              {loading ? 'Verifying...' : 'Verify Code'}
-            </Button>
-            {loading && (
-              <p className="text-stone-700">Trying to log you in...</p>
-            )}
-            {error && (
-              <p className="text-red-600 bg-red-100 rounded-md p-3">{error}</p>
-            )}
+              {error}
+            </p>
           </div>
+
+          <Button
+            onClick={handleVerifyCode}
+            className="from-primary to-primary/70 via-primary/90 bg-gradient-to-b rounded-full text-stone-700"
+            disabled={loading} // Disable button while loading
+          >
+            {loading && <Spinner color="text-stone-700" />}
+            {loading ? 'Verifying...' : 'Verify Code'}
+          </Button>
         </section>
       )}
     </div>
