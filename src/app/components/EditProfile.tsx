@@ -102,7 +102,8 @@ const EditProfile = () => {
 
     mutate(updatedUser, {
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['user', user.id] });
+        queryClient.setQueryData(['user', user.id], updatedUser);
+        queryClient.invalidateQueries({ queryKey: ['user'] });
       },
     });
   };
@@ -304,7 +305,7 @@ const EditProfile = () => {
             <div className="flex w-full items-end gap-3 justify-center">
               <div className="flex flex-col-reverse w-full gap-1">
                 <Slider
-                  defaultValue={[170]}
+                  value={[height]}
                   max={200}
                   min={140}
                   step={1}
