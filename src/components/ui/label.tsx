@@ -7,7 +7,7 @@ import * as React from 'react';
 import { cn } from '@/lib/utils/tailwind';
 
 const labelVariants = cva(
-  'text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 max-w-max'
+  'text-base font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 max-w-max'
 );
 
 const Label = React.forwardRef<

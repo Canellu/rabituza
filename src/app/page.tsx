@@ -65,10 +65,8 @@ const Menu = () => {
       {tabs.map((tab) => (
         <TabsContent key={tab.value} value={tab.value} className="mt-0">
           <div className="h-[calc(100dvh-80px)] overflow-auto flex flex-col ">
-            <section className="sticky top-0  bg-gradient-to-b from-stone-100 to-transparent backdrop-blur-sm border-b p-4 after:inset-0 after:absolute after:bg-white/80 after:-z-10">
-              <h1 className=" font-bold text-2xl text-stone-800">
-                {tab.title}
-              </h1>
+            <section className="sticky top-0  bg-gradient-to-b from-stone-100 to-transparent backdrop-blur-sm border-b p-4 after:inset-0 after:absolute after:bg-white/80 after:-z-10 z-[51]">
+              <h1 className="font-bold text-2xl text-stone-800">{tab.title}</h1>
             </section>
             <section className="p-4 grow">{tab.content}</section>
           </div>

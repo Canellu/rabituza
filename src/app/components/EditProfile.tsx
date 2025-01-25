@@ -2,16 +2,6 @@
 
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from '@/components/ui/drawer';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -37,7 +27,6 @@ import { CalendarIcon, UserPen } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import useCreateOrUpdateUser from '../hooks/useCreateOrUpdateUser';
-import { DatePickerDemo } from './DatePickerDemo';
 
 const EditProfile = () => {
   const queryClient = useQueryClient();
@@ -54,6 +43,7 @@ const EditProfile = () => {
   const [username, setUsername] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [editable, setEditable] = useState(false);
 
   const { mutate } = useCreateOrUpdateUser();
 
@@ -118,216 +108,256 @@ const EditProfile = () => {
   };
 
   return (
-    <Drawer>
+    <>
       {/* Edit button */}
-      <DrawerTrigger className="px-3 py-2 rounded-full bg-primary flex gap-1 items-center justify-center">
+      <Button
+        onClick={() => setEditable((prev) => !prev)}
+        className="px-3 py-2 rounded-full bg-primary flex gap-1 items-center justify-center"
+      >
         <UserPen className="size-4 text-stone-800" />
         Edit profile
-      </DrawerTrigger>
+      </Button>
 
-      {/* Drawer */}
-      <DrawerContent className="fixed flex flex-col bg-white border border-gray-200 border-b-none rounded-t-[10px] bottom-0 left-0 right-0 h-full max-h-[90%] mx-[-1px]">
-        <div className="flex flex-col bg-stone-100 flex-grow rounded-xl p-4 m-2 flex-1 overflow-y-auto gap-5 relative">
-          {/* Title */}
-          <DrawerHeader>
-            <DrawerTitle>Edit Profile</DrawerTitle>
-            <DrawerDescription>
-              Modify your personal details and update your profile settings.
-            </DrawerDescription>
-          </DrawerHeader>
+      {/* Editable */}
+      {
+        <div
+          className={cn(
+            ' rounded-md relative border border-transparent w-full'
+            // editable ? 'border-stone-200 bg-white shadow-sm' : ''
+          )}
+        >
+          <section className="flex flex-col gap-5 w-full p-6">
+            {/* Username */}
+            <div className="flex flex-col-reverse w-full gap-2">
+              <Input
+                type="text"
+                id="username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Username"
+                className="peer"
+                disabled={!editable}
+              />
+              <Label htmlFor="username">Username</Label>
+            </div>
 
-          {/* Username */}
-          <div className="grid w-full items-center gap-2">
-            <Label htmlFor="username">Username</Label>
-            <Input
-              type="text"
-              id="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="Username"
-            />
-          </div>
+            {/* First name */}
+            <div className="flex flex-col-reverse w-full gap-2">
+              <Input
+                type="text"
+                id="first_name"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                placeholder="Fist name"
+                className="peer"
+                disabled={!editable}
+              />
+              <Label htmlFor="first_name">Fist name</Label>
+            </div>
 
-          {/* First name */}
-          <div className="grid w-full items-center gap-2">
-            <Label htmlFor="first_name">Fist name</Label>
-            <Input
-              type="text"
-              id="first_name"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              placeholder="Fist name"
-            />
-          </div>
+            {/* Last name */}
+            <div className="flex flex-col-reverse w-full gap-2">
+              <Input
+                type="text"
+                id="last_name"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                placeholder="Last name"
+                className="peer"
+                disabled={!editable}
+              />
+              <Label htmlFor="last_name">Last name</Label>
+            </div>
 
-          {/* Last name */}
-          <div className="grid w-full items-center gap-2">
-            <Label htmlFor="last_name">Last name</Label>
-            <Input
-              type="text"
-              id="last_name"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              placeholder="Last name"
-            />
-          </div>
+            {/* Date of Birth */}
+            <div className="flex flex-col-reverse w-full gap-2">
+              <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+                <PopoverTrigger asChild disabled={!editable}>
+                  <Button
+                    id="dob"
+                    variant={'outline'}
+                    className={cn(
+                      'w-full justify-start text-left font-normal hover:bg-white text-base',
+                      !date && 'text-muted-foreground '
+                    )}
+                  >
+                    <CalendarIcon />
+                    {date ? (
+                      format(date, 'do MMMM yyyy')
+                    ) : (
+                      <span>Pick a date</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <div className="p-4">
+                    <div className="flex gap-2">
+                      {/* Month Select */}
+                      <Select
+                        onValueChange={(value) =>
+                          handleMonthChange(Number(value))
+                        }
+                        defaultValue={viewMonth.toString()}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Month" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {months.map((month, index) => (
+                            <SelectItem key={index} value={index.toString()}>
+                              {month}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {/* Year Select */}
+                      <Select
+                        onValueChange={(value) =>
+                          handleYearChange(Number(value))
+                        }
+                        defaultValue={viewYear.toString()}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Year" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {years.map((year) => (
+                            <SelectItem key={year} value={year.toString()}>
+                              {year}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    {/* Calendar */}
+                    <Calendar
+                      mode="single"
+                      weekStartsOn={1}
+                      selected={date}
+                      onSelect={handleDateSelect}
+                      initialFocus
+                      className="p-1"
+                      classNames={{
+                        caption: 'hidden',
+                      }}
+                      month={new Date(viewYear, viewMonth)}
+                    />
+                  </div>
+                </PopoverContent>
+              </Popover>
+              <Label
+                htmlFor="dob"
+                className={cn(!editable ? 'opacity-70 cursor-not-allowed' : '')}
+              >
+                Date of Birth
+              </Label>
+            </div>
 
-          <DatePickerDemo />
-
-          {/* Date of Birth */}
-          <div className="grid w-full items-center gap-2">
-            <Label htmlFor="dob">Date of Birth</Label>
-            <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
-              <PopoverTrigger asChild>
-                <Button
-                  id="dob"
-                  variant={'outline'}
+            {/* Gender */}
+            <div className="flex flex-col-reverse w-full gap-2">
+              <Select
+                value={gender}
+                onValueChange={(g) => setGender(g)}
+                disabled={!editable}
+              >
+                <SelectTrigger
                   className={cn(
-                    'w-full justify-start text-left font-normal hover:bg-white text-base',
-                    !date && 'text-muted-foreground '
+                    'w-full',
+                    gender ? 'text-stone-800' : 'text-muted-foreground'
+                  )}
+                  id="gender"
+                >
+                  <SelectValue placeholder="Gender" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="male">Male</SelectItem>
+                  <SelectItem value="female">Female</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
+                </SelectContent>
+              </Select>
+              <Label
+                htmlFor="gender"
+                className={cn(!editable ? 'opacity-70 cursor-not-allowed' : '')}
+              >
+                Gender
+              </Label>
+            </div>
+
+            {/* Weight */}
+            <div className="flex flex-col-reverse w-full gap-2">
+              <Input
+                type="number"
+                id="weight"
+                value={weight ? weight : ''}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setWeight(value ? Number(value) : undefined);
+                }}
+                placeholder="Weight"
+                className="peer"
+                disabled={!editable}
+              />
+              <Label htmlFor="weight">Weight (kg)</Label>
+            </div>
+
+            {/* Height */}
+            <div className="flex w-full items-end gap-3 justify-center">
+              <div className="flex flex-col-reverse w-full gap-1">
+                <Slider
+                  defaultValue={[170]}
+                  max={200}
+                  min={140}
+                  step={1}
+                  onValueChange={(vals) => setHeight(vals[0])}
+                  disabled={!editable}
+                  className="h-10 "
+                />
+                <Label
+                  htmlFor="height"
+                  className={cn(
+                    !editable ? 'opacity-70 cursor-not-allowed' : ''
                   )}
                 >
-                  <CalendarIcon />
-                  {date ? (
-                    format(date, 'do MMMM yyyy')
-                  ) : (
-                    <span>Pick a date</span>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <div className="p-4">
-                  <div className="flex gap-2">
-                    {/* Year Select */}
-                    <Select
-                      onValueChange={(value) => handleYearChange(Number(value))}
-                      defaultValue={viewYear.toString()}
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Year" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {years.map((year) => (
-                          <SelectItem key={year} value={year.toString()}>
-                            {year}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                  Height (cm)
+                </Label>
+              </div>
 
-                    {/* Month Select */}
-                    <Select
-                      onValueChange={(value) =>
-                        handleMonthChange(Number(value))
-                      }
-                      defaultValue={viewMonth.toString()}
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Month" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {months.map((month, index) => (
-                          <SelectItem key={index} value={index.toString()}>
-                            {month}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  {/* Calendar */}
-                  <Calendar
-                    mode="single"
-                    weekStartsOn={1}
-                    selected={date}
-                    onSelect={handleDateSelect}
-                    initialFocus
-                    className="p-1"
-                    classNames={{
-                      caption: 'hidden',
-                    }}
-                    month={new Date(viewYear, viewMonth)}
-                  />
-                </div>
-              </PopoverContent>
-            </Popover>
-          </div>
-
-          {/* Gender */}
-          <div className="grid w-full items-center gap-2">
-            <Label htmlFor="gender">Gender</Label>
-            <Select value={gender} onValueChange={(g) => setGender(g)}>
-              <SelectTrigger
+              <span
                 className={cn(
-                  'w-full',
-                  gender ? 'text-stone-800' : 'text-muted-foreground'
+                  'flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2  [&>span]:line-clamp-1 text-nowrap min-w-20 items-center justify-center',
+                  !editable ? 'cursor-not-allowed opacity-50' : ''
                 )}
-                id="gender"
               >
-                <SelectValue placeholder="Gender" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="male">Male</SelectItem>
-                <SelectItem value="female">Female</SelectItem>
-                <SelectItem value="other">Other</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Weight */}
-          <div className="grid w-full items-center gap-2">
-            <Label htmlFor="weight">Weight (kg)</Label>
-            <Input
-              type="number"
-              id="weight"
-              value={weight ? weight : ''}
-              onChange={(e) => {
-                const value = e.target.value;
-                setWeight(value ? Number(value) : undefined);
-              }}
-              placeholder="Weight"
-            />
-          </div>
-
-          {/* Height */}
-          <div className="grid w-full items-center gap-1">
-            <Label htmlFor="height">Height (cm)</Label>
-            <div className="flex justify-between items-center w-full gap-3 ">
-              <Slider
-                defaultValue={[170]}
-                max={200}
-                min={140}
-                step={1}
-                onValueChange={(vals) => setHeight(vals[0])}
-              />
-              <span className="flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 text-nowrap min-w-20 items-center justify-center">
                 {height} cm
               </span>
             </div>
-          </div>
 
-          <div className="grid w-full gap-1.5">
-            <Label htmlFor="bio">About me</Label>
-            <Textarea
-              rows={6}
-              id="bio"
-              value={bio}
-              onChange={(e) => setBio(e.target.value)}
-              placeholder="Get personalized messages based on your bio."
-            />
-          </div>
+            {/* Bio */}
+            <div className="flex flex-col-reverse w-full gap-2">
+              <Textarea
+                rows={6}
+                id="bio"
+                value={bio}
+                onChange={(e) => setBio(e.target.value)}
+                placeholder="Get personalized messages based on your bio."
+                disabled={!editable}
+                className="peer"
+              />
+              <Label htmlFor="bio">About me</Label>
+            </div>
+
+            {/* Save button */}
+            <Button
+              onClick={() => handleSaveProfile()}
+              className="bg-primary my-4 rounded-full"
+              disabled={!editable}
+            >
+              Save
+            </Button>
+          </section>
         </div>
-
-        {/* Save button */}
-        <DrawerFooter className="mb-6">
-          <DrawerClose
-            onClick={() => handleSaveProfile()}
-            className="bg-primary py-2 rounded-full"
-          >
-            Save
-          </DrawerClose>
-        </DrawerFooter>
-      </DrawerContent>
-    </Drawer>
+      }
+    </>
   );
 };
 
