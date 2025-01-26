@@ -16,7 +16,7 @@ const ProtectedRoute = ({ children }: { children: ReactNode }) => {
   if (!isMounted) return null;
 
   // Conditionally render login or protected content
-  return !userId ? <Login /> : <main className="min-h-screen">{children}</main>;
+  return !userId ? <Login /> : <main className="min-h-dvh">{children}</main>;
 };
 
 export default ProtectedRoute;

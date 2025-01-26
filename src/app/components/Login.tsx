@@ -64,7 +64,7 @@ const Login = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen">
+    <div className="flex items-center justify-center min-h-dvh">
       {step === 0 && (
         <section className="flex items-center justify-center flex-col gap-12 p-4">
           <Label
