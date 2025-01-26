@@ -44,9 +44,21 @@ const tabs = [
 ];
 
 const Menu = () => {
-  const vibrationPattern = [50, 10, 50];
+  const vibrationPatternPress = [50]; // Vibrate when pressed
+  const vibrationPatternRelease = [30, 30]; // Vibrate when released
 
-  const vibrate = useVibrate(vibrationPattern);
+  const vibrateOnPress = useVibrate(vibrationPatternPress);
+  const vibrateOnRelease = useVibrate(vibrationPatternRelease);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    e.preventDefault();
+    vibrateOnPress();
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    e.preventDefault();
+    vibrateOnRelease();
+  };
 
   return (
     <Tabs defaultValue={Tab.Home}>
@@ -61,7 +73,8 @@ const Menu = () => {
               'data-[state=active]:bg-transparent data-[state=active]:shadow-sm',
               'data-[state=active]:text-primary'
             )}
-            onClick={vibrate}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
           >
             <tab.icon className="w-5 h-5 mx-auto mb-1" />
             <span>{tab.title}</span>
