@@ -119,7 +119,6 @@ const Login = () => {
               value={code}
               onChange={(value) => setCode(value)}
               onFocus={() => setError('')}
-              autoFocus
               onComplete={handleVerifyCode}
             >
               <InputOTPGroup>
