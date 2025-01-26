@@ -99,7 +99,7 @@ const Login = () => {
 
             <p
               className={cn(
-                'absolute -bottom-8 text-red-500 bg-red-100  rounded-md py-1 px-3 w-full text-center',
+                'absolute -bottom-8 text-red-500 bg-red-100 rounded-md py-1 px-3 w-full text-center',
                 error ? 'visible' : 'invisible'
               )}
             >
@@ -108,7 +108,7 @@ const Login = () => {
           </div>
           <Button
             onClick={handleVerifyUser}
-            className="from-primary to-primary/70 via-primary/90 bg-gradient-to-b rounded-full"
+            className="from-primary to-primary/70 via-primary/90 bg-gradient-to-b"
             disabled={loading}
           >
             {loading ? 'Verifying...' : 'Continue'}
@@ -165,7 +165,7 @@ const Login = () => {
 
           <Button
             onClick={handleVerifyCode}
-            className="from-primary to-primary/70 via-primary/90 bg-gradient-to-b rounded-full text-stone-700"
+            className="from-primary to-primary/70 via-primary/90 bg-gradient-to-b text-stone-700"
             disabled={loading} // Disable button while loading
           >
             {loading && <Spinner color="text-stone-700" />}

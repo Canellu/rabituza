@@ -1,13 +1,16 @@
 'use client';
 
+import { Button } from '@/components/ui/button';
 import { getUser } from '@/lib/database/user/get';
 import { getSession } from '@/lib/utils/userSession';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
+import { UserPen } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
 import EditProfile from './EditProfile';
 import LogoutButton from './LogoutButton';
+import ProfileDetails from './ProfileDetails';
 import RefreshButton from './RefreshButton';
 
 const Profile = () => {
@@ -26,7 +29,7 @@ const Profile = () => {
   });
 
   return (
-    <div className="flex items-center justify-between flex-col h-full gap-6">
+    <div className="flex items-center justify-between flex-col h-full gap-8 py-10">
       <div className="flex items-center flex-col gap-4 w-full">
         <motion.div
           initial={{ opacity: 0 }}
@@ -53,21 +56,31 @@ const Profile = () => {
             />
           )}
           {(user?.username || user?.first_name || user?.last_name) && (
-            <div className="flex flex-col items-center gap-1">
-              <span className="text-2xl font-semibold">
+            <div className="flex flex-col items-center gap-2 text-stone-800">
+              <span className="text-3xl font-semibold capitalize">
                 {user?.username
                   ? user?.username
                   : `${user?.first_name} ${user?.last_name}`}
               </span>
-              <span className="text-stone-500 text-xs">{user?.email}</span>
+              <span className="text-stone-500 text-sm">{user?.email}</span>
             </div>
           )}
-          <EditProfile editable={editable} setEditable={setEditable} />
         </motion.div>
       </div>
 
-      {user?.height && <div>Height: {user?.height} cm</div>}
-      {user?.bio && <div>{user?.bio}</div>}
+      <div className="flex flex-col items-center justify-center w-full gap-6">
+        <Button
+          onClick={() => setEditable((prev) => !prev)}
+          variant="outline"
+          className="place-self-center"
+        >
+          <UserPen />
+          Edit profile
+        </Button>
+        <EditProfile editable={editable} setEditable={setEditable} />
+      </div>
+
+      <ProfileDetails user={user} />
 
       <div className="flex flex-col gap-4">
         <RefreshButton />

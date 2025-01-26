@@ -126,9 +126,7 @@ const Goals = () => {
                 <CardTitle>{tab.title}</CardTitle>
               </CardHeader>
               <CardContent>
-                {goals[tab.value].length === 0 && (
-                  <span className="text-sm">{tab.emptyText}</span>
-                )}
+                {goals[tab.value].length === 0 && <span>{tab.emptyText}</span>}
                 {goals[tab.value].map((goal) => (
                   <div key={goal.id} className="flex gap-2">
                     <Checkbox

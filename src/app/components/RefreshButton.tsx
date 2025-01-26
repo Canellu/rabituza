@@ -18,7 +18,7 @@ const RefreshButton = () => {
   };
 
   return (
-    <Button className="rounded-full" onClick={handleRefresh}>
+    <Button onClick={handleRefresh}>
       {isLoading ? (
         <>
           <Spinner color="text-stone-800" /> Updating...

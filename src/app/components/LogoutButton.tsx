@@ -14,11 +14,7 @@ const LogoutButton = () => {
   };
 
   return (
-    <Button
-      onClick={handleLogout}
-      variant="ghost"
-      className="border border-primary rounded-full px-4 py-2 text-sm items-center justify-center flex"
-    >
+    <Button onClick={handleLogout} variant="secondary">
       Log out
     </Button>
   );
