@@ -1,5 +1,5 @@
 import { createOrUpdateUser } from '@/lib/database/user/createOrUpdate';
-import { User } from '@/types/UserProfile';
+import { User } from '@/types/User';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 // React Query hook for creating or updating a user

@@ -1,5 +1,5 @@
 import { Separator } from '@/components/ui/separator';
-import { User } from '@/types/UserProfile';
+import { User } from '@/types/User';
 import { format } from 'date-fns';
 import { Fragment } from 'react';
 

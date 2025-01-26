@@ -37,24 +37,14 @@ const Profile = () => {
           transition={{ duration: 0.5 }}
           className="flex items-center flex-col gap-4 size w-full"
         >
-          {user?.picture ? (
-            <Image
-              src={user.picture}
-              width={64}
-              height={64}
-              alt="profile_picture"
-              className="rounded-full ring-primary/70 ring ring-offset-2 mt-4"
-            />
-          ) : (
-            <Image
-              src="https://picsum.photos/200"
-              alt="Profile picture"
-              priority
-              width={96}
-              height={96}
-              className="w-24 h-24 rounded-full"
-            />
-          )}
+          <Image
+            src={user?.picture || `https://picsum.photos/seed/${user?.id}/200`}
+            width={96}
+            height={96}
+            alt="profile_picture"
+            className="rounded-full object-contain"
+          />
+
           {(user?.username || user?.first_name || user?.last_name) && (
             <div className="flex flex-col items-center gap-2 text-stone-800">
               <span className="text-3xl font-semibold capitalize">
