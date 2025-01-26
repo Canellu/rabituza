@@ -15,7 +15,7 @@ import { useState } from 'react';
 
 const snapPoints = [0.5, 1];
 
-const Tracker = () => {
+const Activity = () => {
   const [snap, setSnap] = useState<number | string | null>(snapPoints[0]);
 
   return (
@@ -48,4 +48,4 @@ const Tracker = () => {
   );
 };
 
-export default Tracker;
+export default Activity;

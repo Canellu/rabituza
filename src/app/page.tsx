@@ -2,16 +2,16 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils/tailwind';
-import { Goal, HomeIcon, ListCheck, User } from 'lucide-react';
+import { Activity as ActivityIcon, Goal, HomeIcon, User } from 'lucide-react';
+import Activity from './components/Activity';
 import Goals from './components/Goals';
 import Home from './components/Home';
 import Profile from './components/Profile';
-import Tracker from './components/Tracker';
 import useVibrate from './hooks/useVibrate';
 
 enum Tab {
   Home = 'home',
-  Tracker = 'tracker',
+  Activity = 'activity',
   Goals = 'goals',
   Profile = 'profile',
 }
@@ -24,10 +24,10 @@ const tabs = [
     content: <Home />,
   },
   {
-    value: Tab.Tracker,
-    icon: ListCheck,
-    title: 'Tracker',
-    content: <Tracker />,
+    value: Tab.Activity,
+    icon: ActivityIcon,
+    title: 'Activity',
+    content: <Activity />,
   },
   {
     value: Tab.Goals,
@@ -70,12 +70,11 @@ const Menu = () => {
             className={cn(
               'bg-transparent border-none rounded-none px-4 py-3 transition duration-200 ease items-center justify-center flex flex-col text-xs w-24 text-stone-500',
               'data-[state=active]:bg-transparent data-[state=active]:shadow-sm',
-              'data-[state=active]:text-primary'
+              'data-[state=active]:text-primary',
+              '[&[data-state=active]_span]:text-stone-50'
             )}
-            // Use both mouse and touch event handlers
-
-            onTouchStart={handlePress} // For touch devices (press down)
-            onTouchEnd={handleRelease} // For touch devices (release)
+            onTouchStart={handlePress}
+            onTouchEnd={handleRelease}
           >
             <tab.icon className="w-5 h-5 mx-auto mb-1" />
             <span>{tab.title}</span>
