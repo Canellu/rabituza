@@ -44,19 +44,18 @@ const tabs = [
 ];
 
 const Menu = () => {
-  const vibrationPatternPress = [50]; // Vibrate when pressed
-  const vibrationPatternRelease = [30, 30]; // Vibrate when released
+  const vibrationPatternPress = [90]; // Vibrate when pressed
+  const vibrationPatternRelease = [40]; // Vibrate when released
 
   const vibrateOnPress = useVibrate(vibrationPatternPress);
   const vibrateOnRelease = useVibrate(vibrationPatternRelease);
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    e.preventDefault();
+  // Combine both mouse and touch event handlers
+  const handlePress = () => {
     vibrateOnPress();
   };
 
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    e.preventDefault();
+  const handleRelease = () => {
     vibrateOnRelease();
   };
 
@@ -73,8 +72,10 @@ const Menu = () => {
               'data-[state=active]:bg-transparent data-[state=active]:shadow-sm',
               'data-[state=active]:text-primary'
             )}
-            onTouchStart={handleTouchStart}
-            onTouchEnd={handleTouchEnd}
+            // Use both mouse and touch event handlers
+
+            onTouchStart={handlePress} // For touch devices (press down)
+            onTouchEnd={handleRelease} // For touch devices (release)
           >
             <tab.icon className="w-5 h-5 mx-auto mb-1" />
             <span>{tab.title}</span>
