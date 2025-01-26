@@ -12,14 +12,19 @@ import EditProfile from './EditProfile';
 import LogoutButton from './LogoutButton';
 import ProfileDetails from './ProfileDetails';
 import RefreshButton from './RefreshButton';
+import Spinner from './Spinner';
 
 const Profile = () => {
   const [editable, setEditable] = useState(false);
 
   const userId = getSession();
-  const { data: user, error } = useQuery({
+  const {
+    data: user,
+    isPending,
+    error,
+  } = useQuery({
     queryKey: ['user', userId],
-    queryFn: () => {
+    queryFn: async () => {
       if (!userId) {
         throw new Error('User ID is null');
       }
@@ -27,6 +32,21 @@ const Profile = () => {
     },
     enabled: !!userId, // Ensure query only runs when userId is truthy
   });
+
+  if (isPending || !user) {
+    return (
+      <div className="flex items-center justify-between flex-col h-full gap-8 py-10">
+        <div className="flex items-center justify-center flex-col gap-4 grow">
+          <Spinner />
+          <span className="text-stone-600">Loading profile...</span>
+        </div>
+        <div className="flex flex-col gap-4">
+          <RefreshButton />
+          <LogoutButton />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center justify-between flex-col h-full gap-8 py-10">
