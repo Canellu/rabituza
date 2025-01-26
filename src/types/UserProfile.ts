@@ -1,9 +1,7 @@
 export type User = {
   id: string;
-  code?: string;
+  code: string;
   picture?: string;
-  username?: string;
-  email?: string;
   first_name?: string;
   last_name?: string;
   dob?: Date;
@@ -11,4 +9,7 @@ export type User = {
   height?: number;
   weight?: number;
   bio?: string;
-};
+} & (
+  | { email: string; username?: string }
+  | { username: string; email?: string }
+);

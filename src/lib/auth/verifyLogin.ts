@@ -8,35 +8,36 @@ export type VerifyLoginError =
   | { type: 'CodeMismatchError'; message: string }
   | { type: 'FirestoreError'; message: string; details?: string };
 
-// Helper function to simulate OR behavior (Firestore doesn't support OR queries)
-export async function getUserByIdentifier(identifier: string) {
-  // Convert identifier to lowercase to ensure case-insensitive comparison
-  const normalizedIdentifier = identifier.toLowerCase();
+export async function getUserByIdentifier(identifier: string): Promise<User[]> {
+  try {
+    const normalizedIdentifier = identifier.toLowerCase();
+    const usernameQuery = query(
+      collection(db, 'users'),
+      where('username', '==', normalizedIdentifier)
+    );
 
-  // Create Firestore queries for username and email (converted to lowercase)
-  const usernameQuery = query(
-    collection(db, 'users'),
-    where('username', '==', normalizedIdentifier)
-  );
+    const emailQuery = query(
+      collection(db, 'users'),
+      where('email', '==', normalizedIdentifier)
+    );
 
-  const emailQuery = query(
-    collection(db, 'users'),
-    where('email', '==', normalizedIdentifier)
-  );
+    const [usernameSnapshot, emailSnapshot] = await Promise.all([
+      getDocs(usernameQuery),
+      getDocs(emailQuery),
+    ]);
 
-  // Execute both queries in parallel
-  const [usernameSnapshot, emailSnapshot] = await Promise.all([
-    getDocs(usernameQuery),
-    getDocs(emailQuery),
-  ]);
+    const users = new Set();
+    usernameSnapshot.forEach((doc) => users.add(doc.data()));
+    emailSnapshot.forEach((doc) => users.add(doc.data()));
 
-  // Combine results to avoid duplicates (using a Set)
-  const users = new Set();
-
-  usernameSnapshot.forEach((doc) => users.add(doc.data()));
-  emailSnapshot.forEach((doc) => users.add(doc.data()));
-
-  return Array.from(users) as User[];
+    return Array.from(users) as User[];
+  } catch (err) {
+    throw {
+      type: 'FirestoreError',
+      message: 'Failed to fetch users from Firestore',
+      details: (err as Error).message,
+    } as VerifyLoginError;
+  }
 }
 
 /**

@@ -52,14 +52,16 @@ const Profile = () => {
               className="w-24 h-24 rounded-full"
             />
           )}
-          <div className="flex flex-col items-center gap-1">
-            <span className="text-2xl font-semibold">
-              {user?.username
-                ? user?.username
-                : `${user?.first_name} ${user?.last_name}`}
-            </span>
-            <span className="text-stone-500 text-xs">{user?.email}</span>
-          </div>
+          {(user?.username || user?.first_name || user?.last_name) && (
+            <div className="flex flex-col items-center gap-1">
+              <span className="text-2xl font-semibold">
+                {user?.username
+                  ? user?.username
+                  : `${user?.first_name} ${user?.last_name}`}
+              </span>
+              <span className="text-stone-500 text-xs">{user?.email}</span>
+            </div>
+          )}
           <EditProfile editable={editable} setEditable={setEditable} />
         </motion.div>
       </div>

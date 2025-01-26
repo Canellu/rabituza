@@ -101,10 +101,12 @@ const EditProfile = ({ editable, setEditable }: EditProfileProps) => {
   };
 
   const handleSaveProfile = () => {
-    if (!userId) return;
+    // Make sure `user` exists and userId is valid before proceeding
+    if (!userId || !user) return;
+
+    // Safely update user details
     const updatedUser = {
       ...user,
-      id: userId,
       username: username.toLowerCase(),
       first_name: firstName,
       last_name: lastName,
@@ -115,6 +117,7 @@ const EditProfile = ({ editable, setEditable }: EditProfileProps) => {
       bio,
     };
 
+    // Pass the updated user to createOrUpdate
     createOrUpdate(updatedUser);
     setEditable(false);
   };
@@ -160,11 +163,11 @@ const EditProfile = ({ editable, setEditable }: EditProfileProps) => {
                 id="first_name"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
-                placeholder="Fist name"
+                placeholder="First name"
                 className="peer"
                 disabled={!editable}
               />
-              <Label htmlFor="first_name">Fist name</Label>
+              <Label htmlFor="first_name">First name</Label>
             </div>
 
             {/* Last name */}
@@ -246,6 +249,7 @@ const EditProfile = ({ editable, setEditable }: EditProfileProps) => {
                       mode="single"
                       weekStartsOn={1}
                       selected={date}
+                      fixedWeeks
                       onSelect={handleDateSelect}
                       initialFocus
                       className="p-1"
@@ -296,20 +300,43 @@ const EditProfile = ({ editable, setEditable }: EditProfileProps) => {
             </div>
 
             {/* Weight */}
-            <div className="flex flex-col-reverse w-full gap-2">
-              <Input
-                type="number"
-                id="weight"
-                value={weight ? weight : ''}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  setWeight(value ? Number(value) : undefined);
-                }}
-                placeholder="Weight"
-                className="peer"
-                disabled={!editable}
-              />
-              <Label htmlFor="weight">Weight (kg)</Label>
+            <div className="flex w-full items-end gap-3 justify-center">
+              <div className="flex flex-col-reverse w-full gap-1">
+                <Slider
+                  value={[weight || 70]}
+                  max={120}
+                  min={40}
+                  step={1}
+                  onValueChange={(vals) => setWeight(vals[0])}
+                  disabled={!editable}
+                  className="h-10 "
+                />
+                <Label
+                  htmlFor="weight"
+                  className={cn(
+                    !editable ? 'opacity-70 cursor-not-allowed' : ''
+                  )}
+                >
+                  Weight
+                </Label>
+              </div>
+
+              <div className="flex items-center gap-1 text-base min-w-20">
+                <Input
+                  type="number"
+                  id="weightInput"
+                  value={weight || ''}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setWeight(value ? Number(value) : undefined);
+                  }}
+                  className="peer w-14 text-center"
+                  disabled={!editable}
+                  inputMode="numeric"
+                  placeholder="Weight"
+                />
+                <span>kg</span>
+              </div>
             </div>
 
             {/* Height */}
@@ -330,18 +357,23 @@ const EditProfile = ({ editable, setEditable }: EditProfileProps) => {
                     !editable ? 'opacity-70 cursor-not-allowed' : ''
                   )}
                 >
-                  Height (cm)
+                  Height
                 </Label>
               </div>
 
-              <span
-                className={cn(
-                  'flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2  [&>span]:line-clamp-1 text-nowrap min-w-20 items-center justify-center',
-                  !editable ? 'cursor-not-allowed opacity-50' : ''
-                )}
-              >
-                {height} cm
-              </span>
+              <div className="flex items-center gap-1 text-base min-w-20">
+                <Input
+                  type="number"
+                  id="heightInput"
+                  value={height}
+                  onChange={(e) => setHeight(Number(e.target.value))}
+                  className="peer w-14 text-center"
+                  disabled={!editable}
+                  inputMode="numeric"
+                  placeholder="Height"
+                />
+                <span>cm</span>
+              </div>
             </div>
 
             {/* Bio */}

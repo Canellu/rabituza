@@ -10,19 +10,20 @@ export const getUser = async (userId: string): Promise<User | undefined> => {
     if (userSnap.exists()) {
       const userData = userSnap.data();
 
-      // Map the Firestore data to the User type
+      // Safely handle fields that may be undefined
       const user: User = {
         id: userSnap.id,
-        code: userData.code,
-        username: userData.username,
-        first_name: userData.first_name,
-        last_name: userData.last_name,
-        email: userData.email,
-        dob: userData.dob.toDate(),
-        height: userData.height,
-        gender: userData.gender,
-        weight: userData.weight,
-        bio: userData.bio,
+        code: userData?.code || '', // Default to empty string if not available
+        username: userData?.username || '', // Default to empty string if not available
+        first_name: userData?.first_name || null, // Allow null for optional fields
+        last_name: userData?.last_name || null,
+        email: userData?.email || null,
+        dob:
+          userData?.dob && userData.dob.toDate ? userData.dob.toDate() : null, // Handle missing dob
+        height: userData?.height || null,
+        gender: userData?.gender || null,
+        weight: userData?.weight || null,
+        bio: userData?.bio || null,
       };
 
       return user;

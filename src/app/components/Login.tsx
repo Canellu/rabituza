@@ -14,9 +14,11 @@ import {
   VerifyLoginError,
   verifyUserCode,
 } from '@/lib/auth/verifyLogin';
+import sleep from '@/lib/utils/sleep';
 import { cn } from '@/lib/utils/tailwind';
 import { setSession } from '@/lib/utils/userSession';
 import { useQuery } from '@tanstack/react-query';
+import { ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Spinner from './Spinner';
@@ -29,37 +31,47 @@ const Login = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const { data: user } = useQuery({
+  // useQuery with enabled set to false by default
+  const { data: user, refetch } = useQuery({
     queryKey: ['user', identifier],
     queryFn: () => getUserByIdentifier(identifier),
+    enabled: false, // Will not fetch until manually triggered
   });
 
-  const handleVerifyUser = () => {
-    if (user && user.length !== 0 && !error) {
-      setStep(1);
-    } else {
-      setError('User not found');
+  const handleVerifyUser = async () => {
+    setError(''); // Clear previous errors
+    setLoading(true);
+
+    try {
+      await sleep(250); // Add artificial delay
+      const result = await refetch(); // Trigger query
+      if (result.data && result.data.length > 0) {
+        setStep(1); // Move to the next step if user is found
+      } else {
+        setError('User not found');
+      }
+    } catch (error) {
+      setError('An error occurred while fetching user: ' + error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleVerifyCode = () => {
+  const handleVerifyCode = async () => {
     if (code.length !== 6) {
       setError('Code must be 6 digits long');
       return;
     }
 
     setLoading(true);
-    if (!loading) {
-      setTimeout(() => {
-        try {
-          verifyUserCode(user![0], code);
-          setSession(user![0].id);
-          router.refresh();
-        } catch (error) {
-          setLoading(false);
-          setError((error as VerifyLoginError).message);
-        }
-      }, 500);
+    try {
+      await sleep(250); // Add artificial delay
+      verifyUserCode(user![0], code);
+      setSession(user![0].id);
+      router.refresh();
+    } catch (error) {
+      setLoading(false);
+      setError((error as VerifyLoginError).message);
     }
   };
 
@@ -105,6 +117,14 @@ const Login = () => {
       )}
       {step === 1 && (
         <section className="flex items-center justify-center flex-col gap-12 p-4">
+          <Button
+            size="icon"
+            variant="outline"
+            onClick={() => setStep(0)}
+            className="absolute left-4 top-4"
+          >
+            <ArrowLeft className="!size-5" />
+          </Button>
           <Label
             htmlFor="code"
             className="text-xl max-w-48 text-center text-stone-700"
