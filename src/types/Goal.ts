@@ -10,4 +10,8 @@ export type Goal = {
   tags?: string[];
 };
 
-export type GoalStatus = 'completed' | 'inProgress' | 'abandoned';
+export enum GoalStatus {
+  Completed = 'completed',
+  InProgress = 'inProgress',
+  Abandoned = 'abandoned',
+}

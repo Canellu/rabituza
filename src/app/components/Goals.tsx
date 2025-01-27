@@ -2,38 +2,97 @@
 
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { createOrUpdateGoal } from '@/lib/database/goals/createOrUpdateGoal';
 import { getGoals } from '@/lib/database/goals/getGoals';
+import { cn } from '@/lib/utils';
 import { splitGoalsByTimePeriod, TimePeriod } from '@/lib/utils/timePeriod';
 import { getSession } from '@/lib/utils/userSession';
-import { useQuery } from '@tanstack/react-query';
+import { Goal, GoalStatus } from '@/types/Goal';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { Plus, X } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useDebounce } from '../hooks/useDebounce';
 import AddGoal from './AddGoal';
 import Spinner from './Spinner';
 
 const Goals = () => {
   const [activeTab, setActiveTab] = useState<TimePeriod>(TimePeriod.Year);
   const [editable, setEditable] = useState(false);
+  const [localGoals, setLocalGoals] = useState<Goal[]>([]);
   const year = new Date().getFullYear();
+  const userId = getSession();
 
-  // Fetch userId from localStorage
-  const userId = getSession(); // Directly fetch from localStorage
-
-  const {
-    data: goals = [],
-    isLoading,
-    error,
-  } = useQuery({
+  const { isLoading, error, data } = useQuery<Goal[], Error>({
     queryKey: ['goals', userId],
-    queryFn: () => getGoals(userId!), // Query only runs if we have userId, if we have userId then it's a string
+    queryFn: () => getGoals(userId!),
     enabled: !!userId,
   });
 
-  const splittedGoals = splitGoalsByTimePeriod(goals);
+  useEffect(() => {
+    if (data) {
+      setLocalGoals(data);
+    }
+  }, [data]);
+
+  // Define mutation
+  const { mutate } = useMutation({
+    mutationFn: (updatedGoal: Goal) => {
+      if (!userId || !updatedGoal.id) {
+        throw new Error('Missing userId or goalId');
+      }
+      return createOrUpdateGoal(userId, updatedGoal.id, updatedGoal);
+    },
+    onError: (error, variables) => {
+      console.error('Failed to update goal:', error);
+      // Rollback on error
+      setLocalGoals((prev) =>
+        prev.map((g) =>
+          g.id === variables.id
+            ? {
+                ...g,
+                status:
+                  g.status === GoalStatus.Completed
+                    ? GoalStatus.InProgress
+                    : GoalStatus.Completed,
+              }
+            : g
+        )
+      );
+    },
+  });
+
+  // Debounced mutation handler
+  const debouncedMutation = useDebounce((goal: Goal) => {
+    if (!userId || !goal.id) return;
+    mutate(goal);
+  }, 500);
+
+  const handleCheck = (goal: Goal) => {
+    if (!goal.id) return;
+
+    const newStatus =
+      goal.status === GoalStatus.Completed
+        ? GoalStatus.InProgress
+        : GoalStatus.Completed;
+
+    const updatedGoal = {
+      ...goal,
+      status: newStatus,
+    };
+
+    // Update local state
+    setLocalGoals((prev) =>
+      prev.map((g) => (g.id === goal.id ? updatedGoal : g))
+    );
+
+    // Trigger mutation
+    debouncedMutation(updatedGoal);
+  };
+
+  const splittedGoals = splitGoalsByTimePeriod(localGoals);
 
   return (
     <div className="relative flex flex-col gap-4 pb-10 min-h-full">
-      {/* Tabs for Time Period */}
       <div className="flex items-center justify-between gap-3">
         <Tabs
           value={activeTab}
@@ -49,7 +108,6 @@ const Goals = () => {
           </TabsList>
         </Tabs>
 
-        {/* Add Goal Button */}
         <Button
           size="icon"
           variant={editable ? 'secondary' : 'default'}
@@ -60,19 +118,33 @@ const Goals = () => {
         </Button>
       </div>
 
-      {/* Add Goal Form */}
       <AddGoal editable={editable} setEditable={setEditable} />
 
-      {/* Display Goals */}
       {splittedGoals[activeTab]?.length > 0 ? (
         <div className="flex flex-col items-center gap-3">
           {splittedGoals[activeTab].map((goal) => (
             <div
+              id="card"
               key={goal.id}
-              className="bg-primary/10 rounded-lg p-5 border flex flex-col gap-1 shadow-sm w-full"
+              className={cn(
+                `bg-primary/10 rounded-lg p-5 border flex flex-row justify-between gap-2 items-center shadow-sm w-full cursor-pointer ${
+                  goal.status === GoalStatus.Completed ? 'bg-primary/40' : ''
+                }`
+              )}
+              onClick={() => handleCheck(goal)}
             >
-              <h2 className="text-lg font-semibold capitalize">{goal.title}</h2>
-              <p className="text-stone-600 text-sm">{goal.description}</p>
+              <div>
+                <h2 className="text-lg font-semibold capitalize">
+                  {goal.title}
+                </h2>
+                <p className="text-stone-600 text-sm">{goal.description}</p>
+              </div>
+              <input
+                type="checkbox"
+                className="w-5 h-5 pointer-events-none rounded-xl"
+                checked={goal.status === GoalStatus.Completed}
+                readOnly
+              />
             </div>
           ))}
         </div>
@@ -85,7 +157,7 @@ const Goals = () => {
 
       {(error || isLoading) && (
         <div className="flex flex-col items-center gap-3 justify-center flex-grow">
-          {!isLoading && (
+          {isLoading && (
             <div className="flex flex-col items-center justify-center gap-3">
               <Spinner />
               <span className="text-stone-500">Fetching goals...</span>
@@ -93,7 +165,7 @@ const Goals = () => {
           )}
 
           {error && (
-            <div className="text-red-500 bg-red-100  rounded-md py-2 px-4 text-center">
+            <div className="text-red-500 bg-red-100 rounded-md py-2 px-4 text-center">
               Error fetching goals
             </div>
           )}
