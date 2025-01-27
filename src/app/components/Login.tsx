@@ -14,8 +14,8 @@ import {
   VerifyLoginError,
   verifyUserCode,
 } from '@/lib/auth/verifyLogin';
+import { cn } from '@/lib/utils/cn';
 import sleep from '@/lib/utils/sleep';
-import { cn } from '@/lib/utils/tailwind';
 import { setSession } from '@/lib/utils/userSession';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowLeft } from 'lucide-react';

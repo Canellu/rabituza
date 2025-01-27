@@ -1,12 +1,7 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Plus } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import AddGoal from './AddGoal';
 
 enum Tab {
   yearly = 'yearly',
@@ -16,60 +11,8 @@ enum Tab {
   q4 = 'q4',
 }
 
-interface Goal {
-  id: string;
-  text: string;
-  completed: boolean;
-}
-
 const Goals = () => {
   const year = new Date().getFullYear();
-
-  // State for storing goals
-  const [goals, setGoals] = useState<Record<Tab, Goal[]>>({
-    [Tab.yearly]: [],
-    [Tab.q1]: [],
-    [Tab.q2]: [],
-    [Tab.q3]: [],
-    [Tab.q4]: [],
-  });
-
-  // Refs for uncontrolled inputs
-  const refs = {
-    [Tab.yearly]: useRef<HTMLInputElement>(null),
-    [Tab.q1]: useRef<HTMLInputElement>(null),
-    [Tab.q2]: useRef<HTMLInputElement>(null),
-    [Tab.q3]: useRef<HTMLInputElement>(null),
-    [Tab.q4]: useRef<HTMLInputElement>(null),
-  };
-
-  // Handler for adding a goal
-  const handleAddGoal = (tab: Tab) => {
-    const ref = refs[tab];
-    const goalText = ref.current?.value;
-    if (goalText?.trim()) {
-      const newGoal = {
-        id: `${Date.now()}`, // Generate a unique ID using the current timestamp
-        text: goalText,
-        completed: false,
-      };
-      setGoals((prev) => ({
-        ...prev,
-        [tab]: [...prev[tab], newGoal],
-      }));
-      if (ref.current) ref.current.value = ''; // Clear the input
-    }
-  };
-
-  // Handler for toggling the completed state of a goal
-  const toggleGoalCompletion = (tab: Tab, id: string) => {
-    setGoals((prev) => ({
-      ...prev,
-      [tab]: prev[tab].map((goal) =>
-        goal.id === id ? { ...goal, completed: !goal.completed } : goal
-      ),
-    }));
-  };
 
   // Tab configurations
   const tabs = [
@@ -119,48 +62,9 @@ const Goals = () => {
             </TabsTrigger>
           ))}
         </TabsList>
-        {tabs.map((tab) => (
-          <TabsContent key={tab.value} value={tab.value}>
-            <Card className="">
-              <CardHeader>
-                <CardTitle>{tab.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {goals[tab.value].length === 0 && <span>{tab.emptyText}</span>}
-                {goals[tab.value].map((goal) => (
-                  <div key={goal.id} className="flex gap-2">
-                    <Checkbox
-                      id={`goal-${goal.id}`}
-                      defaultChecked={goal.completed}
-                      onChange={() => toggleGoalCompletion(tab.value, goal.id)}
-                      className="size-5 border-2 mt-0.5"
-                    />
-                    <label htmlFor={`goal-${goal.id}`} className="flex-grow">
-                      {goal.text}
-                    </label>
-                  </div>
-                ))}
-                <div className="flex gap-2 mt-4">
-                  <Input
-                    ref={refs[tab.value]}
-                    placeholder="Type your goal here..."
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') handleAddGoal(tab.value);
-                    }}
-                  />
-                  <Button
-                    className="rounded-md aspect-square"
-                    onClick={() => handleAddGoal(tab.value)}
-                    size="icon"
-                  >
-                    <Plus />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        ))}
       </Tabs>
+
+      <AddGoal />
     </div>
   );
 };

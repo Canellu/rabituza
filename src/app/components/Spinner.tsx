@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils/tailwind';
+import { cn } from '@/lib/utils/cn';
 import { motion } from 'framer-motion';
 import { LoaderCircle } from 'lucide-react'; // Import the loader icon from lucide-react
 // Import the motion component from framer-motion

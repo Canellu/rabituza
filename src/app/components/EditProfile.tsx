@@ -21,7 +21,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { months } from '@/constants/months';
 
 import { getUser } from '@/lib/database/user/get';
-import { cn } from '@/lib/utils/tailwind';
+import { cn } from '@/lib/utils/cn';
 import { getSession } from '@/lib/utils/userSession';
 import { useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
