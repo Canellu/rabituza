@@ -98,7 +98,7 @@ const AddGoal = () => {
                 >
                   <SelectValue placeholder="Category" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="z-[1000]">
                   {categories.map((category) => (
                     <SelectItem key={category} value={category}>
                       {category}
@@ -124,7 +124,7 @@ const AddGoal = () => {
                 >
                   <SelectValue placeholder="Year" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="z-[1000]">
                   {timePeriods.map((timePeriod) => (
                     <SelectItem key={timePeriod} value={timePeriod}>
                       {timePeriod}

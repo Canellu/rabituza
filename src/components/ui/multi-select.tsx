@@ -466,7 +466,7 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
             inputRef?.current?.focus();
           }}
         >
-          <div className="relative flex flex-wrap gap-1">
+          <div className="relative flex flex-wrap gap-1 pr-6">
             {selected.map((option) => {
               return (
                 <Badge
@@ -543,7 +543,7 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                 onChange?.(selected.filter((s) => s.fixed));
               }}
               className={cn(
-                'absolute right-0 h-6 w-6 p-0',
+                'absolute right-0 h-6 w-6 p-0 border flex items-center justify-center',
                 (hideClearAllButton ||
                   disabled ||
                   selected.length < 1 ||
@@ -551,7 +551,7 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                   'hidden'
               )}
             >
-              <X />
+              <X className="size-4 text-stone-500" />
             </button>
           </div>
         </div>
