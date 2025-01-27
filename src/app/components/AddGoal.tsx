@@ -51,14 +51,14 @@ const AddGoal = () => {
           <Plus className="size-4 text-stone-800" />
           New Goal
         </DrawerTrigger>
-        <DrawerContent className="fixed flex flex-col bg-white border border-gray-200 border-b-none rounded-t-[10px] bottom-0 left-0 right-0 h-full max-h-[84%] mx-[-1px]">
+        <DrawerContent className="fixed flex flex-col bg-white border border-gray-200 border-b-none rounded-t-[10px] bottom-0 left-0 right-0 h-full max-h-[100%] mx-[-1px] z-[1000] rounded-none">
           <DrawerHeader className="px-6 py-4">
             <DrawerTitle>Add a New Goal</DrawerTitle>
             <DrawerDescription>
               Set a new goal to help you stay focused and motivated.
             </DrawerDescription>
           </DrawerHeader>
-          <section className="px-6 py-4 flex flex-col gap-6 overflow-auto">
+          <section className="px-6 py-4 flex flex-col gap-6 overflow-auto grow">
             {/* Title */}
             <div className="flex flex-col-reverse w-full gap-2">
               <Input
@@ -136,12 +136,19 @@ const AddGoal = () => {
             </div>
 
             {/* Tags */}
-            <MultiSelect
-              defaultOptions={tags}
-              placeholder="Select or create your own tags"
-              creatable
-              onChange={(tags) => setTags(tags)}
-            />
+            <div className="flex flex-col-reverse w-full gap-2">
+              <MultiSelect
+                maxSelected={3}
+                options={tagsList}
+                value={tags}
+                placeholder="Select or create your own tags"
+                creatable
+                onChange={(tags) => {
+                  setTags(tags);
+                }}
+              />
+              <Label htmlFor="tags">Tags</Label>
+            </div>
           </section>
           <DrawerFooter className="mb-6">
             <DrawerClose asChild>
