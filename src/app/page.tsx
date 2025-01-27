@@ -1,7 +1,7 @@
 'use client';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { cn } from '@/lib/utils/cn';
+import { cn } from '@/lib/utils';
 import { Activity as ActivityIcon, Goal, HomeIcon, User } from 'lucide-react';
 import Activity from './components/Activity';
 import Goals from './components/Goals';

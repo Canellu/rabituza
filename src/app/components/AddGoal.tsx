@@ -1,6 +1,14 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
+
 import {
   Drawer,
   DrawerClose,
@@ -11,11 +19,12 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from '@/components/ui/drawer';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Plus } from 'lucide-react';
+
 import { useState } from 'react';
 
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import MultiSelect, { Option } from '@/components/ui/multi-select';
 import {
   Select,
@@ -24,7 +33,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { cn } from '@/lib/utils/cn';
+import { cn } from '@/lib/utils';
+import { Plus } from 'lucide-react';
 
 const categories = ['Health', 'Personal Growth', 'Other'];
 const timePeriods = ['Year', 'Q1', 'Q2', 'Q3', 'Q4'];
@@ -45,19 +55,18 @@ const AddGoal = () => {
   const [category, setCategory] = useState<string>('');
 
   return (
-    <div className="h-full">
-      <Drawer>
-        <DrawerTrigger className="fixed bottom-28 right-8 px-4 py-2 rounded-full bg-primary flex gap-1 items-center justify-center">
-          <Plus className="size-4 text-stone-800" />
-          New Goal
-        </DrawerTrigger>
-        <DrawerContent className="fixed flex flex-col bg-white border border-gray-200 border-b-none rounded-t-[10px] bottom-0 left-0 right-0 h-full max-h-[100%] mx-[-1px] z-[1000] rounded-none">
-          <DrawerHeader className="px-6 py-4">
-            <DrawerTitle>Add a New Goal</DrawerTitle>
-            <DrawerDescription>
-              Set a new goal to help you stay focused and motivated.
-            </DrawerDescription>
-          </DrawerHeader>
+    <>
+      <Sheet>
+        <SheetTrigger>Open</SheetTrigger>
+        <SheetContent side="bottom">
+          <SheetHeader>
+            <SheetTitle>Are you absolutely sure?</SheetTitle>
+            <SheetDescription>
+              This action cannot be undone. This will permanently delete your
+              account and remove your data from our servers.
+            </SheetDescription>
+          </SheetHeader>
+
           <section className="px-6 py-4 flex flex-col gap-6 overflow-auto grow">
             {/* Title */}
             <div className="flex flex-col-reverse w-full gap-2">
@@ -150,20 +159,128 @@ const AddGoal = () => {
               <Label htmlFor="tags">Tags</Label>
             </div>
           </section>
-          <DrawerFooter className="mb-6">
-            <DrawerClose asChild>
-              <Button
-                onClick={() => {
-                  console.log('Adding goal');
-                }}
-              >
-                Add Goal
-              </Button>
-            </DrawerClose>
-          </DrawerFooter>
-        </DrawerContent>
-      </Drawer>
-    </div>
+        </SheetContent>
+      </Sheet>
+      <div className="h-full">
+        <Drawer>
+          <DrawerTrigger className="fixed bottom-28 right-8 px-4 py-2 rounded-full bg-primary flex gap-1 items-center justify-center">
+            <Plus className="size-4 text-stone-800" />
+            New Goal
+          </DrawerTrigger>
+          <DrawerContent className="fixed flex flex-col bg-white border border-gray-200 border-b-none rounded-t-[10px] bottom-0 left-0 right-0 h-full max-h-[100%] mx-[-1px] z-[1000] rounded-none">
+            <DrawerHeader className="px-6 py-4">
+              <DrawerTitle>Add a New Goal</DrawerTitle>
+              <DrawerDescription>
+                Set a new goal to help you stay focused and motivated.
+              </DrawerDescription>
+            </DrawerHeader>
+            <section className="px-6 py-4 flex flex-col gap-6 overflow-auto grow">
+              {/* Title */}
+              <div className="flex flex-col-reverse w-full gap-2">
+                <Input
+                  type="text"
+                  id="title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="Goal title"
+                />
+                <Label htmlFor="title">Title</Label>
+              </div>
+
+              {/* Description */}
+              <div className="flex flex-col-reverse w-full gap-2">
+                <Input
+                  type="text"
+                  id="description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Goal description"
+                />
+                <Label htmlFor="description">Description</Label>
+              </div>
+
+              {/* Category */}
+              <div className="flex flex-col-reverse w-full gap-2">
+                <Select
+                  value={category}
+                  onValueChange={(category) => setCategory(category)}
+                >
+                  <SelectTrigger
+                    className={cn(
+                      'w-full',
+                      category ? 'text-stone-800' : 'text-muted-foreground'
+                    )}
+                    id="category"
+                  >
+                    <SelectValue placeholder="Category" />
+                  </SelectTrigger>
+                  <SelectContent className="z-[1000]">
+                    {categories.map((category) => (
+                      <SelectItem key={category} value={category}>
+                        {category}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Label htmlFor="category">Category</Label>
+              </div>
+
+              {/* Period */}
+              <div className="flex flex-col-reverse w-full gap-2">
+                <Select
+                  value={timePeriod}
+                  onValueChange={(timePeriod) => setTimePeriod(timePeriod)}
+                >
+                  <SelectTrigger
+                    className={cn(
+                      'w-full',
+                      timePeriod ? 'text-stone-800' : 'text-muted-foreground'
+                    )}
+                    id="timePeriod"
+                  >
+                    <SelectValue placeholder="Year" />
+                  </SelectTrigger>
+                  <SelectContent className="z-[1000]">
+                    {timePeriods.map((timePeriod) => (
+                      <SelectItem key={timePeriod} value={timePeriod}>
+                        {timePeriod}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Label htmlFor="timePeriod">Time Period</Label>
+              </div>
+
+              {/* Tags */}
+              <div className="flex flex-col-reverse w-full gap-2">
+                <MultiSelect
+                  maxSelected={3}
+                  options={tagsList}
+                  value={tags}
+                  placeholder="Select or create your own tags"
+                  creatable
+                  onChange={(tags) => {
+                    setTags(tags);
+                  }}
+                />
+                <Label htmlFor="tags">Tags</Label>
+              </div>
+            </section>
+            <DrawerFooter className="mb-6">
+              <DrawerClose asChild>
+                <Button
+                  onClick={() => {
+                    console.log('Adding goal');
+                  }}
+                >
+                  Add Goal
+                </Button>
+              </DrawerClose>
+            </DrawerFooter>
+          </DrawerContent>
+        </Drawer>
+      </div>
+    </>
   );
 };
 

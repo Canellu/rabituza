@@ -14,7 +14,7 @@ import {
   VerifyLoginError,
   verifyUserCode,
 } from '@/lib/auth/verifyLogin';
-import { cn } from '@/lib/utils/cn';
+import { cn } from '@/lib/utils';
 import sleep from '@/lib/utils/sleep';
 import { setSession } from '@/lib/utils/userSession';
 import { useQuery } from '@tanstack/react-query';
