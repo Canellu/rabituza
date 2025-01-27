@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { ReactNode } from 'react';
 import useMeasure from 'react-use-measure';
@@ -7,6 +8,7 @@ interface AnimateHeightProps {
   children: ReactNode;
   openDuration?: number; // Optional custom duration for opening
   closeDuration?: number; // Optional custom duration for closing
+  className?: string;
 }
 
 const AnimateHeight = ({
@@ -14,6 +16,7 @@ const AnimateHeight = ({
   children,
   openDuration = 0.5,
   closeDuration = 0.3,
+  className = '',
 }: AnimateHeightProps) => {
   const [ref, bounds] = useMeasure();
 
@@ -27,7 +30,7 @@ const AnimateHeight = ({
         duration: isOpen ? openDuration : closeDuration,
         ease: 'easeInOut',
       }}
-      className="overflow-hidden w-full"
+      className={cn('overflow-hidden w-full', className)}
     >
       <div ref={ref}>{children}</div>
     </motion.div>

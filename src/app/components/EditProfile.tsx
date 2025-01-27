@@ -125,7 +125,9 @@ const EditProfile = ({ editable, setEditable }: EditProfileProps) => {
 
   return (
     <AnimateHeight isOpen={editable}>
-      <section className="flex flex-col px-6 py-8 rounded-md border border-input gap-4 w-full">
+      <section className="flex flex-col px-6 py-8 rounded-md border border-input gap-4 w-full bg-white">
+        <h2 className="text-lg font-semibold mb-5">Edit Profile</h2>
+
         {/* Username */}
         <div className="flex flex-col-reverse w-full gap-2">
           <Input
@@ -363,7 +365,6 @@ const EditProfile = ({ editable, setEditable }: EditProfileProps) => {
         </div>
 
         {/* Save and Cancel buttons */}
-
         <div className="flex items-center justify-between mt-4">
           <Button
             onClick={() => setEditable(false)}
