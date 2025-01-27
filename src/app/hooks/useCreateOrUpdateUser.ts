@@ -1,4 +1,4 @@
-import { createOrUpdateUser } from '@/lib/database/user/createOrUpdate';
+import { createOrUpdateUser } from '@/lib/database/user/createOrUpdatUser';
 import { User } from '@/types/User';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 

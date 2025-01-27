@@ -86,7 +86,7 @@ const Login = () => {
             Enter your email or username
           </Label>
 
-          <div className="flex flex-col gap-2 relative">
+          <div className="relative">
             <Input
               type="text"
               id="username"
@@ -99,7 +99,7 @@ const Login = () => {
 
             <p
               className={cn(
-                'absolute -bottom-8 text-red-500 bg-red-100 rounded-md py-1 px-3 w-full text-center',
+                'absolute -bottom-9 text-red-500 bg-red-100 rounded-md py-1 px-3 w-full text-center',
                 error ? 'visible' : 'invisible'
               )}
             >

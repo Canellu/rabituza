@@ -89,7 +89,7 @@ const Menu = () => {
             <section className="sticky top-0  bg-gradient-to-b from-stone-100 to-transparent backdrop-blur-sm border-b p-4 after:inset-0 after:absolute after:bg-white/80 after:-z-10 z-[100]">
               <h1 className="font-bold text-2xl text-stone-800">{tab.title}</h1>
             </section>
-            <section className="p-4 grow overflow-auto">{tab.content}</section>
+            <section className="p-6 grow overflow-auto">{tab.content}</section>
           </div>
         </TabsContent>
       ))}

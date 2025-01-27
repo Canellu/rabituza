@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { getUser } from '@/lib/database/user/get';
+import { getUser } from '@/lib/database/user/getUser';
 import { getSession } from '@/lib/utils/userSession';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';

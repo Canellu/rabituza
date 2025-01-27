@@ -23,14 +23,33 @@ const ProfileDetails = ({ user }: { user?: User }) => {
           // Get the display label for the key (use custom labels if defined)
           const label = fieldLabels[key] || key.replace('_', ' ');
 
-          // Check if the current key is 'bio' and apply flex-col for bio
+          // Check if the current key is 'bio' and apply different styles
           const isBio = key === 'bio';
           const containerClass = isBio
             ? 'flex flex-col px-2 gap-3'
             : 'flex justify-between items-start px-2 gap-10';
           const valueClass = isBio
             ? 'text-muted-foreground'
-            : 'text-muted-foreground font-medium';
+            : 'text-muted-foreground font-medium first-letter:capitalize';
+
+          // Format weight and height with 'kg' and 'cm' suffixes
+          let formattedValue: React.ReactNode;
+
+          // Handle weight and height with suffixes
+          if (key === 'weight' && typeof value === 'number') {
+            formattedValue = `${value} kg`;
+          } else if (key === 'height' && typeof value === 'number') {
+            formattedValue = `${value} cm`;
+          } else if (value instanceof Date) {
+            // Format Date to string using date-fns format
+            formattedValue = format(value, 'do MMMM yyyy');
+          } else if (typeof value === 'string' || typeof value === 'number') {
+            // Keep string or number values as is
+            formattedValue = value;
+          } else {
+            // Fallback for any other types
+            formattedValue = String(value);
+          }
 
           return (
             <Fragment key={key}>
@@ -39,11 +58,7 @@ const ProfileDetails = ({ user }: { user?: User }) => {
                 <div className="capitalize">{label}</div>
 
                 {/* Right column - value */}
-                <div className={valueClass}>
-                  {value instanceof Date
-                    ? format(value, 'do MMMM yyyy')
-                    : value}
-                </div>
+                <div className={valueClass}>{formattedValue}</div>
               </div>
 
               {/* Render Separator only if it's not the last item */}

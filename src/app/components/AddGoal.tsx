@@ -1,7 +1,5 @@
 'use client';
 
-import { Dispatch, SetStateAction, useState } from 'react';
-
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -13,8 +11,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { createOrUpdateGoal } from '@/lib/database/goals/createOrUpdateGoal';
 import { cn } from '@/lib/utils';
+import { TimePeriod, timePeriodToDates } from '@/lib/utils/timePeriod';
+import { getSession } from '@/lib/utils/userSession';
+import { Goal, GoalStatus } from '@/types/Goal';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Dispatch, SetStateAction, useState } from 'react';
 import AnimateHeight from './AnimateHeight';
+import RequiredStar from './RequiredStar';
 
 const categories = ['Health', 'Personal Growth', 'Other'];
 const timePeriods = ['Year', 'Q1', 'Q2', 'Q3', 'Q4'];
@@ -36,13 +41,66 @@ const AddGoal = ({ editable, setEditable }: AddGoalProps) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [tags, setTags] = useState<Option[]>([]);
-  const [timePeriod, setTimePeriod] = useState<string>('');
-  const [category, setCategory] = useState<string>('');
+  const [timePeriod, setTimePeriod] = useState<TimePeriod>(TimePeriod.Year);
+  const [category, setCategory] = useState('');
+  const [status, setStatus] = useState<GoalStatus>('inProgress');
+  const [error, setError] = useState<string | null>(null);
+  const userId = getSession();
+  const queryClient = useQueryClient();
+
+  const { mutate } = useMutation({
+    mutationFn: async () => {
+      if (!userId) {
+        throw new Error('User not logged in');
+      }
+      const { startDate, endDate } = timePeriodToDates(
+        timePeriod,
+        new Date().getFullYear()
+      );
+
+      const goalData: Omit<Goal, 'id'> = {
+        title,
+        description,
+        status,
+        category,
+        startDate,
+        endDate,
+        createdAt: new Date(),
+        tags: tags.map((tag) => tag.value),
+      };
+
+      await createOrUpdateGoal(userId, null, goalData);
+    },
+    onSuccess: () => {
+      //Reset the form after successfully saving the goal
+      setEditable(false);
+      setTitle('');
+      setDescription('');
+      setTags([]);
+      setTimePeriod(TimePeriod.Year);
+      setCategory('');
+      setStatus('inProgress');
+      queryClient.invalidateQueries({ queryKey: ['goals', userId] });
+    },
+    onError: (error) => {
+      console.error('Error creating goal:', error);
+    },
+  });
+
+  const handleSave = () => {
+    console.log(error);
+    if (!title || !category || !timePeriod) {
+      setError('Please fill in the required fields.');
+      return;
+    }
+    setError(null);
+    mutate(); // Trigger the mutation to save the goal
+  };
 
   return (
     <AnimateHeight isOpen={editable}>
-      <section className="px-6 py-4 flex flex-col items-center gap-4 overflow-auto bg-white border border-input rounded-md">
-        <div className="flex flex-col gap-2 mb-5">
+      <section className="px-6 py-12 flex flex-col items-center gap-8 overflow-auto bg-white border border-input rounded-md">
+        <div className="flex flex-col gap-2 ">
           <h2 className="text-lg font-semibold">Add a New Goal</h2>
           <p className="text-stone-600">
             Set a new goal to help you stay focused and motivated.
@@ -58,7 +116,10 @@ const AddGoal = ({ editable, setEditable }: AddGoalProps) => {
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Goal title"
           />
-          <Label htmlFor="title">Title</Label>
+          <Label htmlFor="title">
+            Title
+            <RequiredStar />
+          </Label>
         </div>
 
         {/* Description */}
@@ -96,14 +157,34 @@ const AddGoal = ({ editable, setEditable }: AddGoalProps) => {
               ))}
             </SelectContent>
           </Select>
-          <Label htmlFor="category">Category</Label>
+          <Label htmlFor="category">
+            Category
+            <RequiredStar />
+          </Label>
+        </div>
+
+        {/* Tags */}
+        <div className="flex flex-col-reverse w-full gap-2">
+          <MultiSelect
+            maxSelected={3}
+            options={tagsList}
+            value={tags}
+            placeholder="Select or create your own tags"
+            creatable
+            onChange={(tags) => {
+              setTags(tags);
+            }}
+          />
+          <Label htmlFor="tags">Tags</Label>
         </div>
 
         {/* Period */}
         <div className="flex flex-col-reverse w-full gap-2">
           <Select
             value={timePeriod}
-            onValueChange={(timePeriod) => setTimePeriod(timePeriod)}
+            onValueChange={(timePeriod: TimePeriod) =>
+              setTimePeriod(timePeriod)
+            }
           >
             <SelectTrigger
               className={cn(
@@ -122,36 +203,35 @@ const AddGoal = ({ editable, setEditable }: AddGoalProps) => {
               ))}
             </SelectContent>
           </Select>
-          <Label htmlFor="timePeriod">Time Period</Label>
+          <Label htmlFor="timePeriod">
+            Time Period
+            <RequiredStar />
+          </Label>
         </div>
 
-        {/* Tags */}
-        <div className="flex flex-col-reverse w-full gap-2">
-          <MultiSelect
-            maxSelected={3}
-            options={tagsList}
-            value={tags}
-            placeholder="Select or create your own tags"
-            creatable
-            onChange={(tags) => {
-              setTags(tags);
-            }}
-          />
-          <Label htmlFor="tags">Tags</Label>
-        </div>
-
-        {/* Save and Cancel buttons */}
-        <div className="flex items-center justify-between mt-4 w-full">
-          <Button
-            onClick={() => setEditable(false)}
-            variant="secondary"
-            disabled={!editable}
+        <div className="flex flex-col w-full gap-6">
+          <p
+            className={cn(
+              ' text-red-500 bg-red-100 rounded-md py-1 px-3 w-full text-center',
+              error ? 'visible' : 'invisible'
+            )}
           >
-            Cancel
-          </Button>
-          <Button onClick={() => {}} disabled={!editable}>
-            Save
-          </Button>
+            {error}
+          </p>
+
+          {/* Save and Cancel buttons */}
+          <div className="flex items-center justify-between w-full">
+            <Button
+              onClick={() => setEditable(false)}
+              variant="secondary"
+              disabled={!editable}
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleSave} disabled={!editable}>
+              Save
+            </Button>
+          </div>
         </div>
       </section>
     </AnimateHeight>

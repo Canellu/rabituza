@@ -20,7 +20,7 @@ import { Slider } from '@/components/ui/slider';
 import { Textarea } from '@/components/ui/textarea';
 import { months } from '@/constants/months';
 
-import { getUser } from '@/lib/database/user/get';
+import { getUser } from '@/lib/database/user/getUser';
 import { cn } from '@/lib/utils';
 import { getSession } from '@/lib/utils/userSession';
 import { useQuery } from '@tanstack/react-query';
@@ -125,7 +125,7 @@ const EditProfile = ({ editable, setEditable }: EditProfileProps) => {
 
   return (
     <AnimateHeight isOpen={editable}>
-      <section className="flex flex-col px-6 py-8 rounded-md border border-input gap-4 w-full bg-white">
+      <section className="flex flex-col px-6 py-8 rounded-md border border-input gap-8 w-full bg-white">
         <h2 className="text-lg font-semibold mb-5">Edit Profile</h2>
 
         {/* Username */}
