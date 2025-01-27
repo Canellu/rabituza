@@ -58,7 +58,7 @@ const AddGoal = () => {
               Set a new goal to help you stay focused and motivated.
             </DrawerDescription>
           </DrawerHeader>
-          <section className="px-6 py-4 flex flex-col gap-6">
+          <section className="px-6 py-4 flex flex-col gap-6 overflow-auto">
             {/* Title */}
             <div className="flex flex-col-reverse w-full gap-2">
               <Input
