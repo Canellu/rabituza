@@ -30,7 +30,7 @@ const ProfileDetails = ({ user }: { user?: User }) => {
             : 'flex justify-between items-start px-2 gap-10';
           const valueClass = isBio
             ? 'text-muted-foreground'
-            : 'text-muted-foreground font-medium first-letter:capitalize';
+            : 'text-muted-foreground font-medium first-letter:capitalize text-right';
 
           // Format weight and height with 'kg' and 'cm' suffixes
           let formattedValue: React.ReactNode;
@@ -55,7 +55,7 @@ const ProfileDetails = ({ user }: { user?: User }) => {
             <Fragment key={key}>
               <div className={containerClass}>
                 {/* Left column - key */}
-                <div className="capitalize">{label}</div>
+                <div className="capitalize whitespace-nowrap">{label}</div>
 
                 {/* Right column - value */}
                 <div className={valueClass}>{formattedValue}</div>
