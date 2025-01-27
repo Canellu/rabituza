@@ -14,6 +14,7 @@ import Spinner from './Spinner';
 const Goals = () => {
   const [activeTab, setActiveTab] = useState<TimePeriod>(TimePeriod.Year);
   const [editable, setEditable] = useState(false);
+  const year = new Date().getFullYear();
 
   // Fetch userId from localStorage
   const userId = getSession(); // Directly fetch from localStorage
@@ -77,7 +78,8 @@ const Goals = () => {
         </div>
       ) : (
         <div className="text-stone-500 text-center max-w-44 mx-auto">
-          No goals for this time period 🥲
+          You have no goals for{' '}
+          {activeTab === TimePeriod.Year ? year : activeTab} 🥲
         </div>
       )}
 
