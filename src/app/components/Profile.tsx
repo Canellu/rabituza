@@ -92,7 +92,7 @@ const Profile = () => {
 
       <ProfileDetails user={user} />
 
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 pb-10">
         <RefreshButton />
         <LogoutButton />
       </div>
