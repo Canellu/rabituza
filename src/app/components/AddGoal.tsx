@@ -39,9 +39,10 @@ const tagsList: Option[] = [
 interface AddGoalProps {
   editable: boolean;
   setEditable: Dispatch<SetStateAction<boolean>>;
+  setActiveTab: Dispatch<SetStateAction<TimePeriod>>;
 }
 
-const AddGoal = ({ editable, setEditable }: AddGoalProps) => {
+const AddGoal = ({ editable, setEditable, setActiveTab }: AddGoalProps) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [tags, setTags] = useState<Option[]>([]);
@@ -91,10 +92,10 @@ const AddGoal = ({ editable, setEditable }: AddGoalProps) => {
       setTitle('');
       setDescription('');
       setTags([]);
-      setTimePeriod(TimePeriod.Year);
       setCategory('');
       setStatus(GoalStatus.InProgress);
       queryClient.invalidateQueries({ queryKey: ['goals', userId] });
+      setActiveTab(TimePeriod.Year);
     },
     onError: (error) => {
       console.error('Error creating goal:', error);

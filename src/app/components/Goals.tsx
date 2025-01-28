@@ -173,7 +173,11 @@ const Goals = () => {
         </Button>
       </div>
 
-      <AddGoal editable={editable} setEditable={setEditable} />
+      <AddGoal
+        editable={editable}
+        setEditable={setEditable}
+        setActiveTab={setActiveTab}
+      />
 
       {splittedGoals[activeTab]?.length > 0 ? (
         <Reorder.Group
@@ -197,7 +201,6 @@ const Goals = () => {
                     : 'bg-secondary shadow-sm'
                 }`
               )}
-              onClick={() => handleCheck(goal)}
             >
               <GripVertical className="size-5 text-stone-400 cursor-grab active:cursor-grabbing" />
               <div className="flex-grow">
@@ -212,6 +215,7 @@ const Goals = () => {
                   'data-[state=checked]:bg-secondary'
                 )}
                 checked={goal.status === GoalStatus.Completed}
+                onClick={() => handleCheck(goal)}
               />
             </Reorder.Item>
           ))}
