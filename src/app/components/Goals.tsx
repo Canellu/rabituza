@@ -263,7 +263,7 @@ const Goals = () => {
                       'relative',
                       isOrdering ? 'pl-3' : 'pl-5'
                     )}
-                    drag="x"
+                    drag={!isOrdering ? 'x' : false} // Disable drag when isOrdering is true
                     dragDirectionLock
                     whileDrag={{ cursor: 'grabbing' }}
                     dragConstraints={{ left: -250, right: 0 }}
