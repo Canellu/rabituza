@@ -104,7 +104,7 @@ const AddGoal = ({ isEditing, setIsEditing, setActiveTab }: AddGoalProps) => {
 
   const handleSave = () => {
     console.log(error);
-    if (!title || !category || !timePeriod) {
+    if (!title || !category) {
       setError('Please fill in the required fields.');
       return;
     }
@@ -220,10 +220,7 @@ const AddGoal = ({ isEditing, setIsEditing, setActiveTab }: AddGoalProps) => {
               ))}
             </SelectContent>
           </Select>
-          <Label htmlFor="timePeriod">
-            Time Period
-            <RequiredStar />
-          </Label>
+          <Label htmlFor="timePeriod">Time Period</Label>
         </div>
 
         <div className="flex flex-col w-full gap-6">
