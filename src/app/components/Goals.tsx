@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { createOrUpdateGoal } from '@/lib/database/goals/createOrUpdateGoal';
 import { getGoals } from '@/lib/database/goals/getGoals';
@@ -127,8 +128,10 @@ const Goals = () => {
               id="card"
               key={goal.id}
               className={cn(
-                `bg-primary/10 rounded-lg p-5 border flex flex-row justify-between gap-2 items-center shadow-sm w-full cursor-pointer ${
-                  goal.status === GoalStatus.Completed ? 'bg-primary/40' : ''
+                ` rounded-lg p-5 border flex flex-row justify-between gap-2 items-center w-full cursor-pointer ${
+                  goal.status === GoalStatus.Completed
+                    ? 'bg-primary/50 shadow-none'
+                    : 'bg-secondary shadow-sm'
                 }`
               )}
               onClick={() => handleCheck(goal)}
@@ -139,11 +142,12 @@ const Goals = () => {
                 </h2>
                 <p className="text-stone-600 text-sm">{goal.description}</p>
               </div>
-              <input
-                type="checkbox"
-                className="w-5 h-5 pointer-events-none rounded-xl"
+              <Checkbox
+                className={cn(
+                  'size-5 bg-white',
+                  'data-[state=checked]:bg-secondary'
+                )}
                 checked={goal.status === GoalStatus.Completed}
-                readOnly
               />
             </div>
           ))}
