@@ -3,7 +3,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
 import { Activity as ActivityIcon, Goal, HomeIcon, User } from 'lucide-react';
-import Activity from './components/Activity';
+import Activities from './components/Activities';
 import Goals from './components/Goals';
 import Home from './components/Home';
 import Profile from './components/Profile';
@@ -11,7 +11,7 @@ import useVibrate from './hooks/useVibrate';
 
 enum Tab {
   Home = 'home',
-  Activity = 'activity',
+  Activities = 'activities', // Changed from 'activity' to 'activities'
   Goals = 'goals',
   Profile = 'profile',
 }
@@ -24,10 +24,10 @@ const tabs = [
     content: <Home />,
   },
   {
-    value: Tab.Activity,
+    value: Tab.Activities, // Updated to use the plural form
     icon: ActivityIcon,
-    title: 'Activity',
-    content: <Activity />,
+    title: 'Activities', // Updated to use the plural form
+    content: <Activities />,
   },
   {
     value: Tab.Goals,
