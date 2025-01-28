@@ -11,7 +11,7 @@ import { splitGoalsByTimePeriod, TimePeriod } from '@/lib/utils/timePeriod';
 import { getSession } from '@/lib/utils/userSession';
 import { Goal, GoalStatus } from '@/types/Goal';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { motion, Reorder } from 'framer-motion';
+import { motion, PanInfo, Reorder } from 'framer-motion';
 import { GripVertical, MoveVertical, Plus, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useDebounce } from '../hooks/useDebounce';
@@ -163,11 +163,7 @@ const Goals = () => {
     },
   });
 
-  const handleDragEnd = (
-    event: MouseEvent | TouchEvent | PointerEvent,
-    info: { offset: { x: number } },
-    goal: Goal
-  ) => {
+  const handleDragEnd = (info: PanInfo, goal: Goal) => {
     if (info.offset.x < -56 * 3) {
       // Delete the goal when dragged far enough left
       setLocalGoals((prev) => prev.filter((g) => g.id !== goal.id));
@@ -268,7 +264,7 @@ const Goals = () => {
                 dragSnapToOrigin
                 dragElastic={{ left: 0.5, right: 0 }}
                 onDragStart={() => setDraggingId(goal.id!)}
-                onDragEnd={(e, info) => handleDragEnd(e, info, goal)}
+                onDragEnd={(_, info) => handleDragEnd(info, goal)}
               >
                 <GripVertical
                   className={cn(
