@@ -11,7 +11,7 @@ import { splitGoalsByTimePeriod, TimePeriod } from '@/lib/utils/timePeriod';
 import { getSession } from '@/lib/utils/userSession';
 import { Goal, GoalStatus } from '@/types/Goal';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { motion, PanInfo, Reorder } from 'framer-motion';
+import { AnimatePresence, motion, PanInfo, Reorder } from 'framer-motion';
 import { GripVertical, MoveVertical, Plus, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useDebounce } from '../hooks/useDebounce';
@@ -231,64 +231,74 @@ const Goals = () => {
           onReorder={handleReorder}
           className="flex flex-col gap-3 "
         >
-          {splittedGoals[activeTab].map((goal) => (
-            <Reorder.Item
-              key={goal.id}
-              value={goal}
-              id={goal.id}
-              onDragEnd={(e) => {
-                handleReorderEnd();
-                setDraggingId(null);
-              }}
-              dragListener={isOrdering && !draggingId}
-              className="relative"
-            >
-              <div className="absolute inset-1 bg-red-500 rounded-lg flex items-center justify-end px-4 z-0">
-                <Trash2 className="text-secondary" />
-              </div>
-              <motion.div
-                className={cn(
-                  `${
-                    goal.status === GoalStatus.Completed
-                      ? 'bg-primary shadow-none'
-                      : 'bg-secondary shadow-sm'
-                  }`,
-                  'rounded-lg p-5  border flex flex-row gap-3 items-center w-full transition-colors duration-200 ease-in-out',
-                  'relative',
-                  isOrdering ? 'pl-3' : 'pl-5'
-                )}
-                drag="x"
-                dragDirectionLock
-                whileDrag={{ cursor: 'grabbing' }}
-                dragConstraints={{ left: -250, right: 0 }}
-                dragSnapToOrigin
-                dragElastic={{ left: 0.5, right: 0 }}
-                onDragStart={() => setDraggingId(goal.id!)}
-                onDragEnd={(_, info) => handleDragEnd(info, goal)}
+          <AnimatePresence>
+            {splittedGoals[activeTab].map((goal) => (
+              <Reorder.Item
+                key={goal.id}
+                value={goal}
+                id={goal.id}
+                onDragEnd={() => {
+                  handleReorderEnd();
+                  setDraggingId(null);
+                }}
+                dragListener={isOrdering && !draggingId}
               >
-                <GripVertical
-                  className={cn(
-                    'size-5 text-stone-400',
-                    isOrdering ? 'block' : 'hidden'
-                  )}
-                />
-                <div className="flex-grow">
-                  <h2 className="text-lg font-semibold capitalize">
-                    {goal.title}
-                  </h2>
-                  <p className="text-stone-600 text-sm">{goal.description}</p>
-                </div>
-                <Checkbox
-                  className={cn(
-                    'size-5 bg-white',
-                    'data-[state=checked]:bg-secondary'
-                  )}
-                  checked={goal.status === GoalStatus.Completed}
-                  onClick={() => handleCheck(goal)}
-                />
-              </motion.div>
-            </Reorder.Item>
-          ))}
+                <motion.div
+                  className="relative"
+                  initial={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <div className="absolute inset-1 bg-red-500 rounded-lg flex items-center justify-end px-4 ">
+                    <Trash2 className="text-secondary" />
+                  </div>
+                  <motion.div
+                    className={cn(
+                      `${
+                        goal.status === GoalStatus.Completed
+                          ? 'bg-primary shadow-none'
+                          : 'bg-secondary shadow-sm'
+                      }`,
+                      'rounded-lg p-5  border flex flex-row gap-3 items-center w-full transition-colors duration-200 ease-in-out',
+                      'relative',
+                      isOrdering ? 'pl-3' : 'pl-5'
+                    )}
+                    drag="x"
+                    dragDirectionLock
+                    whileDrag={{ cursor: 'grabbing' }}
+                    dragConstraints={{ left: -250, right: 0 }}
+                    dragSnapToOrigin
+                    dragElastic={{ left: 0.5, right: 0 }}
+                    onDragStart={() => setDraggingId(goal.id!)}
+                    onDragEnd={(_, info) => handleDragEnd(info, goal)}
+                  >
+                    <GripVertical
+                      className={cn(
+                        'size-5 text-stone-400',
+                        isOrdering ? 'block' : 'hidden'
+                      )}
+                    />
+                    <div className="flex-grow">
+                      <h2 className="text-lg font-semibold capitalize">
+                        {goal.title}
+                      </h2>
+                      <p className="text-stone-600 text-sm">
+                        {goal.description}
+                      </p>
+                    </div>
+                    <Checkbox
+                      className={cn(
+                        'size-5 bg-white',
+                        'data-[state=checked]:bg-secondary'
+                      )}
+                      checked={goal.status === GoalStatus.Completed}
+                      onClick={() => handleCheck(goal)}
+                    />
+                  </motion.div>
+                </motion.div>
+              </Reorder.Item>
+            ))}
+          </AnimatePresence>
         </Reorder.Group>
       ) : (
         <div className="text-stone-500 text-center max-w-44 mx-auto">
