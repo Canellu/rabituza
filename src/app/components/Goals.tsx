@@ -298,7 +298,7 @@ const Goals = () => {
         </Reorder.Group>
       )}
 
-      {!isLoading && !error && !data && (
+      {!isLoading && !error && !haveGoals && (
         <div className="text-stone-500 text-center max-w-44 mx-auto">
           You have no goals for{' '}
           {activeTab === TimePeriod.Year ? year : activeTab} 🥲
