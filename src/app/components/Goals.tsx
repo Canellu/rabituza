@@ -4,14 +4,15 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { createOrUpdateGoal } from '@/lib/database/goals/createOrUpdateGoal';
+import { deleteGoal } from '@/lib/database/goals/deleteGoal';
 import { getGoals } from '@/lib/database/goals/getGoals';
 import { cn } from '@/lib/utils';
 import { splitGoalsByTimePeriod, TimePeriod } from '@/lib/utils/timePeriod';
 import { getSession } from '@/lib/utils/userSession';
 import { Goal, GoalStatus } from '@/types/Goal';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Reorder } from 'framer-motion';
-import { GripVertical, Plus, X } from 'lucide-react';
+import { motion, Reorder } from 'framer-motion';
+import { GripVertical, MoveVertical, Plus, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useDebounce } from '../hooks/useDebounce';
 import AddGoal from './AddGoal';
@@ -19,8 +20,11 @@ import Spinner from './Spinner';
 
 const Goals = () => {
   const [activeTab, setActiveTab] = useState<TimePeriod>(TimePeriod.Year);
-  const [editable, setEditable] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [localGoals, setLocalGoals] = useState<Goal[]>([]);
+  const [draggingId, setDraggingId] = useState<string | null>(null);
+  const [isOrdering, setIsOrdering] = useState(false);
+
   const year = new Date().getFullYear();
   const userId = getSession();
 
@@ -146,6 +150,34 @@ const Goals = () => {
     }
   };
 
+  // Add this mutation before the handleDragEnd function
+  const { mutate: deleteGoalMutation } = useMutation({
+    mutationFn: ({ userId, goalId }: { userId: string; goalId: string }) =>
+      deleteGoal(userId, goalId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['goals', userId] });
+    },
+    onError: (error) => {
+      console.error('Failed to delete goal:', error);
+      // Optionally, you could restore the deleted goal in the local state here
+    },
+  });
+
+  const handleDragEnd = (
+    event: MouseEvent | TouchEvent | PointerEvent,
+    info: { offset: { x: number } },
+    goal: Goal
+  ) => {
+    if (info.offset.x < -56 * 3) {
+      // Delete the goal when dragged far enough left
+      setLocalGoals((prev) => prev.filter((g) => g.id !== goal.id));
+      if (userId && goal.id) {
+        deleteGoalMutation({ userId, goalId: goal.id });
+      }
+    }
+    setDraggingId(null);
+  };
+
   return (
     <div className="relative flex flex-col gap-4 pb-10 min-h-full">
       <div className="flex items-center justify-between gap-3">
@@ -163,19 +195,36 @@ const Goals = () => {
           </TabsList>
         </Tabs>
 
-        <Button
-          size="icon"
-          variant={editable ? 'secondary' : 'default'}
-          className="rounded-md size-8"
-          onClick={() => setEditable((prev) => !prev)}
-        >
-          {editable ? <X /> : <Plus />}
-        </Button>
+        <div className="flex gap-1">
+          <Button
+            size="icon"
+            variant="secondary"
+            className={cn(
+              'shadow rounded-md size-8 border',
+              isOrdering ? 'shadow-inner !bg-stone-200 border-stone-300' : ''
+            )}
+            onClick={() => setIsOrdering((prev) => !prev)}
+          >
+            <MoveVertical />
+          </Button>
+
+          <Button
+            size="icon"
+            variant="secondary"
+            className={cn(
+              'shadow rounded-md size-8 border',
+              isEditing ? 'shadow-inner !bg-stone-200 border-stone-300' : ''
+            )}
+            onClick={() => setIsEditing((prev) => !prev)}
+          >
+            <Plus />
+          </Button>
+        </div>
       </div>
 
       <AddGoal
-        editable={editable}
-        setEditable={setEditable}
+        isEditing={isEditing}
+        setIsEditing={setIsEditing}
         setActiveTab={setActiveTab}
       />
 
@@ -184,39 +233,64 @@ const Goals = () => {
           axis="y"
           values={splittedGoals[activeTab]}
           onReorder={handleReorder}
-          className="flex flex-col items-center gap-3"
+          className="flex flex-col gap-3 "
         >
           {splittedGoals[activeTab].map((goal) => (
             <Reorder.Item
               key={goal.id}
               value={goal}
               id={goal.id}
-              onDragEnd={() => {
+              onDragEnd={(e) => {
                 handleReorderEnd();
+                setDraggingId(null);
               }}
-              className={cn(
-                ` rounded-lg p-5 pl-3 border flex flex-row gap-3 items-center w-full ${
-                  goal.status === GoalStatus.Completed
-                    ? 'bg-primary/50 shadow-none'
-                    : 'bg-secondary shadow-sm'
-                }`
-              )}
+              dragListener={isOrdering && !draggingId}
+              className="relative"
             >
-              <GripVertical className="size-5 text-stone-400 cursor-grab active:cursor-grabbing" />
-              <div className="flex-grow">
-                <h2 className="text-lg font-semibold capitalize">
-                  {goal.title}
-                </h2>
-                <p className="text-stone-600 text-sm">{goal.description}</p>
+              <div className="absolute inset-1 bg-red-500 rounded-lg flex items-center justify-end px-4 z-0">
+                <Trash2 className="text-secondary" />
               </div>
-              <Checkbox
+              <motion.div
                 className={cn(
-                  'size-5 bg-white',
-                  'data-[state=checked]:bg-secondary'
+                  `${
+                    goal.status === GoalStatus.Completed
+                      ? 'bg-primary shadow-none'
+                      : 'bg-secondary shadow-sm'
+                  }`,
+                  'rounded-lg p-5  border flex flex-row gap-3 items-center w-full transition-colors duration-200 ease-in-out',
+                  'relative',
+                  isOrdering ? 'pl-3' : 'pl-5'
                 )}
-                checked={goal.status === GoalStatus.Completed}
-                onClick={() => handleCheck(goal)}
-              />
+                drag="x"
+                dragDirectionLock
+                whileDrag={{ cursor: 'grabbing' }}
+                dragConstraints={{ left: -250, right: 0 }}
+                dragSnapToOrigin
+                dragElastic={{ left: 0.5, right: 0 }}
+                onDragStart={() => setDraggingId(goal.id!)}
+                onDragEnd={(e, info) => handleDragEnd(e, info, goal)}
+              >
+                <GripVertical
+                  className={cn(
+                    'size-5 text-stone-400',
+                    isOrdering ? 'block' : 'hidden'
+                  )}
+                />
+                <div className="flex-grow">
+                  <h2 className="text-lg font-semibold capitalize">
+                    {goal.title}
+                  </h2>
+                  <p className="text-stone-600 text-sm">{goal.description}</p>
+                </div>
+                <Checkbox
+                  className={cn(
+                    'size-5 bg-white',
+                    'data-[state=checked]:bg-secondary'
+                  )}
+                  checked={goal.status === GoalStatus.Completed}
+                  onClick={() => handleCheck(goal)}
+                />
+              </motion.div>
             </Reorder.Item>
           ))}
         </Reorder.Group>

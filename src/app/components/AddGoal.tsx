@@ -37,12 +37,12 @@ const tagsList: Option[] = [
 ];
 
 interface AddGoalProps {
-  editable: boolean;
-  setEditable: Dispatch<SetStateAction<boolean>>;
+  isEditing: boolean;
+  setIsEditing: Dispatch<SetStateAction<boolean>>;
   setActiveTab: Dispatch<SetStateAction<TimePeriod>>;
 }
 
-const AddGoal = ({ editable, setEditable, setActiveTab }: AddGoalProps) => {
+const AddGoal = ({ isEditing, setIsEditing, setActiveTab }: AddGoalProps) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [tags, setTags] = useState<Option[]>([]);
@@ -88,7 +88,7 @@ const AddGoal = ({ editable, setEditable, setActiveTab }: AddGoalProps) => {
     },
     onSuccess: () => {
       //Reset the form after successfully saving the goal
-      setEditable(false);
+      setIsEditing(false);
       setTitle('');
       setDescription('');
       setTags([]);
@@ -113,11 +113,13 @@ const AddGoal = ({ editable, setEditable, setActiveTab }: AddGoalProps) => {
   };
 
   return (
-    <AnimateHeight isOpen={editable}>
-      <section className="px-6 py-12 flex flex-col items-center gap-8 overflow-auto bg-white border border-input rounded-md">
+    <AnimateHeight isOpen={isEditing}>
+      <section className="px-6 pt-8 pb-12 flex flex-col items-center gap-8 overflow-auto bg-white border border-input rounded-md">
         <div className="flex flex-col gap-2 ">
-          <h2 className="text-lg font-semibold">Add a New Goal</h2>
-          <p className="text-stone-600">
+          <h2 className="text-lg font-semibold text-stone-800">
+            Add a New Goal
+          </h2>
+          <p className="text-stone-600 text-sm">
             Set a new goal to help you stay focused and motivated.
           </p>
         </div>
@@ -228,7 +230,7 @@ const AddGoal = ({ editable, setEditable, setActiveTab }: AddGoalProps) => {
           <p
             className={cn(
               ' text-red-500 bg-red-100 rounded-md py-1 px-3 w-full text-center',
-              error ? 'visible' : 'invisible'
+              error ? 'block' : 'hidden'
             )}
           >
             {error}
@@ -237,13 +239,13 @@ const AddGoal = ({ editable, setEditable, setActiveTab }: AddGoalProps) => {
           {/* Save and Cancel buttons */}
           <div className="flex items-center justify-between w-full">
             <Button
-              onClick={() => setEditable(false)}
+              onClick={() => setIsEditing(false)}
               variant="secondary"
-              disabled={!editable}
+              disabled={!isEditing}
             >
               Cancel
             </Button>
-            <Button onClick={handleSave} disabled={!editable}>
+            <Button onClick={handleSave} disabled={!isEditing}>
               Save
             </Button>
           </div>
