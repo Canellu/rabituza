@@ -12,21 +12,25 @@ import { getSession } from '@/lib/utils/userSession';
 import { Goal, GoalStatus } from '@/types/Goal';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AnimatePresence, motion, PanInfo, Reorder } from 'framer-motion';
-import { GripVertical, MoveVertical, Plus, Trash2 } from 'lucide-react';
+import { ArrowDownUp, GripVertical, Plus, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useDebounce } from '../hooks/useDebounce';
 import AddGoal from './AddGoal';
 import Spinner from './Spinner';
 
 const Goals = () => {
+  const queryClient = useQueryClient();
+  const userId = getSession();
+
   const [activeTab, setActiveTab] = useState<TimePeriod>(TimePeriod.Year);
   const [isEditing, setIsEditing] = useState(false);
   const [localGoals, setLocalGoals] = useState<Goal[]>([]);
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const [isOrdering, setIsOrdering] = useState(false);
 
+  const splittedGoals = splitGoalsByTimePeriod(localGoals);
+  const haveGoals = splittedGoals[activeTab]?.length > 0;
   const year = new Date().getFullYear();
-  const userId = getSession();
 
   const { isLoading, error, data } = useQuery<Goal[], Error>({
     queryKey: ['goals', userId],
@@ -40,10 +44,6 @@ const Goals = () => {
     }
   }, [data]);
 
-  // Define mutation
-  const queryClient = useQueryClient(); // Add this at the top of the component
-
-  // Modify the mutation configuration
   const { mutate } = useMutation({
     mutationFn: (updatedGoal: Goal) => {
       if (!userId || !updatedGoal.id) {
@@ -52,7 +52,6 @@ const Goals = () => {
       return createOrUpdateGoal(userId, updatedGoal.id, updatedGoal);
     },
     onSuccess: () => {
-      // Invalidate and refetch goals after successful mutation
       queryClient.invalidateQueries({ queryKey: ['goals', userId] });
     },
     onError: (error, variables) => {
@@ -73,7 +72,6 @@ const Goals = () => {
     },
   });
 
-  // Debounced mutation handler
   const debouncedMutation = useDebounce((goal: Goal) => {
     if (!userId || !goal.id) return;
     mutate(goal);
@@ -100,8 +98,6 @@ const Goals = () => {
     // Trigger mutation
     debouncedMutation(updatedGoal);
   };
-
-  const splittedGoals = splitGoalsByTimePeriod(localGoals);
 
   const handleReorder = (newOrder: Goal[]) => {
     // Only update local state during dragging
@@ -194,19 +190,19 @@ const Goals = () => {
         <div className="flex gap-1">
           <Button
             size="icon"
-            variant="secondary"
+            variant="outline"
             className={cn(
-              'shadow rounded-md size-8 border',
+              'shadow-sm rounded-md size-8',
               isOrdering ? 'shadow-inner !bg-stone-200 border-stone-300' : ''
             )}
             onClick={() => setIsOrdering((prev) => !prev)}
           >
-            <MoveVertical />
+            <ArrowDownUp />
           </Button>
 
           <Button
             size="icon"
-            variant="secondary"
+            variant="outline"
             className={cn(
               'shadow rounded-md size-8 border',
               isEditing ? 'shadow-inner !bg-stone-200 border-stone-300' : ''
@@ -224,7 +220,7 @@ const Goals = () => {
         setActiveTab={setActiveTab}
       />
 
-      {splittedGoals[activeTab]?.length > 0 ? (
+      {haveGoals && (
         <Reorder.Group
           axis="y"
           values={splittedGoals[activeTab]}
@@ -300,27 +296,25 @@ const Goals = () => {
             ))}
           </AnimatePresence>
         </Reorder.Group>
-      ) : (
+      )}
+
+      {!isLoading && !error && !data && (
         <div className="text-stone-500 text-center max-w-44 mx-auto">
           You have no goals for{' '}
           {activeTab === TimePeriod.Year ? year : activeTab} 🥲
         </div>
       )}
 
-      {(error || isLoading) && (
-        <div className="flex flex-col items-center gap-3 justify-center flex-grow">
-          {isLoading && (
-            <div className="flex flex-col items-center justify-center gap-3">
-              <Spinner />
-              <span className="text-stone-500">Fetching goals...</span>
-            </div>
-          )}
+      {isLoading && (
+        <div className="flex flex-col items-center justify-center gap-3">
+          <Spinner />
+          <span className="text-stone-500">Fetching goals...</span>
+        </div>
+      )}
 
-          {error && (
-            <div className="text-red-500 bg-red-100 rounded-md py-2 px-4 text-center">
-              Error fetching goals
-            </div>
-          )}
+      {error && (
+        <div className="text-red-500 bg-red-100 rounded-md py-2 px-4 text-center">
+          Error fetching goals
         </div>
       )}
     </div>
