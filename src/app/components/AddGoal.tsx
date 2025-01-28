@@ -13,7 +13,11 @@ import {
 } from '@/components/ui/select';
 import { createOrUpdateGoal } from '@/lib/database/goals/createOrUpdateGoal';
 import { cn } from '@/lib/utils';
-import { TimePeriod, timePeriodToDates } from '@/lib/utils/timePeriod';
+import {
+  splitGoalsByTimePeriod,
+  TimePeriod,
+  timePeriodToDates,
+} from '@/lib/utils/timePeriod';
 import { getSession } from '@/lib/utils/userSession';
 import { Goal, GoalStatus } from '@/types/Goal';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -58,6 +62,15 @@ const AddGoal = ({ editable, setEditable }: AddGoalProps) => {
         new Date().getFullYear()
       );
 
+      // Get current goals to determine the next order
+      const currentGoals =
+        (await queryClient.getQueryData<Goal[]>(['goals', userId])) || [];
+      const periodGoals = currentGoals.filter((goal) => {
+        const goalPeriod = splitGoalsByTimePeriod([goal])[timePeriod];
+        return goalPeriod?.length > 0;
+      });
+      const nextOrder = periodGoals.length;
+
       const goalData: Omit<Goal, 'id'> = {
         title,
         description,
@@ -67,6 +80,7 @@ const AddGoal = ({ editable, setEditable }: AddGoalProps) => {
         endDate,
         createdAt: new Date(),
         tags: tags.map((tag) => tag.value),
+        order: nextOrder, // Add order field
       };
 
       await createOrUpdateGoal(userId, null, goalData);

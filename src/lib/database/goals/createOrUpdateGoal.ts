@@ -18,6 +18,7 @@ export const createOrUpdateGoal = async (
     // Convert startDate and endDate to Firestore Timestamps if they are JavaScript Date objects
     const goalDataWithTimestamps = {
       ...goalData,
+      order: goalData.order ?? 0, // Ensure order field exists, default to 0
       startDate:
         goalData.startDate instanceof Date
           ? Timestamp.fromDate(goalData.startDate)
@@ -26,7 +27,7 @@ export const createOrUpdateGoal = async (
         goalData.endDate instanceof Date
           ? Timestamp.fromDate(goalData.endDate)
           : goalData.endDate,
-      updatedAt: serverTimestamp(), // Set or update the `updatedAt` timestamp
+      updatedAt: serverTimestamp(),
     };
 
     // If goalId is provided, update the existing goal

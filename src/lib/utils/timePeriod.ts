@@ -81,12 +81,16 @@ export const splitGoalsByTimePeriod = (goals: Goal[]) => {
     [TimePeriod.Year]: [],
   };
 
-  // Loop through each goal and determine its time period
+  if (!goals) return groupedGoals;
+
   goals.forEach((goal) => {
     const period = datesToTimePeriod(goal.startDate, goal.endDate);
-
-    // Add the goal to the appropriate period group
     groupedGoals[period].push(goal);
+  });
+
+  // Sort goals by order within each period
+  Object.keys(groupedGoals).forEach((period) => {
+    groupedGoals[period as TimePeriod].sort((a, b) => a.order - b.order);
   });
 
   return groupedGoals;

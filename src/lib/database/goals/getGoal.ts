@@ -14,10 +14,10 @@ export const getGoal = async (
       // Map Firestore document to Goal type, converting Timestamps to JavaScript Dates
       const goalData = goalSnap.data();
       const goal: Goal = {
-        title: goalData.title, // Ensure 'title' is mapped
-        description: goalData.description || '', // Default to empty string if not available
-        status: goalData.status, // Ensure 'status' is mapped
-        category: goalData.category, // Ensure 'category' is mapped
+        title: goalData.title,
+        description: goalData.description || '',
+        status: goalData.status,
+        category: goalData.category,
         startDate:
           goalData.startDate instanceof Timestamp
             ? goalData.startDate.toDate()
@@ -30,7 +30,8 @@ export const getGoal = async (
           goalData.createdAt instanceof Timestamp
             ? goalData.createdAt.toDate()
             : goalData.createdAt,
-        tags: goalData.tags || [], // Default to empty array if no tags
+        tags: goalData.tags || [],
+        order: goalData.order ?? 0, // Add order with default value 0
       };
       return goal;
     } else {

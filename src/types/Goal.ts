@@ -8,6 +8,7 @@ export type Goal = {
   endDate: Date;
   createdAt: Date;
   tags?: string[];
+  order: number;
 };
 
 export enum GoalStatus {

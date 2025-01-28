@@ -9,8 +9,9 @@ import { cn } from '@/lib/utils';
 import { splitGoalsByTimePeriod, TimePeriod } from '@/lib/utils/timePeriod';
 import { getSession } from '@/lib/utils/userSession';
 import { Goal, GoalStatus } from '@/types/Goal';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { Plus, X } from 'lucide-react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Reorder } from 'framer-motion';
+import { GripVertical, Plus, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useDebounce } from '../hooks/useDebounce';
 import AddGoal from './AddGoal';
@@ -36,6 +37,9 @@ const Goals = () => {
   }, [data]);
 
   // Define mutation
+  const queryClient = useQueryClient(); // Add this at the top of the component
+
+  // Modify the mutation configuration
   const { mutate } = useMutation({
     mutationFn: (updatedGoal: Goal) => {
       if (!userId || !updatedGoal.id) {
@@ -43,9 +47,12 @@ const Goals = () => {
       }
       return createOrUpdateGoal(userId, updatedGoal.id, updatedGoal);
     },
+    onSuccess: () => {
+      // Invalidate and refetch goals after successful mutation
+      queryClient.invalidateQueries({ queryKey: ['goals', userId] });
+    },
     onError: (error, variables) => {
       console.error('Failed to update goal:', error);
-      // Rollback on error
       setLocalGoals((prev) =>
         prev.map((g) =>
           g.id === variables.id
@@ -92,6 +99,53 @@ const Goals = () => {
 
   const splittedGoals = splitGoalsByTimePeriod(localGoals);
 
+  const handleReorder = (newOrder: Goal[]) => {
+    // Only update local state during dragging
+    setLocalGoals((prev) => {
+      const activeTabGoalsMap = new Set(
+        splittedGoals[activeTab].map((g) => g.id)
+      );
+      const otherGoals = prev.filter((goal) => !activeTabGoalsMap.has(goal.id));
+
+      // Preserve the order field from previous state for the reordered items
+      const orderedNewGoals = newOrder.map((goal, index) => ({
+        ...goal,
+        order: index,
+      }));
+
+      return [...otherGoals, ...orderedNewGoals];
+    });
+  };
+
+  const handleReorderEnd = () => {
+    const currentGoals = splittedGoals[activeTab];
+    // Get original goals for the current time period
+    const originalGoals =
+      data
+        ?.filter((goal) => {
+          const goalPeriod = splitGoalsByTimePeriod([goal])[activeTab];
+          return goalPeriod?.length > 0;
+        })
+        .sort((a, b) => (a.order ?? 0) - (b.order ?? 0)) || [];
+
+    // Compare orders within the same time period
+    const hasOrderChanged = currentGoals.some((goal, index) => {
+      const originalIndex = originalGoals.findIndex((g) => g.id === goal.id);
+      return originalIndex !== index;
+    });
+
+    if (hasOrderChanged) {
+      currentGoals.forEach((goal, index) => {
+        if (userId && goal.id) {
+          mutate({
+            ...goal,
+            order: index,
+          });
+        }
+      });
+    }
+  };
+
   return (
     <div className="relative flex flex-col gap-4 pb-10 min-h-full">
       <div className="flex items-center justify-between gap-3">
@@ -122,13 +176,22 @@ const Goals = () => {
       <AddGoal editable={editable} setEditable={setEditable} />
 
       {splittedGoals[activeTab]?.length > 0 ? (
-        <div className="flex flex-col items-center gap-3">
+        <Reorder.Group
+          axis="y"
+          values={splittedGoals[activeTab]}
+          onReorder={handleReorder}
+          className="flex flex-col items-center gap-3"
+        >
           {splittedGoals[activeTab].map((goal) => (
-            <div
-              id="card"
+            <Reorder.Item
               key={goal.id}
+              value={goal}
+              id={goal.id}
+              onDragEnd={() => {
+                handleReorderEnd();
+              }}
               className={cn(
-                ` rounded-lg p-5 border flex flex-row justify-between gap-2 items-center w-full cursor-pointer ${
+                ` rounded-lg p-5 pl-3 border flex flex-row gap-3 items-center w-full ${
                   goal.status === GoalStatus.Completed
                     ? 'bg-primary/50 shadow-none'
                     : 'bg-secondary shadow-sm'
@@ -136,7 +199,8 @@ const Goals = () => {
               )}
               onClick={() => handleCheck(goal)}
             >
-              <div>
+              <GripVertical className="size-5 text-stone-400 cursor-grab active:cursor-grabbing" />
+              <div className="flex-grow">
                 <h2 className="text-lg font-semibold capitalize">
                   {goal.title}
                 </h2>
@@ -149,9 +213,9 @@ const Goals = () => {
                 )}
                 checked={goal.status === GoalStatus.Completed}
               />
-            </div>
+            </Reorder.Item>
           ))}
-        </div>
+        </Reorder.Group>
       ) : (
         <div className="text-stone-500 text-center max-w-44 mx-auto">
           You have no goals for{' '}

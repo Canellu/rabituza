@@ -7,24 +7,25 @@ export const getGoals = async (userId: string): Promise<Goal[]> => {
   try {
     const goalsRef = collection(db, `users/${userId}/goals`);
 
-    // Fetch all goals for the user without filtering by date
     const querySnapshot = await getDocs(goalsRef);
     const goals: Goal[] = querySnapshot.docs.map((doc) => {
       const data = doc.data();
       return {
-        id: doc.id, // Include Firestore document ID here
+        id: doc.id,
         title: data.title,
         description: data.description || '',
         status: data.status,
         category: data.category,
-        startDate: data.startDate.toDate(), // Convert Firestore Timestamps to JS Dates
+        startDate: data.startDate.toDate(),
         endDate: data.endDate.toDate(),
         createdAt: data.createdAt.toDate(),
         tags: data.tags || [],
+        order: data.order ?? 0,
       };
     });
 
-    return goals;
+    // Sort goals by order
+    return goals.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
   } catch (error) {
     console.error('Error fetching goals:', error);
     return [];
