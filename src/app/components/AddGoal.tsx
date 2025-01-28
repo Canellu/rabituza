@@ -43,7 +43,7 @@ const AddGoal = ({ editable, setEditable }: AddGoalProps) => {
   const [tags, setTags] = useState<Option[]>([]);
   const [timePeriod, setTimePeriod] = useState<TimePeriod>(TimePeriod.Year);
   const [category, setCategory] = useState('');
-  const [status, setStatus] = useState<GoalStatus>('inProgress');
+  const [status, setStatus] = useState<GoalStatus>(GoalStatus.InProgress);
   const [error, setError] = useState<string | null>(null);
   const userId = getSession();
   const queryClient = useQueryClient();
@@ -79,7 +79,7 @@ const AddGoal = ({ editable, setEditable }: AddGoalProps) => {
       setTags([]);
       setTimePeriod(TimePeriod.Year);
       setCategory('');
-      setStatus('inProgress');
+      setStatus(GoalStatus.InProgress);
       queryClient.invalidateQueries({ queryKey: ['goals', userId] });
     },
     onError: (error) => {
