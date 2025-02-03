@@ -83,6 +83,7 @@ const Profile = () => {
           onClick={() => setEditable((prev) => !prev)}
           variant="outline"
           className="place-self-center"
+          size="sm"
         >
           <UserPen />
           Edit profile
