@@ -178,7 +178,7 @@ const EditProfile = ({ editable, setEditable }: EditProfileProps) => {
                 id="dob"
                 variant={'outline'}
                 className={cn(
-                  'w-full justify-start text-left font-normal hover:bg-white text-base',
+                  'w-full justify-start text-left font-normal hover:bg-white text-base rounded-md',
                   !date && 'text-muted-foreground '
                 )}
               >
