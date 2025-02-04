@@ -30,7 +30,7 @@ const SplashScreen = () => {
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="size-24 rounded-2xl bg-gradient-to-br from-lime-300 via-primary to-lime-900 flex items-center justify-center">
+          <div className="size-24 rounded-2xl bg-gradient-to-b from-lime-300 via-primary to-lime-700 flex items-center justify-center">
             <Rabbit className="text-stone-900 size-12" />
           </div>
         </motion.div>
