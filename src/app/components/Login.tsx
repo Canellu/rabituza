@@ -91,7 +91,7 @@ const Login = () => {
               type="text"
               id="username"
               value={identifier}
-              onChange={(e) => setIdentifier(e.target.value)}
+              onChange={(e) => setIdentifier(e.target.value.trim())}
               placeholder="Rabituza"
               onKeyDown={(e) => e.key === 'Enter' && handleVerifyUser()}
               onFocus={() => setError('')}
