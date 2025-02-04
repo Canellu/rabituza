@@ -81,7 +81,7 @@ export default async function RootLayout({
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-stone-50`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-stone-50 dark:bg-stone-900`}
       >
         <Providers>
           <ProtectedRoute>
