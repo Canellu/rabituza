@@ -267,6 +267,7 @@ const Goals = () => {
                     dragElastic={{ left: 0.5, right: 0 }}
                     onDragStart={() => setDraggingId(goal.id!)}
                     onDragEnd={(_, info) => handleDragEnd(info, goal)}
+                    onClick={() => handleCheck(goal)}
                   >
                     <GripVertical
                       className={cn(
@@ -288,7 +289,6 @@ const Goals = () => {
                         'data-[state=checked]:bg-secondary'
                       )}
                       checked={goal.status === GoalStatus.Completed}
-                      onClick={() => handleCheck(goal)}
                     />
                   </motion.div>
                 </motion.div>
