@@ -9,6 +9,9 @@ export default function manifest(): MetadataRoute.Manifest {
     display: 'standalone',
     background_color: '#0c0a09',
     theme_color: '#0c0a09',
+    launch_handler: {
+      client_mode: 'auto',
+    },
     screenshots: [
       {
         src: 'screenshots/1.jpg',
