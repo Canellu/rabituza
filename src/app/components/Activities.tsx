@@ -15,8 +15,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Activity, Dumbbell, Mountain } from 'lucide-react';
+import { Fragment, useState } from 'react';
+import { GrYoga } from 'react-icons/gr';
 
-import { Fragment, useState } from 'react'; // remove useEffect
 import BoulderingForm from './BoulderingForm';
 
 const GymForm = () => (
@@ -36,21 +38,25 @@ const activityOptions = [
     id: 'bouldering',
     label: 'Bouldering',
     Component: BoulderingForm,
+    icon: Mountain,
   },
   {
     id: 'gym',
     label: 'Gym',
     Component: GymForm,
+    icon: Dumbbell,
   },
   {
     id: 'calisthenics',
     label: 'Calisthenics',
     Component: CalisthenicsForm,
+    icon: Activity,
   },
   {
     id: 'stretching',
     label: 'Stretching',
     Component: StretchingForm,
+    icon: GrYoga,
   },
 ] as const;
 
@@ -92,6 +98,7 @@ const Activities = () => {
               <DropdownMenuItem
                 onSelect={() => handleActivitySelect(exercise.id)}
               >
+                <exercise.icon className="text-primary bg-gradient-to-b from-stone-600 to-stone-950 p-1 rounded-sm min-w-6 min-h-6" />
                 {exercise.label}
               </DropdownMenuItem>
             </Fragment>

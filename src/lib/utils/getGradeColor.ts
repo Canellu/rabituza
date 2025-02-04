@@ -1,6 +1,6 @@
 const getGradeColor = (grade: string) => {
   const colors: Record<string, { text: string; bg: string }> = {
-    white: { text: 'text-stone-700', bg: 'bg-white border-stone-100' },
+    white: { text: 'text-stone-700', bg: 'bg-white border-stone-150' },
     green: {
       text: 'text-green-700',
       bg: 'bg-green-100 border-green-200',
@@ -20,8 +20,8 @@ const getGradeColor = (grade: string) => {
       bg: 'bg-purple-100 border-purple-200',
     },
     black: {
-      text: 'text-stone-900',
-      bg: 'bg-stone-300 border-stone-300',
+      text: 'text-stone-800',
+      bg: 'bg-neutral-400 border-stone-300',
     },
     silver: {
       text: 'text-slate-700',

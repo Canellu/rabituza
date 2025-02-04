@@ -40,7 +40,7 @@ const BoulderingForm = () => {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-10">
       <Select value={selectedGym} onValueChange={handleGymChange}>
         <SelectTrigger>
           <SelectValue placeholder="Select a gym" />
@@ -55,7 +55,7 @@ const BoulderingForm = () => {
       </Select>
 
       {selectedGym && (
-        <div className="space-y-5">
+        <div className="space-y-4">
           {BOULDERING_GYMS[selectedGym].grades.map((grade) => (
             <div
               key={grade}
@@ -108,21 +108,18 @@ const BoulderingForm = () => {
               </div>
             </div>
           ))}
-
-          <div className="pt-8">
-            <Button
-              className="w-full"
-              disabled={
-                !selectedGym ||
-                Object.values(gradeCount).every((count) => count === 0)
-              }
-              onClick={handleSubmit}
-            >
-              Save activity
-            </Button>
-          </div>
         </div>
       )}
+      <Button
+        className="w-full"
+        disabled={
+          !selectedGym ||
+          Object.values(gradeCount).every((count) => count === 0)
+        }
+        onClick={handleSubmit}
+      >
+        Save activity
+      </Button>
     </div>
   );
 };
