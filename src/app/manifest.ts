@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: 'Track & Train',
     start_url: '/',
     display: 'standalone',
-    background_color: '#09090b',
-    theme_color: '#09090b',
+    background_color: '#0c0a09', // stone-950 color
+    theme_color: '#0c0a09', // stone-950 color
     icons: [
       {
         src: 'android/android-launchericon-512-512.png',
