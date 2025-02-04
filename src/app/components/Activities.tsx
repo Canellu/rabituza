@@ -39,7 +39,6 @@ const Activities = () => {
       <div className="space-y-4">
         {activities?.map((activity) => {
           const { activityDate, type } = activity;
-          console.log(activity);
           const Icon = activityOptions.find((opt) => opt.id === type)?.icon;
 
           return (

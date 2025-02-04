@@ -1,5 +1,11 @@
+import ToughestCountdown from './ToughestCountdown';
+
 const Home = () => {
-  return <div>Home</div>;
+  return (
+    <div className="">
+      <ToughestCountdown />
+    </div>
+  );
 };
 
 export default Home;
