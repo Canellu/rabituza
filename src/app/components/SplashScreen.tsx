@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { Rabbit } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 const SplashScreen = () => {
@@ -29,14 +30,15 @@ const SplashScreen = () => {
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.5 }}
         >
-          {/* Add your app logo here */}
-          <div className="size-24 rounded-2xl bg-lime-400" />
+          <div className="size-24 rounded-2xl bg-gradient-to-br from-lime-300 via-primary to-lime-900 flex items-center justify-center">
+            <Rabbit className="text-stone-900 size-12" />
+          </div>
         </motion.div>
         <motion.h1
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="mt-4 text-2xl font-bold text-stone-50"
+          className="mt-5 text-3xl font-bold text-stone-200"
         >
           Rabituza
         </motion.h1>
