@@ -4,11 +4,33 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: 'Rabituza',
     short_name: 'Rabituza',
-    description: 'Track & Train',
+    description: 'Track &amp; Train',
     start_url: '/',
     display: 'standalone',
-    background_color: '#0c0a09', // stone-950 color
-    theme_color: '#0c0a09', // stone-950 color
+    background_color: '#0c0a09',
+    theme_color: '#0c0a09',
+    screenshots: [
+      {
+        src: 'screenshots/1.jpg',
+        sizes: '1920x1080',
+        type: 'image/jpg',
+      },
+      {
+        src: 'screenshots/2.jpg',
+        sizes: '1920x1080',
+        type: 'image/jpg',
+      },
+      {
+        src: 'screenshots/3.jpg',
+        sizes: '1920x1080',
+        type: 'image/jpg',
+      },
+      {
+        src: 'screenshots/4.jpg',
+        sizes: '1920x1080',
+        type: 'image/jpg',
+      },
+    ],
     icons: [
       {
         src: 'android/android-launchericon-512-512.png',
@@ -138,6 +160,21 @@ export default function manifest(): MetadataRoute.Manifest {
         src: 'ios/1024.png',
         sizes: '1024x1024',
       },
+    ],
+    id: 'Rabituza',
+    dir: 'ltr',
+    lang: 'en',
+    orientation: 'portrait',
+    display_override: ['standalone', 'window-controls-overlay'],
+    categories: [
+      'entertainment',
+      'fitness',
+      'health',
+      'lifestyle',
+      'productivity',
+      'social',
+      'sports',
+      'utilities',
     ],
   };
 }
