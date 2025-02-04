@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
 import { Activity as ActivityIcon, Goal, HomeIcon, User } from 'lucide-react';
 import Activities from './components/Activities';
+import AddActivities from './components/AddActivities';
 import Goals from './components/Goals';
 import Home from './components/Home';
 import Profile from './components/Profile';
@@ -88,7 +89,12 @@ const Menu = () => {
         <TabsContent key={tab.value} value={tab.value} className="mt-0">
           <div className="h-[calc(100dvh-80px)] overflow-auto flex flex-col ">
             <section className="sticky top-0 px-4 pt-4">
-              <h1 className="font-bold text-2xl text-stone-800">{tab.title}</h1>
+              <div className="flex items-center justify-between">
+                <h1 className="font-bold text-2xl text-stone-800">
+                  {tab.title}
+                </h1>
+                {tab.value === Tab.Activities && <AddActivities />}
+              </div>
               <Separator className="mt-4" />
             </section>
             <section className="p-6 grow overflow-auto">{tab.content}</section>

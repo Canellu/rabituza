@@ -81,8 +81,4 @@ body {
   input {
     caret-color: var(--primary);
   }
-
-  .text-shadow {
-    text-shadow: 1px 1px 1px rgb(0 0 0 / 70%);
-  }
 }

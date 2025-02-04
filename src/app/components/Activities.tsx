@@ -8,7 +8,6 @@ import { getSession } from '@/lib/utils/userSession';
 import { useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
 
-import AddActivities from './AddActivities';
 import Spinner from './Spinner';
 
 const Activities = () => {
@@ -84,8 +83,6 @@ const Activities = () => {
           );
         })}
       </div>
-
-      <AddActivities />
     </div>
   );
 };

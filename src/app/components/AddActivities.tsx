@@ -40,7 +40,7 @@ const AddActivities = () => {
     <>
       <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" className="fixed bottom-28 right-8">
+          <Button variant="outline" className="text-sm">
             Add activity
           </Button>
         </DropdownMenuTrigger>
