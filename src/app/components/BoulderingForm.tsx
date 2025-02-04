@@ -63,7 +63,7 @@ const BoulderingForm = () => {
             >
               <span
                 className={cn(
-                  'font-medium text-md px-4 py-2 rounded-md w-full',
+                  'font-medium text-md px-4 py-2 rounded-md w-full border',
                   getGradeColor(grade).text,
                   getGradeColor(grade).bg
                 )}
