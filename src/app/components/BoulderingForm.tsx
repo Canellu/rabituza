@@ -35,9 +35,9 @@ interface BoulderingFormProps {
 const BoulderingForm = ({ onClose }: BoulderingFormProps) => {
   const userId = getSession();
   const queryClient = useQueryClient();
-  const [selectedGym, setSelectedGym] = useState<
-    keyof typeof BOULDERING_GYMS | ''
-  >('');
+
+  const [gradeCount, setGradeCount] = useState<Record<string, number>>({});
+  const [calendarOpen, setCalendarOpen] = useState(false);
   const [activityDate, setActivityDate] = useState<Date>(new Date());
   const [selectedHour, setSelectedHour] = useState(
     activityDate.getHours().toString().padStart(2, '0')
@@ -45,8 +45,9 @@ const BoulderingForm = ({ onClose }: BoulderingFormProps) => {
   const [selectedMinute, setSelectedMinute] = useState(
     activityDate.getMinutes().toString().padStart(2, '0')
   );
-  const [gradeCount, setGradeCount] = useState<Record<string, number>>({});
-  const [calendarOpen, setCalendarOpen] = useState(false);
+  const [selectedGym, setSelectedGym] = useState<
+    keyof typeof BOULDERING_GYMS | ''
+  >('');
 
   const handleGymChange = (value: keyof typeof BOULDERING_GYMS | '') => {
     setSelectedGym(value);
@@ -93,7 +94,6 @@ const BoulderingForm = ({ onClose }: BoulderingFormProps) => {
       <div className="space-y-4">
         <div className="space-y-1">
           <Button
-            id="dob"
             variant={'outline'}
             className={cn(
               'w-full justify-start text-left font-normal hover:bg-white text-base rounded-md',
@@ -102,11 +102,7 @@ const BoulderingForm = ({ onClose }: BoulderingFormProps) => {
             onClick={() => setCalendarOpen((prev) => !prev)}
           >
             <CalendarIcon />
-            {activityDate ? (
-              format(activityDate, 'do MMMM yyyy, HH:mm')
-            ) : (
-              <span>Pick a date</span>
-            )}
+            {format(activityDate, 'do MMMM yyyy, HH:mm')}
           </Button>
           <AnimateHeight isOpen={calendarOpen}>
             <div className="border bg-stone-50 rounded-md p-4 space-y-4">

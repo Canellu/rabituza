@@ -9,15 +9,28 @@ import { useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
 
 import AddActivities from './AddActivities';
+import Spinner from './Spinner';
 
 const Activities = () => {
   const userId = getSession();
-  const { data: activities } = useQuery({
+  const { data: activities, isLoading } = useQuery({
     queryKey: ['activities', userId],
     queryFn: () => (userId ? getActivities(userId) : Promise.resolve([])),
     enabled: !!userId,
     staleTime: 0,
   });
+
+  if (isLoading) {
+    // TODO: Add skeleton to prevent layout shift
+    return (
+      <div className="flex items-center justify-center flex-col gap-4 h-full">
+        <Spinner />
+        <span className="text-stone-500 font-medium text-sm">
+          Loading activities...
+        </span>
+      </div>
+    );
+  }
 
   return (
     <div className="h-full">
