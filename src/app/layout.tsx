@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Geist, Geist_Mono, Inter } from 'next/font/google';
 import ProtectedRoute from './components/ProtectedRoute';
 import { Providers } from './components/Providers';
 import SplashScreen from './components/SplashScreen';
@@ -12,6 +12,11 @@ const geistSans = Geist({
 
 const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
+  subsets: ['latin'],
+});
+
+const inter = Inter({
+  variable: '--font-inter',
   subsets: ['latin'],
 });
 
@@ -81,7 +86,7 @@ export default async function RootLayout({
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-stone-50 dark:bg-stone-900`}
+        className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased bg-stone-50 dark:bg-stone-900`}
       >
         <Providers>
           <ProtectedRoute>

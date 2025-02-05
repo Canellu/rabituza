@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 body {
-  font-family: var(--font-geist-sans), var(--font-geist-mono);
+  font-family: var(--font-geist-sans), var(--font-inter), var(--font-geist-mono);
   touch-action: pan-y;
   accent-color: #a3e635;
 }
@@ -72,6 +72,14 @@ body {
 
   .geist-mono {
     font-family: var(--font-geist-mono);
+  }
+
+  .geist-sans {
+    font-family: var(--font-geist-sans);
+  }
+
+  .inter {
+    font-family: var(--font-inter);
   }
 
   input {
