@@ -1,11 +1,11 @@
 import { Button } from '@/components/ui/button';
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from '@/components/ui/dialog';
 import activityOptions from '@/constants/activityOptions';
 import BOULDERING_GYMS from '@/constants/boulderingGyms';
@@ -132,6 +132,12 @@ const ActivityCardBouldering = ({ activity }: ActivityCardBoulderingProps) => {
                 ))}
             </div>
           </div>
+
+          {activity.note && (
+            <p className="text-sm text-stone-500 line-clamp-1">
+              {activity.note}
+            </p>
+          )}
         </motion.div>
       </motion.div>
 

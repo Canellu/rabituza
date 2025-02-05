@@ -21,7 +21,9 @@ interface ActivityCardCalisthenicsProps {
   activity: BaseActivityType & CalisthenicsDataType;
 }
 
-const ActivityCardCalisthenics = ({ activity }: ActivityCardCalisthenicsProps) => {
+const ActivityCardCalisthenics = ({
+  activity,
+}: ActivityCardCalisthenicsProps) => {
   const queryClient = useQueryClient();
   const userId = getSession();
   const Icon = activityOptions.find((opt) => opt.id === activity.type)?.icon;
@@ -101,25 +103,39 @@ const ActivityCardCalisthenics = ({ activity }: ActivityCardCalisthenicsProps) =
                 key={index}
                 className="flex items-center justify-between bg-stone-50 rounded-md p-2 text-sm"
               >
-                <span className="font-medium text-stone-700">{exercise.name}</span>
+                <span className="font-medium text-stone-700">
+                  {exercise.name}
+                </span>
                 <div className="flex gap-3 text-stone-600">
-                  <span>{exercise.sets} {exercise.sets === 1 ? 'set' : 'sets'}</span>
-                  <span>{exercise.reps} {exercise.reps === 1 ? 'rep' : 'reps'}</span>
+                  <span>
+                    {exercise.sets} {exercise.sets === 1 ? 'set' : 'sets'}
+                  </span>
+                  <span>
+                    {exercise.reps} {exercise.reps === 1 ? 'rep' : 'reps'}
+                  </span>
                   {exercise.weight > 0 && <span>+{exercise.weight}kg</span>}
                 </div>
               </div>
             ))}
           </div>
+
+          {activity.note && (
+            <p className="text-sm text-stone-500 line-clamp-1">
+              {activity.note}
+            </p>
+          )}
         </motion.div>
       </motion.div>
 
       <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <DialogContent className="max-w-80 rounded-md">
           <DialogHeader>
-            <DialogTitle className="text-stone-700">Delete Activity</DialogTitle>
+            <DialogTitle className="text-stone-700">
+              Delete Activity
+            </DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete this activity? This action cannot be
-              undone.
+              Are you sure you want to delete this activity? This action cannot
+              be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="flex gap-4 flex-row items-center justify-center">
