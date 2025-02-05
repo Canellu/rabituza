@@ -15,7 +15,7 @@ const SplashScreen = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  if (!isVisible) return null;
+  // if (!isVisible) return null;
 
   return (
     <motion.div
@@ -24,7 +24,7 @@ const SplashScreen = () => {
       transition={{ duration: 0.5, delay: 1.5 }}
       className="fixed inset-0 z-50 flex items-center justify-center bg-stone-950 min-h-[100dvh]"
     >
-      <div className="flex flex-col items-center justify-center">
+      <div className="flex flex-col items-center justify-center pb-52">
         <motion.div
           initial={{ scale: 0.5, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
