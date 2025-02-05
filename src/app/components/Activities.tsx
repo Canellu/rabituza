@@ -34,7 +34,7 @@ const Activities = () => {
 
   return (
     <div className="h-full">
-      <h2 className="text-lg font-semibold mb-3">Recent activities</h2>
+      <h2 className="text-xl font-semibold mb-3">Recent activities</h2>
       {/* Add activities list */}
       <div className="space-y-4">
         {activities?.map((activity) => {
@@ -51,11 +51,11 @@ const Activities = () => {
                   {Icon && (
                     <Icon className="text-primary size-7 rounded-md bg-gradient-to-br from-stone-50 to-stone-100 border p-1" />
                   )}
-                  <span className="font-semibold inter text-stone-700">
+                  <span className="text-lg font-semibold inter text-stone-700">
                     {activityOptions.find((opt) => opt.id === type)?.label}
                   </span>
                 </div>
-                <span className="text-xs text-muted-foreground">
+                <span className="text-sm text-muted-foreground">
                   {activityDate && format(activityDate, 'PP, HH:mm')}
                 </span>
               </div>
@@ -63,7 +63,7 @@ const Activities = () => {
               {/* Render activity-specific details */}
               {activity.type === 'bouldering' && (
                 <div className="flex items-start flex-col text-sm text-muted-foreground capitalize gap-3">
-                  <p className="text-xs font-medium border border-stone-200/70 px-3 py-1 bg-stone-50 max-w-max rounded-sm flex items-center gap-1">
+                  <p className="text-base font-medium border border-stone-200/70 px-3 py-1 bg-stone-50 max-w-max rounded-sm flex items-center gap-1">
                     {activity.gym}
                   </p>
                   <div className="flex flex-wrap gap-1.5">
@@ -86,7 +86,7 @@ const Activities = () => {
                         <span
                           key={idx}
                           className={cn(
-                            'px-2 py-0.5 rounded-sm text-xs',
+                            'px-2 py-0.5 rounded-sm text-sm',
                             getGradeColor(grade.grade).text,
                             getGradeColor(grade.grade).bg
                           )}
