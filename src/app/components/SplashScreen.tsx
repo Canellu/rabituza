@@ -22,7 +22,7 @@ const SplashScreen = () => {
       initial={{ opacity: 1 }}
       animate={{ opacity: 0 }}
       transition={{ duration: 0.5, delay: 1.5 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-stone-950 min-h-[100dvh]"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-stone-50 min-h-[100dvh]"
     >
       <div className="flex flex-col items-center justify-center pb-52">
         <motion.div
@@ -38,7 +38,7 @@ const SplashScreen = () => {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="mt-5 text-3xl font-bold text-stone-200"
+          className="mt-5 text-3xl font-bold text-stone-800"
         >
           Rabituza
         </motion.h1>
