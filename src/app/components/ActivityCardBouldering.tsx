@@ -1,11 +1,11 @@
 import { Button } from '@/components/ui/button';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
 } from '@/components/ui/dialog';
 import activityOptions from '@/constants/activityOptions';
 import BOULDERING_GYMS from '@/constants/boulderingGyms';
@@ -13,7 +13,7 @@ import { deleteActivity } from '@/lib/database/activities/deleteActivity';
 import { cn } from '@/lib/utils';
 import getGradeColor from '@/lib/utils/getGradeColor';
 import { getSession } from '@/lib/utils/userSession';
-import { BaseActivity, BoulderingData } from '@/types/Activity';
+import { BaseActivityType, BoulderingDataType } from '@/types/Activity';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { motion } from 'framer-motion';
@@ -21,7 +21,7 @@ import { Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
 interface ActivityCardBoulderingProps {
-  activity: BaseActivity & BoulderingData;
+  activity: BaseActivityType & BoulderingDataType;
 }
 
 const ActivityCardBouldering = ({ activity }: ActivityCardBoulderingProps) => {

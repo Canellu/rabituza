@@ -22,7 +22,7 @@ const BOULDERING_GYMS = {
       'red',
       'purple',
       'black',
-      'slab of the week',
+      'slab challenge',
     ],
   },
   lokka: {
@@ -35,7 +35,7 @@ const BOULDERING_GYMS = {
       'red',
       'black',
       'silver',
-      'slab of the month',
+      'slab challenge',
     ],
   },
 } as const;

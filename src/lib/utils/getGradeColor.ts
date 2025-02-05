@@ -31,11 +31,7 @@ const getGradeColor = (grade: string) => {
       text: 'text-white [text-shadow:_1px_1px_1px_rgb(0_0_0_/_70%)] font-semibold',
       bg: 'bg-gradient-to-tl from-yellow-300 via-orange-400 to-red-600 border-white',
     },
-    'slab of the week': {
-      text: 'text-white [text-shadow:_1px_1px_1px_rgb(0_0_0_/_70%)] font-semibold',
-      bg: 'bg-gradient-to-tl from-yellow-300 via-orange-400  to-red-600 border-white',
-    },
-    'slab of the month': {
+    'slab challenge': {
       text: 'text-white [text-shadow:_1px_1px_1px_rgb(0_0_0_/_70%)] font-semibold',
       bg: 'bg-gradient-to-tl from-yellow-300 via-orange-400  to-red-600 border-white',
     },

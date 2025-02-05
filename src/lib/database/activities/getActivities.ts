@@ -1,8 +1,15 @@
-import { Activity, ActivityType } from '@/types/Activity';
+import {
+  ActivityRatingsType,
+  ActivityType,
+  ActivityTypes,
+  CalisthenicsExerciseType,
+} from '@/types/Activity';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 
-export const getActivities = async (userId: string): Promise<Activity[]> => {
+export const getActivities = async (
+  userId: string
+): Promise<ActivityType[]> => {
   try {
     const activitiesRef = collection(db, `users/${userId}/activities`);
     const querySnapshot = await getDocs(activitiesRef);
@@ -17,27 +24,33 @@ export const getActivities = async (userId: string): Promise<Activity[]> => {
         userId,
         createdAt: data.createdAt.toDate(),
         activityDate: data.activityDate.toDate(),
+        ratings: data.ratings as ActivityRatingsType,
       };
 
       // Add type-specific fields
       switch (data.type) {
-        case ActivityType.Bouldering:
+        case ActivityTypes.Bouldering:
           return {
             ...baseActivity,
             gym: data.gym,
             grades: data.grades,
           };
-        case ActivityType.Gym:
+        case ActivityTypes.Calisthenics:
+          return {
+            ...baseActivity,
+            exercises: data.exercises.map((exercise: CalisthenicsExerciseType) => ({
+              name: exercise.name,
+              sets: exercise.sets,
+              reps: exercise.reps,
+              weight: exercise.weight || 0,
+            })),
+          };
+        case ActivityTypes.Gym:
           return {
             ...baseActivity,
             // Add gym-specific fields when implemented
           };
-        case ActivityType.Calisthenics:
-          return {
-            ...baseActivity,
-            // Add calisthenics-specific fields when implemented
-          };
-        case ActivityType.Stretching:
+        case ActivityTypes.Stretching:
           return {
             ...baseActivity,
             // Add stretching-specific fields when implemented
@@ -47,7 +60,7 @@ export const getActivities = async (userId: string): Promise<Activity[]> => {
       }
     });
 
-    return (activities as Activity[]).sort(
+    return (activities as unknown as ActivityType[]).sort(
       (a, b) => b.activityDate.getTime() - a.activityDate.getTime()
     );
   } catch (error) {

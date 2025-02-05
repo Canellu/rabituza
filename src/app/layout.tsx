@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono, Inter } from 'next/font/google';
 import ProtectedRoute from './components/ProtectedRoute';
 import { Providers } from './components/Providers';
-import SplashScreen from './components/SplashScreen';
 import './globals.css';
 
 const geistSans = Geist({
@@ -90,7 +89,7 @@ export default async function RootLayout({
       >
         <Providers>
           <ProtectedRoute>
-            <SplashScreen />
+            {/* <SplashScreen /> */}
             {children}
           </ProtectedRoute>
         </Providers>

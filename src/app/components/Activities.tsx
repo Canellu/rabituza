@@ -4,7 +4,7 @@ import { getActivities } from '@/lib/database/activities/getActivities';
 import { getSession } from '@/lib/utils/userSession';
 import { useQuery } from '@tanstack/react-query';
 
-import { ActivityType } from '@/types/Activity';
+import { ActivityTypes } from '@/types/Activity';
 import ActivityCardBouldering from './ActivityCardBouldering';
 import Spinner from './Spinner';
 
@@ -34,7 +34,7 @@ const Activities = () => {
       <h2 className="text-xl font-semibold mb-3">Recent activities</h2>
       <div className="space-y-4 pb-10">
         {activities?.map((activity) => {
-          if (activity.type === ActivityType.Bouldering) {
+          if (activity.type === ActivityTypes.Bouldering) {
             return (
               <ActivityCardBouldering key={activity.id} activity={activity} />
             );

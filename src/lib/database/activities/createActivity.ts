@@ -1,4 +1,4 @@
-import { ActivityData } from '@/types/Activity';
+import { ActivityDataType, BaseActivityType } from '@/types/Activity';
 import {
   collection,
   doc,
@@ -7,10 +7,10 @@ import {
 } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 
-export async function createActivity<T extends ActivityData>(
-  userId: string,
-  activityData: T
-) {
+export async function createActivity<
+  T extends ActivityDataType &
+    Pick<BaseActivityType, 'ratings' | 'activityDate'>
+>(userId: string, activityData: T) {
   const activityId = doc(collection(db, 'activities')).id;
 
   const activityWithUserAndId = {
