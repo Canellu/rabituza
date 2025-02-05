@@ -13,7 +13,7 @@ export type BoulderingGrade = {
 };
 
 export type BaseActivity = {
-  id?: string;
+  id: string;
   userId: string;
   createdAt: Date;
   activityDate: Date;

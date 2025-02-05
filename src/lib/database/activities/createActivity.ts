@@ -11,22 +11,21 @@ export async function createActivity<T extends ActivityData>(
   userId: string,
   activityData: T
 ) {
-  const batch = writeBatch(db);
-
   const activityId = doc(collection(db, 'activities')).id;
 
-  const globalActivityRef = doc(db, 'activities', activityId);
-  const userActivityRef = doc(db, `users/${userId}/activities`, activityId);
-
-  const activityWithUser = {
+  const activityWithUserAndId = {
     ...activityData,
+    id: activityId,
     userId,
     createdAt: serverTimestamp(),
   };
 
-  batch.set(globalActivityRef, activityWithUser);
-  batch.set(userActivityRef, activityWithUser);
+  const globalActivityRef = doc(db, 'activities', activityId);
+  const userActivityRef = doc(db, `users/${userId}/activities`, activityId);
 
+  const batch = writeBatch(db);
+  batch.set(globalActivityRef, activityWithUserAndId);
+  batch.set(userActivityRef, activityWithUserAndId);
   await batch.commit();
 
   return activityId;
