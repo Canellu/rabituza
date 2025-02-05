@@ -6,7 +6,7 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: 'Rabituza',
     description: 'Track &amp; Train',
     start_url: '/',
-    display: 'standalone',
+    display: 'fullscreen',
     background_color: '#0c0a09',
     theme_color: '#0c0a09',
     launch_handler: {
