@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
+import { Textarea } from '@/components/ui/textarea';
 import { createActivity } from '@/lib/database/activities/createActivity';
 import { getSession } from '@/lib/utils/userSession';
 import {
@@ -93,6 +94,8 @@ const CalisthenicsForm = ({ onClose }: CalisthenicsFormProps) => {
     );
   };
 
+  const [note, setNote] = useState<string>('');
+
   const handleSubmit = () => {
     if (!userId) return;
 
@@ -100,6 +103,7 @@ const CalisthenicsForm = ({ onClose }: CalisthenicsFormProps) => {
       type: ActivityTypes.Calisthenics,
       activityDate,
       ratings,
+      note,
       exercises: exercises.map(({ name, sets, reps, weight }) => ({
         name: CALISTHENICS_EXERCISES[name],
         sets: Number(sets),
@@ -247,6 +251,13 @@ const CalisthenicsForm = ({ onClose }: CalisthenicsFormProps) => {
           </div>
         </AnimateHeight>
       </div>
+
+      <Textarea
+        placeholder="Add notes (optional)"
+        value={note}
+        onChange={(e) => setNote(e.target.value)}
+        className="min-h-[100px]"
+      />
 
       <SaveActivityButton
         isPending={isPending}

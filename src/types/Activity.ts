@@ -24,6 +24,7 @@ export type BaseActivityType = {
   createdAt: Date;
   activityDate: Date;
   ratings: ActivityRatingsType;
+  note?: string;
 };
 
 export type BoulderingDataType = {

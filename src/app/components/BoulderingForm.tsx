@@ -15,6 +15,7 @@ import ActivityDateTimePicker from './ActivityDateTimePicker';
 import { ActivityRatings } from './ActivityRatings';
 import { BoulderingGradeSelector } from './BoulderingGradeSelector';
 import SaveActivityButton from './SaveActivityButton';
+import { Textarea } from '@/components/ui/textarea';
 
 interface BoulderingFormProps {
   onClose: () => void;
@@ -60,6 +61,8 @@ const BoulderingForm = ({ onClose }: BoulderingFormProps) => {
     },
   });
 
+  const [note, setNote] = useState<string>('');
+
   const handleSubmit = async () => {
     if (!userId) return;
 
@@ -68,6 +71,7 @@ const BoulderingForm = ({ onClose }: BoulderingFormProps) => {
       gym: selectedGym,
       activityDate,
       ratings,
+      note,
       grades: Object.entries(gradeCount)
         .filter(([_, count]) => count > 0)
         .map(([grade, count]) => ({
@@ -85,7 +89,6 @@ const BoulderingForm = ({ onClose }: BoulderingFormProps) => {
         date={activityDate}
         onDateChange={setActivityDate}
       />
-
       <ActivityRatings ratings={ratings} onChange={setRatings} />
 
       <BoulderingGradeSelector
@@ -93,6 +96,13 @@ const BoulderingForm = ({ onClose }: BoulderingFormProps) => {
         selectedGym={selectedGym}
         onGymChange={handleGymChange}
         onGradeCountChange={setGradeCount}
+      />
+
+      <Textarea
+        placeholder="Add notes (optional)"
+        value={note}
+        onChange={(e) => setNote(e.target.value)}
+        className="min-h-[100px]"
       />
 
       <SaveActivityButton

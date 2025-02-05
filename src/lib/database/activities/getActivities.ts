@@ -25,6 +25,7 @@ export const getActivities = async (
         createdAt: data.createdAt.toDate(),
         activityDate: data.activityDate.toDate(),
         ratings: data.ratings as ActivityRatingsType,
+        note: data.note || '',
       };
 
       // Add type-specific fields
@@ -38,12 +39,14 @@ export const getActivities = async (
         case ActivityTypes.Calisthenics:
           return {
             ...baseActivity,
-            exercises: data.exercises.map((exercise: CalisthenicsExerciseType) => ({
-              name: exercise.name,
-              sets: exercise.sets,
-              reps: exercise.reps,
-              weight: exercise.weight || 0,
-            })),
+            exercises: data.exercises.map(
+              (exercise: CalisthenicsExerciseType) => ({
+                name: exercise.name,
+                sets: exercise.sets,
+                reps: exercise.reps,
+                weight: exercise.weight || 0,
+              })
+            ),
           };
         case ActivityTypes.Gym:
           return {
