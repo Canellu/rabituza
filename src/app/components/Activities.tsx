@@ -6,6 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { ActivityTypes } from '@/types/Activity';
 import ActivityCardBouldering from './ActivityCardBouldering';
+import ActivityCardCalisthenics from './ActivityCardCalisthenics';
 import Spinner from './Spinner';
 
 const Activities = () => {
@@ -37,6 +38,11 @@ const Activities = () => {
           if (activity.type === ActivityTypes.Bouldering) {
             return (
               <ActivityCardBouldering key={activity.id} activity={activity} />
+            );
+          }
+          if (activity.type === ActivityTypes.Calisthenics) {
+            return (
+              <ActivityCardCalisthenics key={activity.id} activity={activity} />
             );
           }
           // Add other activity type handlers here

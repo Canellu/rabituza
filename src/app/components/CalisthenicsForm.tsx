@@ -117,19 +117,19 @@ const CalisthenicsForm = ({ onClose }: CalisthenicsFormProps) => {
 
   return (
     <div className="flex flex-col gap-3">
-      <ActivityRatings ratings={ratings} onChange={setRatings} />
       <ActivityDateTimePicker
         date={activityDate}
         onDateChange={setActivityDate}
       />
+      <ActivityRatings ratings={ratings} onChange={setRatings} />
 
       <div className="space-y-2">
         <Select
           value=""
           onValueChange={(value: keyof typeof CALISTHENICS_EXERCISES) => {
             setExercises((prev) => [
-              ...prev,
               { name: value, sets: '', reps: '', weight: '' },
+              ...prev,
             ]);
           }}
         >
