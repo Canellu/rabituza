@@ -13,16 +13,17 @@ const activityOptions = [
     icon: Mountain,
   },
   {
-    id: 'gym',
-    label: 'Gym',
-    Component: GymForm,
-    icon: Dumbbell,
-  },
-  {
     id: 'calisthenics',
     label: 'Calisthenics',
     Component: CalisthenicsForm,
     icon: Activity,
+  },
+
+  {
+    id: 'gym',
+    label: 'Gym',
+    Component: GymForm,
+    icon: Dumbbell,
   },
   {
     id: 'stretching',
