@@ -114,7 +114,7 @@ const AddGoal = ({ isEditing, setIsEditing, setActiveTab }: AddGoalProps) => {
 
   return (
     <AnimateHeight isOpen={isEditing}>
-      <section className="px-6 pt-8 pb-12 flex flex-col items-center gap-8 overflow-auto bg-white border border-input rounded-md">
+      <section className="px-6 pt-8 pb-12 flex flex-col items-center gap-6 overflow-auto bg-white border border-input rounded-md">
         <div className="flex flex-col gap-2 ">
           <h2 className="text-lg font-semibold text-stone-800">
             Add a New Goal

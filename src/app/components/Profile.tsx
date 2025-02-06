@@ -2,11 +2,11 @@
 
 import { Button } from '@/components/ui/button';
 import { getUser } from '@/lib/database/user/getUser';
+import { cn } from '@/lib/utils';
 import { getSession } from '@/lib/utils/userSession';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { UserPen } from 'lucide-react';
-import Image from 'next/image';
 import { useState } from 'react';
 import EditProfile from './EditProfile';
 import LogoutButton from './LogoutButton';
@@ -14,15 +14,24 @@ import ProfileDetails from './ProfileDetails';
 import RefreshButton from './RefreshButton';
 import Spinner from './Spinner';
 
+const getGradientClass = (userId: string) => {
+  const gradients = [
+    'from-emerald-300 to-emerald-800',
+    'from-blue-400 to-blue-600',
+    'from-violet-400 to-violet-600',
+    'from-amber-400 to-amber-600',
+    'from-rose-300 to-rose-600',
+  ];
+
+  const index = parseInt(userId) % gradients.length;
+  return gradients[index];
+};
+
 const Profile = () => {
   const [editable, setEditable] = useState(false);
 
   const userId = getSession();
-  const {
-    data: user,
-    isPending,
-    error,
-  } = useQuery({
+  const { data: user, isPending } = useQuery({
     queryKey: ['user', userId],
     queryFn: async () => {
       if (!userId) {
@@ -57,14 +66,22 @@ const Profile = () => {
           transition={{ duration: 0.5 }}
           className="flex items-center flex-col gap-4 size w-full"
         >
-          <Image
-            src={user?.picture || `https://picsum.photos/seed/${user?.id}/200`}
-            width={96}
-            height={96}
-            alt="profile_picture"
-            className="rounded-full object-contain"
-          />
-
+          <div
+            className={cn(
+              'flex items-center justify-center size-24 rounded-full bg-gradient-to-br',
+              user?.id &&
+                `from-emerald-300 to-emerald-800 from-blue-400 to-blue-600 from-violet-400 to-violet-600 from-amber-400 to-amber-600 from-rose-300 to-rose-600`,
+              getGradientClass(user.id)
+            )}
+          >
+            <span className="text-3xl font-bold text-white">
+              {(
+                user?.username?.[0] ||
+                user?.first_name?.[0] ||
+                '?'
+              ).toUpperCase()}
+            </span>
+          </div>
           {(user?.username || user?.first_name || user?.last_name) && (
             <div className="flex flex-col items-center gap-2 text-stone-800">
               <span className="text-3xl font-semibold capitalize">
