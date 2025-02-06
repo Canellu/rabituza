@@ -357,13 +357,13 @@ const ProfileDetails = ({ user }: { user?: User }) => {
         })}
 
       <Dialog open={drawerOpen} onOpenChange={setDrawerOpen}>
-        <DialogContent className="max-w-[94%] rounded-md">
+        <DialogContent className="max-w-[94%] rounded-md top-[25%]">
           <DialogHeader>
             <DialogTitle>Edit {fieldLabels[selectedField || '']}</DialogTitle>
           </DialogHeader>
           <div className="p-4">
             {renderInputField()}
-            <div className="flex items-center justify-between mt-4">
+            <div className="flex items-center justify-between mt-10">
               <Button onClick={() => setDrawerOpen(false)} variant="secondary">
                 Cancel
               </Button>
