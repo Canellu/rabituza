@@ -1,4 +1,4 @@
-import { Goal } from '@/types/Goal';
+import { GoalType } from '@/types/Goal';
 import { endOfYear, startOfYear } from 'date-fns';
 
 export enum TimePeriod {
@@ -66,13 +66,13 @@ export const datesToTimePeriod = (
 };
 
 // Function to split goals by time period (using TimePeriod enum)
-export const splitGoalsByTimePeriod = (goals: Goal[]) => {
+export const splitGoalsByTimePeriod = (goals: GoalType[]) => {
   const groupedGoals: {
-    [TimePeriod.Q1]: Goal[];
-    [TimePeriod.Q2]: Goal[];
-    [TimePeriod.Q3]: Goal[];
-    [TimePeriod.Q4]: Goal[];
-    [TimePeriod.Year]: Goal[];
+    [TimePeriod.Q1]: GoalType[];
+    [TimePeriod.Q2]: GoalType[];
+    [TimePeriod.Q3]: GoalType[];
+    [TimePeriod.Q4]: GoalType[];
+    [TimePeriod.Year]: GoalType[];
   } = {
     [TimePeriod.Q1]: [],
     [TimePeriod.Q2]: [],

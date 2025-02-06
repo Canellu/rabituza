@@ -1,14 +1,14 @@
 // firestore/goals.ts
-import { Goal } from '@/types/Goal';
+import { GoalType } from '@/types/Goal';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 
-export const getGoals = async (userId: string): Promise<Goal[]> => {
+export const getGoals = async (userId: string): Promise<GoalType[]> => {
   try {
     const goalsRef = collection(db, `users/${userId}/goals`);
 
     const querySnapshot = await getDocs(goalsRef);
-    const goals: Goal[] = querySnapshot.docs.map((doc) => {
+    const goals: GoalType[] = querySnapshot.docs.map((doc) => {
       const data = doc.data();
       return {
         id: doc.id,

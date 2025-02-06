@@ -19,21 +19,27 @@ import {
   timePeriodToDates,
 } from '@/lib/utils/timePeriod';
 import { getSession } from '@/lib/utils/userSession';
-import { Goal, GoalStatus } from '@/types/Goal';
+import { GoalStatus, GoalType } from '@/types/Goal';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Dispatch, SetStateAction, useState } from 'react';
 import AnimateHeight from './AnimateHeight';
 import RequiredStar from './RequiredStar';
 
-const categories = ['Health', 'Personal Growth', 'Other'];
+const categories = [
+  'Health',
+  'Personal Growth',
+  'Relationships',
+  'Travel',
+  'Hobbies',
+  'Finance',
+  'Career',
+  'Other',
+];
 const timePeriods = ['Year', 'Q1', 'Q2', 'Q3', 'Q4'];
 const tagsList: Option[] = [
   { label: 'Fitness', value: 'Fitness' },
-  { label: 'Reading', value: 'Reading' },
-  { label: 'Running', value: 'Running' },
-  { label: 'Swimming', value: 'Swimming' },
-  { label: 'Writing', value: 'Writing' },
-  { label: 'Yoga', value: 'Yoga' },
+  { label: 'Learning', value: 'Learning' },
+  { label: 'Mindfulness', value: 'Mindfulness' },
 ];
 
 interface AddGoalProps {
@@ -65,14 +71,14 @@ const AddGoal = ({ isEditing, setIsEditing, setActiveTab }: AddGoalProps) => {
 
       // Get current goals to determine the next order
       const currentGoals =
-        (await queryClient.getQueryData<Goal[]>(['goals', userId])) || [];
+        (await queryClient.getQueryData<GoalType[]>(['goals', userId])) || [];
       const periodGoals = currentGoals.filter((goal) => {
         const goalPeriod = splitGoalsByTimePeriod([goal])[timePeriod];
         return goalPeriod?.length > 0;
       });
       const nextOrder = periodGoals.length;
 
-      const goalData: Omit<Goal, 'id'> = {
+      const goalData: Omit<GoalType, 'id'> = {
         title,
         description,
         status,
@@ -183,7 +189,7 @@ const AddGoal = ({ isEditing, setIsEditing, setActiveTab }: AddGoalProps) => {
         {/* Tags */}
         <div className="flex flex-col-reverse w-full gap-2">
           <MultiSelect
-            maxSelected={3}
+            maxSelected={6}
             options={tagsList}
             value={tags}
             placeholder="Select or create your own tags"

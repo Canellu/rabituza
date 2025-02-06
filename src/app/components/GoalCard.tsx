@@ -10,18 +10,18 @@ import {
 } from '@/components/ui/dialog';
 import { DELETE_DRAG_THRESHOLD } from '@/constants/deleteDragThreshold';
 import { cn } from '@/lib/utils';
-import { Goal, GoalStatus } from '@/types/Goal';
+import { GoalStatus, GoalType } from '@/types/Goal';
 import { motion, PanInfo } from 'framer-motion';
 import { GripVertical, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
 interface GoalCardProps {
-  goal: Goal;
+  goal: GoalType;
   isOrdering: boolean;
   draggingId: string | null;
   onDragStart: (id: string) => void;
-  onDragEnd: (info: PanInfo, goal: Goal) => void;
-  onCheck: (goal: Goal) => void;
+  onDragEnd: (info: PanInfo, goal: GoalType) => void;
+  onCheck: (goal: GoalType) => void;
 }
 
 const GoalCard = ({
@@ -51,16 +51,15 @@ const GoalCard = ({
         transition={{ duration: 0.5 }}
       >
         <div className="absolute inset-1 bg-red-500 rounded-lg flex items-center justify-end px-4">
-          <Trash2 className="text-secondary" />
+          <Trash2 className="text-white" />
         </div>
         <motion.div
           className={cn(
-            `${
-              goal.status === GoalStatus.Completed
-                ? 'bg-primary shadow-none'
-                : 'bg-secondary shadow-sm'
-            }`,
-            'rounded-lg p-5 border flex flex-row gap-3 items-center w-full transition-colors duration-200 ease-in-out',
+            'bg-gradient-to-tr',
+            goal.status === GoalStatus.Completed
+              ? ' from-lime-100 to-emerald-500 shadow-md'
+              : 'from-white to-stone-100',
+            'rounded-lg p-5 border flex flex-row gap-3 items-center w-full',
             'relative',
             isOrdering ? 'pl-3' : 'pl-5'
           )}
@@ -85,13 +84,35 @@ const GoalCard = ({
             )}
           />
           <div className="flex-grow">
-            <h2 className="text-lg font-semibold capitalize">{goal.title}</h2>
-            <p className="text-stone-600 text-sm">{goal.description}</p>
+            <h2 className="text-lg font-semibold capitalize text-stone-800">
+              {goal.title}
+            </h2>
+            <p className="text-stone-700 text-sm">{goal.description}</p>
+            <p className="text-stone-600 text-xs mt-1 italic">
+              Category: {goal.category}
+            </p>
+            {goal.tags && goal.tags.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-3">
+                {goal.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className={cn(
+                      ' text-stone-700 border text-xs px-2 py-1 rounded-full',
+                      goal.status === GoalStatus.Completed
+                        ? 'bg-white/30 backdrop-blur-sm border-white/20'
+                        : 'bg-secondary text-stone-700'
+                    )}
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
           <Checkbox
             className={cn(
               'size-5 bg-white',
-              'data-[state=checked]:bg-secondary'
+              'data-[state=checked]:bg-emerald-100 data-[state=checked]:text-emerald-700 data-[state=checked]:border-emerald-100'
             )}
             checked={goal.status === GoalStatus.Completed}
           />

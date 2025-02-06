@@ -9,7 +9,7 @@ import { getGoals } from '@/lib/database/goals/getGoals';
 import { cn } from '@/lib/utils';
 import { splitGoalsByTimePeriod, TimePeriod } from '@/lib/utils/timePeriod';
 import { getSession } from '@/lib/utils/userSession';
-import { Goal, GoalStatus } from '@/types/Goal';
+import { GoalStatus, GoalType } from '@/types/Goal';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AnimatePresence, PanInfo, Reorder } from 'framer-motion';
 import { ArrowDownUp, Plus } from 'lucide-react';
@@ -25,7 +25,7 @@ const Goals = () => {
 
   const [activeTab, setActiveTab] = useState<TimePeriod>(TimePeriod.Year);
   const [isEditing, setIsEditing] = useState(false);
-  const [localGoals, setLocalGoals] = useState<Goal[]>([]);
+  const [localGoals, setLocalGoals] = useState<GoalType[]>([]);
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const [isOrdering, setIsOrdering] = useState(false);
 
@@ -33,7 +33,7 @@ const Goals = () => {
   const haveGoals = splittedGoals[activeTab]?.length > 0;
   const year = new Date().getFullYear();
 
-  const { isLoading, error, data } = useQuery<Goal[], Error>({
+  const { isLoading, error, data } = useQuery<GoalType[], Error>({
     queryKey: ['goals', userId],
     queryFn: () => getGoals(userId!),
     enabled: !!userId,
@@ -46,7 +46,7 @@ const Goals = () => {
   }, [data]);
 
   const { mutate } = useMutation({
-    mutationFn: (updatedGoal: Goal) => {
+    mutationFn: (updatedGoal: GoalType) => {
       if (!userId || !updatedGoal.id) {
         throw new Error('Missing userId or goalId');
       }
@@ -77,12 +77,12 @@ const Goals = () => {
     },
   });
 
-  const debouncedMutation = useDebounce((goal: Goal) => {
+  const debouncedMutation = useDebounce((goal: GoalType) => {
     if (!userId || !goal.id) return;
     mutate(goal);
   }, 500);
 
-  const handleCheck = (goal: Goal) => {
+  const handleCheck = (goal: GoalType) => {
     if (!goal.id) return;
 
     const newStatus =
@@ -104,7 +104,7 @@ const Goals = () => {
     debouncedMutation(updatedGoal);
   };
 
-  const handleReorder = (newOrder: Goal[]) => {
+  const handleReorder = (newOrder: GoalType[]) => {
     // Only update local state during dragging
     setLocalGoals((prev) => {
       const activeTabGoalsMap = new Set(
@@ -164,7 +164,7 @@ const Goals = () => {
     },
   });
 
-  const handleDragEnd = (info: PanInfo, goal: Goal) => {
+  const handleDragEnd = (info: PanInfo, goal: GoalType) => {
     if (info.offset.x < DELETE_DRAG_THRESHOLD) {
       setLocalGoals((prev) => prev.filter((g) => g.id !== goal.id));
       if (userId && goal.id) {

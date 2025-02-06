@@ -1,4 +1,4 @@
-import { Goal } from '@/types/Goal';
+import { GoalType } from '@/types/Goal';
 import {
   collection,
   doc,
@@ -12,7 +12,7 @@ import { db } from '../firebaseConfig';
 export const createOrUpdateGoal = async (
   userId: string,
   goalId: string | null,
-  goalData: Goal
+  goalData: GoalType
 ): Promise<void> => {
   try {
     // Convert startDate and endDate to Firestore Timestamps if they are JavaScript Date objects
