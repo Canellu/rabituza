@@ -1,5 +1,6 @@
 'use client';
 
+import { Textarea } from '@/components/ui/textarea';
 import BOULDERING_GYMS from '@/constants/boulderingGyms';
 import { createActivity } from '@/lib/database/activities/createActivity';
 import { getSession } from '@/lib/utils/userSession';
@@ -15,7 +16,6 @@ import ActivityDateTimePicker from './ActivityDateTimePicker';
 import { ActivityRatings } from './ActivityRatings';
 import { BoulderingGradeSelector } from './BoulderingGradeSelector';
 import SaveActivityButton from './SaveActivityButton';
-import { Textarea } from '@/components/ui/textarea';
 
 interface BoulderingFormProps {
   onClose: () => void;
@@ -67,7 +67,7 @@ const BoulderingForm = ({ onClose }: BoulderingFormProps) => {
     if (!userId) return;
 
     const data = {
-      type: ActivityTypes.Bouldering,
+      type: ActivityTypes.Climbing,
       gym: selectedGym,
       activityDate,
       ratings,

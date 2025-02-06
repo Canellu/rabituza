@@ -50,7 +50,7 @@ const AddActivities = () => {
               <DropdownMenuItem
                 onSelect={() => handleActivitySelect(exercise.id)}
               >
-                <exercise.icon className="text-primary bg-gradient-to-b from-stone-600 to-stone-950 p-1.5 rounded-md min-w-7 min-h-7" />
+                <exercise.icon className="text-white bg-emerald-500 p-1.5 rounded-md min-w-8 min-h-8" />
                 {exercise.label}
               </DropdownMenuItem>
             </Fragment>

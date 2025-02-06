@@ -85,7 +85,7 @@ const ActivityCardCalisthenics = ({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               {Icon && (
-                <Icon className="text-lime-500 size-7 rounded-md bg-gradient-to-br from-stone-50 to-stone-100 border p-1" />
+                <Icon className="text-white size-6 rounded-md bg-emerald-500 p-1" />
               )}
               <span className="text-lg font-semibold inter text-stone-700">
                 {activityOptions.find((opt) => opt.id === activity.type)?.label}
