@@ -291,20 +291,22 @@ const ProfileDetails = ({ user }: { user?: User }) => {
       case 'bio':
         return (
           <div className="flex flex-col w-full gap-2">
+            <Label htmlFor="bio">About Me</Label>
             <Textarea
-              rows={8}
+              rows={6}
               id="bio"
               value={bio}
               onChange={(e) => setBio(e.target.value)}
               placeholder="Get personalized messages based on your bio."
             />
-            <Label htmlFor="bio">About Me</Label>
           </div>
         );
       default:
         return null;
     }
   };
+
+  const shouldAutoFocus = ['username', 'first_name', 'last_name', 'bio'].includes(selectedField || '');
 
   return (
     <div className="flex flex-col py-4 rounded-lg border gap-2 bg-secondary">
@@ -357,7 +359,10 @@ const ProfileDetails = ({ user }: { user?: User }) => {
         })}
 
       <Dialog open={drawerOpen} onOpenChange={setDrawerOpen}>
-        <DialogContent className="max-w-[94%] rounded-md p-4" autoFocus={false}>
+        <DialogContent
+          className={`max-w-[94%] rounded-md p-4 ${shouldAutoFocus ? 'top-[20%]' : ''}`}
+          autoFocus={shouldAutoFocus}
+        >
           <DialogHeader>
             <DialogTitle>Edit {fieldLabels[selectedField || '']}</DialogTitle>
           </DialogHeader>
