@@ -196,8 +196,8 @@ const ProfileDetails = ({ user }: { user?: User }) => {
                 initialFocus
                 classNames={{
                   caption: 'hidden',
-                  head_row: 'flex space-x-2',
-                  row: 'flex w-full mt-2 space-x-2',
+                  head_row: 'flex space-x-1',
+                  row: 'flex w-full mt-2 space-x-1',
                 }}
                 month={new Date(viewYear, viewMonth)}
                 className="items-center flex w-full justify-center rounded-md border bg-white mt-2"
@@ -357,7 +357,7 @@ const ProfileDetails = ({ user }: { user?: User }) => {
         })}
 
       <Dialog open={drawerOpen} onOpenChange={setDrawerOpen}>
-        <DialogContent className="max-w-[94%] rounded-md top-[25%]">
+        <DialogContent className="max-w-[94%] rounded-md p-4" autoFocus={false}>
           <DialogHeader>
             <DialogTitle>Edit {fieldLabels[selectedField || '']}</DialogTitle>
           </DialogHeader>
