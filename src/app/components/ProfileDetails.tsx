@@ -118,6 +118,7 @@ const ProfileDetails = ({ user }: { user?: User }) => {
               onChange={(e) => setUsername(e.target.value)}
               placeholder="Username"
               className="peer"
+              autoFocus
             />
             <Label htmlFor="username">Username</Label>
           </div>
@@ -133,6 +134,7 @@ const ProfileDetails = ({ user }: { user?: User }) => {
               onChange={(e) => setFirstName(e.target.value)}
               placeholder="First name"
               className="peer"
+              autoFocus
             />
             <Label htmlFor="first_name">First name</Label>
           </div>
@@ -148,6 +150,7 @@ const ProfileDetails = ({ user }: { user?: User }) => {
               onChange={(e) => setLastName(e.target.value)}
               placeholder="Last name"
               className="peer"
+              autoFocus
             />
             <Label htmlFor="last_name">Last name</Label>
           </div>
@@ -301,6 +304,7 @@ const ProfileDetails = ({ user }: { user?: User }) => {
               onChange={(e) => setBio(e.target.value)}
               placeholder="Get personalized messages based on your bio."
               className="peer"
+              autoFocus
             />
             <Label htmlFor="bio">About Me</Label>
           </div>
@@ -361,7 +365,7 @@ const ProfileDetails = ({ user }: { user?: User }) => {
         })}
 
       <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
-        <DrawerContent className="fixed flex flex-col bg-white border border-gray-200 border-b-none rounded-t-[10px] bottom-0 left-0 right-0 h-full max-h-[90%] mx-[-1px]">
+        <DrawerContent className="fixed flex flex-col bg-white border border-gray-200 border-b-none rounded-t-[10px] bottom-0 left-0 right-0 h-full max-h-[98%] mx-[-1px]">
           <DrawerHeader>
             <DrawerTitle>Edit {fieldLabels[selectedField || '']}</DrawerTitle>
           </DrawerHeader>
