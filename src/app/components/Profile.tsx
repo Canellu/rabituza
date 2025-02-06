@@ -48,23 +48,23 @@ const Profile = () => {
   }
 
   return (
-    <div className="flex items-center justify-between flex-col h-full gap-8 py-10">
+    <div className="flex items-center justify-between flex-col h-full gap-8 pt-4 pb-10">
       <div className="flex items-center flex-col gap-4 w-full">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
-          className="flex items-center flex-col gap-4 size w-full"
+          className="flex items-center flex-col gap-3 size w-full"
         >
           <div
             className={cn(
-              'flex items-center justify-center size-24 rounded-full bg-gradient-to-br',
+              'flex items-center justify-center size-20 rounded-full bg-gradient-to-br',
               user?.id &&
                 `from-emerald-300 to-emerald-800 from-blue-400 to-blue-600 from-violet-400 to-violet-600 from-amber-400 to-amber-600 from-rose-300 to-rose-600`,
               getGradientClass(user.id)
             )}
           >
-            <span className="text-3xl font-bold text-white inter">
+            <span className="text-2xl font-bold text-white inter">
               {(
                 user?.username?.[0] ||
                 user?.first_name?.[0] ||
@@ -73,13 +73,13 @@ const Profile = () => {
             </span>
           </div>
           {(user?.username || user?.first_name || user?.last_name) && (
-            <div className="flex flex-col items-center gap-2 text-stone-800">
-              <span className="text-3xl font-semibold capitalize">
+            <div className="flex flex-col items-center gap-1 text-stone-800">
+              <span className="text-xl font-semibold capitalize">
                 {user?.username
                   ? user?.username
                   : `${user?.first_name} ${user?.last_name}`}
               </span>
-              <span className="text-stone-500 text-sm">{user?.email}</span>
+              <span className="text-stone-500 text-xs">{user?.email}</span>
             </div>
           )}
         </motion.div>

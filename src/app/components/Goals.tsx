@@ -258,9 +258,16 @@ const Goals = () => {
       )}
 
       {!isLoading && !error && !haveGoals && (
-        <div className="text-stone-500 text-center max-w-44 mx-auto">
-          You have no goals for{' '}
-          {activeTab === TimePeriod.Year ? year : activeTab} 🥲
+        <div className="text-stone-600 text-center p-4 mx-auto">
+          {activeTab === TimePeriod.Year && `You have no goals for ${year} 🥲`}
+          {activeTab === TimePeriod.Q1 &&
+            'Break down your yearly goals into manageable chunks to start the year strong.'}
+          {activeTab === TimePeriod.Q2 &&
+            'Reflect on your progress and set new goals for the upcoming months.'}
+          {activeTab === TimePeriod.Q3 &&
+            'Reassess your objectives and make adjustments to stay on track.'}
+          {activeTab === TimePeriod.Q4 &&
+            'Finish the year strong by setting clear and achievable goals.'}
         </div>
       )}
 
