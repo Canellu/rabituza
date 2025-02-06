@@ -110,54 +110,48 @@ const ProfileDetails = ({ user }: { user?: User }) => {
     switch (selectedField) {
       case 'username':
         return (
-          <div className="flex flex-col-reverse w-full gap-2">
+          <div className="flex flex-col w-full gap-2">
+            <Label htmlFor="username">Username</Label>
             <Input
               type="text"
               id="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="Username"
-              className="peer"
-              autoFocus
             />
-            <Label htmlFor="username">Username</Label>
           </div>
         );
 
       case 'first_name':
         return (
-          <div className="flex flex-col-reverse w-full gap-2">
+          <div className="flex flex-col w-full gap-2">
+            <Label htmlFor="first_name">First name</Label>
             <Input
               type="text"
               id="first_name"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
               placeholder="First name"
-              className="peer"
-              autoFocus
             />
-            <Label htmlFor="first_name">First name</Label>
           </div>
         );
 
       case 'last_name':
         return (
-          <div className="flex flex-col-reverse w-full gap-2">
+          <div className="flex flex-col w-full gap-2">
+            <Label htmlFor="last_name">Last name</Label>
             <Input
               type="text"
               id="last_name"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
               placeholder="Last name"
-              className="peer"
-              autoFocus
             />
-            <Label htmlFor="last_name">Last name</Label>
           </div>
         );
       case 'dob':
         return (
-          <div className="flex flex-col-reverse w-full gap-2">
+          <div className="flex flex-col w-full gap-2">
             <div className="rounded-md">
               <div className="flex gap-2">
                 {/* Month Select */}
@@ -213,7 +207,8 @@ const ProfileDetails = ({ user }: { user?: User }) => {
         );
       case 'gender':
         return (
-          <div className="flex flex-col-reverse w-full gap-2">
+          <div className="flex flex-col w-full gap-2">
+            <Label htmlFor="gender">Gender</Label>
             <Select value={gender} onValueChange={(g) => setGender(g)}>
               <SelectTrigger
                 className={cn(
@@ -230,13 +225,13 @@ const ProfileDetails = ({ user }: { user?: User }) => {
                 <SelectItem value="other">Other</SelectItem>
               </SelectContent>
             </Select>
-            <Label htmlFor="gender">Gender</Label>
           </div>
         );
       case 'weight':
         return (
           <div className="flex w-full items-end gap-3 justify-center">
-            <div className="flex flex-col-reverse w-full gap-1">
+            <div className="flex flex-col w-full gap-1">
+              <Label htmlFor="weight">Weight</Label>
               <Slider
                 value={[weight || 70]}
                 max={120}
@@ -245,7 +240,6 @@ const ProfileDetails = ({ user }: { user?: User }) => {
                 onValueChange={(vals) => setWeight(vals[0])}
                 className="h-10 "
               />
-              <Label htmlFor="weight">Weight</Label>
             </div>
 
             <div className="flex items-center gap-1 text-base min-w-20">
@@ -268,7 +262,8 @@ const ProfileDetails = ({ user }: { user?: User }) => {
       case 'height':
         return (
           <div className="flex w-full items-end gap-3 justify-center">
-            <div className="flex flex-col-reverse w-full gap-1">
+            <div className="flex flex-col w-full gap-1">
+              <Label htmlFor="height">Height</Label>
               <Slider
                 value={[height]}
                 max={200}
@@ -277,7 +272,6 @@ const ProfileDetails = ({ user }: { user?: User }) => {
                 onValueChange={(vals) => setHeight(vals[0])}
                 className="h-10 "
               />
-              <Label htmlFor="height">Height</Label>
             </div>
 
             <div className="flex items-center gap-1 text-base min-w-20">
@@ -296,15 +290,13 @@ const ProfileDetails = ({ user }: { user?: User }) => {
         );
       case 'bio':
         return (
-          <div className="flex flex-col-reverse w-full gap-2">
+          <div className="flex flex-col w-full gap-2">
             <Textarea
               rows={8}
               id="bio"
               value={bio}
               onChange={(e) => setBio(e.target.value)}
               placeholder="Get personalized messages based on your bio."
-              className="peer"
-              autoFocus
             />
             <Label htmlFor="bio">About Me</Label>
           </div>
