@@ -87,7 +87,7 @@ const Menu = () => {
       {/* Tab Content */}
       {tabs.map((tab) => (
         <TabsContent key={tab.value} value={tab.value} className="mt-0">
-          <div className="h-[calc(100dvh-80px)] overflow-auto flex flex-col ">
+          <div className="h-[calc(100dvh-80px)] overflow-auto flex flex-col max-w-3xl mx-auto">
             <section className="sticky top-0 px-4 pt-4">
               <div className="flex items-center justify-between">
                 <h1 className="font-bold text-2xl text-stone-800">

@@ -1,11 +1,11 @@
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import {
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-} from '@/components/ui/drawer';
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -364,11 +364,11 @@ const ProfileDetails = ({ user }: { user?: User }) => {
           );
         })}
 
-      <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
-        <DrawerContent className="fixed flex flex-col bg-white border border-gray-200 border-b-none rounded-t-[10px] bottom-0 left-0 right-0 h-full max-h-[98%] mx-[-1px]">
-          <DrawerHeader>
-            <DrawerTitle>Edit {fieldLabels[selectedField || '']}</DrawerTitle>
-          </DrawerHeader>
+      <Dialog open={drawerOpen} onOpenChange={setDrawerOpen}>
+        <DialogContent className="max-w-[94%] rounded-md">
+          <DialogHeader>
+            <DialogTitle>Edit {fieldLabels[selectedField || '']}</DialogTitle>
+          </DialogHeader>
           <div className="p-4">
             {renderInputField()}
             <div className="flex items-center justify-between mt-4">
@@ -378,8 +378,8 @@ const ProfileDetails = ({ user }: { user?: User }) => {
               <Button onClick={handleSaveProfile}>Save</Button>
             </div>
           </div>
-        </DrawerContent>
-      </Drawer>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

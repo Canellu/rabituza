@@ -48,7 +48,7 @@ const ActivitiesYear = ({ activities = [] }: ActivitiesYearProps) => {
 
   return (
     <div className="overflow-auto border bg-gradient-to-b from-white to-emerald-50 rounded-md px-2 pt-10 pb-2">
-      <ChartContainer config={chartConfig} className="h-[273px] w-[700px]">
+      <ChartContainer config={chartConfig} className="h-[273px] w-[680px]">
         <BarChart data={monthlyData}>
           <defs>
             <linearGradient id="activityGradient" x1="0" y1="0" x2="0" y2="1">
