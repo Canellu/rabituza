@@ -1,14 +1,11 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
 import { getUser } from '@/lib/database/user/getUser';
 import { cn } from '@/lib/utils';
 import { getSession } from '@/lib/utils/userSession';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { UserPen } from 'lucide-react';
 import { useState } from 'react';
-import EditProfile from './EditProfile';
 import LogoutButton from './LogoutButton';
 import ProfileDetails from './ProfileDetails';
 import RefreshButton from './RefreshButton';
@@ -74,7 +71,7 @@ const Profile = () => {
               getGradientClass(user.id)
             )}
           >
-            <span className="text-3xl font-bold text-white">
+            <span className="text-3xl font-bold text-white inter">
               {(
                 user?.username?.[0] ||
                 user?.first_name?.[0] ||
@@ -95,7 +92,7 @@ const Profile = () => {
         </motion.div>
       </div>
 
-      <div className="flex flex-col items-center justify-center w-full gap-6">
+      {/* <div className="flex flex-col items-center justify-center w-full gap-6">
         <Button
           onClick={() => setEditable((prev) => !prev)}
           variant="outline"
@@ -106,7 +103,7 @@ const Profile = () => {
           Edit profile
         </Button>
         <EditProfile editable={editable} setEditable={setEditable} />
-      </div>
+      </div> */}
 
       <ProfileDetails user={user} />
 

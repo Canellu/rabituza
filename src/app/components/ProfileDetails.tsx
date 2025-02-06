@@ -9,11 +9,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import {
   Select,
   SelectContent,
   SelectItem,
@@ -27,7 +22,6 @@ import { months } from '@/constants/months';
 import { cn } from '@/lib/utils';
 import { User } from '@/types/User';
 import { format } from 'date-fns';
-import { CalendarIcon } from 'lucide-react';
 import { Fragment, useEffect, useState } from 'react';
 import useCreateOrUpdateUser from '../hooks/useCreateOrUpdateUser';
 
@@ -47,7 +41,6 @@ const ProfileDetails = ({ user }: { user?: User }) => {
   const [date, setDate] = useState<Date>();
   const [viewYear, setViewYear] = useState(new Date().getFullYear());
   const [viewMonth, setViewMonth] = useState(new Date().getMonth());
-  const [popoverOpen, setPopoverOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [gender, setGender] = useState('');
   const [height, setHeight] = useState(170);
@@ -84,22 +77,7 @@ const ProfileDetails = ({ user }: { user?: User }) => {
         setViewMonth(dob.getMonth());
       }
     }
-  }, [user]);
-
-  const handleMonthChange = (monthIndex: number) => {
-    setViewMonth(monthIndex);
-  };
-
-  const handleYearChange = (year: number) => {
-    setViewYear(year);
-  };
-
-  const handleDateSelect = (selectedDate: Date | undefined) => {
-    setDate(selectedDate);
-    if (selectedDate) {
-      setPopoverOpen(false);
-    }
-  };
+  }, [user, drawerOpen]);
 
   const handleFieldClick = (field: string) => {
     setSelectedField(field);
@@ -177,80 +155,57 @@ const ProfileDetails = ({ user }: { user?: User }) => {
       case 'dob':
         return (
           <div className="flex flex-col-reverse w-full gap-2">
-            <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
-              <PopoverTrigger asChild>
-                <Button
-                  id="dob"
-                  variant={'outline'}
-                  className={cn(
-                    'w-full justify-start text-left font-normal hover:bg-white text-base rounded-md',
-                    !date && 'text-muted-foreground '
-                  )}
+            <div className="rounded-md">
+              <div className="flex gap-2">
+                {/* Month Select */}
+                <Select
+                  onValueChange={(value) => setViewMonth(Number(value))}
+                  defaultValue={viewMonth.toString()}
                 >
-                  <CalendarIcon />
-                  {date ? (
-                    format(date, 'do MMMM yyyy')
-                  ) : (
-                    <span>Pick a date</span>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <div className="p-4">
-                  <div className="flex gap-2">
-                    {/* Month Select */}
-                    <Select
-                      onValueChange={(value) =>
-                        handleMonthChange(Number(value))
-                      }
-                      defaultValue={viewMonth.toString()}
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Month" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {months.map((month, index) => (
-                          <SelectItem key={index} value={index.toString()}>
-                            {month}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    {/* Year Select */}
-                    <Select
-                      onValueChange={(value) => handleYearChange(Number(value))}
-                      defaultValue={viewYear.toString()}
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Year" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {years.map((year) => (
-                          <SelectItem key={year} value={year.toString()}>
-                            {year}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  {/* Calendar */}
-                  <Calendar
-                    mode="single"
-                    weekStartsOn={1}
-                    selected={date}
-                    fixedWeeks
-                    onSelect={handleDateSelect}
-                    initialFocus
-                    className="p-1"
-                    classNames={{
-                      caption: 'hidden',
-                    }}
-                    month={new Date(viewYear, viewMonth)}
-                  />
-                </div>
-              </PopoverContent>
-            </Popover>
-            <Label htmlFor="dob">Date of Birth</Label>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Month" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {months.map((month, index) => (
+                      <SelectItem key={index} value={index.toString()}>
+                        {month}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {/* Year Select */}
+                <Select
+                  onValueChange={(value) => setViewYear(Number(value))}
+                  defaultValue={viewYear.toString()}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Year" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {years.map((year) => (
+                      <SelectItem key={year} value={year.toString()}>
+                        {year}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <Calendar
+                mode="single"
+                weekStartsOn={1}
+                selected={date}
+                showOutsideDays={false}
+                onSelect={setDate}
+                initialFocus
+                classNames={{
+                  caption: 'hidden',
+                  head_row: 'flex space-x-2',
+                  row: 'flex w-full mt-2 space-x-2',
+                }}
+                month={new Date(viewYear, viewMonth)}
+                className="items-center flex w-full justify-center rounded-md border bg-white mt-2"
+              />
+            </div>
           </div>
         );
       case 'gender':
@@ -340,14 +295,14 @@ const ProfileDetails = ({ user }: { user?: User }) => {
         return (
           <div className="flex flex-col-reverse w-full gap-2">
             <Textarea
-              rows={6}
+              rows={8}
               id="bio"
               value={bio}
               onChange={(e) => setBio(e.target.value)}
               placeholder="Get personalized messages based on your bio."
               className="peer"
             />
-            <Label htmlFor="bio">About me</Label>
+            <Label htmlFor="bio">About Me</Label>
           </div>
         );
       default:
@@ -356,7 +311,7 @@ const ProfileDetails = ({ user }: { user?: User }) => {
   };
 
   return (
-    <div className="flex flex-col p-4 py-6 rounded-lg border gap-2 bg-secondary">
+    <div className="flex flex-col py-4 rounded-lg border gap-2 bg-secondary">
       {user &&
         Object.entries(user).map(([key, value], index, array) => {
           if (excludedFields.includes(key)) {
@@ -365,12 +320,6 @@ const ProfileDetails = ({ user }: { user?: User }) => {
 
           const label = fieldLabels[key] || key.replace('_', ' ');
           const isBio = key === 'bio';
-          const containerClass = isBio
-            ? 'flex flex-col px-2 gap-3'
-            : 'flex justify-between items-center px-2 py-2 transition-colors duration-200 ease-in-out';
-          const valueClass = isBio
-            ? 'text-gray-600'
-            : 'text-gray-800 font-medium text-right';
 
           let formattedValue: React.ReactNode;
 
@@ -389,11 +338,22 @@ const ProfileDetails = ({ user }: { user?: User }) => {
           return (
             <Fragment key={key}>
               <div
-                className={containerClass}
+                className={cn(
+                  'flex py-1 px-4',
+                  isBio ? 'flex-col gap-3' : 'justify-between items-center'
+                )}
                 onClick={() => handleFieldClick(key)}
               >
-                <div className="capitalize text-gray-500">{label}</div>
-                <div className={valueClass}>{formattedValue}</div>
+                <div className="text-secondary-foreground">{label}</div>
+                <div
+                  className={cn(
+                    isBio
+                      ? 'text-secondary-foreground whitespace-pre-line p-4 border rounded-md bg-stone-50'
+                      : 'text-emerald-600 font-medium text-right'
+                  )}
+                >
+                  {formattedValue}
+                </div>
               </div>
               {index < array.length - 1 && <Separator />}
             </Fragment>
@@ -401,7 +361,7 @@ const ProfileDetails = ({ user }: { user?: User }) => {
         })}
 
       <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
-        <DrawerContent className="fixed flex flex-col bg-white border border-gray-200 border-b-none rounded-t-[10px] bottom-0 left-0 right-0 h-full max-h-[98%] mx-[-1px]">
+        <DrawerContent className="fixed flex flex-col bg-white border border-gray-200 border-b-none rounded-t-[10px] bottom-0 left-0 right-0 h-full max-h-[90%] mx-[-1px]">
           <DrawerHeader>
             <DrawerTitle>Edit {fieldLabels[selectedField || '']}</DrawerTitle>
           </DrawerHeader>
