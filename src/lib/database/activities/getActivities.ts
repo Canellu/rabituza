@@ -30,7 +30,7 @@ export const getActivities = async (
 
       // Add type-specific fields
       switch (data.type) {
-        case ActivityTypes.Bouldering:
+        case ActivityTypes.Climbing:
           return {
             ...baseActivity,
             gym: data.gym,

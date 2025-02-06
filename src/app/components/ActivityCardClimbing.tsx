@@ -13,18 +13,18 @@ import { deleteActivity } from '@/lib/database/activities/deleteActivity';
 import { cn } from '@/lib/utils';
 import getGradeColor from '@/lib/utils/getGradeColor';
 import { getSession } from '@/lib/utils/userSession';
-import { BaseActivityType, BoulderingDataType } from '@/types/Activity';
+import { BaseActivityType, ClimbingDataType } from '@/types/Activity';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { motion } from 'framer-motion';
 import { Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
-interface ActivityCardBoulderingProps {
-  activity: BaseActivityType & BoulderingDataType;
+interface ActivityCardClimbingProps {
+  activity: BaseActivityType & ClimbingDataType;
 }
 
-const ActivityCardBouldering = ({ activity }: ActivityCardBoulderingProps) => {
+const ActivityCardClimbing = ({ activity }: ActivityCardClimbingProps) => {
   const queryClient = useQueryClient();
   const userId = getSession();
   const Icon = activityOptions.find((opt) => opt.id === activity.type)?.icon;
@@ -86,7 +86,7 @@ const ActivityCardBouldering = ({ activity }: ActivityCardBoulderingProps) => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               {Icon && (
-                <Icon className="text-primary size-7 rounded-md bg-gradient-to-br from-stone-50 to-stone-100 border p-1" />
+                <Icon className="text-lime-500 size-7 rounded-md bg-gradient-to-br from-stone-50 to-stone-100 border p-1" />
               )}
               <span className="text-lg font-semibold inter text-stone-700">
                 {activityOptions.find((opt) => opt.id === activity.type)?.label}
@@ -174,4 +174,4 @@ const ActivityCardBouldering = ({ activity }: ActivityCardBoulderingProps) => {
   );
 };
 
-export default ActivityCardBouldering;
+export default ActivityCardClimbing;

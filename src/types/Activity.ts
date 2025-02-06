@@ -1,5 +1,5 @@
 export const ActivityTypes = {
-  Bouldering: 'bouldering',
+  Climbing: 'climbing',
   Gym: 'gym',
   Calisthenics: 'calisthenics',
   Stretching: 'stretching',
@@ -7,7 +7,7 @@ export const ActivityTypes = {
 
 export type Activity = (typeof ActivityTypes)[keyof typeof ActivityTypes];
 
-export type BoulderingGradeType = {
+export type ClimbingGradeType = {
   grade: string;
   count: number;
 };
@@ -27,10 +27,10 @@ export type BaseActivityType = {
   note?: string;
 };
 
-export type BoulderingDataType = {
-  type: typeof ActivityTypes.Bouldering;
+export type ClimbingDataType = {
+  type: typeof ActivityTypes.Climbing;
   gym: string;
-  grades: BoulderingGradeType[];
+  grades: ClimbingGradeType[];
 };
 
 export type GymDataType = {
@@ -72,7 +72,7 @@ export type StretchingDataType = {
 };
 
 export type ActivityDataType =
-  | BoulderingDataType
+  | ClimbingDataType
   | GymDataType
   | CalisthenicsDataType
   | StretchingDataType;
