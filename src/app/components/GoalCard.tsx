@@ -57,9 +57,9 @@ const GoalCard = ({
           className={cn(
             'bg-gradient-to-tr',
             goal.status === GoalStatus.Completed
-              ? ' from-lime-100 to-emerald-500 shadow-md'
+              ? ' from-lime-100 to-emerald-500 shadow-md ring-transparent'
               : 'from-white to-stone-100',
-            'rounded-lg p-5 border flex flex-row gap-3 items-center w-full',
+            'rounded-lg p-5 ring-1 ring-stone-200 flex flex-row gap-3 items-center w-full',
             'relative',
             isOrdering ? 'pl-3' : 'pl-5'
           )}
