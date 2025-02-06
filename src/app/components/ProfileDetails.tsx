@@ -352,7 +352,7 @@ const ProfileDetails = ({ user }: { user?: User }) => {
                 <div
                   className={cn(
                     isBio
-                      ? 'text-secondary-foreground whitespace-pre-line p-4 border rounded-md bg-stone-50'
+                      ? 'text-secondary-foreground whitespace-pre-line p-4 border rounded-md bg-stone-50 shadow-inner'
                       : 'text-emerald-600 font-medium text-right'
                   )}
                 >
