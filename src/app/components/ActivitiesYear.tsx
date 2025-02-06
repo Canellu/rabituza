@@ -1,11 +1,6 @@
 'use client';
 
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from '@/components/ui/chart';
+import { ChartConfig, ChartContainer } from '@/components/ui/chart';
 import { ActivityType } from '@/types/Activity';
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 
@@ -69,14 +64,14 @@ const ActivitiesYear = ({ activities = [] }: ActivitiesYearProps) => {
             strokeDasharray="4 8"
             stroke="rgba(0, 0, 0, 0.25)"
           />
-          <ChartTooltip
+          {/* <ChartTooltip
             content={
               <ChartTooltipContent
                 indicator="line"
                 color="hsl(var(--chart-6))"
               />
             }
-          />
+          /> */}
           <XAxis
             dataKey="month"
             tickLine={false}
