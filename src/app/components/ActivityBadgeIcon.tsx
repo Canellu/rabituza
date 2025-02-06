@@ -18,7 +18,7 @@ const ActivityBadgeIcon = ({
   return (
     <div
       className={cn(
-        'size-4 flex items-center justify-center rounded-sm bg-emerald-500 text-white',
+        'size-4 flex items-center justify-center rounded-md bg-emerald-500 text-white',
         className
       )}
     >

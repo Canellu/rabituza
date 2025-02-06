@@ -1,14 +1,102 @@
-const ActivitiesYear = () => {
+'use client';
+
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from '@/components/ui/chart';
+import { ActivityType } from '@/types/Activity';
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
+
+type ActivitiesYearProps = {
+  activities?: ActivityType[];
+};
+
+const chartConfig = {
+  activities: {
+    label: 'Activities',
+    color: 'hsl(var(--primary))',
+  },
+} satisfies ChartConfig;
+
+const ActivitiesYear = ({ activities = [] }: ActivitiesYearProps) => {
+  const currentYear = new Date().getFullYear();
+
+  const monthlyData = Array.from({ length: 12 }, (_, month) => {
+    const count = activities.filter((activity) => {
+      const activityDate = new Date(activity.activityDate);
+      return (
+        activityDate.getMonth() === month &&
+        activityDate.getFullYear() === currentYear
+      );
+    }).length;
+
+    return {
+      month: new Date(0, month).toLocaleString('default', {
+        month: 'long',
+      }),
+      activities: count,
+    };
+  });
+
+  const maxActivity = Math.max(...monthlyData.map((data) => data.activities));
+  const yAxisTicks = Array.from(
+    { length: Math.ceil(maxActivity / 2) + 1 },
+    (_, i) => i * 2
+  );
+
   return (
-    <div className="grid grid-cols-4 gap-4">
-      {Array.from({ length: 12 }, (_, i) => (
-        <div key={i} className="border rounded-lg p-4">
-          <h3 className="font-medium mb-2">
-            {new Date(0, i).toLocaleString('default', { month: 'long' })}
-          </h3>
-        </div>
-      ))}
-    </div>
+    <ChartContainer
+      config={chartConfig}
+      className="min-h-[300px] w-full border rounded-md px-2 py-4"
+    >
+      <BarChart data={monthlyData}>
+        <defs>
+          <linearGradient id="activityGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={1} />
+            <stop
+              offset="100%"
+              stopColor="hsl(var(--chart-6))"
+              stopOpacity={0.3}
+            />
+          </linearGradient>
+        </defs>
+        <CartesianGrid
+          vertical={false}
+          strokeDasharray="2 6"
+          stroke="rgba(0, 0, 0, 0.25)"
+        />
+        <ChartTooltip
+          content={
+            <ChartTooltipContent indicator="line" color="hsl(var(--chart-6))" />
+          }
+        />
+        <XAxis
+          dataKey="month"
+          tickLine={false}
+          tickMargin={10}
+          axisLine={false}
+          tickFormatter={(value) => value.slice(0, 3)}
+          interval={0}
+          angle={-45}
+          textAnchor="end"
+          height={40}
+        />
+        <YAxis
+          tickLine={false}
+          tickMargin={12}
+          axisLine={false}
+          width={30}
+          ticks={yAxisTicks}
+        />
+        <Bar
+          dataKey="activities"
+          fill="url(#activityGradient)"
+          radius={[4, 4, 0, 0]}
+        />
+      </BarChart>
+    </ChartContainer>
   );
 };
 

@@ -55,7 +55,7 @@ const Activities = () => {
             <ActivitiesMonth activities={activities} />
           </TabsContent>
           <TabsContent value="year">
-            <ActivitiesYear />
+            <ActivitiesYear activities={activities} />
           </TabsContent>
         </Tabs>
       </section>
