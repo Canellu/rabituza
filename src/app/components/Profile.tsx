@@ -5,7 +5,6 @@ import { cn } from '@/lib/utils';
 import { getSession } from '@/lib/utils/userSession';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { useState } from 'react';
 import LogoutButton from './LogoutButton';
 import ProfileDetails from './ProfileDetails';
 import RefreshButton from './RefreshButton';
@@ -25,8 +24,6 @@ const getGradientClass = (userId: string) => {
 };
 
 const Profile = () => {
-  const [editable, setEditable] = useState(false);
-
   const userId = getSession();
   const { data: user, isPending } = useQuery({
     queryKey: ['user', userId],
@@ -45,10 +42,6 @@ const Profile = () => {
         <div className="flex items-center justify-center flex-col gap-4 grow">
           <Spinner />
           <span className="text-stone-600">Loading profile...</span>
-        </div>
-        <div className="flex flex-col gap-4">
-          <RefreshButton />
-          <LogoutButton />
         </div>
       </div>
     );
@@ -91,19 +84,6 @@ const Profile = () => {
           )}
         </motion.div>
       </div>
-
-      {/* <div className="flex flex-col items-center justify-center w-full gap-6">
-        <Button
-          onClick={() => setEditable((prev) => !prev)}
-          variant="outline"
-          className="place-self-center"
-          size="sm"
-        >
-          <UserPen />
-          Edit profile
-        </Button>
-        <EditProfile editable={editable} setEditable={setEditable} />
-      </div> */}
 
       <ProfileDetails user={user} />
 
