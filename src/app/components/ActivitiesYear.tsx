@@ -47,56 +47,61 @@ const ActivitiesYear = ({ activities = [] }: ActivitiesYearProps) => {
   );
 
   return (
-    <ChartContainer
-      config={chartConfig}
-      className="min-h-[300px] w-full border rounded-md px-2 py-4"
-    >
-      <BarChart data={monthlyData}>
-        <defs>
-          <linearGradient id="activityGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={1} />
-            <stop
-              offset="100%"
-              stopColor="hsl(var(--chart-6))"
-              stopOpacity={0.3}
-            />
-          </linearGradient>
-        </defs>
-        <CartesianGrid
-          vertical={false}
-          strokeDasharray="2 6"
-          stroke="rgba(0, 0, 0, 0.25)"
-        />
-        <ChartTooltip
-          content={
-            <ChartTooltipContent indicator="line" color="hsl(var(--chart-6))" />
-          }
-        />
-        <XAxis
-          dataKey="month"
-          tickLine={false}
-          tickMargin={10}
-          axisLine={false}
-          tickFormatter={(value) => value.slice(0, 3)}
-          interval={0}
-          angle={-45}
-          textAnchor="end"
-          height={40}
-        />
-        <YAxis
-          tickLine={false}
-          tickMargin={12}
-          axisLine={false}
-          width={30}
-          ticks={yAxisTicks}
-        />
-        <Bar
-          dataKey="activities"
-          fill="url(#activityGradient)"
-          radius={[4, 4, 0, 0]}
-        />
-      </BarChart>
-    </ChartContainer>
+    <div className="overflow-auto border bg-gradient-to-b from-white to-emerald-50 rounded-md px-2 pt-10 pb-2">
+      <ChartContainer config={chartConfig} className="h-[273px] w-[700px]">
+        <BarChart data={monthlyData}>
+          <defs>
+            <linearGradient id="activityGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop
+                offset="0%"
+                stopColor="hsl(var(--primary))"
+                stopOpacity={1}
+              />
+              <stop
+                offset="100%"
+                stopColor="hsl(var(--chart-6))"
+                stopOpacity={0.3}
+              />
+            </linearGradient>
+          </defs>
+          <CartesianGrid
+            vertical={false}
+            strokeDasharray="4 8"
+            stroke="rgba(0, 0, 0, 0.25)"
+          />
+          <ChartTooltip
+            content={
+              <ChartTooltipContent
+                indicator="line"
+                color="hsl(var(--chart-6))"
+              />
+            }
+          />
+          <XAxis
+            dataKey="month"
+            tickLine={false}
+            tickMargin={10}
+            axisLine={false}
+            tickFormatter={(value) => value.slice(0, 3)}
+            interval={0}
+            height={40}
+          />
+          <YAxis
+            tickLine={false}
+            tickMargin={12}
+            axisLine={false}
+            width={30}
+            ticks={yAxisTicks}
+          />
+          <Bar
+            dataKey="activities"
+            fill="url(#activityGradient)"
+            radius={[4, 4, 0, 0]}
+            barSize={35}
+          />
+        </BarChart>
+      </ChartContainer>
+    </div>
   );
 };
 

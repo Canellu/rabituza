@@ -34,7 +34,7 @@ const ActivitiesMonth = ({ activities = [] }: ActivitiesMonthProps) => {
   return (
     <Calendar
       mode="single"
-      className="rounded-md border w-full flex items-center justify-center"
+      className="rounded-md border w-full flex items-center justify-center bg-gradient-to-b from-white to-emerald-50 py-5"
       showOutsideDays={false}
       fromDate={new Date(currentYear, 0, 1)}
       toDate={new Date(currentYear, 11, 31)}

@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
 import { ActivityType } from '@/types/Activity';
-import { addDays, format, isFuture, isToday, startOfWeek } from 'date-fns';
+import { addDays, format, isToday, startOfWeek } from 'date-fns';
 import ActivityBadgeIcon from './ActivityBadgeIcon';
 
 type ActivitiesWeekProps = {
@@ -32,22 +32,15 @@ const ActivitiesWeek = ({ activities = [] }: ActivitiesWeekProps) => {
   };
 
   return (
-    <div className="flex justify-between border p-4 rounded-md">
+    <div className="flex justify-between border p-4 rounded-md bg-gradient-to-b from-white to-emerald-50">
       {Array.from({ length: 7 }, (_, i) => {
         const date = addDays(weekStart, i);
-        const isFutureDate = isFuture(date);
         const isCurrentDay = isToday(date);
         const hasActivityForDay = hasActivity(date);
         const mostRecentType = getMostRecentActivityType(date);
 
         return (
-          <div
-            key={i}
-            className={cn(
-              'flex flex-col items-center gap-1',
-              isFutureDate && 'opacity-50'
-            )}
-          >
+          <div key={i} className="flex flex-col items-center gap-3">
             <div className="text-sm font-medium text-stone-600">
               {format(date, 'EEE')}
             </div>
