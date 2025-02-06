@@ -366,8 +366,8 @@ const ProfileDetails = ({ user }: { user?: User }) => {
       <Dialog open={drawerOpen} onOpenChange={setDrawerOpen}>
         <DialogContent
           className={cn(
-            'max-w-[96%] rounded-md p-3 gap-3',
-            shouldAutoFocus ? 'top-[20%]' : ''
+            'max-w-[96%] rounded-md p-4 gap-3',
+            shouldAutoFocus ? 'top-[24%]' : ''
           )}
           autoFocus={shouldAutoFocus}
         >
