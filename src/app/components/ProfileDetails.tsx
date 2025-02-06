@@ -293,7 +293,7 @@ const ProfileDetails = ({ user }: { user?: User }) => {
           <div className="flex flex-col w-full gap-2">
             <Label htmlFor="bio">About Me</Label>
             <Textarea
-              rows={6}
+              rows={4}
               id="bio"
               value={bio}
               onChange={(e) => setBio(e.target.value)}
@@ -306,7 +306,12 @@ const ProfileDetails = ({ user }: { user?: User }) => {
     }
   };
 
-  const shouldAutoFocus = ['username', 'first_name', 'last_name', 'bio'].includes(selectedField || '');
+  const shouldAutoFocus = [
+    'username',
+    'first_name',
+    'last_name',
+    'bio',
+  ].includes(selectedField || '');
 
   return (
     <div className="flex flex-col py-4 rounded-lg border gap-2 bg-secondary">
@@ -360,15 +365,18 @@ const ProfileDetails = ({ user }: { user?: User }) => {
 
       <Dialog open={drawerOpen} onOpenChange={setDrawerOpen}>
         <DialogContent
-          className={`max-w-[94%] rounded-md p-4 ${shouldAutoFocus ? 'top-[20%]' : ''}`}
+          className={cn(
+            'max-w-[96%] rounded-md p-3 gap-3',
+            shouldAutoFocus ? 'top-[20%]' : ''
+          )}
           autoFocus={shouldAutoFocus}
         >
           <DialogHeader>
             <DialogTitle>Edit {fieldLabels[selectedField || '']}</DialogTitle>
           </DialogHeader>
-          <div className="p-4">
+          <div className="p-2">
             {renderInputField()}
-            <div className="flex items-center justify-between mt-10">
+            <div className="flex items-center justify-between mt-6">
               <Button onClick={() => setDrawerOpen(false)} variant="secondary">
                 Cancel
               </Button>
