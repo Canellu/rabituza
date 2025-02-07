@@ -11,10 +11,9 @@ const RefreshButton = () => {
 
   const handleRefresh = () => {
     setIsLoading(true);
-    router.refresh();
     setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
+      router.refresh();
+    }, 500);
   };
 
   return (
