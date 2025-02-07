@@ -83,9 +83,13 @@ const Profile = () => {
         </motion.div>
       </div>
 
-      <div className="pb-14">
-        <ProfileDetails user={user} />
-      </div>
+      <ProfileDetails user={user} />
+
+      <p className="geist-mono text-xs text-stone-500 text-center w-full pb-6 pt-12 ">
+        <span className="px-2 py-1 border rounded-md bg-gradient-to-b from-stone-50 to-stone-200 border-white shadow-inner">
+          App version: 1.0.0
+        </span>
+      </p>
     </div>
   );
 };
