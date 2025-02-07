@@ -114,8 +114,8 @@ const AvatarUpload = ({ user }: AvatarUploadProps) => {
           <Image
             src={user.avatar}
             alt="User Avatar"
-            width={100}
-            height={100}
+            width={96}
+            height={96}
             className="rounded-xl object-cover size-24 ring-1 ring-offset-2 ring-stone-300"
           />
         ) : (
