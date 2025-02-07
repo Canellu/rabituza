@@ -14,6 +14,9 @@ const RefreshButton = () => {
     setTimeout(() => {
       router.refresh();
     }, 500);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
   };
 
   return (
