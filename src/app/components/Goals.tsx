@@ -174,7 +174,7 @@ const Goals = () => {
 
   return (
     <div className="relative flex flex-col gap-4 pb-10 min-h-full">
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex items-center justify-between gap-2">
         <Tabs
           value={activeTab}
           onValueChange={(value) => setActiveTab(value as TimePeriod)}
@@ -192,9 +192,8 @@ const Goals = () => {
         <div className="flex gap-1">
           <Button
             size="icon"
-            variant="outline"
+            variant="secondary"
             className={cn(
-              'shadow-sm rounded-md size-8',
               isOrdering ? 'shadow-inner !bg-stone-200 border-stone-300' : ''
             )}
             onClick={() => setIsOrdering((prev) => !prev)}
