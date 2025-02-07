@@ -16,7 +16,7 @@ const RefreshButton = () => {
     }, 500);
     setTimeout(() => {
       setIsLoading(false);
-    }, 1500);
+    }, 1200);
   };
 
   return (
