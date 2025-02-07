@@ -1,9 +1,9 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import { RefreshCw } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import Spinner from './Spinner';
 
 const RefreshButton = () => {
   const router = useRouter();
@@ -14,18 +14,12 @@ const RefreshButton = () => {
     setTimeout(() => {
       router.refresh();
       setIsLoading(false);
-    }, 250);
+    }, 1000);
   };
 
   return (
-    <Button onClick={handleRefresh}>
-      {isLoading ? (
-        <>
-          <Spinner color="text-stone-800" /> Updating...
-        </>
-      ) : (
-        'Update app'
-      )}
+    <Button onClick={handleRefresh} size="icon" variant="secondary">
+      <RefreshCw className={isLoading ? 'animate-spin' : ''} />
     </Button>
   );
 };

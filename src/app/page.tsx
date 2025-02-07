@@ -9,7 +9,9 @@ import AddActivities from './components/AddActivities';
 import AddGoal from './components/AddGoal';
 import Goals from './components/Goals';
 import Home from './components/Home';
+import LogoutButton from './components/LogoutButton';
 import Profile from './components/Profile';
+import RefreshButton from './components/RefreshButton';
 import useVibrate from './hooks/useVibrate';
 
 enum Tab {
@@ -96,6 +98,12 @@ const Menu = () => {
                 </h1>
                 {tab.value === Tab.Activities && <AddActivities />}
                 {tab.value === Tab.Goals && <AddGoal />}
+                {tab.value === Tab.Profile && (
+                  <div className="flex items-center gap-2">
+                    <RefreshButton />
+                    <LogoutButton />
+                  </div>
+                )}
               </div>
               <Separator className="mt-4" />
             </section>

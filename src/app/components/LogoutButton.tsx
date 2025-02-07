@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { clearSession } from '@/lib/utils/userSession';
 import { useQueryClient } from '@tanstack/react-query';
+import { LogOut } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 const LogoutButton = () => {
@@ -14,8 +15,8 @@ const LogoutButton = () => {
   };
 
   return (
-    <Button onClick={handleLogout} variant="secondary">
-      Log out
+    <Button onClick={handleLogout} size="icon" variant="secondary">
+      <LogOut />
     </Button>
   );
 };

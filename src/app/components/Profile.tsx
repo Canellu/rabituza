@@ -5,9 +5,7 @@ import { cn } from '@/lib/utils';
 import { getSession } from '@/lib/utils/userSession';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import LogoutButton from './LogoutButton';
 import ProfileDetails from './ProfileDetails';
-import RefreshButton from './RefreshButton';
 import Spinner from './Spinner';
 
 const getGradientClass = (userId: string) => {
@@ -85,11 +83,8 @@ const Profile = () => {
         </motion.div>
       </div>
 
-      <ProfileDetails user={user} />
-
-      <div className="flex flex-col gap-4 pb-10">
-        <RefreshButton />
-        <LogoutButton />
+      <div className="pb-14">
+        <ProfileDetails user={user} />
       </div>
     </div>
   );
