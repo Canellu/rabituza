@@ -78,7 +78,7 @@ const Goals = () => {
   const debouncedMutation = useDebounce((goal: GoalType) => {
     if (!userId || !goal.id) return;
     mutate(goal);
-  }, 500);
+  }, 250);
 
   const handleCheck = (goal: GoalType) => {
     if (!goal.id) return;
