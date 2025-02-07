@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import { Activity as ActivityIcon, Goal, HomeIcon, User } from 'lucide-react';
 import Activities from './components/Activities';
 import AddActivities from './components/AddActivities';
+import AddGoal from './components/AddGoal';
 import Goals from './components/Goals';
 import Home from './components/Home';
 import Profile from './components/Profile';
@@ -94,6 +95,7 @@ const Menu = () => {
                   {tab.title}
                 </h1>
                 {tab.value === Tab.Activities && <AddActivities />}
+                {tab.value === Tab.Goals && <AddGoal />}
               </div>
               <Separator className="mt-4" />
             </section>

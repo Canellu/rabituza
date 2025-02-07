@@ -12,10 +12,9 @@ import { getSession } from '@/lib/utils/userSession';
 import { GoalStatus, GoalType } from '@/types/Goal';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AnimatePresence, PanInfo, Reorder } from 'framer-motion';
-import { ArrowDownUp, Plus } from 'lucide-react';
+import { ArrowDownUp } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useDebounce } from '../hooks/useDebounce';
-import AddGoal from './AddGoal';
 import GoalCard from './GoalCard';
 import Spinner from './Spinner';
 
@@ -24,7 +23,6 @@ const Goals = () => {
   const userId = getSession();
 
   const [activeTab, setActiveTab] = useState<TimePeriod>(TimePeriod.Year);
-  const [isEditing, setIsEditing] = useState(false);
   const [localGoals, setLocalGoals] = useState<GoalType[]>([]);
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const [isOrdering, setIsOrdering] = useState(false);
@@ -203,26 +201,8 @@ const Goals = () => {
           >
             <ArrowDownUp />
           </Button>
-
-          <Button
-            size="icon"
-            variant="outline"
-            className={cn(
-              'shadow rounded-md size-8 border',
-              isEditing ? 'shadow-inner !bg-stone-200 border-stone-300' : ''
-            )}
-            onClick={() => setIsEditing((prev) => !prev)}
-          >
-            <Plus />
-          </Button>
         </div>
       </div>
-
-      <AddGoal
-        isEditing={isEditing}
-        setIsEditing={setIsEditing}
-        setActiveTab={setActiveTab}
-      />
 
       {haveGoals && (
         <Reorder.Group
