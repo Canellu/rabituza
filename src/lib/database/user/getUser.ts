@@ -18,6 +18,7 @@ export const getUser = async (userId: string): Promise<User | undefined> => {
         first_name: userData?.first_name || null, // Allow null for optional fields
         last_name: userData?.last_name || null,
         email: userData?.email || null,
+        avatar: userData?.avatar || '', // Default to empty string if not available
         dob:
           userData?.dob && userData.dob.toDate ? userData.dob.toDate() : null, // Handle missing dob
         height: userData?.height || null,

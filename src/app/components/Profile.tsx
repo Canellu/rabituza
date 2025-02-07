@@ -1,25 +1,12 @@
 'use client';
 
 import { getUser } from '@/lib/database/user/getUser';
-import { cn } from '@/lib/utils';
 import { getSession } from '@/lib/utils/userSession';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
+import AvatarUpload from './AvatarUpload';
 import ProfileDetails from './ProfileDetails';
 import Spinner from './Spinner';
-
-const getGradientClass = (userId: string) => {
-  const gradients = [
-    'from-emerald-300 to-emerald-800',
-    'from-blue-400 to-blue-600',
-    'from-violet-400 to-violet-600',
-    'from-amber-400 to-amber-600',
-    'from-rose-300 to-rose-600',
-  ];
-
-  const index = parseInt(userId) % gradients.length;
-  return gradients[index];
-};
 
 const Profile = () => {
   const userId = getSession();
@@ -54,22 +41,7 @@ const Profile = () => {
           transition={{ duration: 0.5 }}
           className="flex items-center flex-col gap-3 size w-full"
         >
-          <div
-            className={cn(
-              'flex items-center justify-center size-20 rounded-full bg-gradient-to-br',
-              user?.id &&
-                `from-emerald-300 to-emerald-800 from-blue-400 to-blue-600 from-violet-400 to-violet-600 from-amber-400 to-amber-600 from-rose-300 to-rose-600`,
-              getGradientClass(user.id)
-            )}
-          >
-            <span className="text-2xl font-bold text-white inter">
-              {(
-                user?.username?.[0] ||
-                user?.first_name?.[0] ||
-                '?'
-              ).toUpperCase()}
-            </span>
-          </div>
+          <AvatarUpload user={user} />
           {(user?.username || user?.first_name || user?.last_name) && (
             <div className="flex flex-col items-center gap-1 text-stone-800">
               <span className="text-xl font-semibold capitalize">

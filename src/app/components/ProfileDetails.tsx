@@ -25,7 +25,7 @@ import { format } from 'date-fns';
 import { Fragment, useEffect, useState } from 'react';
 import useCreateOrUpdateUser from '../hooks/useCreateOrUpdateUser';
 
-const excludedFields = ['id', 'code', 'email'];
+const excludedFields = ['id', 'code', 'email', 'avatar'];
 const fieldLabels: Record<string, string> = {
   username: 'Username',
   first_name: 'First Name',
