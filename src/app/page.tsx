@@ -12,6 +12,7 @@ import Home from './components/Home';
 import LogoutButton from './components/LogoutButton';
 import Profile from './components/Profile';
 import RefreshButton from './components/RefreshButton';
+import ThemeToggle from './components/ThemeToggle';
 import useVibrate from './hooks/useVibrate';
 
 enum Tab {
@@ -106,6 +107,7 @@ const Menu = () => {
                 {tab.value === Tab.Goals && <AddGoal />}
                 {tab.value === Tab.Profile && (
                   <div className="flex items-center gap-2">
+                    <ThemeToggle />
                     <RefreshButton />
                     <LogoutButton />
                   </div>
