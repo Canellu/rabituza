@@ -3,6 +3,7 @@ export const ActivityTypes = {
   Gym: 'gym',
   Calisthenics: 'calisthenics',
   Stretching: 'stretching',
+  WinterSports: 'winter_sports',
 } as const;
 
 export type Activity = (typeof ActivityTypes)[keyof typeof ActivityTypes];
@@ -38,21 +39,6 @@ export type GymDataType = {
   // Add gym-specific fields here
 };
 
-export const CALISTHENICS_EXERCISES = {
-  pushUp: 'Push-up',
-  inclinePushUp: 'Incline Push-up',
-  declinePushUp: 'Decline Push-up',
-  kneePushUp: 'Knee Push-up',
-  pullUp: 'Pull-up',
-  dips: 'Dips',
-  squats: 'Squats',
-  squatVariation: 'Squat Variation',
-  plank: 'Plank',
-  sitUp: 'Sit-up',
-  legRaises: 'Leg Raises',
-  lunges: 'Lunges',
-} as const;
-
 export type CalisthenicsExerciseType = {
   name: string;
   sets: number;
@@ -68,7 +54,11 @@ export type CalisthenicsDataType = {
 
 export type StretchingDataType = {
   type: typeof ActivityTypes.Stretching;
-  // Add stretching-specific fields here
+  activityDate: Date;
+  ratings: ActivityRatingsType;
+  duration: number;
+  stretches: string[];
+  note?: string;
 };
 
 export type ActivityDataType =

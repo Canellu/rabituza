@@ -314,7 +314,7 @@ const ProfileDetails = ({ user }: { user?: User }) => {
   ].includes(selectedField || '');
 
   return (
-    <div className="flex flex-col py-4 rounded-lg border gap-2 bg-secondary">
+    <div className="flex flex-col py-4 rounded-lg border gap-2 bg-secondary w-full">
       {user &&
         Object.entries(user).map(([key, value], index, array) => {
           if (excludedFields.includes(key)) {

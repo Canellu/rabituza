@@ -17,6 +17,8 @@ import { motion } from 'framer-motion';
 import { Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
+import { CARD_ANIMATION_CONFIG } from '@/constants/animationConfig';
+
 interface ActivityCardCalisthenicsProps {
   activity: BaseActivityType & CalisthenicsDataType;
 }
@@ -62,9 +64,7 @@ const ActivityCardCalisthenics = ({
     <>
       <motion.div
         className="relative"
-        initial={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.2 }}
+        {...CARD_ANIMATION_CONFIG} // Use shared animation config
       >
         <div className="absolute inset-1 bg-red-500 rounded-lg flex items-center justify-end px-4">
           <Trash2 className="text-secondary" />

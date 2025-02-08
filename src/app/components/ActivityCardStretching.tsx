@@ -9,23 +9,20 @@ import {
 } from '@/components/ui/dialog';
 import activityOptions from '@/constants/activityOptions';
 import { CARD_ANIMATION_CONFIG } from '@/constants/animationConfig';
-import BOULDERING_GYMS from '@/constants/boulderingGyms';
 import { deleteActivity } from '@/lib/database/activities/deleteActivity';
-import { cn } from '@/lib/utils';
-import getGradeColor from '@/lib/utils/getGradeColor';
 import { getSession } from '@/lib/utils/userSession';
-import { BaseActivityType, ClimbingDataType } from '@/types/Activity';
+import { BaseActivityType, StretchingDataType } from '@/types/Activity';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { motion } from 'framer-motion';
 import { Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
-interface ActivityCardClimbingProps {
-  activity: BaseActivityType & ClimbingDataType;
+interface ActivityCardStretchingProps {
+  activity: BaseActivityType & StretchingDataType;
 }
 
-const ActivityCardClimbing = ({ activity }: ActivityCardClimbingProps) => {
+const ActivityCardStretching = ({ activity }: ActivityCardStretchingProps) => {
   const queryClient = useQueryClient();
   const userId = getSession();
   const Icon = activityOptions.find((opt) => opt.id === activity.type)?.icon;
@@ -91,45 +88,25 @@ const ActivityCardClimbing = ({ activity }: ActivityCardClimbingProps) => {
                 {activityOptions.find((opt) => opt.id === activity.type)?.label}
               </span>
             </div>
-            <span className="text-sm text-muted-foreground ">
+            <span className="text-sm text-muted-foreground">
               {activity.activityDate &&
                 format(activity.activityDate, 'PP, HH:mm')}
             </span>
           </div>
 
-          <div className="flex justify-between text-sm text-muted-foreground capitalize gap-3 items-center">
-            <p className="font-medium border px-2 py-1 text-stone-700 text-nowrap rounded-md bg-stone-50">
-              {activity.gym}
-            </p>
-            <div className="flex flex-wrap gap-1.5">
-              {activity.grades
-                .sort((a, b) => {
-                  const gymGrades =
-                    BOULDERING_GYMS[
-                      activity.gym as keyof typeof BOULDERING_GYMS
-                    ].grades;
-                  return (
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-expect-error
-                    gymGrades.indexOf(a.grade) -
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-expect-error
-                    gymGrades.indexOf(b.grade)
-                  );
-                })
-                .map((grade, idx) => (
-                  <span
-                    key={idx}
-                    className={cn(
-                      'size-6 border flex items-center font-bold justify-center rounded-full text-sm',
-                      getGradeColor(grade.grade).text,
-                      getGradeColor(grade.grade).bg
-                    )}
-                  >
-                    {grade.count}
-                  </span>
-                ))}
-            </div>
+          <div className="text-sm text-stone-600">
+            Duration: {activity.duration} minutes
+          </div>
+
+          <div className="flex flex-wrap gap-1">
+            {activity.stretches.map((stretch, idx) => (
+              <span
+                key={idx}
+                className="px-2 py-0.5 border flex items-center justify-center rounded-md text-xs bg-stone-50 font-medium text-stone-700"
+              >
+                {stretch}
+              </span>
+            ))}
           </div>
 
           {activity.note && (
@@ -173,4 +150,4 @@ const ActivityCardClimbing = ({ activity }: ActivityCardClimbingProps) => {
   );
 };
 
-export default ActivityCardClimbing;
+export default ActivityCardStretching;

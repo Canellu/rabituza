@@ -56,7 +56,8 @@ export const getActivities = async (
         case ActivityTypes.Stretching:
           return {
             ...baseActivity,
-            // Add stretching-specific fields when implemented
+            stretches: data.stretches || [], // Extract stretches
+            duration: data.duration || 0, // Extract duration
           };
         default:
           throw new Error(`Unknown activity type: ${data.type}`);

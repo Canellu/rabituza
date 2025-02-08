@@ -16,6 +16,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import activityOptions from '@/constants/activityOptions';
+import { ActivityTypes } from '@/types/Activity';
 import { Fragment, useState } from 'react';
 
 const AddActivities = () => {
@@ -48,6 +49,7 @@ const AddActivities = () => {
           {activityOptions.map((exercise) => (
             <Fragment key={exercise.id}>
               <DropdownMenuItem
+                disabled={exercise.id === ActivityTypes.WinterSports}
                 onSelect={() => handleActivitySelect(exercise.id)}
               >
                 <exercise.icon className="text-white bg-emerald-500 p-1.5 rounded-md min-w-8 min-h-8" />

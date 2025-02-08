@@ -13,13 +13,13 @@ import {
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
+import { CALISTHENICS_EXERCISES } from '@/constants/calisthenicsExercises';
 import { createActivity } from '@/lib/database/activities/createActivity';
 import { getSession } from '@/lib/utils/userSession';
 import {
   ActivityRatingsType,
   ActivityTypes,
   BaseActivityType,
-  CALISTHENICS_EXERCISES,
   CalisthenicsDataType,
 } from '@/types/Activity';
 import { useMutation, useQueryClient } from '@tanstack/react-query';

@@ -1,15 +1,21 @@
 'use client';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  STAGGER_CHILD_VARIANTS,
+  STAGGER_CONTAINER_CONFIG,
+} from '@/constants/animationConfig';
 import { getActivities } from '@/lib/database/activities/getActivities';
 import { getSession } from '@/lib/utils/userSession';
 import { ActivityTypes } from '@/types/Activity';
 import { useQuery } from '@tanstack/react-query';
+import { AnimatePresence, motion } from 'framer-motion';
 import ActivitiesMonth from './ActivitiesMonth';
 import AcitvitiesWeek from './ActivitiesWeek';
 import ActivitiesYear from './ActivitiesYear';
 import ActivityCardCalisthenics from './ActivityCardCalisthenics';
 import ActivityCardClimbing from './ActivityCardClimbing';
+import ActivityCardStretching from './ActivityCardStretching';
 import Spinner from './Spinner';
 
 const Activities = () => {
@@ -62,24 +68,26 @@ const Activities = () => {
 
       <section className="space-y-3">
         <h2 className="text-xl font-semibold">Recent activities</h2>
-        <div className="space-y-4 pb-10">
-          {activities?.map((activity) => {
-            if (activity.type === ActivityTypes.Climbing) {
-              return (
-                <ActivityCardClimbing key={activity.id} activity={activity} />
-              );
-            }
-            if (activity.type === ActivityTypes.Calisthenics) {
-              return (
-                <ActivityCardCalisthenics
-                  key={activity.id}
-                  activity={activity}
-                />
-              );
-            }
-            return null;
-          })}
-        </div>
+        <motion.div className="space-y-4 pb-10" {...STAGGER_CONTAINER_CONFIG}>
+          <AnimatePresence>
+            {activities?.map((activity) => (
+              <motion.div key={activity.id} variants={STAGGER_CHILD_VARIANTS}>
+                {(() => {
+                  switch (activity.type) {
+                    case ActivityTypes.Climbing:
+                      return <ActivityCardClimbing activity={activity} />;
+                    case ActivityTypes.Calisthenics:
+                      return <ActivityCardCalisthenics activity={activity} />;
+                    case ActivityTypes.Stretching:
+                      return <ActivityCardStretching activity={activity} />;
+                    default:
+                      return null;
+                  }
+                })()}
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </motion.div>
       </section>
     </div>
   );
