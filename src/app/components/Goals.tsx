@@ -17,6 +17,11 @@ import { useEffect, useState } from 'react';
 import { useDebounce } from '../hooks/useDebounce';
 import GoalCard from './GoalCard';
 import Spinner from './Spinner';
+import {
+  STAGGER_CHILD_VARIANTS,
+  STAGGER_CONTAINER_CONFIG,
+} from '@/constants/animationConfig';
+import { motion } from 'framer-motion';
 
 const Goals = () => {
   const queryClient = useQueryClient();
@@ -209,28 +214,30 @@ const Goals = () => {
           values={splittedGoals[activeTab]}
           onReorder={handleReorder}
           className="flex flex-col gap-3"
+          {...STAGGER_CONTAINER_CONFIG}
         >
           <AnimatePresence>
             {splittedGoals[activeTab].map((goal) => (
-              <Reorder.Item
-                key={goal.id}
-                value={goal}
-                id={goal.id}
-                onDragEnd={() => {
-                  handleReorderEnd();
-                  setDraggingId(null);
-                }}
-                dragListener={isOrdering && !draggingId}
-              >
-                <GoalCard
-                  goal={goal}
-                  isOrdering={isOrdering}
-                  draggingId={draggingId}
-                  onDragStart={(id) => setDraggingId(id)}
-                  onDragEnd={handleDragEnd}
-                  onCheck={handleCheck}
-                />
-              </Reorder.Item>
+              <motion.div key={goal.id} variants={STAGGER_CHILD_VARIANTS}>
+                <Reorder.Item
+                  value={goal}
+                  id={goal.id}
+                  onDragEnd={() => {
+                    handleReorderEnd();
+                    setDraggingId(null);
+                  }}
+                  dragListener={isOrdering && !draggingId}
+                >
+                  <GoalCard
+                    goal={goal}
+                    isOrdering={isOrdering}
+                    draggingId={draggingId}
+                    onDragStart={(id) => setDraggingId(id)}
+                    onDragEnd={handleDragEnd}
+                    onCheck={handleCheck}
+                  />
+                </Reorder.Item>
+              </motion.div>
             ))}
           </AnimatePresence>
         </Reorder.Group>
