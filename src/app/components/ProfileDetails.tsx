@@ -127,7 +127,9 @@ const ProfileDetails = ({ user }: { user?: User }) => {
               type="text"
               id="first_name"
               value={firstName}
-              onChange={(e) => setFirstName(e.target.value.replace(/^\s+/g, ''))} // Remove leading whitespace
+              onChange={(e) =>
+                setFirstName(e.target.value.replace(/^\s+/g, ''))
+              } // Remove leading whitespace
               placeholder="First name"
             />
           </div>
@@ -328,7 +330,7 @@ const ProfileDetails = ({ user }: { user?: User }) => {
           } else if (key === 'height' && typeof value === 'number') {
             formattedValue = `${value} cm`;
           } else if (value instanceof Date) {
-            formattedValue = format(value, 'do MMMM yyyy');
+            formattedValue = format(value, 'dd. MMMM yyyy');
           } else if (typeof value === 'string' || typeof value === 'number') {
             formattedValue = value;
           } else {
