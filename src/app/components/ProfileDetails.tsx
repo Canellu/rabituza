@@ -351,7 +351,7 @@ const ProfileDetails = ({ user }: { user?: User }) => {
                   className={cn(
                     isBio
                       ? 'text-secondary-foreground whitespace-pre-line p-4 border rounded-md bg-stone-50 shadow-inner'
-                      : 'text-emerald-700 font-medium text-right'
+                      : 'text-emerald-700 font-medium text-right first-letter:capitalize'
                   )}
                 >
                   {formattedValue}
