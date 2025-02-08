@@ -85,23 +85,20 @@ const ProfileDetails = ({ user }: { user?: User }) => {
   };
 
   const handleSaveProfile = () => {
-    // Make sure `user` exists before proceeding
     if (!user) return;
 
-    // Safely update user details
     const updatedUser = {
       ...user,
-      username: username.toLowerCase(),
-      first_name: firstName,
-      last_name: lastName,
+      username: username.trim().toLowerCase(),
+      first_name: firstName.trim(),
+      last_name: lastName.trim(),
       dob: date,
       height,
       gender,
       weight,
-      bio,
+      bio: bio.trim(),
     };
 
-    // Pass the updated user to createOrUpdate
     createOrUpdate(updatedUser);
     setDrawerOpen(false);
   };
@@ -116,7 +113,7 @@ const ProfileDetails = ({ user }: { user?: User }) => {
               type="text"
               id="username"
               value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={(e) => setUsername(e.target.value.replace(/\s+/g, ''))} // Remove all whitespace
               placeholder="Username"
             />
           </div>
@@ -130,7 +127,7 @@ const ProfileDetails = ({ user }: { user?: User }) => {
               type="text"
               id="first_name"
               value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
+              onChange={(e) => setFirstName(e.target.value.replace(/^\s+/g, ''))} // Remove leading whitespace
               placeholder="First name"
             />
           </div>
@@ -144,7 +141,7 @@ const ProfileDetails = ({ user }: { user?: User }) => {
               type="text"
               id="last_name"
               value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
+              onChange={(e) => setLastName(e.target.value.replace(/^\s+/g, ''))} // Remove leading whitespace
               placeholder="Last name"
             />
           </div>
