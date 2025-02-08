@@ -69,7 +69,7 @@ const Menu = () => {
       {/* Tab Headers */}
       <TabsList
         className={cn(
-          'fixed inset-x-0 bottom-0 min-h-max flex items-center justify-around pb-6 pt-0 rounded-none',
+          'fixed inset-x-0 bottom-0 min-h-max flex items-center justify-around pb-5 pt-0 rounded-none z-10',
           // 'bg-gradient-to-b from-stone-800 to-stone-950',
           'bg-stone-900'
         )}
@@ -96,7 +96,7 @@ const Menu = () => {
       {/* Tab Content */}
       {tabs.map((tab) => (
         <TabsContent key={tab.value} value={tab.value} className="mt-0">
-          <div className="h-[calc(100dvh-80px)] overflow-auto flex flex-col max-w-3xl mx-auto">
+          <div className="h-[calc(100dvh-84px)] overflow-auto flex flex-col max-w-3xl mx-auto">
             <section className="sticky top-0 px-4 pt-4">
               <div className="flex items-center justify-between">
                 <h1 className="font-bold text-2xl text-stone-800">
