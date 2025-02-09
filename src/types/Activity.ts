@@ -1,5 +1,7 @@
 export const ActivityTypes = {
+  ActiveRest: 'active_rest',
   Climbing: 'climbing',
+  Fingerboard: 'fingerboard',
   Gym: 'gym',
   Calisthenics: 'calisthenics',
   Stretching: 'stretching',

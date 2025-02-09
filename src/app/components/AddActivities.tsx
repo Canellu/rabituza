@@ -37,6 +37,15 @@ const AddActivities = () => {
     }
   };
 
+  const disabledActivities: Array<
+    (typeof ActivityTypes)[keyof typeof ActivityTypes]
+  > = [
+    ActivityTypes.WinterSports,
+    ActivityTypes.ActiveRest,
+    ActivityTypes.Fingerboard,
+    ActivityTypes.Gym,
+  ];
+
   return (
     <>
       <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
@@ -49,7 +58,7 @@ const AddActivities = () => {
           {activityOptions.map((exercise) => (
             <Fragment key={exercise.id}>
               <DropdownMenuItem
-                disabled={exercise.id === ActivityTypes.WinterSports}
+                disabled={disabledActivities.includes(exercise.id)}
                 onSelect={() => handleActivitySelect(exercise.id)}
               >
                 <exercise.icon className="text-white bg-emerald-500 p-1.5 rounded-md min-w-8 min-h-8" />
