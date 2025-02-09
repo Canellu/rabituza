@@ -1,5 +1,11 @@
 'use client';
 
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+} from '@/components/ui/drawer';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   STAGGER_CHILD_VARIANTS,
@@ -7,18 +13,26 @@ import {
 } from '@/constants/animationConfig';
 import { getActivities } from '@/lib/database/activities/getActivities';
 import { getSession } from '@/lib/utils/userSession';
-import { ActivityTypes } from '@/types/Activity';
+import { ActivityType, ActivityTypes } from '@/types/Activity';
 import { useQuery } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useState } from 'react';
 import ActivitiesMonth from './ActivitiesMonth';
 import AcitvitiesWeek from './ActivitiesWeek';
 import ActivitiesYear from './ActivitiesYear';
 import ActivityCardCalisthenics from './ActivityCardCalisthenics';
 import ActivityCardClimbing from './ActivityCardClimbing';
 import ActivityCardStretching from './ActivityCardStretching';
+import CalisthenicsForm from './CalisthenicsForm';
+import ClimbingForm from './ClimbingForm'; // Import the ClimbingForm component
 import Spinner from './Spinner';
+import StretchingForm from './StretchingForm';
 
 const Activities = () => {
+  const [selectedActivity, setSelectedActivity] = useState<ActivityType | null>(
+    null
+  );
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const userId = getSession();
   const { data: activities, isLoading } = useQuery({
     queryKey: ['activities', userId],
@@ -26,6 +40,11 @@ const Activities = () => {
     enabled: !!userId,
     staleTime: 0,
   });
+
+  const handleEditActivity = (activity: ActivityType) => {
+    setSelectedActivity(activity);
+    setIsDrawerOpen(true);
+  };
 
   if (isLoading) {
     return (
@@ -37,6 +56,17 @@ const Activities = () => {
       </div>
     );
   }
+
+  const formComponents = {
+    [ActivityTypes.Climbing]: ClimbingForm,
+    [ActivityTypes.Calisthenics]: CalisthenicsForm,
+    [ActivityTypes.Stretching]: StretchingForm,
+  };
+
+  const FormComponent =
+    selectedActivity && selectedActivity.type in formComponents
+      ? formComponents[selectedActivity.type as keyof typeof formComponents]
+      : null;
 
   return (
     <div className="h-full space-y-10">
@@ -75,11 +105,26 @@ const Activities = () => {
                 {(() => {
                   switch (activity.type) {
                     case ActivityTypes.Climbing:
-                      return <ActivityCardClimbing activity={activity} />;
+                      return (
+                        <ActivityCardClimbing
+                          activity={activity}
+                          onEdit={() => handleEditActivity(activity)}
+                        />
+                      );
                     case ActivityTypes.Calisthenics:
-                      return <ActivityCardCalisthenics activity={activity} />;
+                      return (
+                        <ActivityCardCalisthenics
+                          activity={activity}
+                          onEdit={() => handleEditActivity(activity)}
+                        />
+                      );
                     case ActivityTypes.Stretching:
-                      return <ActivityCardStretching activity={activity} />;
+                      return (
+                        <ActivityCardStretching
+                          activity={activity}
+                          onEdit={() => handleEditActivity(activity)}
+                        />
+                      );
                     default:
                       return null;
                   }
@@ -89,6 +134,45 @@ const Activities = () => {
           </AnimatePresence>
         </motion.div>
       </section>
+
+      <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+        <DrawerContent className="fixed flex flex-col bg-white border border-gray-200 border-b-none rounded-t-[10px] bottom-0 left-0 right-0 h-full max-h-[98%] mx-[-1px]">
+          <DrawerHeader>
+            <DrawerTitle>Edit Activity</DrawerTitle>
+          </DrawerHeader>
+          {selectedActivity && (
+            <div className="flex-grow overflow-y-auto p-4 pb-16 h-full overflow-auto">
+              {(() => {
+                switch (selectedActivity.type) {
+                  case ActivityTypes.Climbing:
+                    return (
+                      <ClimbingForm
+                        initialData={selectedActivity}
+                        onClose={() => setIsDrawerOpen(false)}
+                      />
+                    );
+                  case ActivityTypes.Calisthenics:
+                    return (
+                      <CalisthenicsForm
+                        initialData={selectedActivity}
+                        onClose={() => setIsDrawerOpen(false)}
+                      />
+                    );
+                  case ActivityTypes.Stretching:
+                    return (
+                      <StretchingForm
+                        initialData={selectedActivity}
+                        onClose={() => setIsDrawerOpen(false)}
+                      />
+                    );
+                  default:
+                    return null;
+                }
+              })()}
+            </div>
+          )}
+        </DrawerContent>
+      </Drawer>
     </div>
   );
 };

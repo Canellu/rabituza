@@ -2,6 +2,7 @@ import ActiveRestForm from '@/app/components/ActiveRestForm';
 import CalisthenicsForm from '@/app/components/CalisthenicsForm';
 import ClimbingForm from '@/app/components/ClimbingForm';
 import FingerboardForm from '@/app/components/FingerboardForm';
+
 import GymForm from '@/app/components/GymForm';
 import ClimbingIcon from '@/app/components/icons/ClimbingIcon';
 import StretchingForm from '@/app/components/StretchingForm';

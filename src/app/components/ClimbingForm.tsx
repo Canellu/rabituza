@@ -9,6 +9,7 @@ import {
   ActivityRatingsType,
   ActivityTypes,
   BaseActivityType,
+  ClimbingDataType,
 } from '@/types/Activity';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
@@ -19,22 +20,34 @@ import SaveActivityButton from './SaveActivityButton';
 
 interface ClimbingFormProps {
   onClose: () => void;
+  initialData?: BaseActivityType & ClimbingDataType; // Add initialData prop
 }
 
-const ClimbingForm = ({ onClose }: ClimbingFormProps) => {
+const ClimbingForm = ({ onClose, initialData }: ClimbingFormProps) => {
   const userId = getSession();
   const queryClient = useQueryClient();
 
-  const [gradeCount, setGradeCount] = useState<Record<string, number>>({});
-  const [activityDate, setActivityDate] = useState<Date>(new Date());
+  // Initialize state with initialData if provided
+  const [gradeCount, setGradeCount] = useState<Record<string, number>>(
+    initialData?.grades.reduce((acc, { grade, count }) => {
+      acc[grade] = count;
+      return acc;
+    }, {} as Record<string, number>) || {}
+  );
+  const [activityDate, setActivityDate] = useState<Date>(
+    initialData?.activityDate || new Date()
+  );
   const [selectedGym, setSelectedGym] = useState<
     keyof typeof BOULDERING_GYMS | ''
-  >('');
-  const [ratings, setRatings] = useState<ActivityRatingsType>({
-    intensity: 5,
-    energy: 5,
-    enjoyment: 5,
-  });
+  >((initialData?.gym as keyof typeof BOULDERING_GYMS) || '');
+  const [ratings, setRatings] = useState<ActivityRatingsType>(
+    initialData?.ratings || {
+      intensity: 5,
+      energy: 5,
+      enjoyment: 5,
+    }
+  );
+  const [note, setNote] = useState<string>(initialData?.note || '');
 
   const handleGymChange = (value: keyof typeof BOULDERING_GYMS | '') => {
     setSelectedGym(value);
@@ -60,8 +73,6 @@ const ClimbingForm = ({ onClose }: ClimbingFormProps) => {
       console.error('Error creating activity:', error);
     },
   });
-
-  const [note, setNote] = useState<string>('');
 
   const handleSubmit = async () => {
     if (!userId) return;
