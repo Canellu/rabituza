@@ -20,9 +20,13 @@ import { useState } from 'react';
 
 interface ActivityCardStretchingProps {
   activity: BaseActivityType & StretchingDataType;
+  onEdit: () => void;
 }
 
-const ActivityCardStretching = ({ activity }: ActivityCardStretchingProps) => {
+const ActivityCardStretching = ({
+  activity,
+  onEdit,
+}: ActivityCardStretchingProps) => {
   const queryClient = useQueryClient();
   const userId = getSession();
   const Icon = activityOptions.find((opt) => opt.id === activity.type)?.icon;
@@ -61,7 +65,8 @@ const ActivityCardStretching = ({ activity }: ActivityCardStretchingProps) => {
     <>
       <motion.div
         className="relative"
-        {...CARD_ANIMATION_CONFIG} // Use shared animation config
+        {...CARD_ANIMATION_CONFIG}
+        onClick={onEdit}
       >
         <div className="absolute inset-1 bg-red-500 rounded-lg flex items-center justify-end px-4">
           <Trash2 className="text-secondary" />

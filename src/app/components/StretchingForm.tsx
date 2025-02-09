@@ -2,6 +2,7 @@
 
 import { Textarea } from '@/components/ui/textarea';
 import { createActivity } from '@/lib/database/activities/createActivity';
+import { updateActivity } from '@/lib/database/activities/updateActivity'; // Import updateActivity
 import { getSession } from '@/lib/utils/userSession';
 import {
   ActivityRatingsType,
@@ -19,21 +20,30 @@ import StretchedMusclesSelection from './StretchedMusclesSelection';
 
 interface StretchingFormProps {
   onClose: () => void;
+  initialData?: BaseActivityType & StretchingDataType;
 }
 
-const StretchingForm = ({ onClose }: StretchingFormProps) => {
+const StretchingForm = ({ onClose, initialData }: StretchingFormProps) => {
   const userId = getSession();
   const queryClient = useQueryClient();
 
-  const [activityDate, setActivityDate] = useState<Date>(new Date());
-  const [ratings, setRatings] = useState<ActivityRatingsType>({
-    intensity: 5,
-    energy: 5,
-    enjoyment: 5,
-  });
-  const [duration, setDuration] = useState<number | ''>('');
-  const [selectedStretches, setSelectedStretches] = useState<string[]>([]);
-  const [note, setNote] = useState<string>('');
+  const [activityDate, setActivityDate] = useState<Date>(
+    initialData?.activityDate || new Date()
+  );
+  const [ratings, setRatings] = useState<ActivityRatingsType>(
+    initialData?.ratings || {
+      intensity: 5,
+      energy: 5,
+      enjoyment: 5,
+    }
+  );
+  const [duration, setDuration] = useState<number | ''>(
+    initialData?.duration || ''
+  );
+  const [selectedStretches, setSelectedStretches] = useState<string[]>(
+    initialData?.stretches || []
+  );
+  const [note, setNote] = useState<string>(initialData?.note || '');
 
   const { mutate, isPending } = useMutation({
     mutationFn: async (
@@ -41,7 +51,11 @@ const StretchingForm = ({ onClose }: StretchingFormProps) => {
         Pick<BaseActivityType, 'ratings' | 'activityDate'>
     ) => {
       if (!userId) throw new Error('User is not signed in');
-      return createActivity(userId, data);
+      if (initialData?.id) {
+        return updateActivity(userId, initialData.id, data);
+      } else {
+        return createActivity(userId, data);
+      }
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({
@@ -51,7 +65,7 @@ const StretchingForm = ({ onClose }: StretchingFormProps) => {
       onClose();
     },
     onError: (error) => {
-      console.error('Error creating activity:', error);
+      console.error('Error processing activity:', error);
     },
   });
 

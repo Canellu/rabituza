@@ -21,10 +21,12 @@ import { CARD_ANIMATION_CONFIG } from '@/constants/animationConfig';
 
 interface ActivityCardCalisthenicsProps {
   activity: BaseActivityType & CalisthenicsDataType;
+  onEdit: () => void;
 }
 
 const ActivityCardCalisthenics = ({
   activity,
+  onEdit,
 }: ActivityCardCalisthenicsProps) => {
   const queryClient = useQueryClient();
   const userId = getSession();
@@ -64,7 +66,8 @@ const ActivityCardCalisthenics = ({
     <>
       <motion.div
         className="relative"
-        {...CARD_ANIMATION_CONFIG} // Use shared animation config
+        {...CARD_ANIMATION_CONFIG}
+        onClick={onEdit} // Use onEdit prop to trigger edit mode
       >
         <div className="absolute inset-1 bg-red-500 rounded-lg flex items-center justify-end px-4">
           <Trash2 className="text-secondary" />

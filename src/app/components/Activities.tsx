@@ -57,17 +57,6 @@ const Activities = () => {
     );
   }
 
-  const formComponents = {
-    [ActivityTypes.Climbing]: ClimbingForm,
-    [ActivityTypes.Calisthenics]: CalisthenicsForm,
-    [ActivityTypes.Stretching]: StretchingForm,
-  };
-
-  const FormComponent =
-    selectedActivity && selectedActivity.type in formComponents
-      ? formComponents[selectedActivity.type as keyof typeof formComponents]
-      : null;
-
   return (
     <div className="h-full space-y-10">
       <section className="space-y-4">

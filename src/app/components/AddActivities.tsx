@@ -82,14 +82,12 @@ const AddActivities = () => {
                 ?.Component && (
                 <div className="flex-grow overflow-y-auto">
                   {(() => {
-                    const ActivityComponent = activityOptions.find(
+                    const ActivityForm = activityOptions.find(
                       (e) => e.id === selectedActivity
                     )?.Component;
-                    return ActivityComponent ? (
+                    return ActivityForm ? (
                       <div className="p-4 pb-16 h-full overflow-auto">
-                        <ActivityComponent
-                          onClose={() => setIsDrawerOpen(false)}
-                        />
+                        <ActivityForm onClose={() => setIsDrawerOpen(false)} />
                       </div>
                     ) : null;
                   })()}

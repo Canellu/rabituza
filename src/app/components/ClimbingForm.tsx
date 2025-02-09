@@ -3,6 +3,7 @@
 import { Textarea } from '@/components/ui/textarea';
 import BOULDERING_GYMS from '@/constants/boulderingGyms';
 import { createActivity } from '@/lib/database/activities/createActivity';
+import { updateActivity } from '@/lib/database/activities/updateActivity';
 import { getSession } from '@/lib/utils/userSession';
 import {
   ActivityDataType,
@@ -20,14 +21,13 @@ import SaveActivityButton from './SaveActivityButton';
 
 interface ClimbingFormProps {
   onClose: () => void;
-  initialData?: BaseActivityType & ClimbingDataType; // Add initialData prop
+  initialData?: BaseActivityType & ClimbingDataType;
 }
 
 const ClimbingForm = ({ onClose, initialData }: ClimbingFormProps) => {
   const userId = getSession();
   const queryClient = useQueryClient();
 
-  // Initialize state with initialData if provided
   const [gradeCount, setGradeCount] = useState<Record<string, number>>(
     initialData?.grades.reduce((acc, { grade, count }) => {
       acc[grade] = count;
@@ -60,7 +60,11 @@ const ClimbingForm = ({ onClose, initialData }: ClimbingFormProps) => {
         Pick<BaseActivityType, 'ratings' | 'activityDate'>
     ) => {
       if (!userId) throw new Error('User is not signed in');
-      return createActivity(userId, data);
+      if (initialData?.id) {
+        return updateActivity(userId, initialData.id, data);
+      } else {
+        return createActivity(userId, data);
+      }
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({
@@ -70,7 +74,7 @@ const ClimbingForm = ({ onClose, initialData }: ClimbingFormProps) => {
       onClose();
     },
     onError: (error) => {
-      console.error('Error creating activity:', error);
+      console.error('Error processing activity:', error);
     },
   });
 

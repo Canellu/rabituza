@@ -13,8 +13,12 @@ import {
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
-import { CALISTHENICS_EXERCISES } from '@/constants/calisthenicsExercises';
+import {
+  CALISTHENICS_EXERCISES,
+  POPULAR_EXERCISES,
+} from '@/constants/calisthenicsExercises';
 import { createActivity } from '@/lib/database/activities/createActivity';
+import { updateActivity } from '@/lib/database/activities/updateActivity'; // Import updateActivity
 import { getSession } from '@/lib/utils/userSession';
 import {
   ActivityRatingsType,
@@ -39,26 +43,32 @@ interface Exercise {
 
 interface CalisthenicsFormProps {
   onClose: () => void;
+  initialData?: BaseActivityType & CalisthenicsDataType;
 }
 
-const POPULAR_EXERCISES: (keyof typeof CALISTHENICS_EXERCISES)[] = [
-  'pushUp',
-  'pullUp',
-  'squats',
-  'sitUp',
-];
-
-const CalisthenicsForm = ({ onClose }: CalisthenicsFormProps) => {
+const CalisthenicsForm = ({ onClose, initialData }: CalisthenicsFormProps) => {
   const userId = getSession();
   const queryClient = useQueryClient();
 
-  const [activityDate, setActivityDate] = useState<Date>(new Date());
-  const [exercises, setExercises] = useState<Exercise[]>([]);
-  const [ratings, setRatings] = useState<ActivityRatingsType>({
-    intensity: 5,
-    energy: 5,
-    enjoyment: 5,
-  });
+  const [activityDate, setActivityDate] = useState<Date>(
+    initialData?.activityDate || new Date()
+  );
+  const [exercises, setExercises] = useState<Exercise[]>(
+    initialData?.exercises.map((exercise) => ({
+      name: exercise.name as keyof typeof CALISTHENICS_EXERCISES,
+      sets: exercise.sets,
+      reps: exercise.reps,
+      weight: exercise.weight,
+    })) || []
+  );
+  const [ratings, setRatings] = useState<ActivityRatingsType>(
+    initialData?.ratings || {
+      intensity: 5,
+      energy: 5,
+      enjoyment: 5,
+    }
+  );
+  const [note, setNote] = useState<string>(initialData?.note || '');
 
   const { mutate, isPending } = useMutation({
     mutationFn: async (
@@ -66,7 +76,11 @@ const CalisthenicsForm = ({ onClose }: CalisthenicsFormProps) => {
         Pick<BaseActivityType, 'ratings' | 'activityDate'>
     ) => {
       if (!userId) throw new Error('User is not signed in');
-      return createActivity(userId, data);
+      if (initialData?.id) {
+        return updateActivity(userId, initialData.id, data);
+      } else {
+        return createActivity(userId, data);
+      }
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({
@@ -76,7 +90,7 @@ const CalisthenicsForm = ({ onClose }: CalisthenicsFormProps) => {
       onClose();
     },
     onError: (error) => {
-      console.error('Error creating activity:', error);
+      console.error('Error processing activity:', error);
     },
   });
 
@@ -93,8 +107,6 @@ const CalisthenicsForm = ({ onClose }: CalisthenicsFormProps) => {
       )
     );
   };
-
-  const [note, setNote] = useState<string>('');
 
   const handleSubmit = () => {
     if (!userId) return;

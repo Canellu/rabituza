@@ -20,18 +20,20 @@ import { format } from 'date-fns';
 import { motion } from 'framer-motion';
 import { Trash2 } from 'lucide-react';
 import { useState } from 'react';
-import ClimbingForm from './ClimbingForm';
 
 interface ActivityCardClimbingProps {
   activity: BaseActivityType & ClimbingDataType;
+  onEdit: () => void;
 }
 
-const ActivityCardClimbing = ({ activity }: ActivityCardClimbingProps) => {
+const ActivityCardClimbing = ({
+  activity,
+  onEdit,
+}: ActivityCardClimbingProps) => {
   const queryClient = useQueryClient();
   const userId = getSession();
   const Icon = activityOptions.find((opt) => opt.id === activity.type)?.icon;
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
 
   const { mutate: deleteActivityMutation } = useMutation({
     mutationFn: ({
@@ -62,100 +64,86 @@ const ActivityCardClimbing = ({ activity }: ActivityCardClimbingProps) => {
     }
   };
 
-  const handleEdit = () => {
-    setIsEditing(true);
-  };
-
   return (
     <>
-      {isEditing ? (
-        <ClimbingForm
-          onClose={() => setIsEditing(false)}
-          initialData={activity} // Pass the activity data to the form
-        />
-      ) : (
+      <motion.div
+        className="relative"
+        {...CARD_ANIMATION_CONFIG}
+        onClick={onEdit} // Use onEdit prop to trigger edit mode
+      >
+        <div className="absolute inset-1 bg-red-500 rounded-lg flex items-center justify-end px-4">
+          <Trash2 className="text-secondary" />
+        </div>
         <motion.div
-          className="relative"
-          {...CARD_ANIMATION_CONFIG}
-          onClick={handleEdit} // Add onClick handler to enter edit mode
+          className="border rounded-lg p-4 shadow-sm space-y-3 bg-secondary relative"
+          drag="x"
+          dragDirectionLock
+          dragConstraints={{ left: -250, right: 0 }}
+          dragElastic={{ left: 0.5, right: 0 }}
+          dragSnapToOrigin
+          onDragEnd={(_, info) => {
+            if (info.offset.x < -56 * 3) {
+              handleDelete();
+            }
+          }}
         >
-          <div className="absolute inset-1 bg-red-500 rounded-lg flex items-center justify-end px-4">
-            <Trash2 className="text-secondary" />
-          </div>
-          <motion.div
-            className="border rounded-lg p-4 shadow-sm space-y-3 bg-secondary relative"
-            drag="x"
-            dragDirectionLock
-            dragConstraints={{ left: -250, right: 0 }}
-            dragElastic={{ left: 0.5, right: 0 }}
-            dragSnapToOrigin
-            onDragEnd={(_, info) => {
-              if (info.offset.x < -56 * 3) {
-                handleDelete();
-              }
-            }}
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                {Icon && (
-                  <Icon className="text-white size-6 rounded-md bg-emerald-500 p-1" />
-                )}
-                <span className="text-lg font-semibold inter text-stone-700">
-                  {
-                    activityOptions.find((opt) => opt.id === activity.type)
-                      ?.label
-                  }
-                </span>
-              </div>
-              <span className="text-sm text-muted-foreground ">
-                {activity.activityDate &&
-                  format(activity.activityDate, 'PP, HH:mm')}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              {Icon && (
+                <Icon className="text-white size-6 rounded-md bg-emerald-500 p-1" />
+              )}
+              <span className="text-lg font-semibold inter text-stone-700">
+                {activityOptions.find((opt) => opt.id === activity.type)?.label}
               </span>
             </div>
+            <span className="text-sm text-muted-foreground ">
+              {activity.activityDate &&
+                format(activity.activityDate, 'PP, HH:mm')}
+            </span>
+          </div>
 
-            <div className="flex justify-between text-sm text-muted-foreground capitalize gap-3 items-center">
-              <p className="font-medium border px-2 py-1 text-stone-700 text-nowrap rounded-md bg-stone-50">
-                {activity.gym}
-              </p>
-              <div className="flex flex-wrap gap-1.5">
-                {activity.grades
-                  .sort((a, b) => {
-                    const gymGrades =
-                      BOULDERING_GYMS[
-                        activity.gym as keyof typeof BOULDERING_GYMS
-                      ].grades;
-                    return (
-                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                      // @ts-expect-error
-                      gymGrades.indexOf(a.grade) -
-                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                      // @ts-expect-error
-                      gymGrades.indexOf(b.grade)
-                    );
-                  })
-                  .map((grade, idx) => (
-                    <span
-                      key={idx}
-                      className={cn(
-                        'size-6 border flex items-center font-bold justify-center rounded-full text-sm',
-                        getGradeColor(grade.grade).text,
-                        getGradeColor(grade.grade).bg
-                      )}
-                    >
-                      {grade.count}
-                    </span>
-                  ))}
-              </div>
+          <div className="flex justify-between text-sm text-muted-foreground capitalize gap-3 items-center">
+            <p className="font-medium border px-2 py-1 text-stone-700 text-nowrap rounded-md bg-stone-50">
+              {activity.gym}
+            </p>
+            <div className="flex flex-wrap gap-1.5">
+              {activity.grades
+                .sort((a, b) => {
+                  const gymGrades =
+                    BOULDERING_GYMS[
+                      activity.gym as keyof typeof BOULDERING_GYMS
+                    ].grades;
+                  return (
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-expect-error
+                    gymGrades.indexOf(a.grade) -
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-expect-error
+                    gymGrades.indexOf(b.grade)
+                  );
+                })
+                .map((grade, idx) => (
+                  <span
+                    key={idx}
+                    className={cn(
+                      'size-6 border flex items-center font-bold justify-center rounded-full text-sm',
+                      getGradeColor(grade.grade).text,
+                      getGradeColor(grade.grade).bg
+                    )}
+                  >
+                    {grade.count}
+                  </span>
+                ))}
             </div>
+          </div>
 
-            {activity.note && (
-              <p className="text-sm text-stone-500 line-clamp-1">
-                {activity.note}
-              </p>
-            )}
-          </motion.div>
+          {activity.note && (
+            <p className="text-sm text-stone-500 line-clamp-1">
+              {activity.note}
+            </p>
+          )}
         </motion.div>
-      )}
+      </motion.div>
 
       <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <DialogContent className="max-w-80 rounded-md">

@@ -12,3 +12,10 @@ export const CALISTHENICS_EXERCISES = {
   legRaises: 'Leg Raises',
   lunges: 'Lunges',
 } as const;
+
+export const POPULAR_EXERCISES: (keyof typeof CALISTHENICS_EXERCISES)[] = [
+  'pushUp',
+  'pullUp',
+  'squats',
+  'sitUp',
+];
