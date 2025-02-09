@@ -1,5 +1,5 @@
-import BoulderingForm from '@/app/components/BoulderingForm';
 import CalisthenicsForm from '@/app/components/CalisthenicsForm';
+import ClimbingForm from '@/app/components/ClimbingForm';
 import GymForm from '@/app/components/GymForm';
 import ClimbingIcon from '@/app/components/icons/ClimbingIcon';
 import StretchingForm from '@/app/components/StretchingForm';
@@ -11,7 +11,7 @@ const activityOptions = [
   {
     id: 'climbing',
     label: 'Climbing',
-    Component: BoulderingForm,
+    Component: ClimbingForm,
     icon: ClimbingIcon,
   },
   {

@@ -17,11 +17,11 @@ import { ActivityRatings } from './ActivityRatings';
 import { BoulderingGradeSelector } from './BoulderingGradeSelector';
 import SaveActivityButton from './SaveActivityButton';
 
-interface BoulderingFormProps {
+interface ClimbingFormProps {
   onClose: () => void;
 }
 
-const BoulderingForm = ({ onClose }: BoulderingFormProps) => {
+const ClimbingForm = ({ onClose }: ClimbingFormProps) => {
   const userId = getSession();
   const queryClient = useQueryClient();
 
@@ -117,4 +117,4 @@ const BoulderingForm = ({ onClose }: BoulderingFormProps) => {
   );
 };
 
-export default BoulderingForm;
+export default ClimbingForm;
