@@ -1,5 +1,5 @@
 export const ActivityTypes = {
-  ActiveRest: 'active_rest',
+  Rest: 'rest',
   Climbing: 'climbing',
   Fingerboard: 'fingerboard',
   Gym: 'gym',
@@ -36,11 +36,6 @@ export type ClimbingDataType = {
   grades: ClimbingGradeType[];
 };
 
-export type GymDataType = {
-  type: typeof ActivityTypes.Gym;
-  // Add gym-specific fields here
-};
-
 export type CalisthenicsExerciseType = {
   name: string;
   sets: number;
@@ -50,17 +45,36 @@ export type CalisthenicsExerciseType = {
 
 export type CalisthenicsDataType = {
   type: typeof ActivityTypes.Calisthenics;
-  exercises: CalisthenicsExerciseType[];
   activityDate: Date;
+  exercises: CalisthenicsExerciseType[];
 };
 
 export type StretchingDataType = {
   type: typeof ActivityTypes.Stretching;
   activityDate: Date;
-  ratings: ActivityRatingsType;
   duration: number;
   stretches: string[];
   note?: string;
+};
+
+export type GymDataType = {
+  type: typeof ActivityTypes.Gym;
+  // Add gym-specific fields here
+};
+
+export type RestDataType = {
+  type: typeof ActivityTypes.Rest;
+  // Add rest-specific fields here
+};
+
+export type WinterSportsDataType = {
+  type: typeof ActivityTypes.WinterSports;
+  // Add winter sports-specific fields here
+};
+
+export type FingerboardDataType = {
+  type: typeof ActivityTypes.Fingerboard;
+  // Add fingerboard-specific fields here
 };
 
 export type ActivityDataType =
