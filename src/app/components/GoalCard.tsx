@@ -11,7 +11,7 @@ import {
 import { DELETE_DRAG_THRESHOLD } from '@/constants/deleteDragThreshold';
 import { cn } from '@/lib/utils';
 import { GoalStatus, GoalType } from '@/types/Goal';
-import { motion, PanInfo } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { GripVertical, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -19,18 +19,11 @@ interface GoalCardProps {
   goal: GoalType;
   isOrdering: boolean;
   draggingId: string | null;
-  onDragStart: (id: string) => void;
-  onDragEnd: (info: PanInfo, goal: GoalType) => void;
+  deleteGoal: () => void;
   onCheck: (goal: GoalType) => void;
 }
 
-const GoalCard = ({
-  goal,
-  isOrdering,
-  onDragStart,
-  onDragEnd,
-  onCheck,
-}: GoalCardProps) => {
+const GoalCard = ({ goal, isOrdering, deleteGoal, onCheck }: GoalCardProps) => {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const handleDelete = () => {
@@ -38,7 +31,7 @@ const GoalCard = ({
   };
 
   const confirmDelete = () => {
-    onDragEnd({ offset: { x: DELETE_DRAG_THRESHOLD, y: 0 } } as PanInfo, goal);
+    deleteGoal();
     setShowDeleteDialog(false);
   };
 
@@ -69,9 +62,8 @@ const GoalCard = ({
           dragConstraints={{ left: -250, right: 0 }}
           dragSnapToOrigin
           dragElastic={{ left: 0.5, right: 0 }}
-          onDragStart={() => onDragStart(goal.id!)}
           onDragEnd={(_, info) => {
-            if (info.offset.x < -56 * 3) {
+            if (info.offset.x < DELETE_DRAG_THRESHOLD) {
               handleDelete();
             }
           }}

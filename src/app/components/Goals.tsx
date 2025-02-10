@@ -2,7 +2,10 @@
 
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { DELETE_DRAG_THRESHOLD } from '@/constants/deleteDragThreshold';
+import {
+  STAGGER_CHILD_VARIANTS,
+  STAGGER_CONTAINER_CONFIG,
+} from '@/constants/animationConfig';
 import { createOrUpdateGoal } from '@/lib/database/goals/createOrUpdateGoal';
 import { deleteGoal } from '@/lib/database/goals/deleteGoal';
 import { getGoals } from '@/lib/database/goals/getGoals';
@@ -11,17 +14,12 @@ import { splitGoalsByTimePeriod, TimePeriod } from '@/lib/utils/timePeriod';
 import { getSession } from '@/lib/utils/userSession';
 import { GoalStatus, GoalType } from '@/types/Goal';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { AnimatePresence, PanInfo, Reorder } from 'framer-motion';
+import { AnimatePresence, motion, Reorder } from 'framer-motion';
 import { ArrowDownUp } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useDebounce } from '../hooks/useDebounce';
 import GoalCard from './GoalCard';
 import Spinner from './Spinner';
-import {
-  STAGGER_CHILD_VARIANTS,
-  STAGGER_CONTAINER_CONFIG,
-} from '@/constants/animationConfig';
-import { motion } from 'framer-motion';
 
 const Goals = () => {
   const queryClient = useQueryClient();
@@ -154,7 +152,6 @@ const Goals = () => {
     }
   };
 
-  // Add this mutation before the handleDragEnd function
   const { mutate: deleteGoalMutation } = useMutation({
     mutationFn: ({ userId, goalId }: { userId: string; goalId: string }) =>
       deleteGoal(userId, goalId),
@@ -167,14 +164,9 @@ const Goals = () => {
     },
   });
 
-  const handleDragEnd = (info: PanInfo, goal: GoalType) => {
-    if (info.offset.x < DELETE_DRAG_THRESHOLD) {
-      setLocalGoals((prev) => prev.filter((g) => g.id !== goal.id));
-      if (userId && goal.id) {
-        deleteGoalMutation({ userId, goalId: goal.id });
-      }
-    }
-    setDraggingId(null);
+  const handleDelete = (goal: GoalType) => {
+    if (!userId || !goal.id) return;
+    deleteGoalMutation({ userId, goalId: goal.id });
   };
 
   return (
@@ -232,8 +224,7 @@ const Goals = () => {
                     goal={goal}
                     isOrdering={isOrdering}
                     draggingId={draggingId}
-                    onDragStart={(id) => setDraggingId(id)}
-                    onDragEnd={handleDragEnd}
+                    deleteGoal={() => handleDelete(goal)}
                     onCheck={handleCheck}
                   />
                 </Reorder.Item>
