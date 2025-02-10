@@ -12,11 +12,11 @@ import {
 } from '@/types/Activity';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import ActivityDateTimePicker from './ActivityDateTimePicker';
-import { ActivityRatings } from './ActivityRatings';
-import SaveActivityButton from './SaveActivityButton';
-import SessionDuration from './SessionDuration';
-import StretchedMusclesSelection from './StretchedMusclesSelection';
+import ActivityDateTimePicker from '../Activities/ActivityDateTimePicker';
+import { ActivityRatings } from '../Activities/ActivityRatings';
+import SaveActivityButton from '../SaveActivityButton';
+import SessionDuration from '../SessionDuration';
+import StretchedMusclesSelection from '../StretchedMusclesSelection';
 
 interface StretchingFormProps {
   onClose: () => void;

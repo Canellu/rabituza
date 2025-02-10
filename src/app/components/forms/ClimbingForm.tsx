@@ -14,10 +14,10 @@ import {
 } from '@/types/Activity';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import ActivityDateTimePicker from './ActivityDateTimePicker';
-import { ActivityRatings } from './ActivityRatings';
-import { BoulderingGradeSelector } from './BoulderingGradeSelector';
-import SaveActivityButton from './SaveActivityButton';
+import ActivityDateTimePicker from '../Activities/ActivityDateTimePicker';
+import { ActivityRatings } from '../Activities/ActivityRatings';
+import { BoulderingGradeSelector } from '../BoulderingGradeSelector';
+import SaveActivityButton from '../SaveActivityButton';
 
 interface ClimbingFormProps {
   onClose: () => void;

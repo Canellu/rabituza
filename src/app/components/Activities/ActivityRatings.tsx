@@ -21,7 +21,7 @@ import { ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
-import AnimateHeight from './AnimateHeight';
+import AnimateHeight from '../AnimateHeight';
 
 const RATING_CONFIG: Record<
   keyof ActivityRatingsType,

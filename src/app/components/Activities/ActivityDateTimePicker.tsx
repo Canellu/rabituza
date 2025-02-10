@@ -13,7 +13,7 @@ import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { CalendarIcon, Clock } from 'lucide-react';
 import { useState } from 'react';
-import AnimateHeight from './AnimateHeight';
+import AnimateHeight from '../AnimateHeight';
 
 interface ActivityDateTimePickerProps {
   date: Date;

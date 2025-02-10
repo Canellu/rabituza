@@ -1,11 +1,11 @@
-import CalisthenicsForm from '@/app/components/CalisthenicsForm';
-import ClimbingForm from '@/app/components/ClimbingForm';
-import FingerboardForm from '@/app/components/FingerboardForm';
-import RestForm from '@/app/components/RestForm';
-import GymForm from '@/app/components/GymForm';
+import CalisthenicsForm from '@/app/components/forms/CalisthenicsForm';
+import ClimbingForm from '@/app/components/forms/ClimbingForm';
+import FingerboardForm from '@/app/components/forms/FingerboardForm';
+import GymForm from '@/app/components/forms/GymForm';
+import RestForm from '@/app/components/forms/RestForm';
+import StretchingForm from '@/app/components/forms/StretchingForm';
+import WinterSportForm from '@/app/components/forms/WinterSportForm';
 import ClimbingIcon from '@/app/components/icons/ClimbingIcon';
-import StretchingForm from '@/app/components/StretchingForm';
-import WinterSportForm from '@/app/components/WinterSportForm';
 import { ActivityTypes } from '@/types/Activity';
 import { BicepsFlexed, Dumbbell, Grab } from 'lucide-react';
 import { FaSnowboarding } from 'react-icons/fa';

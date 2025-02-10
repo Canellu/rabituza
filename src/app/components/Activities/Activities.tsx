@@ -17,16 +17,16 @@ import { ActivityType, ActivityTypes } from '@/types/Activity';
 import { useQuery } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
+import CalisthenicsForm from '../forms/CalisthenicsForm';
+import ClimbingForm from '../forms/ClimbingForm'; // Import the ClimbingForm component
+import StretchingForm from '../forms/StretchingForm';
+import Spinner from '../Spinner';
 import ActivitiesMonth from './ActivitiesMonth';
 import AcitvitiesWeek from './ActivitiesWeek';
 import ActivitiesYear from './ActivitiesYear';
 import ActivityCardCalisthenics from './ActivityCardCalisthenics';
 import ActivityCardClimbing from './ActivityCardClimbing';
 import ActivityCardStretching from './ActivityCardStretching';
-import CalisthenicsForm from './CalisthenicsForm';
-import ClimbingForm from './ClimbingForm'; // Import the ClimbingForm component
-import Spinner from './Spinner';
-import StretchingForm from './StretchingForm';
 
 const Activities = () => {
   const [selectedActivity, setSelectedActivity] = useState<ActivityType | null>(
@@ -56,6 +56,17 @@ const Activities = () => {
       </div>
     );
   }
+
+  const formComponents = {
+    [ActivityTypes.Climbing]: ClimbingForm,
+    [ActivityTypes.Calisthenics]: CalisthenicsForm,
+    [ActivityTypes.Stretching]: StretchingForm,
+  };
+
+  const FormComponent =
+    selectedActivity && selectedActivity.type in formComponents
+      ? formComponents[selectedActivity.type as keyof typeof formComponents]
+      : null;
 
   return (
     <div className="h-full space-y-10">
@@ -129,35 +140,12 @@ const Activities = () => {
           <DrawerHeader>
             <DrawerTitle>Edit Activity</DrawerTitle>
           </DrawerHeader>
-          {selectedActivity && (
-            <div className="flex-grow overflow-y-auto p-4 pb-16 h-full overflow-auto">
-              {(() => {
-                switch (selectedActivity.type) {
-                  case ActivityTypes.Climbing:
-                    return (
-                      <ClimbingForm
-                        initialData={selectedActivity}
-                        onClose={() => setIsDrawerOpen(false)}
-                      />
-                    );
-                  case ActivityTypes.Calisthenics:
-                    return (
-                      <CalisthenicsForm
-                        initialData={selectedActivity}
-                        onClose={() => setIsDrawerOpen(false)}
-                      />
-                    );
-                  case ActivityTypes.Stretching:
-                    return (
-                      <StretchingForm
-                        initialData={selectedActivity}
-                        onClose={() => setIsDrawerOpen(false)}
-                      />
-                    );
-                  default:
-                    return null;
-                }
-              })()}
+          {selectedActivity && FormComponent && (
+            <div className="flex-grow overflow-y-auto">
+              <FormComponent
+                initialData={selectedActivity as typeof selectedActivity}
+                onClose={() => setIsDrawerOpen(false)}
+              />
             </div>
           )}
         </DrawerContent>

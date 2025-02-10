@@ -1,5 +1,5 @@
 import { ActivityDataType, BaseActivityType } from '@/types/Activity';
-import { doc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, serverTimestamp, updateDoc } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 
 export async function updateActivity<

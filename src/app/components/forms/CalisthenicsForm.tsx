@@ -29,10 +29,10 @@ import {
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Dumbbell, X } from 'lucide-react';
 import { useState } from 'react';
-import ActivityDateTimePicker from './ActivityDateTimePicker';
-import { ActivityRatings } from './ActivityRatings';
-import AnimateHeight from './AnimateHeight';
-import SaveActivityButton from './SaveActivityButton';
+import ActivityDateTimePicker from '../Activities/ActivityDateTimePicker';
+import { ActivityRatings } from '../Activities/ActivityRatings';
+import AnimateHeight from '../AnimateHeight';
+import SaveActivityButton from '../SaveActivityButton';
 
 interface Exercise {
   name: keyof typeof CALISTHENICS_EXERCISES;

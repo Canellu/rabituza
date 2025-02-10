@@ -32,10 +32,8 @@ const ActivityCardClimbing = ({
 }: ActivityCardClimbingProps) => {
   const queryClient = useQueryClient();
   const userId = getSession();
-  const Icon = activityOptions.find(
-    (opt) => opt.id === activity.type
-  )?.icon;
-  
+  const Icon = activityOptions.find((opt) => opt.id === activity.type)?.icon;
+
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const { mutate: deleteActivityMutation } = useMutation({
