@@ -12,8 +12,8 @@ const NutritionalGoalSelector = ({
   onGoalChange,
 }: NutritionalGoalSelectorProps) => {
   return (
-    <div className="space-y-1">
-      <Label className="text-sm">Nutritional Goal</Label>
+    <div className="space-y-2">
+      <Label>Nutritional Goal</Label>
       <ToggleGroup
         type="single"
         value={selectedGoal}

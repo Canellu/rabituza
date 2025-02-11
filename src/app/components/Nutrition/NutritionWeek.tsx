@@ -1,18 +1,30 @@
 import { cn } from '@/lib/utils';
-import { NutritionEntry } from '@/types/Nutrition';
+import { NutritionEntry, NutritionTarget } from '@/types/Nutrition';
 import { addDays, format, isToday, startOfWeek } from 'date-fns';
 
 type NutritionWeekProps = {
   entries?: NutritionEntry[];
+  targets?: NutritionTarget[]; // Add targets as a prop
 };
 
-const NutritionWeek = ({ entries = [] }: NutritionWeekProps) => {
+const NutritionWeek = ({ entries = [], targets = [] }: NutritionWeekProps) => {
   const hasEntry = (date: Date) =>
     entries.some(
       (entry) =>
         new Date(entry.mealDate).toLocaleDateString() ===
         date.toLocaleDateString()
     );
+
+  const isTrackingDay = (date: Date) => {
+    return targets.some((target) => {
+      const dayOfWeek = (date.getDay() + 6) % 7; // Adjust the day index to have Monday as 0
+      return (
+        date >= target.startDate &&
+        date <= target.endDate &&
+        target.daysOfWeek.includes(dayOfWeek)
+      );
+    });
+  };
 
   const getDailyCalories = (date: Date) => {
     const dayEntries = entries.filter(
@@ -44,6 +56,7 @@ const NutritionWeek = ({ entries = [] }: NutritionWeekProps) => {
         const isCurrentDay = isToday(date);
         const hasEntryForDay = hasEntry(date);
         const calories = getDailyCalories(date);
+        const trackingDay = isTrackingDay(date);
 
         return (
           <div key={i} className="flex flex-col items-center gap-3">
@@ -55,7 +68,8 @@ const NutritionWeek = ({ entries = [] }: NutritionWeekProps) => {
                 className={cn(
                   'size-9 rounded-full flex items-center justify-center',
                   hasEntryForDay && 'bg-primary/50 font-semibold',
-                  isCurrentDay && 'border-2 border-primary/50'
+                  isCurrentDay && 'border-2 border-primary/50',
+                  trackingDay && 'ring-2 ring-emerald-500' // Indicate tracking day
                 )}
               >
                 <span className="text-sm font-medium">{format(date, 'd')}</span>

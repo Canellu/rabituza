@@ -12,8 +12,8 @@ const ActivityLevelSelector = ({
   onActivityChange,
 }: ActivityLevelSelectorProps) => {
   return (
-    <div className="space-y-1">
-      <Label className="text-sm">Activity Level</Label>
+    <div className="space-y-2">
+      <Label>Activity Level</Label>
       <ToggleGroup
         type="single"
         value={selectedActivity}

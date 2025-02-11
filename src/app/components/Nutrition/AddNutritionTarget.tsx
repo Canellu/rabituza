@@ -8,6 +8,7 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from '@/components/ui/drawer';
+import { createNutritionTarget } from '@/lib/database/nutrition/createNutritionTarget';
 import { getUser } from '@/lib/database/user/getUser';
 import {
   activityLevels,
@@ -25,21 +26,22 @@ import NutritionInputs from './NutritionInputs';
 import RecommendedValues from './RecommendedValues';
 import TargetOccurrence from './TargetOccurrence';
 
-export type NutritionTargetType = Omit<
+export type NutritionTargetType = Pick<
   NutritionTarget,
-  'calories' | 'protein' | 'carbs' | 'fat' | 'fiber'
+  'startDate' | 'daysOfWeek'
 > & {
   calories: string;
   protein: string;
   carbs: string;
   fat: string;
   fiber: string;
+  endDate: Date | null;
 };
 
 export function AddNutritionTarget() {
   const queryClient = useQueryClient();
   const userId = getSession();
-  const { data: user, error } = useQuery({
+  const { data: user } = useQuery({
     queryKey: ['user', userId],
     queryFn: async () => {
       if (!userId) throw new Error('User ID is null');
@@ -56,34 +58,20 @@ export function AddNutritionTarget() {
   >();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  const defaultValues = calculateRecommendedNutritionalValues(
-    user,
-    selectedActivity
-  );
-
   const initialTarget = {
     calories: '',
     protein: '',
     carbs: '',
     fat: '',
     fiber: '',
-    isRecurring: false,
     startDate: new Date(),
-    isCheatDay: false,
+    endDate: null,
+    daysOfWeek: [0, 1, 2, 3, 4], // Mon to Fri
   };
 
-  const [target, setTarget] = useState<
-    Omit<
-      NutritionTarget,
-      'calories' | 'protein' | 'carbs' | 'fat' | 'fiber'
-    > & {
-      calories: string;
-      protein: string;
-      carbs: string;
-      fat: string;
-      fiber: string;
-    }
-  >(initialTarget);
+  const [target, setTarget] = useState<NutritionTargetType>({
+    ...initialTarget,
+  });
 
   const handleActivityChange = (activity: keyof typeof activityLevels) => {
     setSelectedActivity(activity);
@@ -117,11 +105,10 @@ export function AddNutritionTarget() {
   };
 
   const { mutate, isPending } = useMutation({
-    mutationFn: async () => {
+    mutationFn: async (data: Omit<NutritionTarget, 'id'>) => {
       if (!userId) throw new Error('User is not signed in');
-      // TODO: Implement your createNutritionTarget function
-      // await createNutritionTarget(userId, target);
-      console.log('Creating target:', target);
+      await createNutritionTarget(userId, data);
+      console.log('Creating target:', data);
     },
     onSuccess: () => {
       setIsDrawerOpen(false);
@@ -134,8 +121,22 @@ export function AddNutritionTarget() {
   });
 
   const handleSubmit = () => {
-    console.log(target);
-    // mutate(data);
+    if (!target.endDate) {
+      console.error('End date is required');
+      return;
+    }
+
+    const data = {
+      ...target,
+      calories: parseInt(target.calories),
+      protein: parseInt(target.protein),
+      carbs: parseInt(target.carbs),
+      fat: parseInt(target.fat),
+      fiber: parseInt(target.fiber),
+      endDate: target.endDate,
+    };
+
+    mutate(data);
   };
 
   return (
@@ -194,23 +195,22 @@ export function AddNutritionTarget() {
 
               <TargetOccurrence
                 target={target}
-                setTarget={(value) =>
-                  setTarget(
-                    typeof value === 'function'
-                      ? (
-                          value as unknown as (
-                            prev: typeof target
-                          ) => typeof target
-                        )(target)
-                      : { ...target, ...value }
-                  )
-                }
+                setTarget={(value) => setTarget(value)}
               />
 
               <SaveButtonDrawer
                 title="Save target"
                 isPending={isPending}
-                isDisabled={target.calories === ''}
+                isDisabled={
+                  !target.calories ||
+                  !target.protein ||
+                  !target.carbs ||
+                  !target.fat ||
+                  !target.fiber ||
+                  !target.startDate ||
+                  !target.endDate ||
+                  target.daysOfWeek.length === 0
+                }
                 onClick={handleSubmit}
               />
             </div>

@@ -66,25 +66,13 @@ export type NutritionEntry = {
 } & MealContent;
 
 export type NutritionTarget = {
+  id: string;
   calories: number;
   protein: number;
   carbs: number;
   fat: number;
   fiber: number;
-  isRecurring: boolean;
   startDate: Date;
-  endDate?: Date;
-  daysOfWeek?: number[]; // 0-6 for Sunday-Saturday
-  isCheatDay?: boolean;
-};
-
-export type DailyNutritionPlan = NutritionTarget & {
-  date: Date;
-  actualValues?: {
-    calories?: number;
-    protein?: number;
-    carbs?: number;
-    fat?: number;
-    fiber?: number;
-  };
+  endDate: Date;
+  daysOfWeek: number[]; // 0-6 for Monday-Sunday
 };
