@@ -3,6 +3,7 @@ import {
   ActivityType,
   ActivityTypes,
   CalisthenicsExerciseType,
+  GymExerciseType,
   HangboardEdgeType,
 } from '@/types/Activity';
 import { collection, getDocs } from 'firebase/firestore';
@@ -43,16 +44,52 @@ export const getActivities = async (
             exercises: data.exercises.map(
               (exercise: CalisthenicsExerciseType) => ({
                 name: exercise.name,
-                sets: exercise.sets,
-                reps: exercise.reps,
-                weight: exercise.weight || 0,
+                setGroups: exercise.setGroups.map((setGroup) => {
+                  const base = {
+                    sets: setGroup.sets,
+                  };
+
+                  if (setGroup.duration !== undefined) {
+                    return {
+                      ...base,
+                      duration: setGroup.duration,
+                      weight: setGroup.weight || 0,
+                    };
+                  } else {
+                    return {
+                      ...base,
+                      reps: setGroup.reps || 0,
+                      weight: setGroup.weight || 0,
+                    };
+                  }
+                }),
               })
             ),
           };
         case ActivityTypes.Gym:
           return {
             ...baseActivity,
-            // Add gym-specific fields when implemented
+            exercises: data.exercises.map((exercise: GymExerciseType) => ({
+              name: exercise.name,
+              setGroups: exercise.setGroups.map((setGroup) => {
+                const base = {
+                  sets: setGroup.sets,
+                };
+
+                if (setGroup.duration !== undefined) {
+                  return {
+                    ...base,
+                    duration: setGroup.duration,
+                  };
+                } else {
+                  return {
+                    ...base,
+                    reps: setGroup.reps || 0,
+                    weight: setGroup.weight || 0,
+                  };
+                }
+              }),
+            })),
           };
         case ActivityTypes.Stretching:
           return {

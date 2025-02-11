@@ -1,6 +1,5 @@
 'use client';
 
-import { CALISTHENICS_EXERCISES } from '@/constants/calisthenicsExercises';
 import { createActivity } from '@/lib/database/activities/createActivity';
 import { updateActivity } from '@/lib/database/activities/updateActivity'; // Import updateActivity
 import { getSession } from '@/lib/utils/userSession';
@@ -9,6 +8,7 @@ import {
   ActivityTypes,
   BaseActivityType,
   CalisthenicsDataType,
+  CalisthenicsExerciseType,
 } from '@/types/Activity';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
@@ -17,13 +17,6 @@ import { ActivityRatings } from '../Activities/ActivityRatings';
 import ActivityNotes from '../ActivityNotes';
 import CalisthenicsExerciseSelector from '../CalisthenicsExerciseSelector';
 import SaveActivityButton from '../SaveActivityButton';
-
-interface Exercise {
-  name: keyof typeof CALISTHENICS_EXERCISES;
-  sets: number | '';
-  reps: number | '';
-  weight: number | '';
-}
 
 interface CalisthenicsFormProps {
   onClose: () => void;
@@ -37,13 +30,8 @@ const CalisthenicsForm = ({ onClose, initialData }: CalisthenicsFormProps) => {
   const [activityDate, setActivityDate] = useState(
     initialData?.activityDate || new Date()
   );
-  const [exercises, setExercises] = useState<Exercise[]>(
-    initialData?.exercises.map((exercise) => ({
-      name: exercise.name as keyof typeof CALISTHENICS_EXERCISES,
-      sets: exercise.sets,
-      reps: exercise.reps,
-      weight: exercise.weight,
-    })) || []
+  const [exercises, setExercises] = useState<CalisthenicsExerciseType[]>(
+    initialData?.exercises || []
   );
   const [ratings, setRatings] = useState<ActivityRatingsType>(
     initialData?.ratings || {
@@ -86,11 +74,26 @@ const CalisthenicsForm = ({ onClose, initialData }: CalisthenicsFormProps) => {
       activityDate,
       ratings,
       note,
-      exercises: exercises.map(({ name, sets, reps, weight }) => ({
-        name: CALISTHENICS_EXERCISES[name],
-        sets: Number(sets),
-        reps: Number(reps),
-        weight: Number(weight),
+      exercises: exercises.map((exercise) => ({
+        name: exercise.name,
+        setGroups: exercise.setGroups.map((setGroup) => {
+          const base = {
+            sets: Number(setGroup.sets),
+            weight: Number(setGroup.weight || 0),
+          };
+
+          if ('duration' in setGroup) {
+            return {
+              ...base,
+              duration: Number(setGroup.duration),
+            };
+          } else {
+            return {
+              ...base,
+              reps: Number(setGroup.reps),
+            };
+          }
+        }),
       })),
     };
 
@@ -116,12 +119,24 @@ const CalisthenicsForm = ({ onClose, initialData }: CalisthenicsFormProps) => {
         isPending={isPending}
         isDisabled={
           exercises.length === 0 ||
-          exercises.some(
-            (exercise) =>
-              typeof exercise.sets !== 'number' ||
-              typeof exercise.reps !== 'number' ||
-              exercise.sets < 1 ||
-              exercise.reps < 1
+          exercises.some((exercise) =>
+            exercise.setGroups.some((setGroup) => {
+              const hasValidSets = setGroup.sets && Number(setGroup.sets) > 0;
+              console.log(setGroup);
+              if ('duration' in setGroup) {
+                // Duration-based: requires sets and duration
+                return (
+                  !hasValidSets ||
+                  !setGroup.duration ||
+                  Number(setGroup.duration) < 1
+                );
+              } else {
+                // Rep-based: requires sets and reps
+                return (
+                  !hasValidSets || !setGroup.reps || Number(setGroup.reps) < 1
+                );
+              }
+            })
           )
         }
         onClick={handleSubmit}

@@ -39,12 +39,7 @@ const AddActivities = () => {
 
   const disabledActivities: Array<
     (typeof ActivityTypes)[keyof typeof ActivityTypes]
-  > = [
-    ActivityTypes.WinterSports,
-    ActivityTypes.Rest,
-    ActivityTypes.Gym,
-    ActivityTypes.Swimming,
-  ];
+  > = [ActivityTypes.WinterSports, ActivityTypes.Rest, ActivityTypes.Swimming];
 
   const groupedActivities = activityOptions.reduce((acc, activity) => {
     if (!acc[activity.group]) {

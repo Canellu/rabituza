@@ -8,27 +8,23 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import activityOptions from '@/constants/activityOptions';
+import { CARD_ANIMATION_CONFIG } from '@/constants/animationConfig';
+import { GYM_EXERCISES } from '@/constants/gymExercises';
 import { deleteActivity } from '@/lib/database/activities/deleteActivity';
 import { getSession } from '@/lib/utils/userSession';
-import { BaseActivityType, CalisthenicsDataType } from '@/types/Activity';
+import { BaseActivityType, GymDataType } from '@/types/Activity';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { motion } from 'framer-motion';
 import { Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
-import { CARD_ANIMATION_CONFIG } from '@/constants/animationConfig';
-import { CALISTHENICS_EXERCISES } from '@/constants/calisthenicsExercises';
-
-interface ActivityCardCalisthenicsProps {
-  activity: BaseActivityType & CalisthenicsDataType;
+interface ActivityCardGymProps {
+  activity: BaseActivityType & GymDataType;
   onEdit: () => void;
 }
 
-const ActivityCardCalisthenics = ({
-  activity,
-  onEdit,
-}: ActivityCardCalisthenicsProps) => {
+const ActivityCardGym = ({ activity, onEdit }: ActivityCardGymProps) => {
   const queryClient = useQueryClient();
   const userId = getSession();
   const Icon = activityOptions.find((opt) => opt.id === activity.type)?.icon;
@@ -63,12 +59,9 @@ const ActivityCardCalisthenics = ({
     }
   };
 
-  // Remove hasDuration function
   const groupedExercises = activity.exercises.reduce((acc, exercise) => {
     const group =
-      CALISTHENICS_EXERCISES[
-        exercise.name as keyof typeof CALISTHENICS_EXERCISES
-      ].group;
+      GYM_EXERCISES[exercise.name as keyof typeof GYM_EXERCISES].group;
     if (!acc[group]) {
       acc[group] = [];
     }
@@ -122,8 +115,8 @@ const ActivityCardCalisthenics = ({
                   <div key={index} className="space-y-1.5">
                     <span className="font-medium text-stone-700">
                       {
-                        CALISTHENICS_EXERCISES[
-                          exercise.name as keyof typeof CALISTHENICS_EXERCISES
+                        GYM_EXERCISES[
+                          exercise.name as keyof typeof GYM_EXERCISES
                         ].name
                       }
                     </span>
@@ -148,9 +141,9 @@ const ActivityCardCalisthenics = ({
                               {setGroup.reps === 1 ? 'rep' : 'reps'}
                             </span>
                           )}
-                          <span>
-                            {setGroup.weight ? `+${setGroup.weight}kg` : '+0kg'}
-                          </span>
+                          {setGroup.weight && setGroup.weight > 0 && (
+                            <span>{setGroup.weight}kg</span>
+                          )}
                         </div>
                       </div>
                     ))}
@@ -201,4 +194,4 @@ const ActivityCardCalisthenics = ({
   );
 };
 
-export default ActivityCardCalisthenics;
+export default ActivityCardGym;

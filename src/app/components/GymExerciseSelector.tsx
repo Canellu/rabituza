@@ -13,24 +13,24 @@ import {
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import {
-  CALISTHENICS_EXERCISE_GROUPS,
-  CALISTHENICS_EXERCISES,
-  POPULAR_EXERCISES,
-} from '@/constants/calisthenicsExercises';
-import { CalisthenicsExerciseType } from '@/types/Activity';
+  GYM_EXERCISE_GROUPS,
+  GYM_EXERCISES,
+  POPULAR_GYM_EXERCISES,
+} from '@/constants/gymExercises';
+import { GymExerciseType } from '@/types/Activity';
 import { Clock, Dumbbell, Plus, Weight, X } from 'lucide-react';
 import { Dispatch, SetStateAction } from 'react';
 import AnimateHeight from './AnimateHeight';
 
-interface CalisthenicsExerciseListProps {
-  exercises: CalisthenicsExerciseType[];
-  setExercises: Dispatch<SetStateAction<CalisthenicsExerciseType[]>>;
+interface GymExerciseListProps {
+  exercises: GymExerciseType[];
+  setExercises: Dispatch<SetStateAction<GymExerciseType[]>>;
 }
 
-const CalisthenicsExerciseSelector = ({
+const GymExerciseSelector = ({
   exercises,
   setExercises,
-}: CalisthenicsExerciseListProps) => {
+}: GymExerciseListProps) => {
   const removeExercise = (index: number) => {
     setExercises((prev) => prev.filter((_, i) => i !== index));
   };
@@ -43,11 +43,16 @@ const CalisthenicsExerciseSelector = ({
               ...exercise,
               setGroups: [
                 ...exercise.setGroups,
-                {
-                  sets: 0,
-                  weight: 0,
-                  ...(hasDuration(exercise) ? { duration: 0 } : { reps: 0 }),
-                },
+                hasDuration(exercise)
+                  ? {
+                      sets: 0,
+                      duration: 0,
+                    }
+                  : {
+                      sets: 0,
+                      reps: 0,
+                      weight: 0,
+                    },
               ],
             }
           : exercise
@@ -85,7 +90,7 @@ const CalisthenicsExerciseSelector = ({
                 si === setGroupIndex
                   ? {
                       ...setGroup,
-                      [field]: value === '' ? 0 : Number(value),
+                      [field]: value === '' ? 0 : parseInt(value, 10) || 0,
                     }
                   : setGroup
               ),
@@ -95,12 +100,10 @@ const CalisthenicsExerciseSelector = ({
     );
   };
 
-  const hasDuration = (exercise: CalisthenicsExerciseType) => {
+  const hasDuration = (exercise: GymExerciseType) => {
     return (
       'hasDuration' in
-      CALISTHENICS_EXERCISES[
-        exercise.name as keyof typeof CALISTHENICS_EXERCISES
-      ]
+      GYM_EXERCISES[exercise.name as keyof typeof GYM_EXERCISES]
     );
   };
 
@@ -108,8 +111,8 @@ const CalisthenicsExerciseSelector = ({
     <div className="space-y-2">
       <Select
         value=""
-        onValueChange={(value: keyof typeof CALISTHENICS_EXERCISES) => {
-          const hasDuration = 'hasDuration' in CALISTHENICS_EXERCISES[value];
+        onValueChange={(value: keyof typeof GYM_EXERCISES) => {
+          const hasDuration = 'hasDuration' in GYM_EXERCISES[value];
           setExercises((prev) => [
             {
               name: value,
@@ -117,10 +120,12 @@ const CalisthenicsExerciseSelector = ({
                 {
                   sets: 0,
                   weight: 0,
-                  ...(hasDuration ? { duration: 0 } : { reps: 0 }),
+                  ...(hasDuration
+                    ? { duration: 0, reps: undefined }
+                    : { reps: 0, duration: undefined }),
                 },
               ],
-            } as CalisthenicsExerciseType,
+            } as GymExerciseType,
             ...prev,
           ]);
         }}
@@ -138,32 +143,30 @@ const CalisthenicsExerciseSelector = ({
         <SelectContent>
           <SelectGroup>
             <SelectLabel>Popular</SelectLabel>
-            {POPULAR_EXERCISES.map((key) => (
+            {POPULAR_GYM_EXERCISES.map((key) => (
               <SelectItem key={key} value={key}>
-                {CALISTHENICS_EXERCISES[key].name}
+                {GYM_EXERCISES[key].name}
               </SelectItem>
             ))}
           </SelectGroup>
-          {Object.entries(CALISTHENICS_EXERCISE_GROUPS).map(
-            ([groupKey, groupName]) => (
-              <SelectGroup key={groupKey}>
-                <SelectLabel>{groupName}</SelectLabel>
-                {Object.entries(CALISTHENICS_EXERCISES)
-                  .filter(
-                    ([key, exercise]) =>
-                      exercise.group === groupName &&
-                      !POPULAR_EXERCISES.includes(
-                        key as (typeof POPULAR_EXERCISES)[number]
-                      )
-                  )
-                  .map(([key, exercise]) => (
-                    <SelectItem key={key} value={key}>
-                      {exercise.name}
-                    </SelectItem>
-                  ))}
-              </SelectGroup>
-            )
-          )}
+          {Object.entries(GYM_EXERCISE_GROUPS).map(([groupKey, groupName]) => (
+            <SelectGroup key={groupKey}>
+              <SelectLabel>{groupName}</SelectLabel>
+              {Object.entries(GYM_EXERCISES)
+                .filter(
+                  ([key, exercise]) =>
+                    exercise.group === groupName &&
+                    !POPULAR_GYM_EXERCISES.includes(
+                      key as keyof typeof GYM_EXERCISES
+                    )
+                )
+                .map(([key, exercise]) => (
+                  <SelectItem key={key} value={key}>
+                    {exercise.name}
+                  </SelectItem>
+                ))}
+            </SelectGroup>
+          ))}
         </SelectContent>
       </Select>
 
@@ -177,11 +180,11 @@ const CalisthenicsExerciseSelector = ({
               <div className="flex justify-between items-center gap-2">
                 <span>
                   {
-                    CALISTHENICS_EXERCISES[
-                      exercise.name as keyof typeof CALISTHENICS_EXERCISES
-                    ].name
+                    GYM_EXERCISES[exercise.name as keyof typeof GYM_EXERCISES]
+                      .name
                   }
                 </span>
+
                 <Button
                   variant="ghost"
                   size="icon"
@@ -260,41 +263,8 @@ const CalisthenicsExerciseSelector = ({
                               placeholder="0"
                             />
                             <span className="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-stone-500">
-                              sec
+                              min
                             </span>
-                          </div>
-                          <div className="flex gap-1.5 items-center justify-center">
-                            <Weight className="size-4 text-stone-700" />
-                            <div className="relative">
-                              <Input
-                                type="text"
-                                inputMode="numeric"
-                                value={setGroup.weight}
-                                onChange={(e) =>
-                                  updateSetGroup(
-                                    exerciseIndex,
-                                    setGroupIndex,
-                                    'weight',
-                                    e.target.value
-                                  )
-                                }
-                                onFocus={(e) => {
-                                  e.target.value = '';
-                                  updateSetGroup(
-                                    exerciseIndex,
-                                    setGroupIndex,
-                                    'weight',
-                                    ''
-                                  );
-                                }}
-                                maxLength={2}
-                                className="w-14 h-8 px-1.5 pr-6"
-                                placeholder="0"
-                              />
-                              <span className="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-stone-500">
-                                kg
-                              </span>
-                            </div>
                           </div>
                         </div>
                       ) : (
@@ -386,7 +356,7 @@ const CalisthenicsExerciseSelector = ({
                   className="w-full"
                   onClick={() => addSetGroup(exerciseIndex)}
                 >
-                  <Plus className="mr-2" /> Add Row
+                  <Plus /> Add Row
                 </Button>
               </div>
             </div>
@@ -397,4 +367,4 @@ const CalisthenicsExerciseSelector = ({
   );
 };
 
-export default CalisthenicsExerciseSelector;
+export default GymExerciseSelector;

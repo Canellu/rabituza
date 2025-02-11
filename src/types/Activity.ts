@@ -41,11 +41,23 @@ export type ClimbingDataType = {
   grades: ClimbingGradeType[];
 };
 
+export type CalisthenicsSetType = {
+  sets: number;
+  weight?: number;
+} & (
+  | {
+      reps: number;
+      duration?: never;
+    }
+  | {
+      duration: number;
+      reps?: never;
+    }
+);
+
 export type CalisthenicsExerciseType = {
   name: string;
-  sets: number;
-  reps: number;
-  weight: number;
+  setGroups: CalisthenicsSetType[];
 };
 
 export type CalisthenicsDataType = {
@@ -72,9 +84,29 @@ export type HangboardDataType = {
   edges: HangboardEdgeType[];
 };
 
+export type GymSetType = {
+  sets: number;
+} & (
+  | {
+      reps: number;
+      weight: number;
+      duration?: never;
+    }
+  | {
+      duration: number;
+      weight?: never;
+      reps?: never;
+    }
+);
+
+export type GymExerciseType = {
+  name: string;
+  setGroups: GymSetType[];
+};
+
 export type GymDataType = {
   type: typeof ActivityTypes.Gym;
-  // Add gym-specific fields here
+  exercises: GymExerciseType[];
 };
 
 export type RestDataType = {
