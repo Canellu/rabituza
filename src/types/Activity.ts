@@ -1,7 +1,7 @@
 export const ActivityTypes = {
   Rest: 'rest',
   Climbing: 'climbing',
-  Hangboard: 'Hangboard',
+  Hangboard: 'hangboard',
   Gym: 'gym',
   Calisthenics: 'calisthenics',
   Stretching: 'stretching',
