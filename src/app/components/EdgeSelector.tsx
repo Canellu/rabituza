@@ -141,17 +141,22 @@ const EdgeSelector = ({ edges, setEdges }: EdgeSelectorProps) => {
                 <span className="text-sm font-medium text-stone-700">
                   Hang time per rep
                 </span>
-                <Input
-                  type="text"
-                  inputMode="numeric"
-                  value={edge.duration}
-                  onChange={(e) =>
-                    updateEdge(index, 'duration', e.target.value)
-                  }
-                  onFocus={(e) => (e.target.value = '')}
-                  className="w-12 h-8 px-1.5"
-                  placeholder="0"
-                />
+                <div className="relative">
+                  <Input
+                    type="text"
+                    inputMode="numeric"
+                    value={edge.duration}
+                    onChange={(e) =>
+                      updateEdge(index, 'duration', e.target.value)
+                    }
+                    onFocus={(e) => (e.target.value = '')}
+                    className="w-[72px] h-8 px-1.5 pr-9"
+                    placeholder="0"
+                  />
+                  <span className="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-stone-500">
+                    sec
+                  </span>
+                </div>
               </div>
             </div>
           ))}

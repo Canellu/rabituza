@@ -65,7 +65,7 @@ const HangboardForm = ({ onClose, initialData }: HangboardFormProps) => {
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({
-        queryKey: ['activities', initialData?.userId],
+        queryKey: ['activities', userId],
         exact: true,
       });
       onClose();
@@ -82,7 +82,13 @@ const HangboardForm = ({ onClose, initialData }: HangboardFormProps) => {
       type: ActivityTypes.Hangboard,
       activityDate,
       ratings,
-      edges,
+      edges: edges.map((edge) => ({
+        size: edge.size,
+        sets: Number(edge.sets),
+        reps: Number(edge.reps),
+        weight: Number(edge.weight),
+        duration: Number(edge.duration),
+      })),
       note,
     };
 
