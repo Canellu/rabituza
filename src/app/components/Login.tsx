@@ -64,10 +64,12 @@ const Login = () => {
     }
 
     setLoading(true);
+
     try {
       await sleep(250); // Add artificial delay
-      verifyUserCode(user![0], code);
-      setSession(user![0].id);
+      if (!user) return;
+      verifyUserCode(user[0], code);
+      setSession(user[0].id);
       router.refresh();
     } catch (error) {
       setLoading(false);

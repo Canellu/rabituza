@@ -1,6 +1,5 @@
 'use client';
 
-import { Textarea } from '@/components/ui/textarea';
 import BOULDERING_GYMS from '@/constants/boulderingGyms';
 import { createActivity } from '@/lib/database/activities/createActivity';
 import { updateActivity } from '@/lib/database/activities/updateActivity';
@@ -16,6 +15,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import ActivityDateTimePicker from '../Activities/ActivityDateTimePicker';
 import { ActivityRatings } from '../Activities/ActivityRatings';
+import ActivityNotes from '../ActivityNotes';
 import { BoulderingGradeSelector } from '../BoulderingGradeSelector';
 import SaveActivityButton from '../SaveActivityButton';
 
@@ -34,7 +34,7 @@ const ClimbingForm = ({ onClose, initialData }: ClimbingFormProps) => {
       return acc;
     }, {} as Record<string, number>) || {}
   );
-  const [activityDate, setActivityDate] = useState<Date>(
+  const [activityDate, setActivityDate] = useState(
     initialData?.activityDate || new Date()
   );
   const [selectedGym, setSelectedGym] = useState<
@@ -99,7 +99,7 @@ const ClimbingForm = ({ onClose, initialData }: ClimbingFormProps) => {
   };
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-4">
       <ActivityDateTimePicker
         date={activityDate}
         onDateChange={setActivityDate}
@@ -113,12 +113,7 @@ const ClimbingForm = ({ onClose, initialData }: ClimbingFormProps) => {
         onGradeCountChange={setGradeCount}
       />
 
-      <Textarea
-        placeholder="Add notes (optional)"
-        value={note}
-        onChange={(e) => setNote(e.target.value)}
-        className="min-h-[100px]"
-      />
+      <ActivityNotes note={note} onNoteChange={setNote} />
 
       <SaveActivityButton
         isPending={isPending}

@@ -5,15 +5,15 @@ import {
   UPPER_BODY_STRETCHES,
 } from '@/constants/stretches';
 
-interface StretchedMusclesSelectionProps {
+interface StretchedMusclesSelectorProps {
   selectedStretches: string[];
   onStretchChange: (stretches: string[]) => void; // Updated to handle array
 }
 
-const StretchedMusclesSelection = ({
+const StretchedMusclesSelector = ({
   selectedStretches,
   onStretchChange,
-}: StretchedMusclesSelectionProps) => {
+}: StretchedMusclesSelectorProps) => {
   const handleStretchToggle = (stretch: string) => {
     onStretchChange(
       selectedStretches.includes(stretch)
@@ -75,4 +75,4 @@ const StretchGroup = ({
   </div>
 );
 
-export default StretchedMusclesSelection;
+export default StretchedMusclesSelector;

@@ -1,7 +1,7 @@
 import CalisthenicsForm from '@/app/components/forms/CalisthenicsForm';
 import ClimbingForm from '@/app/components/forms/ClimbingForm';
-import FingerboardForm from '@/app/components/forms/FingerboardForm';
 import GymForm from '@/app/components/forms/GymForm';
+import HangboardForm from '@/app/components/forms/HangboardForm';
 import RestForm from '@/app/components/forms/RestForm';
 import StretchingForm from '@/app/components/forms/StretchingForm';
 import WinterSportForm from '@/app/components/forms/WinterSportForm';
@@ -27,9 +27,9 @@ const activityOptions = [
     group: ActivityGroups.PHYSICAL,
   },
   {
-    id: ActivityTypes.Fingerboard,
-    label: 'Fingerboard',
-    Component: FingerboardForm,
+    id: ActivityTypes.Hangboard,
+    label: 'Hangboard',
+    Component: HangboardForm,
     icon: Grab,
     group: ActivityGroups.PHYSICAL,
   },

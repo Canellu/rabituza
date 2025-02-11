@@ -9,6 +9,7 @@ export type VerifyLoginError =
   | { type: 'FirestoreError'; message: string; details?: string };
 
 export async function getUserByIdentifier(identifier: string): Promise<User[]> {
+  console.log(identifier);
   try {
     const normalizedIdentifier = identifier.toLowerCase();
     const usernameQuery = query(
@@ -30,6 +31,7 @@ export async function getUserByIdentifier(identifier: string): Promise<User[]> {
     usernameSnapshot.forEach((doc) => users.add(doc.data()));
     emailSnapshot.forEach((doc) => users.add(doc.data()));
 
+    console.log(Array.from(users));
     return Array.from(users) as User[];
   } catch (err) {
     throw {

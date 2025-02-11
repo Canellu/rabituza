@@ -17,16 +17,15 @@ import { ActivityType, ActivityTypes } from '@/types/Activity';
 import { useQuery } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
-import CalisthenicsForm from '../forms/CalisthenicsForm';
-import ClimbingForm from '../forms/ClimbingForm'; // Import the ClimbingForm component
-import StretchingForm from '../forms/StretchingForm';
 import Spinner from '../Spinner';
 import ActivitiesMonth from './ActivitiesMonth';
 import AcitvitiesWeek from './ActivitiesWeek';
 import ActivitiesYear from './ActivitiesYear';
 import ActivityCardCalisthenics from './ActivityCardCalisthenics';
 import ActivityCardClimbing from './ActivityCardClimbing';
+import ActivityCardHangboard from './ActivityCardHangboard';
 import ActivityCardStretching from './ActivityCardStretching';
+import ActivityForm from './ActivityForm';
 
 const Activities = () => {
   const [selectedActivity, setSelectedActivity] = useState<ActivityType | null>(
@@ -56,17 +55,6 @@ const Activities = () => {
       </div>
     );
   }
-
-  const formComponents = {
-    [ActivityTypes.Climbing]: ClimbingForm,
-    [ActivityTypes.Calisthenics]: CalisthenicsForm,
-    [ActivityTypes.Stretching]: StretchingForm,
-  };
-
-  const FormComponent =
-    selectedActivity && selectedActivity.type in formComponents
-      ? formComponents[selectedActivity.type as keyof typeof formComponents]
-      : null;
 
   return (
     <div className="h-full space-y-10">
@@ -125,6 +113,13 @@ const Activities = () => {
                           onEdit={() => handleEditActivity(activity)}
                         />
                       );
+                    case ActivityTypes.Hangboard:
+                      return (
+                        <ActivityCardHangboard
+                          activity={activity}
+                          onEdit={() => handleEditActivity(activity)}
+                        />
+                      );
                     default:
                       return null;
                   }
@@ -140,10 +135,10 @@ const Activities = () => {
           <DrawerHeader>
             <DrawerTitle>Edit Activity</DrawerTitle>
           </DrawerHeader>
-          {selectedActivity && FormComponent && (
-            <div className="flex-grow overflow-y-auto">
-              <FormComponent
-                initialData={selectedActivity as typeof selectedActivity}
+          {selectedActivity && (
+            <div className="p-4 pb-16 h-full overflow-auto">
+              <ActivityForm
+                selectedActivity={selectedActivity}
                 onClose={() => setIsDrawerOpen(false)}
               />
             </div>

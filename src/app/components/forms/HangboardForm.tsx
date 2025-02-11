@@ -1,49 +1,33 @@
 'use client';
 
-import { CALISTHENICS_EXERCISES } from '@/constants/calisthenicsExercises';
 import { createActivity } from '@/lib/database/activities/createActivity';
-import { updateActivity } from '@/lib/database/activities/updateActivity'; // Import updateActivity
+import { updateActivity } from '@/lib/database/activities/updateActivity';
 import { getSession } from '@/lib/utils/userSession';
 import {
   ActivityRatingsType,
   ActivityTypes,
   BaseActivityType,
-  CalisthenicsDataType,
+  HangboardDataType,
+  HangboardEdgeType,
 } from '@/types/Activity';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import ActivityDateTimePicker from '../Activities/ActivityDateTimePicker';
 import { ActivityRatings } from '../Activities/ActivityRatings';
 import ActivityNotes from '../ActivityNotes';
-import CalisthenicsExerciseSelector from '../CalisthenicsExerciseSelector';
+import EdgeSelector from '../EdgeSelector';
 import SaveActivityButton from '../SaveActivityButton';
 
-interface Exercise {
-  name: keyof typeof CALISTHENICS_EXERCISES;
-  sets: number | '';
-  reps: number | '';
-  weight: number | '';
-}
-
-interface CalisthenicsFormProps {
+interface HangboardFormProps {
   onClose: () => void;
-  initialData?: BaseActivityType & CalisthenicsDataType;
+  initialData?: BaseActivityType & HangboardDataType;
 }
 
-const CalisthenicsForm = ({ onClose, initialData }: CalisthenicsFormProps) => {
+const HangboardForm = ({ onClose, initialData }: HangboardFormProps) => {
   const userId = getSession();
   const queryClient = useQueryClient();
-
-  const [activityDate, setActivityDate] = useState(
+  const [activityDate, setActivityDate] = useState<Date>(
     initialData?.activityDate || new Date()
-  );
-  const [exercises, setExercises] = useState<Exercise[]>(
-    initialData?.exercises.map((exercise) => ({
-      name: exercise.name as keyof typeof CALISTHENICS_EXERCISES,
-      sets: exercise.sets,
-      reps: exercise.reps,
-      weight: exercise.weight,
-    })) || []
   );
   const [ratings, setRatings] = useState<ActivityRatingsType>(
     initialData?.ratings || {
@@ -52,23 +36,36 @@ const CalisthenicsForm = ({ onClose, initialData }: CalisthenicsFormProps) => {
       enjoyment: 5,
     }
   );
+
+  const [edges, setEdges] = useState<HangboardEdgeType[]>(
+    initialData?.edges?.length
+      ? initialData.edges.map((edge) => ({
+          size: edge.size,
+          sets: edge.sets,
+          reps: edge.reps,
+          weight: edge.weight,
+          duration: edge.duration,
+        }))
+      : []
+  );
+
   const [note, setNote] = useState<string>(initialData?.note || '');
 
   const { mutate, isPending } = useMutation({
     mutationFn: async (
-      data: CalisthenicsDataType &
+      data: HangboardDataType &
         Pick<BaseActivityType, 'ratings' | 'activityDate'>
     ) => {
       if (!userId) throw new Error('User is not signed in');
       if (initialData?.id) {
-        return updateActivity(userId, initialData.id, data);
+        return updateActivity(userId, initialData.id, data); // Update if ID exists
       } else {
-        return createActivity(userId, data);
+        return createActivity(userId, data); // Create if no ID
       }
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({
-        queryKey: ['activities', userId],
+        queryKey: ['activities', initialData?.userId],
         exact: true,
       });
       onClose();
@@ -82,20 +79,26 @@ const CalisthenicsForm = ({ onClose, initialData }: CalisthenicsFormProps) => {
     if (!userId) return;
 
     const data = {
-      type: ActivityTypes.Calisthenics,
+      type: ActivityTypes.Hangboard,
       activityDate,
       ratings,
+      edges,
       note,
-      exercises: exercises.map(({ name, sets, reps, weight }) => ({
-        name: CALISTHENICS_EXERCISES[name],
-        sets: Number(sets),
-        reps: Number(reps),
-        weight: Number(weight),
-      })),
     };
 
     mutate(data);
   };
+
+  // Check if any edge has invalid sets or reps (not a number or less than or equal to zero)
+  const hasInvalidSetsOrReps = edges.some(
+    (edge) =>
+      typeof edge.sets !== 'number' ||
+      edge.sets <= 0 ||
+      typeof edge.reps !== 'number' ||
+      edge.reps <= 0 ||
+      typeof edge.duration !== 'number' ||
+      edge.duration <= 0
+  );
 
   return (
     <div className="flex flex-col gap-4">
@@ -105,29 +108,17 @@ const CalisthenicsForm = ({ onClose, initialData }: CalisthenicsFormProps) => {
       />
       <ActivityRatings ratings={ratings} onChange={setRatings} />
 
-      <CalisthenicsExerciseSelector
-        exercises={exercises}
-        setExercises={setExercises}
-      />
+      <EdgeSelector edges={edges} setEdges={setEdges} />
 
       <ActivityNotes note={note} onNoteChange={setNote} />
 
       <SaveActivityButton
         isPending={isPending}
-        isDisabled={
-          exercises.length === 0 ||
-          exercises.some(
-            (exercise) =>
-              typeof exercise.sets !== 'number' ||
-              typeof exercise.reps !== 'number' ||
-              exercise.sets < 1 ||
-              exercise.reps < 1
-          )
-        }
+        isDisabled={hasInvalidSetsOrReps || edges.length === 0} // Disable if edges are empty or any edge has invalid sets or reps
         onClick={handleSubmit}
       />
     </div>
   );
 };
 
-export default CalisthenicsForm;
+export default HangboardForm;

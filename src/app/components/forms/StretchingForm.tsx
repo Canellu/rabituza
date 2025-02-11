@@ -1,6 +1,5 @@
 'use client';
 
-import { Textarea } from '@/components/ui/textarea';
 import { createActivity } from '@/lib/database/activities/createActivity';
 import { updateActivity } from '@/lib/database/activities/updateActivity'; // Import updateActivity
 import { getSession } from '@/lib/utils/userSession';
@@ -14,9 +13,10 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import ActivityDateTimePicker from '../Activities/ActivityDateTimePicker';
 import { ActivityRatings } from '../Activities/ActivityRatings';
+import ActivityNotes from '../ActivityNotes';
 import SaveActivityButton from '../SaveActivityButton';
-import SessionDuration from '../SessionDuration';
-import StretchedMusclesSelection from '../StretchedMusclesSelection';
+import SessionDurationSelector from '../SessionDurationSelector';
+import StretchedMusclesSelector from '../StretchedMusclesSelector';
 
 interface StretchingFormProps {
   onClose: () => void;
@@ -27,7 +27,7 @@ const StretchingForm = ({ onClose, initialData }: StretchingFormProps) => {
   const userId = getSession();
   const queryClient = useQueryClient();
 
-  const [activityDate, setActivityDate] = useState<Date>(
+  const [activityDate, setActivityDate] = useState(
     initialData?.activityDate || new Date()
   );
   const [ratings, setRatings] = useState<ActivityRatingsType>(
@@ -89,26 +89,24 @@ const StretchingForm = ({ onClose, initialData }: StretchingFormProps) => {
   };
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-4">
       <ActivityDateTimePicker
         date={activityDate}
         onDateChange={setActivityDate}
       />
       <ActivityRatings ratings={ratings} onChange={setRatings} />
 
-      <SessionDuration duration={duration} onDurationChange={setDuration} />
+      <SessionDurationSelector
+        duration={duration}
+        onDurationChange={setDuration}
+      />
 
-      <StretchedMusclesSelection
+      <StretchedMusclesSelector
         selectedStretches={selectedStretches}
         onStretchChange={handleStretchChange}
       />
 
-      <Textarea
-        placeholder="Add notes (optional)"
-        value={note}
-        onChange={(e) => setNote(e.target.value)}
-        className="min-h-[100px]"
-      />
+      <ActivityNotes note={note} onNoteChange={setNote} />
 
       <SaveActivityButton
         isPending={isPending}

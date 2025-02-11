@@ -42,7 +42,7 @@ const AddActivities = () => {
   > = [
     ActivityTypes.WinterSports,
     ActivityTypes.Rest,
-    ActivityTypes.Fingerboard,
+    // ActivityTypes.Hangboard,
     ActivityTypes.Gym,
   ];
 

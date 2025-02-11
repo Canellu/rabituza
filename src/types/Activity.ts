@@ -1,7 +1,7 @@
 export const ActivityTypes = {
   Rest: 'rest',
   Climbing: 'climbing',
-  Fingerboard: 'fingerboard',
+  Hangboard: 'Hangboard',
   Gym: 'gym',
   Calisthenics: 'calisthenics',
   Stretching: 'stretching',
@@ -30,6 +30,10 @@ export type BaseActivityType = {
   note?: string;
 };
 
+export type ActivityMetaDataType = {
+  bodyWeight: number;
+};
+
 export type ClimbingDataType = {
   type: typeof ActivityTypes.Climbing;
   gym: string;
@@ -45,16 +49,26 @@ export type CalisthenicsExerciseType = {
 
 export type CalisthenicsDataType = {
   type: typeof ActivityTypes.Calisthenics;
-  activityDate: Date;
   exercises: CalisthenicsExerciseType[];
 };
 
 export type StretchingDataType = {
   type: typeof ActivityTypes.Stretching;
-  activityDate: Date;
   duration: number;
   stretches: string[];
-  note?: string;
+};
+
+export type HangboardEdgeType = {
+  size: number;
+  sets: number;
+  reps: number;
+  weight: number;
+  duration: number;
+};
+
+export type HangboardDataType = {
+  type: typeof ActivityTypes.Hangboard;
+  edges: HangboardEdgeType[];
 };
 
 export type GymDataType = {
@@ -72,15 +86,11 @@ export type WinterSportsDataType = {
   // Add winter sports-specific fields here
 };
 
-export type FingerboardDataType = {
-  type: typeof ActivityTypes.Fingerboard;
-  // Add fingerboard-specific fields here
-};
-
 export type ActivityDataType =
   | ClimbingDataType
   | GymDataType
   | CalisthenicsDataType
-  | StretchingDataType;
+  | StretchingDataType
+  | HangboardDataType;
 
 export type ActivityType = BaseActivityType & ActivityDataType;

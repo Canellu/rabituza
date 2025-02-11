@@ -2,17 +2,17 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 
-interface SessionDurationProps {
+interface SessionDurationSelectorProps {
   duration: number | '';
   onDurationChange: (value: number | '') => void;
 }
 
 const DEFAULT_DURATIONS = [10, 15, 20, 25, 30, 35];
 
-const SessionDuration: React.FC<SessionDurationProps> = ({
+const SessionDurationSelector = ({
   duration,
   onDurationChange,
-}) => {
+}: SessionDurationSelectorProps) => {
   const handleDurationToggle = (value: string) => {
     onDurationChange(value ? parseInt(value) : '');
   };
@@ -58,4 +58,4 @@ const SessionDuration: React.FC<SessionDurationProps> = ({
   );
 };
 
-export default SessionDuration;
+export default SessionDurationSelector;

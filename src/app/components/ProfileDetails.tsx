@@ -22,7 +22,7 @@ import { months } from '@/constants/months';
 import { cn } from '@/lib/utils';
 import { User } from '@/types/User';
 import { format } from 'date-fns';
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, ReactNode, useEffect, useState } from 'react';
 import useCreateOrUpdateUser from '../hooks/useCreateOrUpdateUser';
 
 const excludedFields = ['id', 'code', 'email', 'avatar'];
@@ -42,13 +42,13 @@ const ProfileDetails = ({ user }: { user?: User }) => {
   const [viewYear, setViewYear] = useState(new Date().getFullYear());
   const [viewMonth, setViewMonth] = useState(new Date().getMonth());
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [gender, setGender] = useState('');
-  const [height, setHeight] = useState(170);
+  const [gender, setGender] = useState<string | undefined>(undefined);
+  const [height, setHeight] = useState<number | undefined>(undefined);
   const [weight, setWeight] = useState<number | undefined>(undefined);
-  const [bio, setBio] = useState('');
-  const [username, setUsername] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
+  const [bio, setBio] = useState<string | undefined>(undefined);
+  const [username, setUsername] = useState<string | undefined>(undefined);
+  const [firstName, setFirstName] = useState<string | undefined>(undefined);
+  const [lastName, setLastName] = useState<string | undefined>(undefined);
 
   const [selectedField, setSelectedField] = useState<string | null>(null);
 
@@ -65,7 +65,7 @@ const ProfileDetails = ({ user }: { user?: User }) => {
       setFirstName(user.first_name || '');
       setLastName(user.last_name || '');
       setGender(user.gender || '');
-      setHeight(user.height || 170);
+      setHeight(user.height || undefined);
       setWeight(user.weight || undefined);
       setBio(user.bio || '');
       setUsername(user.username || '');
@@ -89,17 +89,24 @@ const ProfileDetails = ({ user }: { user?: User }) => {
 
     const updatedUser = {
       ...user,
-      username: username.trim().toLowerCase(),
-      first_name: firstName.trim(),
-      last_name: lastName.trim(),
-      dob: date,
+      username: username?.trim().toLowerCase(),
+      first_name: firstName?.trim(),
+      last_name: lastName?.trim(),
+      dob: date || user.dob || null, // Set to null if both are undefined
       height,
       gender,
       weight,
-      bio: bio.trim(),
+      bio: bio?.trim(),
     };
 
-    createOrUpdate(updatedUser);
+    // Remove fields with undefined or null values
+    const sanitizedUser = Object.fromEntries(
+      Object.entries(updatedUser).filter(
+        ([_, value]) => value !== undefined && value !== null
+      )
+    );
+
+    createOrUpdate(sanitizedUser as User);
     setDrawerOpen(false);
   };
 
@@ -264,12 +271,12 @@ const ProfileDetails = ({ user }: { user?: User }) => {
             <div className="flex flex-col w-full gap-1">
               <Label htmlFor="height">Height</Label>
               <Slider
-                value={[height]}
+                value={[height ?? 140]}
                 max={200}
                 min={140}
                 step={1}
                 onValueChange={(vals) => setHeight(vals[0])}
-                className="h-10 "
+                className="h-10"
               />
             </div>
 
@@ -277,9 +284,12 @@ const ProfileDetails = ({ user }: { user?: User }) => {
               <Input
                 type="number"
                 id="heightInput"
-                value={height}
-                onChange={(e) => setHeight(Number(e.target.value))}
-                className="peer w-14 text-center"
+                value={height ?? ''}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setHeight(value ? Number(value) : undefined);
+                }}
+                className="peer w-20 text-center"
                 inputMode="numeric"
                 placeholder="Height"
               />
@@ -323,9 +333,13 @@ const ProfileDetails = ({ user }: { user?: User }) => {
           const label = fieldLabels[key] || key.replace('_', ' ');
           const isBio = key === 'bio';
 
-          let formattedValue: React.ReactNode;
+          let formattedValue: ReactNode;
 
-          if (key === 'weight' && typeof value === 'number') {
+          if (!value) {
+            formattedValue = (
+              <span className="text-gray-500 italic font-normal">Add info</span>
+            );
+          } else if (key === 'weight' && typeof value === 'number') {
             formattedValue = `${value} kg`;
           } else if (key === 'height' && typeof value === 'number') {
             formattedValue = `${value} cm`;

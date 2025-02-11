@@ -3,6 +3,7 @@ import {
   ActivityType,
   ActivityTypes,
   CalisthenicsExerciseType,
+  HangboardEdgeType,
 } from '@/types/Activity';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
@@ -58,6 +59,18 @@ export const getActivities = async (
             ...baseActivity,
             stretches: data.stretches || [], // Extract stretches
             duration: data.duration || 0, // Extract duration
+          };
+
+        case ActivityTypes.Hangboard:
+          return {
+            ...baseActivity,
+            edges: data.edges.map((edge: HangboardEdgeType) => ({
+              size: edge.size,
+              sets: edge.sets,
+              reps: edge.reps,
+              weight: edge.weight || 0,
+              duration: edge.duration || 0,
+            })),
           };
         default:
           throw new Error(`Unknown activity type: ${data.type}`);
