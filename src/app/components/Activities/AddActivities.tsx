@@ -42,8 +42,8 @@ const AddActivities = () => {
   > = [
     ActivityTypes.WinterSports,
     ActivityTypes.Rest,
-    // ActivityTypes.Hangboard,
     ActivityTypes.Gym,
+    ActivityTypes.Swimming,
   ];
 
   const groupedActivities = activityOptions.reduce((acc, activity) => {

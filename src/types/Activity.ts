@@ -6,6 +6,7 @@ export const ActivityTypes = {
   Calisthenics: 'calisthenics',
   Stretching: 'stretching',
   WinterSports: 'winter_sports',
+  Swimming: 'swimming',
 } as const;
 
 export type Activity = (typeof ActivityTypes)[keyof typeof ActivityTypes];
@@ -84,6 +85,11 @@ export type RestDataType = {
 export type WinterSportsDataType = {
   type: typeof ActivityTypes.WinterSports;
   // Add winter sports-specific fields here
+};
+
+export type SwimmingDataType = {
+  type: typeof ActivityTypes.Swimming;
+  // Add swimming specific fields here
 };
 
 export type ActivityDataType =

@@ -4,11 +4,12 @@ import GymForm from '@/app/components/forms/GymForm';
 import HangboardForm from '@/app/components/forms/HangboardForm';
 import RestForm from '@/app/components/forms/RestForm';
 import StretchingForm from '@/app/components/forms/StretchingForm';
+import SwimmingForm from '@/app/components/forms/SwimmingForm';
 import WinterSportForm from '@/app/components/forms/WinterSportForm';
 import ClimbingIcon from '@/app/components/icons/ClimbingIcon';
 import { ActivityTypes } from '@/types/Activity';
 import { BicepsFlexed, Dumbbell, Grab } from 'lucide-react';
-import { FaSnowboarding } from 'react-icons/fa';
+import { FaSnowboarding, FaSwimmer } from 'react-icons/fa';
 import { GiNightSleep } from 'react-icons/gi';
 import { GrYoga } from 'react-icons/gr';
 
@@ -45,6 +46,13 @@ const activityOptions = [
     label: 'Gym',
     Component: GymForm,
     icon: Dumbbell,
+    group: ActivityGroups.PHYSICAL,
+  },
+  {
+    id: ActivityTypes.Swimming,
+    label: 'Swimming',
+    Component: SwimmingForm,
+    icon: FaSwimmer,
     group: ActivityGroups.PHYSICAL,
   },
   {
