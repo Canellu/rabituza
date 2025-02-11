@@ -26,13 +26,14 @@ const AnimateHeight = ({
     <AnimatePresence initial={false}>
       {isOpen && (
         <motion.div
-          initial={{ height: 0, opacity: 0, marginBottom: 0 }}
+          initial={{ height: 0, opacity: 0, marginTop: 0, marginBottom: 0 }}
           animate={{
             height: bounds.height,
             opacity: 1,
             marginBottom,
+            marginTop: 6,
           }}
-          exit={{ height: 0, opacity: 0, marginBottom: 0 }}
+          exit={{ height: 0, opacity: 0, marginTop: 0, marginBottom: 0 }}
           transition={{
             duration: isOpen ? openDuration : closeDuration,
             ease: 'easeInOut',

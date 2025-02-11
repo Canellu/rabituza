@@ -13,11 +13,11 @@ import {
 } from '@/types/Activity';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import ActivityDateTimePicker from '../Activities/ActivityDateTimePicker';
 import { ActivityRatings } from '../Activities/ActivityRatings';
-import ActivityNotes from '../ActivityNotes';
 import { BoulderingGradeSelector } from '../BoulderingGradeSelector';
-import SaveActivityButton from '../SaveActivityButton';
+import DateTimePicker from '../DateTimePicker';
+import NotesInput from '../NotesInput';
+import SaveButtonDrawer from '../SaveButtonDrawer';
 
 interface ClimbingFormProps {
   onClose: () => void;
@@ -100,10 +100,7 @@ const ClimbingForm = ({ onClose, initialData }: ClimbingFormProps) => {
 
   return (
     <div className="flex flex-col gap-4">
-      <ActivityDateTimePicker
-        date={activityDate}
-        onDateChange={setActivityDate}
-      />
+      <DateTimePicker date={activityDate} onDateChange={setActivityDate} />
       <ActivityRatings ratings={ratings} onChange={setRatings} />
 
       <BoulderingGradeSelector
@@ -113,9 +110,9 @@ const ClimbingForm = ({ onClose, initialData }: ClimbingFormProps) => {
         onGradeCountChange={setGradeCount}
       />
 
-      <ActivityNotes note={note} onNoteChange={setNote} />
+      <NotesInput note={note} onNoteChange={setNote} />
 
-      <SaveActivityButton
+      <SaveButtonDrawer
         isPending={isPending}
         isDisabled={
           !selectedGym ||

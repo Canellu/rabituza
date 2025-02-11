@@ -13,17 +13,19 @@ import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { CalendarIcon, Clock } from 'lucide-react';
 import { useState } from 'react';
-import AnimateHeight from '../AnimateHeight';
+import AnimateHeight from './AnimateHeight';
 
-interface ActivityDateTimePickerProps {
+interface DateTimePickerProps {
   date: Date;
   onDateChange: (date: Date) => void;
+  disableFutureDates?: boolean;
 }
 
-const ActivityDateTimePicker = ({
+const DateTimePicker = ({
   date,
   onDateChange,
-}: ActivityDateTimePickerProps) => {
+  disableFutureDates = true,
+}: DateTimePickerProps) => {
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [selectedHour, setSelectedHour] = useState(
     date.getHours().toString().padStart(2, '0')
@@ -65,14 +67,13 @@ const ActivityDateTimePicker = ({
             onSelect={(newDate) => {
               if (newDate) {
                 updateDateTime(newDate);
-                setCalendarOpen(false);
               }
             }}
             classNames={{
               head_row: 'flex space-x-1.5',
               row: 'flex w-full mt-2 space-x-1.5',
             }}
-            disabled={{ after: new Date() }}
+            disabled={disableFutureDates ? { after: new Date() } : undefined}
             className="items-center flex w-full justify-center rounded-md border bg-white"
           />
           <div className="flex items-center justify-between">
@@ -137,4 +138,4 @@ const ActivityDateTimePicker = ({
   );
 };
 
-export default ActivityDateTimePicker;
+export default DateTimePicker;

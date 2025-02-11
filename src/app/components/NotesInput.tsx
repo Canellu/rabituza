@@ -8,7 +8,7 @@ interface ActivityNotesProps {
   onNoteChange: (value: string) => void;
 }
 
-const ActivityNotes = ({ note, onNoteChange }: ActivityNotesProps) => {
+const NotesInput = ({ note, onNoteChange }: ActivityNotesProps) => {
   return (
     <div className="flex flex-col gap-2">
       <Label htmlFor="activity-notes">Notes</Label>
@@ -23,4 +23,4 @@ const ActivityNotes = ({ note, onNoteChange }: ActivityNotesProps) => {
   );
 };
 
-export default ActivityNotes;
+export default NotesInput;

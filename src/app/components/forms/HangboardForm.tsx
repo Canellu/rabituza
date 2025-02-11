@@ -12,11 +12,11 @@ import {
 } from '@/types/Activity';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import ActivityDateTimePicker from '../Activities/ActivityDateTimePicker';
 import { ActivityRatings } from '../Activities/ActivityRatings';
-import ActivityNotes from '../ActivityNotes';
+import DateTimePicker from '../DateTimePicker';
 import EdgeSelector from '../EdgeSelector';
-import SaveActivityButton from '../SaveActivityButton';
+import NotesInput from '../NotesInput';
+import SaveButtonDrawer from '../SaveButtonDrawer';
 
 interface HangboardFormProps {
   onClose: () => void;
@@ -108,17 +108,14 @@ const HangboardForm = ({ onClose, initialData }: HangboardFormProps) => {
 
   return (
     <div className="flex flex-col gap-4">
-      <ActivityDateTimePicker
-        date={activityDate}
-        onDateChange={setActivityDate}
-      />
+      <DateTimePicker date={activityDate} onDateChange={setActivityDate} />
       <ActivityRatings ratings={ratings} onChange={setRatings} />
 
       <EdgeSelector edges={edges} setEdges={setEdges} />
 
-      <ActivityNotes note={note} onNoteChange={setNote} />
+      <NotesInput note={note} onNoteChange={setNote} />
 
-      <SaveActivityButton
+      <SaveButtonDrawer
         isPending={isPending}
         isDisabled={hasInvalidSetsOrReps || edges.length === 0} // Disable if edges are empty or any edge has invalid sets or reps
         onClick={handleSubmit}

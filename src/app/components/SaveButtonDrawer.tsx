@@ -4,12 +4,14 @@ import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 
 interface SaveActivityButtonProps {
+  title?: string;
   isPending: boolean;
   isDisabled: boolean;
   onClick: () => void;
 }
 
-const SaveActivityButton = ({
+const SaveButtonDrawer = ({
+  title = 'Save Activity',
   isPending,
   isDisabled,
   onClick,
@@ -26,10 +28,10 @@ const SaveActivityButton = ({
           Saving...
         </>
       ) : (
-        'Save activity'
+        title
       )}
     </Button>
   );
 };
 
-export default SaveActivityButton;
+export default SaveButtonDrawer;
