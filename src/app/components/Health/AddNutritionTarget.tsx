@@ -143,10 +143,11 @@ export function AddNutritionTarget() {
     <>
       <Button
         size="sm"
-        variant="ghost"
+        variant="outline"
+        className="bg-transparent text-lime-800 border-lime-800"
         onClick={() => setIsDrawerOpen((prev) => !prev)}
       >
-        Add target
+        Create new target
       </Button>
 
       <Drawer

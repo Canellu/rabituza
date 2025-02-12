@@ -11,7 +11,7 @@ import {
 } from 'framer-motion'; // Add this import
 import { Leaf } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import AddActivities from './components/Activities/AddActivities';
 import AddGoal from './components/AddGoal';
 import LogoutButton from './components/LogoutButton';
@@ -23,12 +23,21 @@ const Menu = () => {
   const params = useSearchParams();
   const router = useRouter();
   const [tab, setTab] = useState<Tab>(Tab.Home);
-  const { scrollY } = useScroll();
+  const scrollContainer = useRef<HTMLDivElement>(null);
+  const { scrollY } = useScroll({
+    container: scrollContainer,
+  });
   const backgroundColor = useMotionTemplate`rgba(255, 255, 255, ${useTransform(
     scrollY,
     [0, 50],
     [0, 0.8]
   )})`;
+
+  const backdropBlur = useTransform(
+    scrollY,
+    [0, 50],
+    ['blur(0px)', 'blur(8px)']
+  );
 
   const vibrationPatternPress = [90];
   const vibrationPatternRelease = [40];
@@ -61,7 +70,6 @@ const Menu = () => {
       <TabsList
         className={cn(
           'fixed inset-x-0 bottom-0 min-h-max flex items-center justify-around pb-5 pt-0 rounded-none z-10',
-          // 'bg-gradient-to-b from-stone-800 to-stone-950',
           'bg-stone-900'
         )}
       >
@@ -86,54 +94,64 @@ const Menu = () => {
       </TabsList>
 
       {/* Tab Content */}
-      {tabs.map((tab) => (
-        <TabsContent
-          key={tab.value}
-          value={tab.value}
-          className={cn(
-            'mt-0',
-            tab.value === Tab.Health &&
-              'bg-gradient-to-b from-lime-600 to-stone-50 relative isolate'
-          )}
-        >
-          <div className="bg-circles h-[200dvh] fixed -translate-y-[43%] top-0 inset-x-0 -z-10" />
-          {/* Top bar */}
-          <motion.header
+      <div
+        ref={scrollContainer}
+        className="h-[calc(100dvh-84px)] overflow-y-auto"
+      >
+        {tabs.map((tab) => (
+          <TabsContent
+            key={tab.value}
+            value={tab.value}
             className={cn(
-              'sticky top-0',
-              'backdrop-blur-md',
-              'px-6 h-16',
-              'flex items-center justify-between max-w-3xl mx-auto z-10',
-              tab.value === Tab.Health && 'text-white'
+              'mt-0',
+              tab.value === Tab.Health &&
+                'bg-gradient-to-b from-lime-600 to-stone-50 relative isolate'
             )}
-            style={{ backgroundColor }}
           >
-            <h1
+            <div className="bg-circles h-[200dvh] fixed -translate-y-[43%] top-0 inset-x-0 -z-10" />
+            {/* Top bar */}
+            <motion.header
               className={cn(
-                'font-bold text-2xl text-stone-800 flex items-center gap-2',
+                'sticky top-0 inset-x-0 z-50',
+                'px-6 h-16',
+                'flex items-center',
                 tab.value === Tab.Health && 'text-white'
               )}
+              style={{ backgroundColor, backdropFilter: backdropBlur }}
             >
-              {tab.title}
-              {tab.value === Tab.Health && <Leaf className="text-green-700" />}
-            </h1>
-            {tab.value === Tab.Activities && <AddActivities />}
-            {tab.value === Tab.Goals && <AddGoal />}
-            {tab.value === Tab.Profile && (
-              <div className="flex items-center gap-2">
-                <ThemeToggle />
-                <RefreshButton />
-                <LogoutButton />
+              <div
+                className={cn(
+                  'flex items-center justify-between w-full max-w-3xl mx-auto'
+                )}
+              >
+                <h1
+                  className={cn(
+                    'font-bold text-2xl text-stone-800 flex items-center gap-2',
+                    tab.value === Tab.Health && 'text-lime-900'
+                  )}
+                >
+                  {tab.title}
+                  {tab.value === Tab.Health && (
+                    <Leaf className="text-green-700" />
+                  )}
+                </h1>
+                {tab.value === Tab.Activities && <AddActivities />}
+                {tab.value === Tab.Goals && <AddGoal />}
+                {tab.value === Tab.Profile && (
+                  <div className="flex items-center gap-2">
+                    <ThemeToggle />
+                    <RefreshButton />
+                    <LogoutButton />
+                  </div>
+                )}
               </div>
-            )}
-          </motion.header>
+            </motion.header>
 
-          {/* Content */}
-          <section className="p-6 h-[calc(100dvh-84px)] max-w-3xl mx-auto">
-            {tab.content}
-          </section>
-        </TabsContent>
-      ))}
+            {/* Content */}
+            <section className="p-6  max-w-3xl mx-auto">{tab.content}</section>
+          </TabsContent>
+        ))}
+      </div>
     </Tabs>
   );
 };

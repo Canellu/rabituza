@@ -22,7 +22,7 @@ const SplashScreen = () => {
       initial={{ opacity: 1 }}
       animate={{ opacity: 0 }}
       transition={{ duration: 0.3, delay: 1, ease: easeOut }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-stone-50 min-h-[100dvh]"
+      className="fixed inset-0 flex items-center justify-center bg-stone-50 min-h-[100dvh] z-[999]"
     >
       <div className="flex flex-col items-center justify-center pb-52">
         <motion.div

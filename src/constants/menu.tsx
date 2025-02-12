@@ -1,6 +1,6 @@
 import Activities from '@/app/components/Activities/Activities';
 import Goals from '@/app/components/Goals';
-import Health from '@/app/components/Health';
+import Health from '@/app/components/Health/Health';
 import Home from '@/app/components/Home';
 import Profile from '@/app/components/Profile';
 import { ActivityIcon, Goal, Heart, HomeIcon, User } from 'lucide-react';
