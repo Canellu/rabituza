@@ -4,7 +4,7 @@ import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tab, tabs } from '@/constants/menu';
 import { cn } from '@/lib/utils';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import AddActivities from './components/Activities/AddActivities';
 import AddGoal from './components/AddGoal';
@@ -15,6 +15,7 @@ import useVibrate from './hooks/useVibrate';
 
 const Menu = () => {
   const params = useSearchParams();
+  const router = useRouter();
   const [tab, setTab] = useState<Tab>(Tab.Home);
   const vibrationPatternPress = [90]; // Vibrate when pressed
   const vibrationPatternRelease = [40]; // Vibrate when released
@@ -36,9 +37,10 @@ const Menu = () => {
       const tab = params.get('tab') as Tab;
       if (tab) {
         setTab(tab);
+        router.replace('/');
       }
     }
-  }, [params]);
+  }, [params, router]);
 
   return (
     <Tabs defaultValue={Tab.Home} value={tab}>

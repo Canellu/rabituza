@@ -1,8 +1,8 @@
 'use client';
 
 import WorkInProgress from '@/app/components/WorkInProgress';
-import { Tab } from '@/app/page';
 import { Button } from '@/components/ui/button';
+import { Tab } from '@/constants/menu';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
