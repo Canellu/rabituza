@@ -5,6 +5,11 @@ export const CALISTHENICS_EXERCISE_GROUPS = {
 } as const;
 
 export const CALISTHENICS_EXERCISES = {
+  handstand: {
+    name: 'Handstand',
+    group: CALISTHENICS_EXERCISE_GROUPS.UPPER_BODY,
+    hasDuration: true,
+  },
   pullUp: {
     name: 'Pull-up',
     group: CALISTHENICS_EXERCISE_GROUPS.UPPER_BODY,
