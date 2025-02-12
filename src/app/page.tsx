@@ -32,12 +32,16 @@ const Menu = () => {
     vibrateOnRelease();
   };
 
+  const handleTabPress = (tab: Tab) => {
+    setTab(tab);
+    router.replace('/');
+  };
+
   useEffect(() => {
     if (params && params.has('tab')) {
       const tab = params.get('tab') as Tab;
       if (tab) {
         setTab(tab);
-        router.replace('/');
       }
     }
   }, [params, router]);
@@ -62,7 +66,7 @@ const Menu = () => {
               'data-[state=active]:text-primary',
               '[&[data-state=active]_span]:text-stone-50'
             )}
-            onClick={() => setTab(tab.value)}
+            onClick={() => handleTabPress(tab.value)}
             onTouchStart={handlePress}
             onTouchEnd={handleRelease}
           >

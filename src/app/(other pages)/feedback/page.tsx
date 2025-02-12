@@ -5,8 +5,25 @@ import { Button } from '@/components/ui/button';
 import { Tab } from '@/constants/menu';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { useEffect } from 'react';
+import { toast } from 'sonner';
 
 const FeedbackPage = () => {
+  useEffect(() => {
+    const handlePopState = (event: PopStateEvent) => {
+      toast('backswiped');
+      console.log('Back swipe detected', event);
+    };
+
+    // Listen for the popstate event
+    window.addEventListener('popstate', handlePopState);
+
+    // Cleanup the event listener on component unmount
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, []);
+
   return (
     <div className="flex flex-col items-center justify-center h-dvh">
       <Button
