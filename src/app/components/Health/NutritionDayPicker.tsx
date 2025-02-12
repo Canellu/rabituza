@@ -27,18 +27,30 @@ const NutritionDayPicker = ({
           <div
             key={i}
             className={cn(
-              isSelected ? '' : 'text-stone-700',
-              'relative py-3 flex flex-col gap-2 rounded-2xl items-center justify-center isolate'
+              'relative rounded-full px-3 py-1.5 text-sm font-medium',
+              'text-stone-600 flex flex-col items-center justify-center',
+              'transition-all duration-200 ease'
             )}
             style={{
               WebkitTapHighlightColor: 'transparent',
             }}
             onClick={() => setSelectedDay(date)}
           >
+            {isSelected && (
+              <motion.span
+                layoutId="bubble"
+                className="absolute -inset-1 -z-10 bg-stone-50 border rounded-lg"
+                transition={{
+                  type: 'spring',
+                  bounce: 0.2,
+                  duration: 0.6,
+                }}
+              />
+            )}
             <span
               className={cn(
                 'text-xs',
-                isSelected ? 'font-bold text-stone-50' : ''
+                isSelected ? 'font-semibold text-lime-800' : ''
               )}
             >
               {isToday ? 'Today' : format(date, 'EEEEEE')}
@@ -46,22 +58,11 @@ const NutritionDayPicker = ({
             <span
               className={cn(
                 'text-sm transition-colors duration-200 ease-in-out',
-                isSelected ? 'font-bold text-base text-stone-50' : ''
+                isSelected ? 'font-semibold text-base text-lime-800' : ''
               )}
             >
               {format(date, 'd')}
             </span>
-            {isSelected && (
-              <motion.span
-                layoutId="bubble"
-                className="absolute inset-y-0 -inset-x-1 -z-10 bg-gradient-to-b border border-white/5 from-white/30 to-transparent backdrop-blur-sm mix-blend-difference rounded-2xl"
-                transition={{
-                  type: 'spring',
-                  bounce: 0.2,
-                  duration: 0.4,
-                }}
-              />
-            )}
           </div>
         );
       })}

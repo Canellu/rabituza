@@ -83,19 +83,4 @@ body {
   input {
     caret-color: var(--primary);
   }
-
-  .bg-circles {
-    background-color: #ffffff;
-    opacity: 0.2;
-    background-image: radial-gradient(circle at center center, #ececec, #ffffff),
-      repeating-radial-gradient(
-        circle at center center,
-        #ececec,
-        #ececec,
-        40px,
-        transparent 80px,
-        transparent 40px
-      );
-    background-blend-mode: multiply;
-  }
 }

@@ -27,17 +27,11 @@ const Menu = () => {
   const { scrollY } = useScroll({
     container: scrollContainer,
   });
-  const backgroundColor = useMotionTemplate`rgba(255, 255, 255, ${useTransform(
+  const backgroundColor = useMotionTemplate`rgba(245, 245, 245, ${useTransform(
     scrollY,
     [0, 50],
-    [0, 0.8]
+    [0, 1]
   )})`;
-
-  const backdropBlur = useTransform(
-    scrollY,
-    [0, 50],
-    ['blur(0px)', 'blur(8px)']
-  );
 
   const vibrationPatternPress = [90];
   const vibrationPatternRelease = [40];
@@ -99,25 +93,15 @@ const Menu = () => {
         className="h-[calc(100dvh-84px)] overflow-y-auto"
       >
         {tabs.map((tab) => (
-          <TabsContent
-            key={tab.value}
-            value={tab.value}
-            className={cn(
-              'mt-0',
-              tab.value === Tab.Health &&
-                'bg-gradient-to-b from-lime-600 to-55% to-stone-50 relative isolate'
-            )}
-          >
-            <div className="bg-circles h-[200dvh] fixed -translate-y-[43%] top-0 inset-x-0 -z-10" />
+          <TabsContent key={tab.value} value={tab.value} className={cn('mt-0')}>
             {/* Top bar */}
             <motion.header
               className={cn(
                 'sticky top-0 inset-x-0 z-50',
                 'px-6 h-16',
-                'flex items-center',
-                tab.value === Tab.Health && 'text-white'
+                'flex items-center'
               )}
-              style={{ backgroundColor, backdropFilter: backdropBlur }}
+              style={{ backgroundColor }}
             >
               <div
                 className={cn(
@@ -126,8 +110,7 @@ const Menu = () => {
               >
                 <h1
                   className={cn(
-                    'font-bold text-2xl text-stone-800 flex items-center gap-2',
-                    tab.value === Tab.Health && 'text-lime-900'
+                    'font-bold text-2xl text-stone-800 flex items-center gap-2'
                   )}
                 >
                   {tab.title}

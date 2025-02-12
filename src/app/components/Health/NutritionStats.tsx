@@ -46,32 +46,32 @@ const NutritionStats = ({
     >
       <div className="flex">
         <div className="text-center flex flex-col">
-          <span className="text-7xl font-semibold text-lime-900 text-center">
+          <span className="text-7xl font-semibold text-lime-800 text-center">
             {isInTargetPeriod ? nutritionTarget.calories : '-'}
           </span>
           <span className="text-lime-900 text-sm ">remaining calories</span>
         </div>
       </div>
       <div className="grid grid-cols-4 gap-2 w-full text-stone-700 ">
-        <div className="flex flex-col gap-1 items-center text-center bg-gradient-to-b from-white/30 to-transparent backdrop-blur-sm border border-white/5 shadow rounded-3xl py-2 px-2">
+        <div className="flex flex-col gap-1 items-center text-center bg-gradient-to-b from-lime-600/30 to-transparent border rounded-xl py-2 px-2">
           <span className="text-xs text-lime-800">Carbs</span>
           <span className="font-medium text-sm text-lime-900">
             {isInTargetPeriod ? nutritionTarget.carbs : '-'}
           </span>
         </div>
-        <div className="flex flex-col gap-1 items-center text-center bg-gradient-to-b from-white/30 to-transparent backdrop-blur-sm border border-white/5 shadow rounded-3xl py-2 px-2">
+        <div className="flex flex-col gap-1 items-center text-center bg-gradient-to-b from-lime-600/30 to-transparent border rounded-xl py-2 px-2">
           <span className="text-xs text-lime-800">Protein</span>
           <span className="font-medium text-sm text-lime-900">
             {isInTargetPeriod ? nutritionTarget.protein : '-'}
           </span>
         </div>
-        <div className="flex flex-col gap-1 items-center text-center bg-gradient-to-b from-white/30 to-transparent backdrop-blur-sm border border-white/5 shadow rounded-3xl py-2 px-2">
+        <div className="flex flex-col gap-1 items-center text-center bg-gradient-to-b from-lime-600/30 to-transparent border rounded-xl py-2 px-2">
           <span className="text-xs text-lime-800">Fat</span>
           <span className="font-medium text-sm text-lime-900">
             {isInTargetPeriod ? nutritionTarget.fat : '-'}
           </span>
         </div>
-        <div className="flex flex-col gap-1 items-center text-center bg-gradient-to-b from-white/30 to-transparent backdrop-blur-sm border border-white/5 shadow rounded-3xl py-2 px-2">
+        <div className="flex flex-col gap-1 items-center text-center bg-gradient-to-b from-lime-600/30 to-transparent border rounded-xl py-2 px-2">
           <span className="text-xs text-lime-800">Fiber</span>
           <span className="font-medium text-sm text-lime-900">
             {isInTargetPeriod ? nutritionTarget.fiber : '-'}

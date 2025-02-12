@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: 'Track &amp; Train',
     start_url: '/',
     display: 'fullscreen',
-    background_color: '#0c0a09',
-    theme_color: '#82b14e',
+    background_color: '#1c1917',
+    theme_color: '#a3e635',
     launch_handler: {
       client_mode: 'auto',
     },
