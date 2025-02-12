@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 import useMeasure from 'react-use-measure';
 
 interface AnimateHeightProps {
@@ -21,24 +21,37 @@ const AnimateHeight = ({
   marginBottom = 0,
 }: AnimateHeightProps) => {
   const [ref, bounds] = useMeasure();
+  const [overflow, setOverflow] = useState<'hidden' | 'visible'>('hidden');
 
   return (
     <AnimatePresence initial={false}>
       {isOpen && (
         <motion.div
-          initial={{ height: 0, opacity: 0, marginTop: 0, marginBottom: 0 }}
+          initial={{
+            height: 0,
+            opacity: 0,
+            marginTop: 0,
+            marginBottom: 0,
+          }}
           animate={{
             height: bounds.height,
             opacity: 1,
             marginBottom,
             marginTop: 6,
           }}
-          exit={{ height: 0, opacity: 0, marginTop: 0, marginBottom: 0 }}
+          exit={{
+            height: 0,
+            opacity: 0,
+            marginTop: 0,
+            marginBottom: 0,
+          }}
           transition={{
             duration: isOpen ? openDuration : closeDuration,
             ease: 'easeInOut',
           }}
-          className={cn('overflow-hidden w-full', className)}
+          onAnimationComplete={() => setOverflow(isOpen ? 'visible' : 'hidden')}
+          style={{ overflow: overflow }}
+          className={cn('w-full', className)}
         >
           <div ref={ref}>{children}</div>
         </motion.div>
