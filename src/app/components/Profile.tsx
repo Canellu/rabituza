@@ -1,9 +1,11 @@
 'use client';
 
+import { Button } from '@/components/ui/button';
 import { getUser } from '@/lib/database/user/getUser';
 import { getSession } from '@/lib/utils/userSession';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 import AvatarUpload from './AvatarUpload';
 import ProfileDetails from './ProfileDetails';
 import Spinner from './Spinner';
@@ -57,7 +59,11 @@ const Profile = () => {
 
       <ProfileDetails user={user} />
 
-      <p className="geist-mono text-xs text-stone-500 text-center w-full pb-6 pt-12 ">
+      <Button asChild variant="outline">
+        <Link href="/feedback">Release Notes & Feedback</Link>
+      </Button>
+
+      <p className="geist-mono text-xs text-stone-500 text-center w-full pb-6">
         <span className="px-2 py-1 border rounded-md bg-gradient-to-b from-stone-50 to-stone-200 border-white shadow-inner">
           App version: 1.0.0
         </span>

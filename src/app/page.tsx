@@ -10,6 +10,8 @@ import {
   HomeIcon,
   User,
 } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import Activities from './components/Activities/Activities';
 import AddActivities from './components/Activities/AddActivities';
 import AddGoal from './components/AddGoal';
@@ -22,7 +24,7 @@ import RefreshButton from './components/RefreshButton';
 import ThemeToggle from './components/ThemeToggle';
 import useVibrate from './hooks/useVibrate';
 
-enum Tab {
+export enum Tab {
   Home = 'home',
   Activities = 'activities',
   Goals = 'goals',
@@ -64,6 +66,8 @@ const tabs = [
 ];
 
 const Menu = () => {
+  const params = useSearchParams();
+  const [tab, setTab] = useState<Tab>(Tab.Home);
   const vibrationPatternPress = [90]; // Vibrate when pressed
   const vibrationPatternRelease = [40]; // Vibrate when released
 
@@ -79,8 +83,17 @@ const Menu = () => {
     vibrateOnRelease();
   };
 
+  useEffect(() => {
+    if (params && params.has('tab')) {
+      const tab = params.get('tab') as Tab;
+      if (tab) {
+        setTab(tab);
+      }
+    }
+  }, [params]);
+
   return (
-    <Tabs defaultValue={Tab.Home}>
+    <Tabs defaultValue={Tab.Home} value={tab}>
       {/* Tab Headers */}
       <TabsList
         className={cn(
@@ -99,6 +112,7 @@ const Menu = () => {
               'data-[state=active]:text-primary',
               '[&[data-state=active]_span]:text-stone-50'
             )}
+            onClick={() => setTab(tab.value)}
             onTouchStart={handlePress}
             onTouchEnd={handleRelease}
           >
