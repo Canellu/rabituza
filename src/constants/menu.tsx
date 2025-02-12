@@ -10,7 +10,7 @@ export enum Tab {
   Activities = 'activities',
   Goals = 'goals',
   Profile = 'profile',
-  Lifestyle = 'lifestyle',
+  Health = 'health',
 }
 
 export const tabs = [
@@ -21,7 +21,7 @@ export const tabs = [
     content: <Home />,
   },
   {
-    value: Tab.Lifestyle,
+    value: Tab.Health,
     icon: Heart,
     title: 'Health',
     content: <Health />,

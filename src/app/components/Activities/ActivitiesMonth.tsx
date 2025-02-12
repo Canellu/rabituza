@@ -36,6 +36,7 @@ const ActivitiesMonth = ({ activities = [] }: ActivitiesMonthProps) => {
       mode="single"
       className="rounded-md border w-full flex items-center justify-center bg-gradient-to-b from-white to-emerald-50 py-5"
       showOutsideDays={false}
+      weekStartsOn={1}
       fromDate={new Date(currentYear, 0, 1)}
       toDate={new Date(currentYear, 11, 31)}
       classNames={{

@@ -1,9 +1,15 @@
 'use client';
 
-import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tab, tabs } from '@/constants/menu';
 import { cn } from '@/lib/utils';
+import {
+  motion,
+  useMotionTemplate,
+  useScroll,
+  useTransform,
+} from 'framer-motion'; // Add this import
+import { Leaf } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import AddActivities from './components/Activities/AddActivities';
@@ -17,17 +23,20 @@ const Menu = () => {
   const params = useSearchParams();
   const router = useRouter();
   const [tab, setTab] = useState<Tab>(Tab.Home);
-  const vibrationPatternPress = [90]; // Vibrate when pressed
-  const vibrationPatternRelease = [40]; // Vibrate when released
+  const { scrollY } = useScroll();
+  const backgroundColor = useMotionTemplate`rgba(255, 255, 255, ${useTransform(
+    scrollY,
+    [0, 50],
+    [0, 0.8]
+  )})`;
 
+  const vibrationPatternPress = [90];
+  const vibrationPatternRelease = [40];
   const vibrateOnPress = useVibrate(vibrationPatternPress);
   const vibrateOnRelease = useVibrate(vibrationPatternRelease);
-
-  // Combine both mouse and touch event handlers
   const handlePress = () => {
     vibrateOnPress();
   };
-
   const handleRelease = () => {
     vibrateOnRelease();
   };
@@ -78,27 +87,51 @@ const Menu = () => {
 
       {/* Tab Content */}
       {tabs.map((tab) => (
-        <TabsContent key={tab.value} value={tab.value} className="mt-0">
-          <div className="h-[calc(100dvh-84px)] overflow-auto flex flex-col max-w-3xl mx-auto">
-            <section className="sticky top-0 px-4 pt-4">
-              <div className="flex items-center justify-between">
-                <h1 className="font-bold text-2xl text-stone-800">
-                  {tab.title}
-                </h1>
-                {tab.value === Tab.Activities && <AddActivities />}
-                {tab.value === Tab.Goals && <AddGoal />}
-                {tab.value === Tab.Profile && (
-                  <div className="flex items-center gap-2">
-                    <ThemeToggle />
-                    <RefreshButton />
-                    <LogoutButton />
-                  </div>
-                )}
+        <TabsContent
+          key={tab.value}
+          value={tab.value}
+          className={cn(
+            'mt-0',
+            tab.value === Tab.Health &&
+              'bg-gradient-to-b from-lime-600 to-stone-50 relative isolate'
+          )}
+        >
+          <div className="bg-circles h-[200dvh] fixed -translate-y-[43%] top-0 inset-x-0 -z-10" />
+          {/* Top bar */}
+          <motion.header
+            className={cn(
+              'sticky top-0',
+              'backdrop-blur-md',
+              'px-6 h-16',
+              'flex items-center justify-between max-w-3xl mx-auto z-10',
+              tab.value === Tab.Health && 'text-white'
+            )}
+            style={{ backgroundColor }}
+          >
+            <h1
+              className={cn(
+                'font-bold text-2xl text-stone-800 flex items-center gap-2',
+                tab.value === Tab.Health && 'text-white'
+              )}
+            >
+              {tab.title}
+              {tab.value === Tab.Health && <Leaf className="text-green-700" />}
+            </h1>
+            {tab.value === Tab.Activities && <AddActivities />}
+            {tab.value === Tab.Goals && <AddGoal />}
+            {tab.value === Tab.Profile && (
+              <div className="flex items-center gap-2">
+                <ThemeToggle />
+                <RefreshButton />
+                <LogoutButton />
               </div>
-              <Separator className="mt-4" />
-            </section>
-            <section className="p-6 grow overflow-auto">{tab.content}</section>
-          </div>
+            )}
+          </motion.header>
+
+          {/* Content */}
+          <section className="p-6 h-[calc(100dvh-84px)] max-w-3xl mx-auto">
+            {tab.content}
+          </section>
         </TabsContent>
       ))}
     </Tabs>

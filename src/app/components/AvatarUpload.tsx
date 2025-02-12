@@ -16,16 +16,16 @@ import { FormEvent, useRef, useState } from 'react';
 import useCreateOrUpdateUser from '../hooks/useCreateOrUpdateUser';
 import Spinner from './Spinner'; // Import the Spinner component
 
-const getGradientClass = (userId: string) => {
+const getGradientClass = () => {
   const gradients = [
+    'from-blue-300 to-blue-800',
     'from-emerald-300 to-emerald-800',
-    'from-blue-400 to-blue-600',
-    'from-violet-400 to-violet-600',
-    'from-amber-400 to-amber-600',
-    'from-rose-300 to-rose-600',
+    'from-violet-300 to-violet-800',
+    'from-amber-300 to-amber-800',
+    'from-rose-300 to-rose-800',
   ];
 
-  const index = parseInt(userId) % gradients.length;
+  const index = Math.floor(Math.random() * gradients.length);
   return gradients[index];
 };
 
@@ -114,20 +114,23 @@ const AvatarUpload = ({ user }: AvatarUploadProps) => {
           <Image
             src={user.avatar}
             alt="User Avatar"
-            width={96}
-            height={96}
-            className="rounded-xl object-cover size-24 ring-1 ring-offset-2 ring-stone-300"
+            width={112}
+            height={112}
+            className="rounded-full object-cover size-28"
           />
         ) : (
           <div
             className={cn(
-              'flex items-center justify-center size-20 rounded-full bg-gradient-to-br',
-              user?.id &&
-                `from-emerald-300 to-emerald-800 from-blue-400 to-blue-600 from-violet-400 to-violet-600 from-amber-400 to-amber-600 from-rose-300 to-rose-600`,
-              getGradientClass(user.id)
+              'flex items-center justify-center size-28 rounded-full bg-gradient-to-b',
+              'from-blue-100 to-blue-800',
+              'from-emerald-100 to-emerald-800',
+              'from-violet-100 to-violet-800',
+              'from-amber-100 to-amber-800',
+              'from-rose-100 to-rose-800',
+              getGradientClass()
             )}
           >
-            <span className="text-2xl font-bold text-white inter">
+            <span className="text-4xl font-bold text-white inter">
               {(
                 user?.username?.[0] ||
                 user?.first_name?.[0] ||

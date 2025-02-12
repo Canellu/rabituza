@@ -8,7 +8,7 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from '@/components/ui/drawer';
-import { createNutritionTarget } from '@/lib/database/nutrition/createNutritionTarget';
+import { createOrUpdateNutritionTarget } from '@/lib/database/nutrition/createOrUpdateNutritionTarget';
 import { getUser } from '@/lib/database/user/getUser';
 import {
   activityLevels,
@@ -107,7 +107,7 @@ export function AddNutritionTarget() {
   const { mutate, isPending } = useMutation({
     mutationFn: async (data: Omit<NutritionTarget, 'id'>) => {
       if (!userId) throw new Error('User is not signed in');
-      await createNutritionTarget(userId, data);
+      await createOrUpdateNutritionTarget(userId, data);
       console.log('Creating target:', data);
     },
     onSuccess: () => {
