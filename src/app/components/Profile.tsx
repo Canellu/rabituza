@@ -59,7 +59,12 @@ const Profile = () => {
 
       <ProfileDetails user={user} />
 
-      <Button asChild variant="outline">
+      <Button
+        asChild
+        variant="outline"
+        size="sm"
+        className="bg-gradient-to-br  from-emerald-200 to-lime-200 text-stone-800 border border-white/50"
+      >
         <Link href="/feedback">Release Notes & Feedback</Link>
       </Button>
 
