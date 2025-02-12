@@ -6,6 +6,7 @@ import { Tab, tabs } from '@/constants/menu';
 import { cn } from '@/lib/utils';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import AddActivities from './components/Activities/AddActivities';
 import AddGoal from './components/AddGoal';
 import LogoutButton from './components/LogoutButton';
@@ -42,6 +43,7 @@ const Menu = () => {
       const tab = params.get('tab') as Tab;
       if (tab) {
         setTab(tab);
+        toast(`${tab}`);
       }
     }
   }, [params, router]);
