@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tab, tabs } from '@/constants/menu';
 import { cn } from '@/lib/utils';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AddActivities from './components/Activities/AddActivities';
 import AddGoal from './components/AddGoal';
 import LogoutButton from './components/LogoutButton';
@@ -34,18 +34,17 @@ const Menu = () => {
 
   const handleTabPress = (tab: Tab) => {
     setTab(tab);
-    // router.replace('/');
+    router.replace('/');
   };
 
-  // useEffect(() => {
-  //   if (params && params.has('tab')) {
-  //     const tab = params.get('tab') as Tab;
-  //     if (tab) {
-  //       setTab(tab);
-  //       toast(`${tab}`);
-  //     }
-  //   }
-  // }, [params, router]);
+  useEffect(() => {
+    if (params && params.has('tab')) {
+      const tab = params.get('tab') as Tab;
+      if (tab) {
+        setTab(tab);
+      }
+    }
+  }, [params, router]);
 
   return (
     <Tabs defaultValue={Tab.Home} value={tab}>
