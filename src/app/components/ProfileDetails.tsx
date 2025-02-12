@@ -7,6 +7,12 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
+} from '@/components/ui/input-otp';
 import { Label } from '@/components/ui/label';
 import {
   Select,
@@ -19,14 +25,16 @@ import { Separator } from '@/components/ui/separator';
 import { Slider } from '@/components/ui/slider';
 import { Textarea } from '@/components/ui/textarea';
 import { months } from '@/constants/months';
+import { verifyUserCode } from '@/lib/auth/verifyLogin';
 import { cn } from '@/lib/utils';
 import { User } from '@/types/User';
 import { format } from 'date-fns';
 import { Fragment, ReactNode, useEffect, useState } from 'react';
 import useCreateOrUpdateUser from '../hooks/useCreateOrUpdateUser';
 
-const excludedFields = ['id', 'code', 'email', 'avatar'];
+const excludedFields = ['id', 'email', 'avatar'];
 const fieldLabels: Record<string, string> = {
+  code: 'Code',
   username: 'Username',
   first_name: 'First Name',
   last_name: 'Last Name',
@@ -38,7 +46,7 @@ const fieldLabels: Record<string, string> = {
 };
 
 const ProfileDetails = ({ user }: { user?: User }) => {
-  const [date, setDate] = useState<Date>();
+  const [dob, setDob] = useState<Date | undefined>(undefined);
   const [viewYear, setViewYear] = useState(new Date().getFullYear());
   const [viewMonth, setViewMonth] = useState(new Date().getMonth());
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -49,6 +57,9 @@ const ProfileDetails = ({ user }: { user?: User }) => {
   const [username, setUsername] = useState<string | undefined>(undefined);
   const [firstName, setFirstName] = useState<string | undefined>(undefined);
   const [lastName, setLastName] = useState<string | undefined>(undefined);
+  const [code, setCode] = useState<string | undefined>(undefined);
+  const [error, setError] = useState<string | undefined>(undefined);
+  const [step, setStep] = useState<'current' | 'new'>('current');
 
   const [selectedField, setSelectedField] = useState<string | null>(null);
 
@@ -69,13 +80,6 @@ const ProfileDetails = ({ user }: { user?: User }) => {
       setWeight(user.weight || undefined);
       setBio(user.bio || '');
       setUsername(user.username || '');
-
-      const dob = user.dob ? new Date(user.dob) : undefined;
-      if (dob) {
-        setDate(dob);
-        setViewYear(dob.getFullYear());
-        setViewMonth(dob.getMonth());
-      }
     }
   }, [user, drawerOpen]);
 
@@ -92,11 +96,12 @@ const ProfileDetails = ({ user }: { user?: User }) => {
       username: username?.trim().toLowerCase(),
       first_name: firstName?.trim(),
       last_name: lastName?.trim(),
-      dob: date || user.dob || null, // Set to null if both are undefined
+      dob: dob || user.dob || undefined,
       height,
       gender,
       weight,
       bio: bio?.trim(),
+      code: code ? code : user.code,
     };
 
     // Remove fields with undefined or null values
@@ -112,6 +117,57 @@ const ProfileDetails = ({ user }: { user?: User }) => {
 
   const renderInputField = () => {
     switch (selectedField) {
+      case 'code': {
+        return (
+          <div className="relative flex flex-col items-center gap-2 mt-4 pb-4">
+            <Label htmlFor="code">
+              {step === 'current' ? 'Current Code' : 'New Code'}
+            </Label>
+            <InputOTP
+              maxLength={6}
+              id="code"
+              value={code}
+              onChange={(value) => setCode(value)}
+              autoFocus={shouldAutoFocus}
+              onFocus={() => setError('')}
+              onComplete={() => {
+                if (user && code?.length === 6 && step === 'current') {
+                  try {
+                    const verifiedUser = verifyUserCode(user, code);
+                    if (verifiedUser) {
+                      setCode('');
+                      setError('');
+                      setStep('new');
+                    }
+                  } catch {
+                    setError('Invalid Code');
+                  }
+                }
+              }}
+            >
+              <InputOTPGroup>
+                <InputOTPSlot index={0} />
+                <InputOTPSlot index={1} />
+                <InputOTPSlot index={2} />
+              </InputOTPGroup>
+              <InputOTPSeparator />
+              <InputOTPGroup>
+                <InputOTPSlot index={3} />
+                <InputOTPSlot index={4} />
+                <InputOTPSlot index={5} />
+              </InputOTPGroup>
+            </InputOTP>
+            <p
+              className={cn(
+                'absolute -bottom-4 inset-x-6 text-red-500 bg-red-100 text-sm rounded-md py-1 px-3 text-center',
+                error ? 'visible' : 'invisible'
+              )}
+            >
+              {error}
+            </p>
+          </div>
+        );
+      }
       case 'username':
         return (
           <div className="flex flex-col w-full gap-2">
@@ -134,9 +190,7 @@ const ProfileDetails = ({ user }: { user?: User }) => {
               type="text"
               id="first_name"
               value={firstName}
-              onChange={(e) =>
-                setFirstName(e.target.value.replace(/^\s+/g, ''))
-              } // Remove leading whitespace
+              onChange={(e) => setFirstName(e.target.value.trim())}
               placeholder="First name"
             />
           </div>
@@ -150,7 +204,7 @@ const ProfileDetails = ({ user }: { user?: User }) => {
               type="text"
               id="last_name"
               value={lastName}
-              onChange={(e) => setLastName(e.target.value.replace(/^\s+/g, ''))} // Remove leading whitespace
+              onChange={(e) => setLastName(e.target.value.trim())}
               placeholder="Last name"
             />
           </div>
@@ -196,9 +250,9 @@ const ProfileDetails = ({ user }: { user?: User }) => {
               <Calendar
                 mode="single"
                 weekStartsOn={1}
-                selected={date}
+                selected={dob}
                 showOutsideDays={false}
-                onSelect={setDate}
+                onSelect={setDob}
                 initialFocus
                 classNames={{
                   caption: 'hidden',
@@ -316,6 +370,7 @@ const ProfileDetails = ({ user }: { user?: User }) => {
   };
 
   const shouldAutoFocus = [
+    'code',
     'username',
     'first_name',
     'last_name',
@@ -339,6 +394,8 @@ const ProfileDetails = ({ user }: { user?: User }) => {
             formattedValue = (
               <span className="text-gray-500 italic font-normal">Add info</span>
             );
+          } else if (key === 'code') {
+            formattedValue = <span className="tracking-wider">******</span>;
           } else if (key === 'weight' && typeof value === 'number') {
             formattedValue = `${value} kg`;
           } else if (key === 'height' && typeof value === 'number') {

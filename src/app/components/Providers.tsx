@@ -1,5 +1,6 @@
 'use client';
 
+import { Toaster } from '@/components/ui/sonner';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { ThemeProvider } from 'next-themes';
@@ -30,6 +31,7 @@ export const Providers = ({ children }: { children: ReactNode }) => {
       <QueryClientProvider client={queryClient}>
         {children}
         {QueryDevToolsEnabled && <ReactQueryDevtools initialIsOpen={false} />}
+        <Toaster />
       </QueryClientProvider>
     </ThemeProvider>
   );
