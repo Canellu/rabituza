@@ -44,11 +44,13 @@ const NutritionStats = ({
       }}
       className="flex flex-col gap-6 items-center justify-center"
     >
-      <div className="text-center flex flex-col">
-        <span className="text-7xl font-semibold text-lime-900 text-center">
-          {isInTargetPeriod ? nutritionTarget.calories : '-'}
-        </span>
-        <span className="text-lime-900 text-sm">remaining calories</span>
+      <div className="flex">
+        <div className="text-center flex flex-col">
+          <span className="text-7xl font-semibold text-lime-900 text-center">
+            {isInTargetPeriod ? nutritionTarget.calories : '-'}
+          </span>
+          <span className="text-lime-900 text-sm ">remaining calories</span>
+        </div>
       </div>
       <div className="grid grid-cols-4 gap-2 w-full text-stone-700 ">
         <div className="flex flex-col gap-1 items-center text-center bg-gradient-to-b from-white/30 to-transparent backdrop-blur-sm border border-white/5 shadow rounded-3xl py-2 px-2">

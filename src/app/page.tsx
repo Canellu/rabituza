@@ -105,7 +105,7 @@ const Menu = () => {
             className={cn(
               'mt-0',
               tab.value === Tab.Health &&
-                'bg-gradient-to-b from-lime-600 to-stone-50 relative isolate'
+                'bg-gradient-to-b from-lime-600 to-55% to-stone-50 relative isolate'
             )}
           >
             <div className="bg-circles h-[200dvh] fixed -translate-y-[43%] top-0 inset-x-0 -z-10" />
