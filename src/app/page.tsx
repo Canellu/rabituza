@@ -2,68 +2,16 @@
 
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tab, tabs } from '@/constants/menu';
 import { cn } from '@/lib/utils';
-import {
-  Activity as ActivityIcon,
-  Goal,
-  Heart,
-  HomeIcon,
-  User,
-} from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import Activities from './components/Activities/Activities';
 import AddActivities from './components/Activities/AddActivities';
 import AddGoal from './components/AddGoal';
-import Goals from './components/Goals';
-import Health from './components/Health';
-import Home from './components/Home';
 import LogoutButton from './components/LogoutButton';
-import Profile from './components/Profile';
 import RefreshButton from './components/RefreshButton';
 import ThemeToggle from './components/ThemeToggle';
 import useVibrate from './hooks/useVibrate';
-
-export enum Tab {
-  Home = 'home',
-  Activities = 'activities',
-  Goals = 'goals',
-  Profile = 'profile',
-  Lifestyle = 'lifestyle',
-}
-
-const tabs = [
-  {
-    value: Tab.Home,
-    icon: HomeIcon,
-    title: 'Home',
-    content: <Home />,
-  },
-  {
-    value: Tab.Lifestyle,
-    icon: Heart,
-    title: 'Health',
-    content: <Health />,
-  },
-  {
-    value: Tab.Activities,
-    icon: ActivityIcon,
-    title: 'Activities',
-    content: <Activities />,
-  },
-  {
-    value: Tab.Goals,
-    icon: Goal,
-    title: 'Goals',
-    content: <Goals />,
-  },
-  {
-    value: Tab.Profile,
-    icon: User,
-    title: 'Profile',
-    content: <Profile />,
-  },
-];
 
 const Menu = () => {
   const params = useSearchParams();
