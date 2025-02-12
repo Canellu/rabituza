@@ -65,7 +65,9 @@ const Profile = () => {
         size="sm"
         className="bg-gradient-to-br  from-emerald-200 to-lime-200 text-stone-800 border border-white/50"
       >
-        <Link href="/feedback">Release Notes & Feedback</Link>
+        <Link href="/feedback" replace>
+          Release Notes & Feedback
+        </Link>
       </Button>
 
       <p className="geist-mono text-xs text-stone-500 text-center w-full pb-6">
