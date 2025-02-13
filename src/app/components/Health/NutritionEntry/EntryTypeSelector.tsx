@@ -3,29 +3,28 @@
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
-import { MealEntryType } from '@/types/Nutrition';
+import { MealEntryType, MealEntryTypes } from '@/types/Nutrition';
 import { Plus } from 'lucide-react';
+import { useState } from 'react';
 
 interface EntryTypeSelectorProps {
-  selectedEntryType: MealEntryType;
-  onEntryTypeChange: (value: MealEntryType) => void;
   onAddEntryType: (entryType: MealEntryType) => void; // Pass entryType to the function
 }
 
-const EntryTypeSelector = ({
-  selectedEntryType,
-  onEntryTypeChange,
-  onAddEntryType,
-}: EntryTypeSelectorProps) => {
+const EntryTypeSelector = ({ onAddEntryType }: EntryTypeSelectorProps) => {
+  const [entryType, setEntryType] = useState<MealEntryType>(
+    MealEntryTypes.Food
+  );
+
   return (
     <div className="space-y-2">
       <Label className="text-sm">Entry Type</Label>
       <div className="flex items-center gap-2">
         <ToggleGroup
           type="single"
-          value={selectedEntryType}
+          value={entryType}
           onValueChange={(value) => {
-            if (value) onEntryTypeChange(value as MealEntryType); // Prevent deselection
+            if (value) setEntryType(value as MealEntryType); // Prevent deselection
           }}
           className="grid grid-cols-2 bg-stone-50 border rounded-md p-1 grow"
         >
@@ -42,7 +41,11 @@ const EntryTypeSelector = ({
             Drink
           </ToggleGroupItem>
         </ToggleGroup>
-        <Button variant="default" size="icon" onClick={() => onAddEntryType(selectedEntryType)}>
+        <Button
+          variant="default"
+          size="icon"
+          onClick={() => onAddEntryType(entryType)}
+        >
           <Plus className="h-4 w-4" />
         </Button>
       </div>

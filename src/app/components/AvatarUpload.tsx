@@ -13,7 +13,7 @@ import { User } from '@/types/User';
 import type { PutBlobResult } from '@vercel/blob';
 import Image from 'next/image';
 import { FormEvent, useRef, useState } from 'react';
-import useCreateOrUpdateUser from '../hooks/useCreateOrUpdateUser';
+import useCreateOrUpdateUser from '../../lib/hooks/useCreateOrUpdateUser';
 import Spinner from './Spinner'; // Import the Spinner component
 
 const getGradientClass = () => {

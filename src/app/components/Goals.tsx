@@ -17,7 +17,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AnimatePresence, motion, Reorder } from 'framer-motion';
 import { ArrowDownUp } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { useDebounce } from '../hooks/useDebounce';
+import { useDebounce } from '../../lib/hooks/useDebounce';
 import GoalCard from './GoalCard';
 import Spinner from './Spinner';
 

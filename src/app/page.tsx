@@ -6,13 +6,13 @@ import { cn } from '@/lib/utils';
 import { Leaf } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import useVibrate from '../lib/hooks/useVibrate';
 import AddActivities from './components/Activities/AddActivities';
 import AddGoal from './components/AddGoal';
 import AddNutrition from './components/Health/NutritionEntry/AddNutrition';
 import LogoutButton from './components/LogoutButton';
 import RefreshButton from './components/RefreshButton';
 import ThemeToggle from './components/ThemeToggle';
-import useVibrate from './hooks/useVibrate';
 
 const Menu = () => {
   const params = useSearchParams();

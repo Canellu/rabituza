@@ -30,7 +30,7 @@ import { cn } from '@/lib/utils';
 import { User } from '@/types/User';
 import { format } from 'date-fns';
 import { Fragment, ReactNode, useEffect, useState } from 'react';
-import useCreateOrUpdateUser from '../hooks/useCreateOrUpdateUser';
+import useCreateOrUpdateUser from '../../lib/hooks/useCreateOrUpdateUser';
 
 const excludedFields = ['id', 'email', 'avatar'];
 const fieldLabels: Record<string, string> = {

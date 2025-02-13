@@ -2,6 +2,7 @@
 
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { cn } from '@/lib/utils';
 import { BaseNutrition } from '@/types/Nutrition';
 import { useState } from 'react';
 
@@ -19,16 +20,23 @@ type BaseNutritionInputsState = Omit<
 
 interface BaseNutritionInputsProps {
   onChange: (nutrition: BaseNutrition) => void;
+  className?: string;
 }
 
-const BaseNutritionInputs = ({ onChange }: BaseNutritionInputsProps) => {
-  const [nutrition, setNutrition] = useState<BaseNutritionInputsState>({
-    calories: '',
-    protein: '',
-    carbs: '',
-    fat: '',
-    fiber: '',
-  });
+const initialNutrition = {
+  calories: '',
+  protein: '',
+  carbs: '',
+  fat: '',
+  fiber: '',
+};
+
+const BaseNutritionInputs = ({
+  onChange,
+  className = '',
+}: BaseNutritionInputsProps) => {
+  const [nutrition, setNutrition] =
+    useState<BaseNutritionInputsState>(initialNutrition);
 
   const handleChange = (
     field: keyof BaseNutritionInputsState,
@@ -38,7 +46,6 @@ const BaseNutritionInputs = ({ onChange }: BaseNutritionInputsProps) => {
       ...nutrition,
       [field]: value, // Accept string values, including empty strings
     };
-    setNutrition(updatedNutrition);
     onChange({
       ...updatedNutrition,
       calories: Number(updatedNutrition.calories) || 0,
@@ -47,10 +54,16 @@ const BaseNutritionInputs = ({ onChange }: BaseNutritionInputsProps) => {
       fat: Number(updatedNutrition.fat) || 0,
       fiber: Number(updatedNutrition.fiber) || 0,
     });
+    setNutrition(initialNutrition);
   };
 
   return (
-    <div className="grid grid-cols-2 gap-2 border rounded-b-md p-4 bg-white border-t-0 space-y-2">
+    <div
+      className={cn(
+        'grid grid-cols-2 gap-2 border rounded-b-md p-4 bg-white border-t-0',
+        className
+      )}
+    >
       <Label htmlFor="calories" className="self-center text-sm font-normal">
         Calories
       </Label>
