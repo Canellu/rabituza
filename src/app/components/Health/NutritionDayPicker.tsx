@@ -39,7 +39,7 @@ const NutritionDayPicker = ({
             {isSelected && (
               <motion.span
                 layoutId="bubble"
-                className="absolute -inset-1 -z-10 bg-stone-50 border rounded-lg"
+                className="absolute -inset-1 -z-10 bg-white border rounded-lg"
                 transition={{
                   type: 'spring',
                   bounce: 0.2,
@@ -50,7 +50,7 @@ const NutritionDayPicker = ({
             <span
               className={cn(
                 'text-xs',
-                isSelected ? 'font-semibold text-lime-800' : ''
+                isSelected ? 'font-semibold text-emerald-800' : ''
               )}
             >
               {isToday ? 'Today' : format(date, 'EEEEEE')}
@@ -58,7 +58,7 @@ const NutritionDayPicker = ({
             <span
               className={cn(
                 'text-sm transition-colors duration-200 ease-in-out',
-                isSelected ? 'font-semibold text-base text-lime-800' : ''
+                isSelected ? 'font-semibold text-base text-emerald-800' : ''
               )}
             >
               {format(date, 'd')}

@@ -7,7 +7,6 @@ import { getSession } from '@/lib/utils/userSession';
 import { useQuery } from '@tanstack/react-query';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
-import WorkInProgress from '../WorkInProgress';
 import { AddNutritionTarget } from './AddNutritionTarget';
 import NutritionDayPicker from './NutritionDayPicker';
 import NutritionMonth from './NutritionMonth';
@@ -37,7 +36,6 @@ const Health = () => {
 
   return (
     <div className="h-full space-y-10">
-      <WorkInProgress />
       <NutritionDayPicker
         selectedDay={selectedDay}
         setSelectedDay={setSelectedDay}

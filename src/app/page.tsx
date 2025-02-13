@@ -3,35 +3,21 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tab, tabs } from '@/constants/menu';
 import { cn } from '@/lib/utils';
-import {
-  motion,
-  useMotionTemplate,
-  useScroll,
-  useTransform,
-} from 'framer-motion'; // Add this import
 import { Leaf } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import AddActivities from './components/Activities/AddActivities';
 import AddGoal from './components/AddGoal';
 import LogoutButton from './components/LogoutButton';
 import RefreshButton from './components/RefreshButton';
 import ThemeToggle from './components/ThemeToggle';
+import WorkInProgress from './components/WorkInProgress';
 import useVibrate from './hooks/useVibrate';
 
 const Menu = () => {
   const params = useSearchParams();
   const router = useRouter();
   const [tab, setTab] = useState<Tab>(Tab.Home);
-  const scrollContainer = useRef<HTMLDivElement>(null);
-  const { scrollY } = useScroll({
-    container: scrollContainer,
-  });
-  const backgroundColor = useMotionTemplate`rgba(var(--header-bg), ${useTransform(
-    scrollY,
-    [0, 50],
-    [0, 1]
-  )})`;
 
   const vibrationPatternPress = [90];
   const vibrationPatternRelease = [40];
@@ -63,13 +49,13 @@ const Menu = () => {
       {tabs.map((tab) => (
         <TabsContent key={tab.value} value={tab.value} className={cn('mt-0')}>
           {/* Top bar */}
-          <motion.header
+          <header
             className={cn(
               'sticky top-0 inset-x-0 z-50',
               'px-6 h-16',
-              'flex items-center'
+              'flex items-center',
+              'border-b'
             )}
-            style={{ backgroundColor }}
           >
             <div
               className={cn(
@@ -83,7 +69,10 @@ const Menu = () => {
               >
                 {tab.title}
                 {tab.value === Tab.Health && (
-                  <Leaf className="text-green-700" />
+                  <>
+                    <Leaf className="text-green-700" />
+                    <WorkInProgress />
+                  </>
                 )}
               </h1>
               {tab.value === Tab.Activities && <AddActivities />}
@@ -96,13 +85,10 @@ const Menu = () => {
                 </div>
               )}
             </div>
-          </motion.header>
+          </header>
 
           {/* Content */}
-          <div
-            className={cn('h-[calc(100dvh-84px)] overflow-y-auto')}
-            ref={scrollContainer}
-          >
+          <div className={cn('h-[calc(100dvh-84px)] overflow-y-auto')}>
             <section className={cn('p-6 m-w-3xl mx-auto pb-20')}>
               {tab.content}
             </section>
