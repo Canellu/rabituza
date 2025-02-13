@@ -5,7 +5,7 @@
 body {
   font-family: var(--font-geist-sans), var(--font-inter), var(--font-geist-mono);
   touch-action: pan-y;
-  accent-color: #a3e635;
+  accent-color: #22c55e;
   overscroll-behavior-x: none;
   overscroll-behavior-y: none;
 }
@@ -18,7 +18,7 @@ body {
     --card-foreground: 240 10% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
-    --primary: 82.7 78% 55.5%;
+    --primary: 142 71% 45%;
     --primary-foreground: 240 5.9% 10%;
     --secondary: 240 4.8% 95.9%;
     --secondary-foreground: 240 5.9% 10%;

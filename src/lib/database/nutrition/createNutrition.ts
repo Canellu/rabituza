@@ -14,14 +14,6 @@ export async function createNutrition(
     'id' | 'userId' | 'createdAt' | 'updatedAt'
   >
 ) {
-  // Validate that only one of foods or preparedMeals is present
-  if (
-    ('foods' in nutritionData && 'preparedMeals' in nutritionData) ||
-    (!('foods' in nutritionData) && !('preparedMeals' in nutritionData))
-  ) {
-    throw new Error('Must provide either foods or preparedMeals, but not both');
-  }
-
   const nutritionId = doc(collection(db, 'nutrition')).id;
 
   const nutritionWithUserAndId = {

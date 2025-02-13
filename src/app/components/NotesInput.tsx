@@ -11,7 +11,9 @@ interface ActivityNotesProps {
 const NotesInput = ({ note, onNoteChange }: ActivityNotesProps) => {
   return (
     <div className="flex flex-col gap-2">
-      <Label htmlFor="activity-notes">Notes</Label>
+      <Label htmlFor="activity-notes" className="text-sm">
+        Notes
+      </Label>
       <Textarea
         id="activity-notes"
         placeholder="Add notes (optional)"

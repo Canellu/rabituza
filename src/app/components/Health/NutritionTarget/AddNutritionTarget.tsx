@@ -19,10 +19,10 @@ import { getSession } from '@/lib/utils/userSession';
 import type { NutritionTarget } from '@/types/Nutrition';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import SaveButtonDrawer from '../SaveButtonDrawer';
+import SaveButtonDrawer from '../../SaveButtonDrawer';
 import ActivityLevelSelector from './ActivityLevelSelector';
 import NutritionalGoalSelector from './NutritionalGoalSelector';
-import NutritionInputs from './NutritionInputs';
+import NutritionTargetInputs from './NutritionTargetInputs';
 import RecommendedValues from './RecommendedValues';
 import TargetOccurrence from './TargetOccurrence';
 
@@ -188,7 +188,7 @@ export function AddNutritionTarget() {
                 onGoalChange={handleGoalChange}
               />
 
-              <NutritionInputs
+              <NutritionTargetInputs
                 target={target}
                 setTarget={setTarget}
                 initialTarget={initialTarget}

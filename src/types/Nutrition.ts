@@ -5,17 +5,30 @@ export const MealTypes = {
   Snack: 'snack',
 } as const;
 
-export const Units = {
+// Define separate units for food and drinks
+export const FoodUnits = {
   Gram: 'g',
   Kilogram: 'kg',
-  Milliliter: 'ml',
-  Liter: 'l',
   Piece: 'pc',
   Serving: 'serving',
 } as const;
 
+export const DrinkUnits = {
+  Milliliter: 'ml',
+  Liter: 'l',
+  Serving: 'serving',
+} as const;
+
+export const MealEntryTypes = {
+  Food: 'food',
+  Drink: 'drink',
+} as const;
+
+export type MealEntryType =
+  (typeof MealEntryTypes)[keyof typeof MealEntryTypes];
 export type MealType = (typeof MealTypes)[keyof typeof MealTypes];
-export type Unit = (typeof Units)[keyof typeof Units];
+export type FoodUnit = (typeof FoodUnits)[keyof typeof FoodUnits];
+export type DrinkUnit = (typeof DrinkUnits)[keyof typeof DrinkUnits];
 
 export type BaseNutrition = {
   /** Kilocalories (kcal) */
@@ -30,40 +43,28 @@ export type BaseNutrition = {
   fiber: number;
 };
 
+export type MealEntry = BaseNutrition & {
+  name: string;
+  entryType: MealEntryType;
+  ingredients: Ingredient[];
+};
+
 export type Ingredient = BaseNutrition & {
   name: string;
   amount: number;
-  unit: Unit;
+  unit: FoodUnit | DrinkUnit; // Use the new unit types
 };
-
-export type PreparedMeal = BaseNutrition & {
-  name: string;
-  brand?: string;
-  servingSize: number;
-  servingUnit: Unit;
-};
-
-export type Drink = {
-  name: string;
-  calories: number;
-  amount: number;
-  unit: Unit;
-};
-
-export type MealContent =
-  | { foods: Ingredient[]; preparedMeals: never }
-  | { foods: never; preparedMeals: PreparedMeal[] };
 
 export type NutritionEntry = {
   id: string;
   userId: string;
-  mealType: MealType;
   mealDate: Date;
-  drinks: Drink[];
+  mealType: MealType;
+  mealEntries: MealEntry[];
   notes?: string;
   createdAt: Date;
   updatedAt: Date;
-} & MealContent;
+};
 
 export type NutritionTarget = {
   id: string;

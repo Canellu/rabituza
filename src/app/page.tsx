@@ -8,10 +8,10 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import AddActivities from './components/Activities/AddActivities';
 import AddGoal from './components/AddGoal';
+import AddNutrition from './components/Health/NutritionEntry/AddNutrition';
 import LogoutButton from './components/LogoutButton';
 import RefreshButton from './components/RefreshButton';
 import ThemeToggle from './components/ThemeToggle';
-import WorkInProgress from './components/WorkInProgress';
 import useVibrate from './hooks/useVibrate';
 
 const Menu = () => {
@@ -69,12 +69,10 @@ const Menu = () => {
               >
                 {tab.title}
                 {tab.value === Tab.Health && (
-                  <>
-                    <Leaf className="text-green-700" />
-                    <WorkInProgress />
-                  </>
+                  <Leaf className="text-green-700" />
                 )}
               </h1>
+              {tab.value === Tab.Health && <AddNutrition />}
               {tab.value === Tab.Activities && <AddActivities />}
               {tab.value === Tab.Goals && <AddGoal />}
               {tab.value === Tab.Profile && (

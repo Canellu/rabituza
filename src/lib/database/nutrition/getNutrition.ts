@@ -11,31 +11,16 @@ export const getNutrition = async (
 
     const nutritionEntries = querySnapshot.docs.map((doc) => {
       const data = doc.data();
-      const baseEntry = {
+      return {
         id: doc.id,
         userId,
         mealType: data.mealType,
         mealDate: data.mealDate.toDate(),
-        drinks: data.drinks || [],
+        mealEntries: data.mealEntries,
         notes: data.notes || '',
         createdAt: data.createdAt.toDate(),
         updatedAt: data.updatedAt.toDate(),
-      };
-
-      // Handle MealContent union type
-      if (data.foods) {
-        return {
-          ...baseEntry,
-          foods: data.foods,
-          preparedMeals: undefined,
-        } as NutritionEntry;
-      } else {
-        return {
-          ...baseEntry,
-          preparedMeals: data.preparedMeals,
-          foods: undefined,
-        } as NutritionEntry;
-      }
+      } as NutritionEntry;
     });
 
     return nutritionEntries.sort(

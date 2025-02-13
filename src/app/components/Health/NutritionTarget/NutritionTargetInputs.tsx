@@ -3,17 +3,17 @@ import { Label } from '@/components/ui/label';
 import { Dispatch, SetStateAction } from 'react';
 import { NutritionTargetType } from './AddNutritionTarget';
 
-interface NutritionInputsProps {
+interface NutritionTargetInputsProps {
   target: NutritionTargetType;
   setTarget: Dispatch<SetStateAction<NutritionTargetType>>;
   initialTarget: NutritionTargetType;
 }
 
-const NutritionInputs = ({
+const NutritionTargetInputs = ({
   target,
   setTarget,
   initialTarget,
-}: NutritionInputsProps) => {
+}: NutritionTargetInputsProps) => {
   return (
     <div className="space-y-2">
       <Label>Nutritional Target Values</Label>
@@ -138,4 +138,4 @@ const NutritionInputs = ({
   );
 };
 
-export default NutritionInputs;
+export default NutritionTargetInputs;
