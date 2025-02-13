@@ -63,11 +63,11 @@ const ActivityCardHangboard = ({
   return (
     <>
       <motion.div className="relative" onClick={onEdit}>
-        <div className="absolute inset-1 bg-red-500 rounded-lg flex items-center justify-end px-4">
+        <div className="absolute inset-1 bg-red-500 rounded-xl flex items-center justify-end px-4">
           <Trash2 className="text-secondary" />
         </div>
         <motion.div
-          className="border rounded-lg p-4 shadow-sm space-y-3 bg-white relative"
+          className="border rounded-xl p-4 space-y-3 bg-white relative"
           drag="x"
           dragDirectionLock
           dragConstraints={{ left: -250, right: 0 }}

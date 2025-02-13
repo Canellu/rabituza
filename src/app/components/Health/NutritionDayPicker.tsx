@@ -39,7 +39,7 @@ const NutritionDayPicker = ({
             {isSelected && (
               <motion.span
                 layoutId="bubble"
-                className="absolute -inset-1 -z-10 bg-white border rounded-lg"
+                className="absolute -inset-1 -z-10 bg-emerald-50 border rounded-xl"
                 transition={{
                   type: 'spring',
                   bounce: 0.2,

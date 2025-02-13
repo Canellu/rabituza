@@ -79,7 +79,7 @@ const AddMeal = ({
   handleAddMeal: () => void;
 }) => {
   return (
-    <div className="bg-white border p-5 rounded-2xl text-stone-800 flex flex-col justify-between gap-4">
+    <div className="bg-white border p-5 rounded-xl text-stone-800 flex flex-col justify-between gap-4">
       <div className="flex flex-col">
         <span className="font-medium">{title}</span>
         <span className="text-sm text-stone-600">0 kcal</span>

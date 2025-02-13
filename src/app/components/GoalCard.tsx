@@ -43,7 +43,7 @@ const GoalCard = ({ goal, isOrdering, deleteGoal, onCheck }: GoalCardProps) => {
         exit={{ opacity: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="absolute inset-1 bg-red-500 rounded-lg flex items-center justify-end px-4">
+        <div className="absolute inset-1 bg-red-500 rounded-xl flex items-center justify-end px-4">
           <Trash2 className="text-white" />
         </div>
         <motion.div
@@ -52,7 +52,7 @@ const GoalCard = ({ goal, isOrdering, deleteGoal, onCheck }: GoalCardProps) => {
             goal.status === GoalStatus.Completed
               ? ' from-lime-100 to-emerald-500 shadow-md ring-transparent'
               : 'bg-white ring-stone-200 ',
-            'rounded-lg p-5 ring-1 flex flex-row gap-3 items-center w-full',
+            'rounded-xl p-5 ring-1 flex flex-row gap-3 items-center w-full',
             'relative',
             isOrdering ? 'pl-3' : 'pl-5'
           )}

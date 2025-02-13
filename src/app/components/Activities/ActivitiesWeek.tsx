@@ -32,7 +32,7 @@ const ActivitiesWeek = ({ activities = [] }: ActivitiesWeekProps) => {
   };
 
   return (
-    <div className="flex justify-between border p-4 rounded-md bg-gradient-to-b from-white to-emerald-50">
+    <div className="flex justify-between border p-4 rounded-xl bg-gradient-to-b from-white to-emerald-50">
       {Array.from({ length: 7 }, (_, i) => {
         const date = addDays(weekStart, i);
         const isCurrentDay = isToday(date);

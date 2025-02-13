@@ -34,11 +34,11 @@ const ToughestProgress = () => {
     <div className="w-full mt-4">
       <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
         <div
-          className="h-full bg-gradient-to-r from-primary to-emerald-600 transition-all duration-1000"
+          className="h-full bg-gradient-to-r from-emerald-200 to-emerald-700 transition-all duration-1000"
           style={{ width: `${progress}%` }}
         />
       </div>
-      <div className="text-xs text-emerald-900 font-medium mt-2 text-right">
+      <div className="text-xs text-emerald-50 font-medium mt-2 text-right">
         {Math.round(progress)}% of the journey
       </div>
     </div>

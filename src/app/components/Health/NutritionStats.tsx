@@ -54,25 +54,25 @@ const NutritionStats = ({
         </div>
       </div>
       <div className="grid grid-cols-4 gap-2 w-full text-stone-700">
-        <div className="flex flex-col gap-1 items-center text-center bg-gradient-to-b from-emerald-600/30 to-transparent border rounded-xl py-2 px-2">
+        <div className="flex flex-col gap-1 items-center text-center bg-emerald-50 border rounded-lg py-2 px-2">
           <span className="text-xs text-emerald-800">Carbs</span>
           <span className="font-medium text-sm text-emerald-900">
             {isTargetDay ? nutritionTarget.carbs : '-'}
           </span>
         </div>
-        <div className="flex flex-col gap-1 items-center text-center bg-gradient-to-b from-emerald-600/30 to-transparent border rounded-xl py-2 px-2">
+        <div className="flex flex-col gap-1 items-center text-center bg-emerald-50 border rounded-lg py-2 px-2">
           <span className="text-xs text-emerald-800">Protein</span>
           <span className="font-medium text-sm text-emerald-900">
             {isTargetDay ? nutritionTarget.protein : '-'}
           </span>
         </div>
-        <div className="flex flex-col gap-1 items-center text-center bg-gradient-to-b from-emerald-600/30 to-transparent border rounded-xl py-2 px-2">
+        <div className="flex flex-col gap-1 items-center text-center bg-emerald-50 border rounded-lg py-2 px-2">
           <span className="text-xs text-emerald-800">Fat</span>
           <span className="font-medium text-sm text-emerald-900">
             {isTargetDay ? nutritionTarget.fat : '-'}
           </span>
         </div>
-        <div className="flex flex-col gap-1 items-center text-center bg-gradient-to-b from-emerald-600/30 to-transparent border rounded-xl py-2 px-2">
+        <div className="flex flex-col gap-1 items-center text-center bg-emerald-50 border rounded-lg py-2 px-2">
           <span className="text-xs text-emerald-800">Fiber</span>
           <span className="font-medium text-sm text-emerald-900">
             {isTargetDay ? nutritionTarget.fiber : '-'}
