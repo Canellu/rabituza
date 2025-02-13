@@ -50,8 +50,8 @@ const BaseNutritionInputs = ({ onChange }: BaseNutritionInputsProps) => {
   };
 
   return (
-    <div className="space-y-2 pt-2">
-      <div className="grid grid-cols-2 gap-2 border rounded-md p-4 bg-stone-50">
+    <div className="space-y-2">
+      <div className="grid grid-cols-2 gap-2 border rounded-b-md p-4 bg-white border-t-0">
         <Label htmlFor="calories" className="self-center text-sm font-normal">
           Calories
         </Label>

@@ -18,18 +18,20 @@ const EntryTypeSelector = ({
       <ToggleGroup
         type="single"
         value={selectedEntryType}
-        onValueChange={(value) => onEntryTypeChange(value as MealEntryType)}
+        onValueChange={(value) => {
+          if (value) onEntryTypeChange(value as MealEntryType); // Prevent deselection
+        }}
         className="grid grid-cols-2 bg-stone-50 border rounded-md p-1"
       >
         <ToggleGroupItem
           value="food"
-          className="data-[state=on]:bg-stone-200 capitalize px-2 py-1"
+          className="data-[state=on]:bg-stone-200 capitalize px-2 py-1 min-h-max h-8"
         >
           Food
         </ToggleGroupItem>
         <ToggleGroupItem
           value="drink"
-          className="data-[state=on]:bg-stone-200 capitalize px-2 py-1"
+          className="data-[state=on]:bg-stone-200 capitalize px-2 py-1 min-h-max h-8"
         >
           Drink
         </ToggleGroupItem>

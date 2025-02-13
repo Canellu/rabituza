@@ -4,7 +4,7 @@ import { addDays, format, isToday, startOfWeek } from 'date-fns';
 
 type NutritionWeekProps = {
   entries?: NutritionEntry[];
-  targets?: NutritionTarget[]; // Add targets as a prop
+  targets?: NutritionTarget[];
 };
 
 const NutritionWeek = ({ entries = [], targets = [] }: NutritionWeekProps) => {
@@ -17,7 +17,7 @@ const NutritionWeek = ({ entries = [], targets = [] }: NutritionWeekProps) => {
 
   const isTrackingDay = (date: Date) => {
     return targets.some((target) => {
-      const dayOfWeek = (date.getDay() + 6) % 7; // Adjust the day index to have Monday as 0
+      const dayOfWeek = (date.getDay() + 6) % 7;
       return (
         date >= target.startDate &&
         date <= target.endDate &&
@@ -34,15 +34,11 @@ const NutritionWeek = ({ entries = [], targets = [] }: NutritionWeekProps) => {
     );
 
     return dayEntries.reduce((sum, entry) => {
-      const foodCalories = entry.foods.reduce(
-        (foodSum, food) => foodSum + (food.calories || 0),
+      const mealCalories = entry.mealEntries.reduce(
+        (mealSum, meal) => mealSum + (meal.calories || 0),
         0
       );
-      const drinkCalories = entry.drinks.reduce(
-        (drinkSum, drink) => drinkSum + (drink.calories || 0),
-        0
-      );
-      return sum + foodCalories + drinkCalories;
+      return sum + mealCalories;
     }, 0);
   };
 
@@ -69,7 +65,7 @@ const NutritionWeek = ({ entries = [], targets = [] }: NutritionWeekProps) => {
                   'size-9 rounded-full flex items-center justify-center',
                   hasEntryForDay && 'bg-primary/50 font-semibold',
                   isCurrentDay && 'border-2 border-primary/50',
-                  trackingDay && 'ring-2 ring-emerald-500' // Indicate tracking day
+                  trackingDay && 'ring-2 ring-emerald-500'
                 )}
               >
                 <span className="text-sm font-medium">{format(date, 'd')}</span>
