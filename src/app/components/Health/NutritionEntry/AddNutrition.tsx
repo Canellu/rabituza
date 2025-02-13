@@ -1,11 +1,5 @@
 'use client';
 
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import {
   Drawer,
@@ -13,13 +7,9 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from '@/components/ui/drawer';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { createNutrition } from '@/lib/database/nutrition/createNutrition';
-import { cn } from '@/lib/utils';
 import { getSession } from '@/lib/utils/userSession';
 import {
-  BaseNutrition,
   MealEntry,
   MealEntryType,
   MealEntryTypes,
@@ -32,7 +22,7 @@ import { useState } from 'react';
 import DateTimePicker from '../../DateTimePicker';
 import NotesInput from '../../NotesInput';
 import SaveButtonDrawer from '../../SaveButtonDrawer';
-import BaseNutritionInputs from './BaseNutritionInputs';
+import AddMealEntry from './AddMealEntry';
 import EntryTypeSelector from './EntryTypeSelector';
 import MealTypeSelector from './MealTypeSelector';
 
@@ -45,14 +35,7 @@ const AddNutrition = () => {
   const [entryType, setEntryType] = useState<MealEntryType>(
     MealEntryTypes.Food
   );
-  const [mealName, setMealName] = useState(''); // New state for meal name
-  const [baseNutrition, setBaseNutrition] = useState<BaseNutrition>({
-    calories: 0,
-    protein: 0,
-    carbs: 0,
-    fat: 0,
-    fiber: 0,
-  });
+
   const [mealEntries, setMealEntries] = useState<MealEntry[]>([]);
   const [note, setNote] = useState('');
 
@@ -75,21 +58,12 @@ const AddNutrition = () => {
     },
   });
 
-  const handleAddMealEntry = (entry: MealEntry) => {
-    setMealEntries([...mealEntries, entry]);
-  };
-
-  const handleRemoveMealEntry = (index: number) => {
-    setMealEntries(mealEntries.filter((_, i) => i !== index));
-  };
-
   const handleSubmit = () => {
-    if (!userId || !mealType || !mealName) return; // Ensure mealName is provided
+    if (!userId || !mealType) return;
 
     const data = {
-      mealName, // Include mealName in the data
-      mealType,
       mealDate,
+      mealType,
       mealEntries,
       notes: note,
     };
@@ -123,60 +97,15 @@ const AddNutrition = () => {
                 <EntryTypeSelector
                   selectedEntryType={entryType}
                   onEntryTypeChange={setEntryType}
+                  onAddEntryType={() => {}}
                 />
 
-                {/* Entry name */}
-                <div className="space-y-1">
-                  <Label className="text-sm">Name</Label>
-                  <Input
-                    type="text"
-                    placeholder="Fried chicken / Sugar Free Coke"
-                    value={mealName}
-                    onChange={(e) => setMealName(e.target.value)}
-                    className="border rounded-md p-2"
-                  />
-                </div>
-
-                <Accordion
-                  type="single"
-                  defaultValue="nutrition"
-                  collapsible
-                  className="space-y-2"
-                >
-                  {/* Accordion for Base Nutrition Inputs */}
-                  <AccordionItem value="nutrition" className="border-none">
-                    <AccordionTrigger
-                      className={cn(
-                        '[&>svg]:h-4 [&>svg]:w-4 [&>svg]:text-stone-800 ',
-                        'text-start hover:no-underline border rounded-md p-3 bg-stone-50 text-sm',
-                        'data-[state=open]:rounded-b-none',
-                        'transition-all duration-200 ease-in-out'
-                      )}
-                    >
-                      Nutrition
-                    </AccordionTrigger>
-                    <AccordionContent className="pb-2">
-                      <BaseNutritionInputs onChange={setBaseNutrition} />
-                    </AccordionContent>
-                  </AccordionItem>
-
-                  {/* Accordion for Ingredients */}
-                  <AccordionItem value="ingredients" className="border-none">
-                    <AccordionTrigger
-                      className={cn(
-                        '[&>svg]:h-4 [&>svg]:w-4 [&>svg]:text-stone-800 ',
-                        'text-start hover:no-underline border rounded-md p-3 bg-stone-50 text-sm',
-                        'data-[state=open]:rounded-b-none',
-                        'transition-all duration-200 ease-in-out'
-                      )}
-                    >
-                      Ingredients
-                    </AccordionTrigger>
-                    <AccordionContent className="pb-2">
-                      <div>Ingredients content goes here...</div>
-                    </AccordionContent>
-                  </AccordionItem>
-                </Accordion>
+                <AddMealEntry
+                  entryType={'food'}
+                  onAddMealEntry={function (mealEntry: MealEntry): void {
+                    throw new Error('Function not implemented.');
+                  }}
+                />
 
                 <NotesInput note={note} onNoteChange={setNote} />
 
