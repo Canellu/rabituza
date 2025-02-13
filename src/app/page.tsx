@@ -60,53 +60,55 @@ const Menu = () => {
 
   return (
     <Tabs defaultValue={Tab.Home} value={tab}>
-      <div
-        ref={scrollContainer}
-        className="h-[calc(100dvh-84px)] overflow-y-auto"
-      >
-        {tabs.map((tab) => (
-          <TabsContent key={tab.value} value={tab.value} className={cn('mt-0')}>
-            {/* Top bar */}
-            <motion.header
+      {tabs.map((tab) => (
+        <TabsContent key={tab.value} value={tab.value} className={cn('mt-0')}>
+          {/* Top bar */}
+          <motion.header
+            className={cn(
+              'sticky top-0 inset-x-0 z-50',
+              'px-6 h-16',
+              'flex items-center'
+            )}
+            style={{ backgroundColor }}
+          >
+            <div
               className={cn(
-                'sticky top-0 inset-x-0 z-50',
-                'px-6 h-16',
-                'flex items-center'
+                'flex items-center justify-between w-full max-w-3xl mx-auto'
               )}
-              style={{ backgroundColor }}
             >
-              <div
+              <h1
                 className={cn(
-                  'flex items-center justify-between w-full max-w-3xl mx-auto'
+                  'font-bold text-2xl text-stone-800 flex items-center gap-2'
                 )}
               >
-                <h1
-                  className={cn(
-                    'font-bold text-2xl text-stone-800 flex items-center gap-2'
-                  )}
-                >
-                  {tab.title}
-                  {tab.value === Tab.Health && (
-                    <Leaf className="text-green-700" />
-                  )}
-                </h1>
-                {tab.value === Tab.Activities && <AddActivities />}
-                {tab.value === Tab.Goals && <AddGoal />}
-                {tab.value === Tab.Profile && (
-                  <div className="flex items-center gap-2">
-                    <ThemeToggle />
-                    <RefreshButton />
-                    <LogoutButton />
-                  </div>
+                {tab.title}
+                {tab.value === Tab.Health && (
+                  <Leaf className="text-green-700" />
                 )}
-              </div>
-            </motion.header>
+              </h1>
+              {tab.value === Tab.Activities && <AddActivities />}
+              {tab.value === Tab.Goals && <AddGoal />}
+              {tab.value === Tab.Profile && (
+                <div className="flex items-center gap-2">
+                  <ThemeToggle />
+                  <RefreshButton />
+                  <LogoutButton />
+                </div>
+              )}
+            </div>
+          </motion.header>
 
-            {/* Content */}
-            <section className="p-6  max-w-3xl mx-auto">{tab.content}</section>
-          </TabsContent>
-        ))}
-      </div>
+          {/* Content */}
+          <div
+            className={cn('h-[calc(100dvh-84px)] overflow-y-auto')}
+            ref={scrollContainer}
+          >
+            <section className={cn('p-6 m-w-3xl mx-auto pb-20')}>
+              {tab.content}
+            </section>
+          </div>
+        </TabsContent>
+      ))}
 
       {/* Bottom Menu */}
       <TabsList
