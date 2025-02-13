@@ -1,46 +1,5 @@
-import { NutritionEntry } from '@/types/Nutrition';
 import { User } from '@/types/User';
 import { differenceInYears } from 'date-fns';
-
-export const calculateTotalNutrition = (entry: NutritionEntry) => {
-  const foodTotals =
-    'foods' in entry && entry.foods
-      ? entry.foods.reduce(
-          (acc, food) => ({
-            calories: acc.calories + food.calories,
-            protein: acc.protein + food.protein,
-            carbs: acc.carbs + food.carbs,
-            fat: acc.fat + food.fat,
-          }),
-          { calories: 0, protein: 0, carbs: 0, fat: 0 }
-        )
-      : { calories: 0, protein: 0, carbs: 0, fat: 0 };
-
-  const preparedMealTotals =
-    'preparedMeals' in entry && entry.preparedMeals
-      ? entry.preparedMeals.reduce(
-          (acc, meal) => ({
-            calories: acc.calories + meal.calories,
-            protein: acc.protein + meal.protein,
-            carbs: acc.carbs + meal.carbs,
-            fat: acc.fat + meal.fat,
-          }),
-          { calories: 0, protein: 0, carbs: 0, fat: 0 }
-        )
-      : { calories: 0, protein: 0, carbs: 0, fat: 0 };
-
-  const drinkCalories = entry.drinks.reduce(
-    (acc, drink) => acc + drink.calories,
-    0
-  );
-
-  return {
-    calories: foodTotals.calories + preparedMealTotals.calories + drinkCalories,
-    protein: foodTotals.protein + preparedMealTotals.protein,
-    carbs: foodTotals.carbs + preparedMealTotals.carbs,
-    fat: foodTotals.fat + preparedMealTotals.fat,
-  };
-};
 
 // Activity Level Multipliers and corresponding nutritional recommendations
 export const activityLevels = {

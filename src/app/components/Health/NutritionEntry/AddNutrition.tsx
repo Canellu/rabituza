@@ -130,7 +130,7 @@ const AddNutrition = () => {
                   <Label className="text-sm">Name</Label>
                   <Input
                     type="text"
-                    placeholder="Fried chicken / Coke"
+                    placeholder="Fried chicken / Sugar Free Coke"
                     value={mealName}
                     onChange={(e) => setMealName(e.target.value)}
                     className="border rounded-md p-2"
@@ -155,7 +155,7 @@ const AddNutrition = () => {
                     >
                       Nutrition
                     </AccordionTrigger>
-                    <AccordionContent>
+                    <AccordionContent className="pb-2">
                       <BaseNutritionInputs onChange={setBaseNutrition} />
                     </AccordionContent>
                   </AccordionItem>
@@ -172,7 +172,7 @@ const AddNutrition = () => {
                     >
                       Ingredients
                     </AccordionTrigger>
-                    <AccordionContent>
+                    <AccordionContent className="pb-2">
                       <div>Ingredients content goes here...</div>
                     </AccordionContent>
                   </AccordionItem>
