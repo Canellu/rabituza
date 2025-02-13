@@ -7,6 +7,7 @@ import { getSession } from '@/lib/utils/userSession';
 import { useQuery } from '@tanstack/react-query';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
+import WorkInProgress from '../WorkInProgress';
 import { AddNutritionTarget } from './AddNutritionTarget';
 import NutritionDayPicker from './NutritionDayPicker';
 import NutritionMonth from './NutritionMonth';
@@ -36,6 +37,7 @@ const Health = () => {
 
   return (
     <div className="h-full space-y-10">
+      <WorkInProgress />
       <NutritionDayPicker
         selectedDay={selectedDay}
         setSelectedDay={setSelectedDay}
@@ -45,6 +47,7 @@ const Health = () => {
         isLoading={isLoading}
         nutritionTarget={nutritionTarget}
         isInTargetPeriod={isInTargetPeriod}
+        selectedDay={selectedDay}
       />
 
       {!isLoading && (
@@ -78,7 +81,7 @@ const AddMeal = ({
   handleAddMeal: () => void;
 }) => {
   return (
-    <div className="bg-stone-50 border p-5 rounded-2xl text-stone-800 flex flex-col justify-between gap-4">
+    <div className="bg-white border p-5 rounded-2xl text-stone-800 flex flex-col justify-between gap-4">
       <div className="flex flex-col">
         <span className="font-medium">{title}</span>
         <span className="text-sm text-stone-600">0 kcal</span>
@@ -86,15 +89,15 @@ const AddMeal = ({
 
       <div className="flex items-end justify-between gap-2">
         <div className="flex gap-1">
-          <div className="space-x-1 text-[10px] rounded-full bg-stone-100 border px-2.5 py-1.5">
+          <div className="space-x-1 text-[10px] rounded-full bg-stone-50 border px-2.5 py-1.5">
             <span className="text-stone-500">Carbs</span>
             <span className="font-medium">0%</span>
           </div>
-          <div className="space-x-1 text-[10px] rounded-full bg-stone-100 border px-2.5 py-1.5">
+          <div className="space-x-1 text-[10px] rounded-full bg-stone-50 border px-2.5 py-1.5">
             <span className="text-stone-500">Protein</span>
             <span className="font-medium">0%</span>
           </div>
-          <div className="space-x-1 text-[10px] rounded-full bg-stone-100 border px-2.5 py-1.5">
+          <div className="space-x-1 text-[10px] rounded-full bg-stone-50 border px-2.5 py-1.5">
             <span className="text-stone-500">Fat</span>
             <span className="font-medium">0%</span>
           </div>

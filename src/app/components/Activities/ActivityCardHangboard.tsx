@@ -67,7 +67,7 @@ const ActivityCardHangboard = ({
           <Trash2 className="text-secondary" />
         </div>
         <motion.div
-          className="border rounded-lg p-4 shadow-sm space-y-3 bg-secondary relative"
+          className="border rounded-lg p-4 shadow-sm space-y-3 bg-white relative"
           drag="x"
           dragDirectionLock
           dragConstraints={{ left: -250, right: 0 }}

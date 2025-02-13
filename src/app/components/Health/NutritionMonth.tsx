@@ -58,8 +58,8 @@ const NutritionMonth = ({ entries = [], target }: NutritionMonthProps) => {
               <div
                 className={cn(
                   'flex items-center justify-center size-9 rounded-full',
-                  hasEntryForDay && 'bg-stone-50 font-semibold',
-                  isTargetDayDate && 'border-2 border-stone-200 font-semibold',
+                  hasEntryForDay && 'bg-primary/50',
+                  isTargetDayDate && 'border-2 border-stone-200',
                   isTodayDate && 'border-2 border-primary/50'
                 )}
               >

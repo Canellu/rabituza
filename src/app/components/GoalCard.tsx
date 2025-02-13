@@ -51,7 +51,7 @@ const GoalCard = ({ goal, isOrdering, deleteGoal, onCheck }: GoalCardProps) => {
             'bg-gradient-to-tr',
             goal.status === GoalStatus.Completed
               ? ' from-lime-100 to-emerald-500 shadow-md ring-transparent'
-              : 'from-white to-stone-100 ring-stone-200 ',
+              : 'bg-white ring-stone-200 ',
             'rounded-lg p-5 ring-1 flex flex-row gap-3 items-center w-full',
             'relative',
             isOrdering ? 'pl-3' : 'pl-5'

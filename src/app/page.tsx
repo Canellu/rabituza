@@ -27,7 +27,7 @@ const Menu = () => {
   const { scrollY } = useScroll({
     container: scrollContainer,
   });
-  const backgroundColor = useMotionTemplate`rgba(245, 245, 245, ${useTransform(
+  const backgroundColor = useMotionTemplate`rgba(var(--header-bg), ${useTransform(
     scrollY,
     [0, 50],
     [0, 1]
@@ -60,34 +60,6 @@ const Menu = () => {
 
   return (
     <Tabs defaultValue={Tab.Home} value={tab}>
-      {/* Tab Headers */}
-      <TabsList
-        className={cn(
-          'fixed inset-x-0 bottom-0 min-h-max flex items-center justify-around pb-5 pt-0 rounded-none z-10',
-          'bg-stone-900'
-        )}
-      >
-        {tabs.map((tab) => (
-          <TabsTrigger
-            key={tab.value}
-            value={tab.value}
-            className={cn(
-              'bg-transparent border-none rounded-none px-4 py-3 transition duration-200 ease items-center justify-center flex flex-col text-xs w-24 text-stone-500',
-              'data-[state=active]:bg-transparent data-[state=active]:shadow-sm',
-              'data-[state=active]:text-primary',
-              '[&[data-state=active]_span]:text-stone-50'
-            )}
-            onClick={() => handleTabPress(tab.value)}
-            onTouchStart={handlePress}
-            onTouchEnd={handleRelease}
-          >
-            <tab.icon className="w-5 h-5 mx-auto mb-1" />
-            <span>{tab.title}</span>
-          </TabsTrigger>
-        ))}
-      </TabsList>
-
-      {/* Tab Content */}
       <div
         ref={scrollContainer}
         className="h-[calc(100dvh-84px)] overflow-y-auto"
@@ -135,6 +107,33 @@ const Menu = () => {
           </TabsContent>
         ))}
       </div>
+
+      {/* Bottom Menu */}
+      <TabsList
+        className={cn(
+          'fixed inset-x-0 bottom-0 min-h-max flex items-center justify-around pb-5 pt-0 rounded-none z-10',
+          'bg-stone-900'
+        )}
+      >
+        {tabs.map((tab) => (
+          <TabsTrigger
+            key={tab.value}
+            value={tab.value}
+            className={cn(
+              'bg-transparent border-none rounded-none px-4 py-3 transition duration-200 ease items-center justify-center flex flex-col text-xs w-24 text-stone-500',
+              'data-[state=active]:bg-transparent data-[state=active]:shadow-sm',
+              'data-[state=active]:text-primary',
+              '[&[data-state=active]_span]:text-stone-50'
+            )}
+            onClick={() => handleTabPress(tab.value)}
+            onTouchStart={handlePress}
+            onTouchEnd={handleRelease}
+          >
+            <tab.icon className="w-5 h-5 mx-auto mb-1" />
+            <span>{tab.title}</span>
+          </TabsTrigger>
+        ))}
+      </TabsList>
     </Tabs>
   );
 };
