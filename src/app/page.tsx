@@ -54,7 +54,7 @@ const Menu = () => {
               'sticky top-0 inset-x-0 z-50',
               'px-6 h-16',
               'flex items-center',
-              'border-b'
+              'border-b bg-stone-50'
             )}
           >
             <div
