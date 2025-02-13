@@ -23,9 +23,14 @@ import BaseNutritionInputs from './BaseNutritionInputs';
 interface AddIgredientsProps {
   entryType: MealEntryType;
   onAddIngredient: (ingredients: Ingredient[]) => void;
+  initialIngredients?: Ingredient[]; // Add this prop
 }
 
-const AddIngredients = ({ entryType, onAddIngredient }: AddIgredientsProps) => {
+const AddIngredients = ({ 
+  entryType, 
+  onAddIngredient,
+  initialIngredients = [], // Default to empty array
+}: AddIgredientsProps) => {
   const [ingredientName, setIngredientName] = useState('');
   const [amount, setAmount] = useState<string>('');
   const [unit, setUnit] = useState<FoodUnit | DrinkUnit>(
@@ -39,7 +44,7 @@ const AddIngredients = ({ entryType, onAddIngredient }: AddIgredientsProps) => {
     fiber: 0,
   });
   // const [error, setError] = useState<string | null>(null);
-  const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+  const [ingredients, setIngredients] = useState<Ingredient[]>(initialIngredients);
 
   const handleAdd = () => {
     const numberAmount = Number(amount);

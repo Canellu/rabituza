@@ -35,13 +35,12 @@ const DrinkEntryEditor = ({
   });
 
   const [ingredients, setIngredients] = useState<Ingredient[]>(
-    mealEntry.ingredients
+    mealEntry.ingredients || [] // Add default empty array
   );
 
-  const handleAddIngredient = (ingredient: Ingredient) => {
-    const updatedIngredients = [...ingredients, ingredient];
-    setIngredients(updatedIngredients);
-    onUpdateMealEntry({ ...mealEntry, ingredients: updatedIngredients });
+  const handleAddIngredient = (ingredients: Ingredient[]) => {
+    setIngredients(ingredients);
+    onUpdateMealEntry({ ...mealEntry, ingredients });
   };
 
   const handleUpdateMealEntryClick = () => {

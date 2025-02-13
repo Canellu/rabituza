@@ -31,7 +31,7 @@ const FoodEntryEditor = ({
   onUpdateMealEntry,
   onRemoveMealEntry,
 }: FoodEntryEditorProps) => {
-  const [mealName, setMealName] = useState(mealEntry.name);
+  const [foodName, setFoodName] = useState(mealEntry.name);
   const [baseNutrition, setBaseNutrition] = useState<BaseNutrition>({
     calories: mealEntry.calories,
     protein: mealEntry.protein,
@@ -40,15 +40,21 @@ const FoodEntryEditor = ({
     fiber: mealEntry.fiber,
   });
 
+  const [ingredients, setIngredients] = useState<Ingredient[]>(
+    mealEntry.ingredients || []
+  );
+
   const handleAddIngredient = (ingredients: Ingredient[]) => {
+    setIngredients(ingredients);
     onUpdateMealEntry({ ...mealEntry, ingredients });
   };
 
   const handleUpdateMealEntryClick = () => {
     const updatedEntry: MealEntry = {
       ...mealEntry,
-      name: mealName,
+      name: foodName,
       ...baseNutrition,
+      ingredients,
     };
     onUpdateMealEntry(updatedEntry);
   };
@@ -65,14 +71,13 @@ const FoodEntryEditor = ({
       </Button>
 
       <div className="space-y-4">
-        {/* Entry name */}
         <div className="space-y-1">
           <Label className="text-sm">Food Name</Label>
           <Input
             type="text"
             placeholder="Fried chicken"
-            value={mealName}
-            onChange={(e) => setMealName(e.target.value)}
+            value={foodName}
+            onChange={(e) => setFoodName(e.target.value)}
             onBlur={handleUpdateMealEntryClick}
             className="border rounded-md p-2"
           />
