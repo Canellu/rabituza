@@ -5,6 +5,7 @@ export const UPPER_BODY_STRETCHES = [
   'Neck',
   'Shoulder',
   'Upper Back',
+  'Lower Back',
 ];
 
 export const LOWER_BODY_STRETCHES = [
@@ -13,7 +14,6 @@ export const LOWER_BODY_STRETCHES = [
   'Hamstring',
   'Hip Flexors',
   'Inner Thigh',
-  'Lower Back',
   'Quadriceps',
 ];
 
