@@ -4,10 +4,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import { BaseNutrition } from '@/types/Nutrition';
-import { useEffect, useState } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 
 // Create a new type that allows string values for nutrition fields
-export type BaseNutritionInputsState = Omit<
+export type BaseNutritionStringed = Omit<
   BaseNutrition,
   'calories' | 'protein' | 'carbs' | 'fat' | 'fiber'
 > & {
@@ -19,56 +19,16 @@ export type BaseNutritionInputsState = Omit<
 };
 
 interface BaseNutritionInputsProps {
-  onChange: (nutrition: BaseNutrition) => void;
+  value: BaseNutritionStringed;
+  setValue: Dispatch<SetStateAction<BaseNutritionStringed>>;
   className?: string;
-  value?: BaseNutrition; // Add this
 }
 
 const BaseNutritionInputs = ({
-  onChange,
-  className = '',
   value,
+  setValue,
+  className = '',
 }: BaseNutritionInputsProps) => {
-  const [nutrition, setNutrition] = useState<BaseNutritionInputsState>({
-    calories: value?.calories?.toString() || '',
-    protein: value?.protein?.toString() || '',
-    carbs: value?.carbs?.toString() || '',
-    fat: value?.fat?.toString() || '',
-    fiber: value?.fiber?.toString() || '',
-  });
-
-  useEffect(() => {
-    setNutrition({
-      calories: value?.calories?.toString() || '',
-      protein: value?.protein?.toString() || '',
-      carbs: value?.carbs?.toString() || '',
-      fat: value?.fat?.toString() || '',
-      fiber: value?.fiber?.toString() || '',
-    });
-  }, [value]);
-
-  const handleChange = (
-    field: keyof BaseNutritionInputsState,
-    value: string
-  ) => {
-    const updatedNutrition = {
-      ...nutrition,
-      [field]: value,
-    };
-    setNutrition(updatedNutrition);
-    onChange({
-      calories:
-        updatedNutrition.calories === ''
-          ? 0
-          : Number(updatedNutrition.calories),
-      protein:
-        updatedNutrition.protein === '' ? 0 : Number(updatedNutrition.protein),
-      carbs: updatedNutrition.carbs === '' ? 0 : Number(updatedNutrition.carbs),
-      fat: updatedNutrition.fat === '' ? 0 : Number(updatedNutrition.fat),
-      fiber: updatedNutrition.fiber === '' ? 0 : Number(updatedNutrition.fiber),
-    });
-  };
-
   return (
     <div
       className={cn(
@@ -85,8 +45,13 @@ const BaseNutritionInputs = ({
           name="calories"
           type="text"
           inputMode="numeric"
-          value={nutrition.calories}
-          onChange={(e) => handleChange('calories', e.target.value)}
+          value={value.calories}
+          onChange={(e) =>
+            setValue((prev) => ({
+              ...prev,
+              calories: e.target.value,
+            }))
+          }
           placeholder="Calories"
           className="pr-12"
         />
@@ -103,8 +68,13 @@ const BaseNutritionInputs = ({
           name="protein"
           type="text"
           inputMode="numeric"
-          value={nutrition.protein}
-          onChange={(e) => handleChange('protein', e.target.value)}
+          value={value.protein}
+          onChange={(e) =>
+            setValue((prev) => ({
+              ...prev,
+              protein: e.target.value,
+            }))
+          }
           placeholder="Protein"
           className="pr-8"
         />
@@ -121,8 +91,13 @@ const BaseNutritionInputs = ({
           name="carbs"
           type="text"
           inputMode="numeric"
-          value={nutrition.carbs}
-          onChange={(e) => handleChange('carbs', e.target.value)}
+          value={value.carbs}
+          onChange={(e) =>
+            setValue((prev) => ({
+              ...prev,
+              carbs: e.target.value,
+            }))
+          }
           placeholder="Carbs"
           className="pr-8"
         />
@@ -139,8 +114,13 @@ const BaseNutritionInputs = ({
           name="fat"
           type="text"
           inputMode="numeric"
-          value={nutrition.fat}
-          onChange={(e) => handleChange('fat', e.target.value)}
+          value={value.fat}
+          onChange={(e) =>
+            setValue((prev) => ({
+              ...prev,
+              fat: e.target.value,
+            }))
+          }
           placeholder="Fat"
           className="pr-8"
         />
@@ -157,8 +137,13 @@ const BaseNutritionInputs = ({
           name="fiber"
           type="text"
           inputMode="numeric"
-          value={nutrition.fiber}
-          onChange={(e) => handleChange('fiber', e.target.value)}
+          value={value.fiber}
+          onChange={(e) =>
+            setValue((prev) => ({
+              ...prev,
+              fiber: e.target.value,
+            }))
+          }
           placeholder="Fiber"
           className="pr-8"
         />

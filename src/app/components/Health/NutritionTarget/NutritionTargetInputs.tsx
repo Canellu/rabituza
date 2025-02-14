@@ -6,13 +6,11 @@ import { NutritionTargetType } from './AddNutritionTarget';
 interface NutritionTargetInputsProps {
   target: NutritionTargetType;
   setTarget: Dispatch<SetStateAction<NutritionTargetType>>;
-  initialTarget: NutritionTargetType;
 }
 
 const NutritionTargetInputs = ({
   target,
   setTarget,
-  initialTarget,
 }: NutritionTargetInputsProps) => {
   return (
     <div className="space-y-2">
@@ -34,7 +32,6 @@ const NutritionTargetInputs = ({
                 calories: e.target.value,
               }))
             }
-            placeholder={initialTarget.calories}
             className="pr-12"
           />
           <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-sm text-muted-foreground">
@@ -57,7 +54,6 @@ const NutritionTargetInputs = ({
                 protein: e.target.value,
               }))
             }
-            placeholder={initialTarget.protein}
             className="pr-8"
           />
           <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-sm text-muted-foreground">
@@ -80,7 +76,6 @@ const NutritionTargetInputs = ({
                 carbs: e.target.value,
               }))
             }
-            placeholder={initialTarget.carbs}
             className="pr-8"
           />
           <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-sm text-muted-foreground">
@@ -103,7 +98,6 @@ const NutritionTargetInputs = ({
                 fat: e.target.value,
               }))
             }
-            placeholder={initialTarget.fat}
             className="pr-8"
           />
           <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-sm text-muted-foreground">
@@ -126,7 +120,6 @@ const NutritionTargetInputs = ({
                 fiber: e.target.value,
               }))
             }
-            placeholder={initialTarget.fiber}
             className="pr-8"
           />
           <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-sm text-muted-foreground">

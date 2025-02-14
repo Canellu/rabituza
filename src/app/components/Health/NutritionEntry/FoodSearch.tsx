@@ -14,18 +14,18 @@ import { Check, Loader2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 interface FoodSearchProps {
+  value: string;
   onSelect: (food: Food) => void;
-  value?: string;
-  onChange?: (value: string) => void;
+  onChange: (value: string) => void;
   onClear?: () => void;
   placeholder?: string;
 }
 
 export const FoodSearch = ({
   placeholder = 'Search foods...',
-  onSelect,
-  value = '',
+  value,
   onChange,
+  onSelect,
   onClear,
 }: FoodSearchProps) => {
   const [isSearching, setIsSearching] = useState(false);
@@ -74,6 +74,12 @@ export const FoodSearch = ({
     setSearchResults(matchedFoods || []);
   }, 300);
 
+  const handleClear = () => {
+    onClear?.();
+    onChange('');
+    setSearchResults([]);
+  };
+
   return (
     <Command
       className={cn(
@@ -95,8 +101,7 @@ export const FoodSearch = ({
         }}
         clearButton={!!value}
         onClear={() => {
-          onClear?.();
-          setSearchResults([]);
+          handleClear();
         }}
       />
 

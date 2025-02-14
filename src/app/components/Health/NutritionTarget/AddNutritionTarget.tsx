@@ -69,9 +69,7 @@ export function AddNutritionTarget() {
     daysOfWeek: [0, 1, 2, 3, 4], // Mon to Fri
   };
 
-  const [target, setTarget] = useState<NutritionTargetType>({
-    ...initialTarget,
-  });
+  const [target, setTarget] = useState<NutritionTargetType>(initialTarget);
 
   const handleActivityChange = (activity: keyof typeof activityLevels) => {
     setSelectedActivity(activity);
@@ -188,11 +186,7 @@ export function AddNutritionTarget() {
                 onGoalChange={handleGoalChange}
               />
 
-              <NutritionTargetInputs
-                target={target}
-                setTarget={setTarget}
-                initialTarget={initialTarget}
-              />
+              <NutritionTargetInputs target={target} setTarget={setTarget} />
 
               <TargetOccurrence
                 target={target}

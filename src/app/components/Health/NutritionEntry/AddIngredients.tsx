@@ -18,7 +18,6 @@ import {
   MealEntryTypes,
 } from '@/types/Nutrition';
 import { useState } from 'react';
-import BaseNutritionInputs from './BaseNutritionInputs';
 
 interface AddIgredientsProps {
   entryType: MealEntryType;
@@ -26,8 +25,8 @@ interface AddIgredientsProps {
   initialIngredients?: Ingredient[]; // Add this prop
 }
 
-const AddIngredients = ({ 
-  entryType, 
+const AddIngredients = ({
+  entryType,
   onAddIngredient,
   initialIngredients = [], // Default to empty array
 }: AddIgredientsProps) => {
@@ -44,7 +43,8 @@ const AddIngredients = ({
     fiber: 0,
   });
   // const [error, setError] = useState<string | null>(null);
-  const [ingredients, setIngredients] = useState<Ingredient[]>(initialIngredients);
+  const [ingredients, setIngredients] =
+    useState<Ingredient[]>(initialIngredients);
 
   const handleAdd = () => {
     const numberAmount = Number(amount);
@@ -118,10 +118,10 @@ const AddIngredients = ({
                 ))}
           </SelectContent>
         </Select>
-        <BaseNutritionInputs
-          onChange={setNutrition}
+        {/* <BaseNutritionInputs
+          value={setNutrition}
           className="col-span-2 border-none rounded-md p-0 [&>label]:hidden"
-        />
+        /> */}
 
         {/* {error && (
           <p className="text-red-500 bg-red-100 rounded-md py-1 px-3 w-full text-center col-span-2">
