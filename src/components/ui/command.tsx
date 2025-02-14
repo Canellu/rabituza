@@ -2,11 +2,12 @@
 
 import { type DialogProps } from '@radix-ui/react-dialog';
 import { Command as CommandPrimitive } from 'cmdk';
-import { Search } from 'lucide-react';
+import { Search, X } from 'lucide-react';
 import * as React from 'react';
 
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
+import { Button } from './button';
 
 const Command = React.forwardRef<
   React.ComponentRef<typeof CommandPrimitive>,
@@ -37,10 +38,13 @@ const CommandDialog = ({ children, ...props }: DialogProps) => {
 
 const CommandInput = React.forwardRef<
   React.ComponentRef<typeof CommandPrimitive.Input>,
-  React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>
->(({ className, ...props }, ref) => (
+  React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input> & {
+    clearButton?: boolean;
+    onClear?: () => void;
+  }
+>(({ className, clearButton, onClear, ...props }, ref) => (
   <div className="flex items-center border-b px-3" cmdk-input-wrapper="">
-    <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
+    <Search className="mr-2.5 h-4 w-4 shrink-0 opacity-50" />
     <CommandPrimitive.Input
       ref={ref}
       className={cn(
@@ -49,6 +53,16 @@ const CommandInput = React.forwardRef<
       )}
       {...props}
     />
+    {clearButton && (
+      <Button
+        size="icon"
+        variant="ghost"
+        className="h-8 w-8 shrink-0"
+        onClick={onClear}
+      >
+        <X className="h-4 w-4 text-muted-foreground" />
+      </Button>
+    )}
   </div>
 ));
 

@@ -1,29 +1,29 @@
-type Nutrient = {
+export type Nutrient = {
   sourceId: string;
   nutrientId: string;
   quantity?: number;
   unit?: string;
 };
 
-type Portion = {
+export type Portion = {
   portionName: string;
   portionUnit: string;
   quantity: number;
   unit: string;
 };
 
-type EdiblePart = {
+export type EdiblePart = {
   percent: number;
   sourceId: string;
 };
 
-type CalorieInfo = {
+export type CalorieInfo = {
   sourceId: string;
   quantity: number;
   unit: string;
 };
 
-type EnergyInfo = {
+export type EnergyInfo = {
   sourceId: string;
   quantity: number;
   unit: string;

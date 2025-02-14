@@ -4,10 +4,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import { BaseNutrition } from '@/types/Nutrition';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 // Create a new type that allows string values for nutrition fields
-type BaseNutritionInputsState = Omit<
+export type BaseNutritionInputsState = Omit<
   BaseNutrition,
   'calories' | 'protein' | 'carbs' | 'fat' | 'fiber'
 > & {
@@ -21,22 +21,31 @@ type BaseNutritionInputsState = Omit<
 interface BaseNutritionInputsProps {
   onChange: (nutrition: BaseNutrition) => void;
   className?: string;
+  value?: BaseNutrition; // Add this
 }
-
-const initialNutrition = {
-  calories: '',
-  protein: '',
-  carbs: '',
-  fat: '',
-  fiber: '',
-};
 
 const BaseNutritionInputs = ({
   onChange,
   className = '',
+  value,
 }: BaseNutritionInputsProps) => {
-  const [nutrition, setNutrition] =
-    useState<BaseNutritionInputsState>(initialNutrition);
+  const [nutrition, setNutrition] = useState<BaseNutritionInputsState>({
+    calories: value?.calories?.toString() || '',
+    protein: value?.protein?.toString() || '',
+    carbs: value?.carbs?.toString() || '',
+    fat: value?.fat?.toString() || '',
+    fiber: value?.fiber?.toString() || '',
+  });
+
+  useEffect(() => {
+    setNutrition({
+      calories: value?.calories?.toString() || '',
+      protein: value?.protein?.toString() || '',
+      carbs: value?.carbs?.toString() || '',
+      fat: value?.fat?.toString() || '',
+      fiber: value?.fiber?.toString() || '',
+    });
+  }, [value]);
 
   const handleChange = (
     field: keyof BaseNutritionInputsState,
@@ -44,17 +53,20 @@ const BaseNutritionInputs = ({
   ) => {
     const updatedNutrition = {
       ...nutrition,
-      [field]: value, // Accept string values, including empty strings
+      [field]: value,
     };
+    setNutrition(updatedNutrition);
     onChange({
-      ...updatedNutrition,
-      calories: Number(updatedNutrition.calories) || 0,
-      protein: Number(updatedNutrition.protein) || 0,
-      carbs: Number(updatedNutrition.carbs) || 0,
-      fat: Number(updatedNutrition.fat) || 0,
-      fiber: Number(updatedNutrition.fiber) || 0,
+      calories:
+        updatedNutrition.calories === ''
+          ? 0
+          : Number(updatedNutrition.calories),
+      protein:
+        updatedNutrition.protein === '' ? 0 : Number(updatedNutrition.protein),
+      carbs: updatedNutrition.carbs === '' ? 0 : Number(updatedNutrition.carbs),
+      fat: updatedNutrition.fat === '' ? 0 : Number(updatedNutrition.fat),
+      fiber: updatedNutrition.fiber === '' ? 0 : Number(updatedNutrition.fiber),
     });
-    setNutrition(initialNutrition);
   };
 
   return (
