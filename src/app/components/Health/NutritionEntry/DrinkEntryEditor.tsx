@@ -12,7 +12,6 @@ import { BaseNutrition, Ingredient, MealEntry } from '@/types/Nutrition';
 import { X } from 'lucide-react';
 import { useState } from 'react';
 import AddIngredients from './AddIngredients';
-import BaseNutritionInputs from './BaseNutritionInputs';
 
 interface DrinkEntryEditorProps {
   mealEntry: MealEntry;
@@ -96,12 +95,12 @@ const DrinkEntryEditor = ({
               Nutrition
             </AccordionTrigger>
             <AccordionContent className="pb-2">
-              <BaseNutritionInputs
+              {/* <BaseNutritionInputs
                 onChange={(nutrition) => {
                   setBaseNutrition(nutrition);
                   onUpdateMealEntry({ ...mealEntry, ...nutrition });
                 }}
-              />
+              /> */}
             </AccordionContent>
           </AccordionItem>
 
