@@ -7,6 +7,7 @@ export const ActivityTypes = {
   Stretching: 'stretching',
   WinterSports: 'winter_sports',
   Swimming: 'swimming',
+  Driving: 'driving',
 } as const;
 
 export type Activity = (typeof ActivityTypes)[keyof typeof ActivityTypes];
@@ -124,11 +125,61 @@ export type SwimmingDataType = {
   // Add swimming specific fields here
 };
 
+export const TrafficConditions = {
+  empty: 'empty',
+  lightTraffic: 'light_traffic',
+  moderateTraffic: 'moderate_traffic',
+  busy: 'busy',
+  heavyTraffic: 'heavy_traffic',
+} as const;
+
+export type TrafficCondition =
+  (typeof TrafficConditions)[keyof typeof TrafficConditions];
+
+export const WeatherConditions = {
+  sunny: 'sunny',
+  cloudy: 'cloudy',
+  rainy: 'rainy',
+  snowy: 'snowy',
+  windy: 'windy',
+  foggy: 'foggy',
+} as const;
+
+export type WeatherCondition =
+  (typeof WeatherConditions)[keyof typeof WeatherConditions];
+
+export const DrivingPurposes = {
+  leisure: 'leisure',
+  lesson: 'lesson',
+} as const;
+export type DrivingPurpose =
+  (typeof DrivingPurposes)[keyof typeof DrivingPurposes];
+
+export type GeoLocation = {
+  latitude: number;
+  longitude: number;
+  timestamp: Date;
+};
+
+export type DrivingDataType = {
+  type: typeof ActivityTypes.Driving;
+  purpose: DrivingPurpose;
+  duration: number;
+  weatherConditions: WeatherCondition;
+  trafficConditions: TrafficCondition;
+  distance?: number;
+  route?: GeoLocation[];
+};
+
 export type ActivityDataType =
   | ClimbingDataType
   | GymDataType
   | CalisthenicsDataType
   | StretchingDataType
-  | HangboardDataType;
+  | HangboardDataType
+  | RestDataType
+  | WinterSportsDataType
+  | SwimmingDataType
+  | DrivingDataType;
 
 export type ActivityType = BaseActivityType & ActivityDataType;

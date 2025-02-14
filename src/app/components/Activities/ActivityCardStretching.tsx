@@ -103,6 +103,12 @@ const ActivityCardStretching = ({
             Duration: {activity.duration} minutes
           </div>
 
+          {activity.note && (
+            <p className="text-sm text-stone-600 line-clamp-2">
+              {activity.note}
+            </p>
+          )}
+
           <div className="flex flex-wrap gap-1">
             {activity.stretches.map((stretch, idx) => (
               <span
@@ -113,12 +119,6 @@ const ActivityCardStretching = ({
               </span>
             ))}
           </div>
-
-          {activity.note && (
-            <p className="text-sm text-stone-500 line-clamp-1">
-              {activity.note}
-            </p>
-          )}
         </motion.div>
       </motion.div>
 

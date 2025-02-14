@@ -23,6 +23,7 @@ import AcitvitiesWeek from './ActivitiesWeek';
 import ActivitiesYear from './ActivitiesYear';
 import ActivityCardCalisthenics from './ActivityCardCalisthenics';
 import ActivityCardClimbing from './ActivityCardClimbing';
+import ActivityCardDriving from './ActivityCardDriving';
 import ActivityCardGym from './ActivityCardGym';
 import ActivityCardHangboard from './ActivityCardHangboard';
 import ActivityCardStretching from './ActivityCardStretching';
@@ -125,6 +126,14 @@ const Activities = () => {
                     case ActivityTypes.Gym:
                       return (
                         <ActivityCardGym
+                          activity={activity}
+                          onEdit={() => handleEditActivity(activity)}
+                        />
+                      );
+
+                    case ActivityTypes.Driving:
+                      return (
+                        <ActivityCardDriving
                           activity={activity}
                           onEdit={() => handleEditActivity(activity)}
                         />

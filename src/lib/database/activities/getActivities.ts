@@ -3,6 +3,7 @@ import {
   ActivityType,
   ActivityTypes,
   CalisthenicsExerciseType,
+  GeoLocation,
   GymExerciseType,
   HangboardEdgeType,
 } from '@/types/Activity';
@@ -108,6 +109,21 @@ export const getActivities = async (
               weight: edge.weight || 0,
               duration: edge.duration || 0,
             })),
+          };
+        case ActivityTypes.Driving:
+          return {
+            ...baseActivity,
+            purpose: data.purpose,
+            duration: data.duration,
+            weatherConditions: data.weatherConditions,
+            trafficConditions: data.trafficConditions,
+            distance: data.distance,
+            route:
+              data.route?.map((location: GeoLocation) => ({
+                latitude: location.latitude,
+                longitude: location.longitude,
+                timestamp: new Date(location.timestamp),
+              })) || [],
           };
         default:
           throw new Error(`Unknown activity type: ${data.type}`);

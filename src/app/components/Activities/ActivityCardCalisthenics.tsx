@@ -114,6 +114,11 @@ const ActivityCardCalisthenics = ({
             </span>
           </div>
 
+          {activity.note && (
+            <p className="text-sm text-stone-600 line-clamp-2">
+              {activity.note}
+            </p>
+          )}
           <div className="space-y-4">
             {Object.entries(groupedExercises).map(([group, exercises]) => (
               <div key={group} className="space-y-2">
@@ -159,12 +164,6 @@ const ActivityCardCalisthenics = ({
               </div>
             ))}
           </div>
-
-          {activity.note && (
-            <p className="text-sm text-stone-500 line-clamp-1">
-              {activity.note}
-            </p>
-          )}
         </motion.div>
       </motion.div>
 

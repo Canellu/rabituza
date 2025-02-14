@@ -139,7 +139,7 @@ const ActivityCardClimbing = ({
           </div>
 
           {activity.note && (
-            <p className="text-sm text-stone-500 line-clamp-1">
+            <p className="text-sm text-stone-600 line-clamp-2">
               {activity.note}
             </p>
           )}
