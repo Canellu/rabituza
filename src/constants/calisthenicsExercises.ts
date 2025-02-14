@@ -8,7 +8,6 @@ export const CALISTHENICS_EXERCISES = {
   backExtenstion: {
     name: 'Back Extension',
     group: CALISTHENICS_EXERCISE_GROUPS.UPPER_BODY,
-    hasDuration: true,
   },
   deadhang: {
     name: 'Deadhang',
