@@ -1,37 +1,54 @@
 import { Button } from '@/components/ui/button';
+import useRecordDriving from '@/lib/hooks/useRecordDriving';
 import { cn } from '@/lib/utils';
-import { GeoLocation } from '@/types/Activity';
 import { Car, Pause, RotateCcw } from 'lucide-react';
+import { useState } from 'react';
+import ResetDialog from '../ResetDialog';
+import SaveDialog from '../SaveDialog';
 
 interface RecordingCardProps {
-  isRecording: boolean;
-  isPaused: boolean;
-  isStopped: boolean;
-  isIdle: boolean;
-  locations: GeoLocation[];
-  getRecordingText: () => string;
-  onStartRecording: () => void;
-  onPauseRecording: () => void;
-  onStopRecording: () => void;
-  onResetRecording: () => void;
   onCancel: () => void;
-  onSaveRecording: () => void;
 }
 
-const RecordingCard = ({
-  isRecording,
-  isPaused,
-  isStopped,
-  isIdle,
-  locations,
-  getRecordingText,
-  onStartRecording,
-  onPauseRecording,
-  onStopRecording,
-  onResetRecording,
-  onCancel,
-  onSaveRecording,
-}: RecordingCardProps) => {
+const RecordingCard = ({ onCancel }: RecordingCardProps) => {
+  const {
+    isRecording,
+    isPaused,
+    locations,
+    startRecording,
+    pauseRecording,
+    stopRecording,
+    resetRecording,
+  } = useRecordDriving();
+
+  const [showResetModal, setShowResetModal] = useState(false);
+  const [showSaveModal, setShowSaveModal] = useState(false);
+
+  const getRecordingText = () => {
+    if (isRecording) return 'Recording...';
+    if (isPaused) return 'Paused';
+    if (!isRecording && !isPaused && locations.length > 0) return 'Stopped';
+    return 'Start Recording';
+  };
+
+  const handleResetRecording = () => {
+    setShowResetModal(true);
+  };
+
+  const confirmResetRecording = () => {
+    resetRecording();
+    setShowResetModal(false);
+  };
+
+  const handleSaveRecording = () => {
+    setShowSaveModal(true);
+  };
+
+  const handleConfirmSaveRecording = () => {
+    // Logic to save the recorded session
+    setShowSaveModal(false);
+  };
+
   return (
     <div
       className={cn(
@@ -47,23 +64,23 @@ const RecordingCard = ({
       </div>
       <div className="items-center flex justify-center gap-4 mb-4">
         <Button
-          onClick={onStartRecording}
+          onClick={startRecording}
           size="icon"
           variant="secondary"
-          disabled={isRecording || isStopped}
+          disabled={isRecording}
         >
           <div className="bg-destructive size-3.5 rounded-full" />
         </Button>
         <Button
-          onClick={onPauseRecording}
+          onClick={pauseRecording}
           size="icon"
           variant="secondary"
-          disabled={!isRecording}
+          disabled={!isRecording || isPaused}
         >
           <Pause />
         </Button>
         <Button
-          onClick={onStopRecording}
+          onClick={stopRecording}
           size="icon"
           variant="secondary"
           disabled={!isRecording && !isPaused}
@@ -71,10 +88,10 @@ const RecordingCard = ({
           <div className="bg-destructive size-3.5 rounded-sm" />
         </Button>
         <Button
-          onClick={onResetRecording}
+          onClick={handleResetRecording}
           size="icon"
           variant="secondary"
-          disabled={isIdle && locations.length === 0}
+          disabled={!isRecording && !isPaused && locations.length === 0}
         >
           <RotateCcw />
         </Button>
@@ -90,12 +107,26 @@ const RecordingCard = ({
         <Button variant="secondary" size="sm" onClick={onCancel}>
           Cancel
         </Button>
-        {isStopped && locations && locations.length > 0 && (
-          <Button size="sm" onClick={onSaveRecording}>
+        {!isRecording && !isPaused && locations.length > 0 && (
+          <Button size="sm" onClick={handleSaveRecording}>
             Save Recording
           </Button>
         )}
       </div>
+
+      {/* Reset Dialog */}
+      <ResetDialog
+        open={showResetModal}
+        onClose={() => setShowResetModal(false)}
+        onConfirm={confirmResetRecording}
+      />
+
+      {/* Save Dialog */}
+      <SaveDialog
+        open={showSaveModal}
+        onClose={() => setShowSaveModal(false)}
+        onConfirm={handleConfirmSaveRecording}
+      />
     </div>
   );
 };

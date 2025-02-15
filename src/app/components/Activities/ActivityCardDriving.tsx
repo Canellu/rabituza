@@ -3,18 +3,12 @@ import { CARD_ANIMATION_CONFIG } from '@/constants/animationConfig';
 import { deleteActivity } from '@/lib/database/activities/deleteActivity';
 import formatTrafficCondition from '@/lib/utils/formatTrafficCondition';
 import { getSession } from '@/lib/utils/userSession';
-import {
-  BaseActivityType,
-  DrivingDataType,
-  GeoLocation,
-} from '@/types/Activity';
+import { BaseActivityType, DrivingDataType } from '@/types/Activity';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import DeleteDialog from '../DeleteDialog';
-import ResetDialog from '../ResetDialog';
-import SaveDialog from '../SaveDialog';
 import DrivingCardHeader from './DrivingCardHeader'; // Import the new component
 import RecordingCard from './RecordingCard'; // Import the new component
 
@@ -22,16 +16,6 @@ interface ActivityCardDrivingProps {
   activity: BaseActivityType & DrivingDataType;
   onEdit: () => void;
 }
-
-const RecordingStates = {
-  NOT_STARTED: 'not_started',
-  IDLE: 'idle',
-  RECORDING: 'recording',
-  PAUSED: 'paused',
-  STOPPED: 'stopped',
-};
-
-type RecordingState = (typeof RecordingStates)[keyof typeof RecordingStates];
 
 const ActivityCardDriving = ({
   activity,
@@ -41,18 +25,7 @@ const ActivityCardDriving = ({
   const userId = getSession();
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [showResetModal, setShowResetModal] = useState(false);
-  const [showSaveModal, setShowSaveModal] = useState(false);
-  const [locations, setLocations] = useState<GeoLocation[]>([]);
-
-  const [recordingState, setRecordingState] = useState<RecordingState>(
-    RecordingStates.NOT_STARTED
-  );
-  const isRecording = recordingState === RecordingStates.RECORDING;
-  const isPaused = recordingState === RecordingStates.PAUSED;
-  const isStopped = recordingState === RecordingStates.STOPPED;
-  const isIdle = recordingState === RecordingStates.IDLE;
-  const isStarted = recordingState !== RecordingStates.NOT_STARTED;
+  const [showRecordingCard, setShowRecordingCard] = useState(false);
 
   const { mutate: deleteActivityMutation } = useMutation({
     mutationFn: ({
@@ -83,90 +56,19 @@ const ActivityCardDriving = ({
     }
   };
 
-  const confirmResetRecording = () => {
-    setRecordingState(RecordingStates.IDLE);
-    setLocations([]);
-    setShowResetModal(false);
-  };
-
-  const handleConfirmSaveRecording = () => {
-    // Logic to save the recorded session
-    setRecordingState(RecordingStates.IDLE);
-    setShowSaveModal(false);
-  };
-
-  const handleSaveRecording = () => {
-    setRecordingState(RecordingStates.IDLE);
-    setShowSaveModal(true);
-  };
-
-  const handleStartRecording = () => {
-    if (isIdle || isPaused) {
-      setRecordingState(RecordingStates.RECORDING);
-      setLocations([
-        {
-          latitude: 0,
-          longitude: 0,
-          timestamp: new Date(),
-        },
-      ]);
-    }
-  };
-
-  const handlePauseRecording = () => {
-    if (isRecording) {
-      setRecordingState(RecordingStates.PAUSED);
-    }
-  };
-
-  const handleStopRecording = () => {
-    if (isRecording || isPaused) {
-      setRecordingState(RecordingStates.STOPPED);
-    }
-  };
-
-  const handleResetRecording = () => {
-    setShowResetModal(true);
-  };
-
-  const getRecordingText = () => {
-    switch (recordingState) {
-      case RecordingStates.IDLE:
-        return 'Start Recording';
-      case RecordingStates.RECORDING:
-        return 'Recording...';
-      case RecordingStates.PAUSED:
-        return 'Paused';
-      case RecordingStates.STOPPED:
-        return 'Stopped';
-      default:
-        return '';
-    }
+  const handleCancel = () => {
+    setShowRecordingCard(false);
   };
 
   return (
     <>
-      {/* Recording card */}
-      {isStarted && (
-        <RecordingCard
-          isRecording={isRecording}
-          isPaused={isPaused}
-          isStopped={isStopped}
-          isIdle={isIdle}
-          locations={locations}
-          getRecordingText={getRecordingText}
-          onStartRecording={handleStartRecording}
-          onPauseRecording={handlePauseRecording}
-          onStopRecording={handleStopRecording}
-          onResetRecording={handleResetRecording}
-          onCancel={() => setRecordingState(RecordingStates.NOT_STARTED)}
-          onSaveRecording={handleSaveRecording}
-        />
-      )}
-
-      {/* Driving activity card */}
-      {!isStarted && (
+      {showRecordingCard ? (
+        <motion.div layoutId="activity-card" className="relative">
+          <RecordingCard onCancel={handleCancel} />
+        </motion.div>
+      ) : (
         <motion.div
+          layoutId="activity-card"
           className="relative"
           {...CARD_ANIMATION_CONFIG}
           onClick={onEdit}
@@ -223,7 +125,7 @@ const ActivityCardDriving = ({
                     className="bg-emerald-500 rounded-full text-white"
                     onClick={(e) => {
                       e.stopPropagation();
-                      setRecordingState(RecordingStates.IDLE);
+                      setShowRecordingCard(true);
                     }}
                   >
                     <span className="font-bold">Record route</span>
@@ -235,21 +137,11 @@ const ActivityCardDriving = ({
         </motion.div>
       )}
 
-      {/* Dialogs */}
+      {/* Delete Dialog */}
       <DeleteDialog
         open={showDeleteDialog}
         onClose={() => setShowDeleteDialog(false)}
         onConfirm={confirmDelete}
-      />
-      <ResetDialog
-        open={showResetModal}
-        onClose={() => setShowResetModal(false)}
-        onConfirm={confirmResetRecording}
-      />
-      <SaveDialog
-        open={showSaveModal}
-        onClose={() => setShowSaveModal(false)}
-        onConfirm={handleConfirmSaveRecording}
       />
     </>
   );

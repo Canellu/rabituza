@@ -31,40 +31,22 @@ const useRecordDriving = () => {
       return;
     }
 
-    setIsRecording(true);
-    setIsPaused(false);
+    if (isPaused) {
+      // Resuming recording
+      setIsPaused(false);
+      console.log('Resumed recording');
+    } else {
+      // Starting new recording
+      setIsRecording(true);
+      console.log('Started recording');
+    }
 
-    // Start watching the user's position
-    watchIdRef.current = navigator.geolocation.watchPosition(
-      async (position) => {
-        if (isPaused) return; // Skip if paused
-
-        const { latitude, longitude } = position.coords;
-        const timestamp = new Date();
-        const newLocation: GeoLocation = { latitude, longitude, timestamp };
-
-        // Save the new location to state and IndexedDB
-        setLocations((prev) => [...prev, newLocation]);
-
-        try {
-          const db = await getDB();
-          const tx = db.transaction('locations', 'readwrite');
-          await tx.store.put(newLocation);
-        } catch (error) {
-          console.error('Error saving location to IndexedDB:', error);
-        }
-      },
-      (error) => console.error('GPS error:', error),
-      { enableHighAccuracy: true, maximumAge: 10000, timeout: 5000 }
-    );
+    return;
   };
 
   const pauseRecording = () => {
+    console.log('Pausing recording');
     setIsPaused(true);
-  };
-
-  const resumeRecording = () => {
-    setIsPaused(false);
   };
 
   const stopRecording = () => {
@@ -94,7 +76,6 @@ const useRecordDriving = () => {
     locations,
     startRecording,
     pauseRecording,
-    resumeRecording,
     stopRecording,
     resetRecording,
   };
