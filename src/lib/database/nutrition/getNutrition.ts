@@ -14,7 +14,7 @@ export const getNutrition = async (userId: string): Promise<Meal[]> => {
         userId,
         mealType: data.mealType,
         mealDate: data.mealDate.toDate(),
-        mealEntries: data.mealEntries,
+        mealItems: data.mealItems,
         notes: data.notes || '',
         createdAt: data.createdAt.toDate(),
         updatedAt: data.updatedAt.toDate(),

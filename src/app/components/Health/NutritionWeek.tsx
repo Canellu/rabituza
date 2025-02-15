@@ -15,6 +15,22 @@ const NutritionWeek = ({ entries = [], targets = [] }: NutritionWeekProps) => {
         date.toLocaleDateString()
     );
 
+  const getDailyCalories = (date: Date) => {
+    const dayEntries = entries.filter(
+      (entry) =>
+        new Date(entry.mealDate).toLocaleDateString() ===
+        date.toLocaleDateString()
+    );
+
+    return dayEntries.reduce((sum, entry) => {
+      const mealCalories = entry.mealItems.reduce(
+        (mealSum, mealItem) => mealSum + (mealItem.calories || 0),
+        0
+      );
+      return sum + mealCalories;
+    }, 0);
+  };
+
   const isTrackingDay = (date: Date) => {
     return targets.some((target) => {
       const dayOfWeek = (date.getDay() + 6) % 7;
@@ -24,22 +40,6 @@ const NutritionWeek = ({ entries = [], targets = [] }: NutritionWeekProps) => {
         target.daysOfWeek.includes(dayOfWeek)
       );
     });
-  };
-
-  const getDailyCalories = (date: Date) => {
-    const dayEntries = entries.filter(
-      (entry) =>
-        new Date(entry.mealDate).toLocaleDateString() ===
-        date.toLocaleDateString()
-    );
-
-    return dayEntries.reduce((sum, entry) => {
-      const mealCalories = entry.mealEntries.reduce(
-        (mealSum, meal) => mealSum + (meal.calories || 0),
-        0
-      );
-      return sum + mealCalories;
-    }, 0);
   };
 
   const today = new Date();

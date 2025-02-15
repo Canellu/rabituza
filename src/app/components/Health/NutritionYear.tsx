@@ -34,8 +34,8 @@ const NutritionYear = ({ entries = [] }: NutritionYearProps) => {
     const totalCalories = monthEntries.reduce(
       (sum, entry) =>
         sum +
-        entry.mealEntries.reduce(
-          (entrySum, mealEntry) => entrySum + mealEntry.calories,
+        entry.mealItems.reduce(
+          (entrySum: number, mealItem) => entrySum + mealItem.calories,
           0
         ),
       0
