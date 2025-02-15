@@ -1,7 +1,7 @@
 import { Food } from '@/types/Food';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-import { getAllFoodsFromDB, loadChunkedFoodsFromFiles } from '../idb/idb';
+import { getAllFoodsFromDB, loadChunkedFoodsFromFiles } from '../idb/foods';
 
 const useFoods = () => {
   const queryClient = useQueryClient();

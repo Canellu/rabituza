@@ -1,16 +1,6 @@
 import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import activityOptions from '@/constants/activityOptions';
 import { CARD_ANIMATION_CONFIG } from '@/constants/animationConfig';
 import { deleteActivity } from '@/lib/database/activities/deleteActivity';
-import { cn } from '@/lib/utils';
 import formatTrafficCondition from '@/lib/utils/formatTrafficCondition';
 import { getSession } from '@/lib/utils/userSession';
 import {
@@ -19,10 +9,14 @@ import {
   GeoLocation,
 } from '@/types/Activity';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { format } from 'date-fns';
 import { motion } from 'framer-motion';
-import { Pause, RotateCcw, Trash2 } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import { useState } from 'react';
+import DeleteDialog from '../DeleteDialog';
+import ResetDialog from '../ResetDialog';
+import SaveDialog from '../SaveDialog';
+import DrivingCardHeader from './DrivingCardHeader'; // Import the new component
+import RecordingCard from './RecordingCard'; // Import the new component
 
 interface ActivityCardDrivingProps {
   activity: BaseActivityType & DrivingDataType;
@@ -45,13 +39,20 @@ const ActivityCardDriving = ({
 }: ActivityCardDrivingProps) => {
   const queryClient = useQueryClient();
   const userId = getSession();
-  const [recordingState, setRecordingState] = useState<RecordingState>(
-    RecordingStates.NOT_STARTED
-  );
+
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showResetModal, setShowResetModal] = useState(false);
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [locations, setLocations] = useState<GeoLocation[]>([]);
+
+  const [recordingState, setRecordingState] = useState<RecordingState>(
+    RecordingStates.NOT_STARTED
+  );
+  const isRecording = recordingState === RecordingStates.RECORDING;
+  const isPaused = recordingState === RecordingStates.PAUSED;
+  const isStopped = recordingState === RecordingStates.STOPPED;
+  const isIdle = recordingState === RecordingStates.IDLE;
+  const isStarted = recordingState !== RecordingStates.NOT_STARTED;
 
   const { mutate: deleteActivityMutation } = useMutation({
     mutationFn: ({
@@ -88,22 +89,19 @@ const ActivityCardDriving = ({
     setShowResetModal(false);
   };
 
-  const confirmSaveRecording = () => {
+  const handleConfirmSaveRecording = () => {
     // Logic to save the recorded session
     setRecordingState(RecordingStates.IDLE);
     setShowSaveModal(false);
   };
 
-  const saveRecording = () => {
+  const handleSaveRecording = () => {
     setRecordingState(RecordingStates.IDLE);
     setShowSaveModal(true);
   };
 
-  const startRecording = () => {
-    if (
-      recordingState === RecordingStates.IDLE ||
-      recordingState === RecordingStates.PAUSED
-    ) {
+  const handleStartRecording = () => {
+    if (isIdle || isPaused) {
       setRecordingState(RecordingStates.RECORDING);
       setLocations([
         {
@@ -115,22 +113,19 @@ const ActivityCardDriving = ({
     }
   };
 
-  const pauseRecording = () => {
-    if (recordingState === RecordingStates.RECORDING) {
+  const handlePauseRecording = () => {
+    if (isRecording) {
       setRecordingState(RecordingStates.PAUSED);
     }
   };
 
-  const stopRecording = () => {
-    if (
-      recordingState === RecordingStates.RECORDING ||
-      recordingState === RecordingStates.PAUSED
-    ) {
+  const handleStopRecording = () => {
+    if (isRecording || isPaused) {
       setRecordingState(RecordingStates.STOPPED);
     }
   };
 
-  const resetRecording = () => {
+  const handleResetRecording = () => {
     setShowResetModal(true);
   };
 
@@ -151,88 +146,26 @@ const ActivityCardDriving = ({
 
   return (
     <>
-      {recordingState !== RecordingStates.NOT_STARTED && (
-        <div
-          className={cn(
-            'border rounded-xl p-4  bg-white relative',
-            'flex flex-col gap-3'
-          )}
-        >
-          <DrivingCardHeader activity={activity} title="Record Driving" />
-          <p
-            className={cn(
-              'text-lg font-medium text-center py-2',
-              recordingState === RecordingStates.RECORDING && 'animate-pulse'
-            )}
-          >
-            {getRecordingText()}
-          </p>
-          <div className="items-center flex justify-center gap-4 mb-4">
-            <Button
-              onClick={startRecording}
-              size="icon"
-              variant="secondary"
-              disabled={recordingState === RecordingStates.RECORDING}
-            >
-              <div className="bg-destructive size-3.5 rounded-full" />
-            </Button>
-            <Button
-              onClick={pauseRecording}
-              size="icon"
-              variant="secondary"
-              disabled={recordingState !== RecordingStates.RECORDING}
-            >
-              <Pause />
-            </Button>
-            <Button
-              onClick={stopRecording}
-              size="icon"
-              variant="secondary"
-              disabled={
-                recordingState !== RecordingStates.RECORDING &&
-                recordingState !== RecordingStates.PAUSED
-              }
-            >
-              <div className="bg-destructive size-3.5 rounded-sm" />
-            </Button>
-            <Button
-              onClick={resetRecording}
-              size="icon"
-              variant="secondary"
-              disabled={
-                recordingState === RecordingStates.IDLE &&
-                locations.length === 0
-              }
-            >
-              <RotateCcw />
-            </Button>
-          </div>
-
-          {locations && locations.length > 0 && (
-            <p className={cn('text-sm font-medium text-stone-500 text-center')}>
-              Data points: {locations.length}
-            </p>
-          )}
-
-          <div className="flex justify-between items-center gap-2">
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => setRecordingState(RecordingStates.NOT_STARTED)}
-            >
-              Cancel
-            </Button>
-            {recordingState === RecordingStates.STOPPED &&
-              locations &&
-              locations.length > 0 && (
-                <Button size="sm" onClick={saveRecording}>
-                  Save Recording
-                </Button>
-              )}
-          </div>
-        </div>
+      {/* Recording card */}
+      {isStarted && (
+        <RecordingCard
+          isRecording={isRecording}
+          isPaused={isPaused}
+          isStopped={isStopped}
+          isIdle={isIdle}
+          locations={locations}
+          getRecordingText={getRecordingText}
+          onStartRecording={handleStartRecording}
+          onPauseRecording={handlePauseRecording}
+          onStopRecording={handleStopRecording}
+          onResetRecording={handleResetRecording}
+          onCancel={() => setRecordingState(RecordingStates.NOT_STARTED)}
+          onSaveRecording={handleSaveRecording}
+        />
       )}
-      {recordingState === RecordingStates.NOT_STARTED && (
+
+      {/* Driving activity card */}
+      {!isStarted && (
         <motion.div
           className="relative"
           {...CARD_ANIMATION_CONFIG}
@@ -302,119 +235,23 @@ const ActivityCardDriving = ({
         </motion.div>
       )}
 
-      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-        <DialogContent className="max-w-80 rounded-md">
-          <DialogHeader>
-            <DialogTitle className="text-stone-700">
-              Delete Activity
-            </DialogTitle>
-            <DialogDescription>
-              Are you sure you want to delete this activity? This action cannot
-              be undone.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="flex gap-4 flex-row items-center justify-center">
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={() => setShowDeleteDialog(false)}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="destructive"
-              className="w-full"
-              onClick={confirmDelete}
-            >
-              Delete
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={showResetModal} onOpenChange={setShowResetModal}>
-        <DialogContent className="max-w-80 rounded-md">
-          <DialogHeader>
-            <DialogTitle className="text-stone-700">
-              Reset Recording
-            </DialogTitle>
-            <DialogDescription className="flex flex-col gap-1">
-              <span>Recorded data will be discarded.</span>
-              <span>Are you sure you want to reset the recording?</span>
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="flex gap-4 flex-row items-center justify-center">
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={() => setShowResetModal(false)}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="destructive"
-              className="w-full"
-              onClick={confirmResetRecording}
-            >
-              Reset
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={showSaveModal} onOpenChange={setShowSaveModal}>
-        <DialogContent
-          className="max-w-80 rounded-md"
-          onInteractOutside={(e) => e.preventDefault()}
-          hideCloseButton={true}
-        >
-          <DialogHeader>
-            <DialogTitle className="text-stone-700">Save Recording</DialogTitle>
-            <DialogDescription>
-              Recording stopped, do you want to save the recorded session?
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="flex gap-4 flex-row items-center justify-center">
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={() => setShowSaveModal(false)}
-            >
-              Discard
-            </Button>
-            <Button className="w-full" onClick={confirmSaveRecording}>
-              Save
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* Dialogs */}
+      <DeleteDialog
+        open={showDeleteDialog}
+        onClose={() => setShowDeleteDialog(false)}
+        onConfirm={confirmDelete}
+      />
+      <ResetDialog
+        open={showResetModal}
+        onClose={() => setShowResetModal(false)}
+        onConfirm={confirmResetRecording}
+      />
+      <SaveDialog
+        open={showSaveModal}
+        onClose={() => setShowSaveModal(false)}
+        onConfirm={handleConfirmSaveRecording}
+      />
     </>
-  );
-};
-
-const DrivingCardHeader = ({
-  activity,
-  title = 'Driving',
-}: {
-  activity: BaseActivityType & DrivingDataType;
-  title?: string;
-}) => {
-  const Icon = activityOptions.find((opt) => opt.id === activity.type)?.icon;
-
-  return (
-    <div className="flex items-center justify-between">
-      <div className="flex items-center gap-2">
-        {Icon && (
-          <Icon className="text-white size-6 rounded-md bg-emerald-500 p-1" />
-        )}
-        <span className="text-lg font-semibold inter text-stone-700">
-          {title}
-        </span>
-      </div>
-      <span className="text-sm text-muted-foreground">
-        {activity.activityDate && format(activity.activityDate, 'PP, HH:mm')}
-      </span>
-    </div>
   );
 };
 
