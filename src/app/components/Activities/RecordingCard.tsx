@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import { CardHeader } from '@/components/ui/card';
 import useRecordDriving from '@/lib/hooks/useRecordDriving';
 import { cn } from '@/lib/utils';
 import { Car, Pause, RotateCcw } from 'lucide-react';
@@ -56,6 +57,7 @@ const RecordingCard = ({ onCancel }: RecordingCardProps) => {
         'flex flex-col gap-3'
       )}
     >
+      <CardHeader />
       <div className={cn('text-lg font-medium text-center')}>
         <Car className={cn(isRecording && 'animate-bounce', ' mx-auto')} />
         <span className={cn(isRecording && 'animate-pulse')}>

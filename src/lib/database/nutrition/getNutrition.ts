@@ -1,10 +1,8 @@
-import { NutritionEntry } from '@/types/Nutrition';
+import { Meal } from '@/types/Nutrition';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 
-export const getNutrition = async (
-  userId: string
-): Promise<NutritionEntry[]> => {
+export const getNutrition = async (userId: string): Promise<Meal[]> => {
   try {
     const nutritionRef = collection(db, `users/${userId}/nutrition`);
     const querySnapshot = await getDocs(nutritionRef);
@@ -20,7 +18,7 @@ export const getNutrition = async (
         notes: data.notes || '',
         createdAt: data.createdAt.toDate(),
         updatedAt: data.updatedAt.toDate(),
-      } as NutritionEntry;
+      } as Meal;
     });
 
     return nutritionEntries.sort(

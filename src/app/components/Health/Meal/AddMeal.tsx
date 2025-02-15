@@ -9,36 +9,28 @@ import {
 } from '@/components/ui/drawer';
 import { createNutrition } from '@/lib/database/nutrition/createNutrition';
 import { getSession } from '@/lib/utils/userSession';
-import {
-  MealEntry,
-  MealEntryType,
-  MealType,
-  MealTypes,
-  NutritionEntry,
-} from '@/types/Nutrition';
+import { Meal, MealItem, MealType, MealTypes } from '@/types/Nutrition';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import DateTimePicker from '../../DateTimePicker';
 import NotesInput from '../../NotesInput';
 import SaveButtonDrawer from '../../SaveButtonDrawer';
-import DrinkEntryEditor from './DrinkEntryEditor';
-import EntryTypeSelector from './EntryTypeSelector';
-import FoodEntryEditor from './FoodEntryEditor';
+import MealItemEditor from './MealItemEditor';
 import MealTypeSelector from './MealTypeSelector';
 
-const AddNutrition = () => {
+const AddMeal = () => {
   const userId = getSession();
   const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
   const [mealDate, setMealDate] = useState(new Date());
   const [mealType, setMealType] = useState<MealType>(MealTypes.Breakfast);
+  const [mealItems, setMealItems] = useState<MealItem[]>([]);
 
-  const [mealEntries, setMealEntries] = useState<MealEntry[]>([]);
-  const [note, setNote] = useState('');
+  const [notes, setNotes] = useState('');
 
   const { mutate, isPending } = useMutation({
     mutationFn: async (
-      data: Omit<NutritionEntry, 'id' | 'userId' | 'createdAt' | 'updatedAt'>
+      data: Omit<Meal, 'id' | 'userId' | 'createdAt' | 'updatedAt'>
     ) => {
       if (!userId) throw new Error('User is not signed in');
       return createNutrition(userId, data);
@@ -55,28 +47,26 @@ const AddNutrition = () => {
     },
   });
 
-  const handleAddEntryType = (entryType: MealEntryType) => {
-    const newEntry: MealEntry = {
+  const handleAddMealItem = () => {
+    const newItem: MealItem = {
       name: '',
-      entryType,
-      ingredients: [],
       calories: 0,
       protein: 0,
       carbs: 0,
       fat: 0,
       fiber: 0,
     };
-    setMealEntries([...mealEntries, newEntry]);
+    setMealItems([...mealItems, newItem]);
   };
 
-  const handleUpdateMealEntry = (index: number, updatedEntry: MealEntry) => {
-    const updatedEntries = [...mealEntries];
+  const handleUpdateMealItem = (index: number, updatedEntry: MealItem) => {
+    const updatedEntries = [...mealItems];
     updatedEntries[index] = updatedEntry;
-    setMealEntries(updatedEntries);
+    setMealItems(updatedEntries);
   };
 
-  const handleRemoveMealEntry = (index: number) => {
-    setMealEntries(mealEntries.filter((_, i) => i !== index));
+  const handleRemoveMealItem = (index: number) => {
+    setMealItems(mealItems.filter((_, i) => i !== index));
   };
 
   const handleSubmit = () => {
@@ -85,8 +75,8 @@ const AddNutrition = () => {
     const data = {
       mealDate,
       mealType,
-      mealEntries,
-      notes: note,
+      mealItems,
+      notes,
     };
 
     mutate(data);
@@ -95,8 +85,8 @@ const AddNutrition = () => {
   const resetForm = () => {
     setMealDate(new Date());
     setMealType(MealTypes.Breakfast);
-    setMealEntries([]);
-    setNote('');
+    setMealItems([]);
+    setNotes('');
   };
 
   return (
@@ -121,44 +111,41 @@ const AddNutrition = () => {
               <div className="flex flex-col gap-4">
                 <DateTimePicker date={mealDate} onDateChange={setMealDate} />
 
-                {/* Meal Type Selection */}
                 <MealTypeSelector
                   selectedMealType={mealType}
                   onMealTypeChange={setMealType}
                 />
 
-                {/* Entry Type Selection */}
-                <EntryTypeSelector onAddEntryType={handleAddEntryType} />
-
-                {/* Render MealEntryEditor for each meal entry */}
-                {mealEntries.map((entry, index) =>
-                  entry.entryType === 'food' ? (
-                    <FoodEntryEditor
+                <div className="bg-stone-50 rounded-md border p-4 flex flex-col gap-4">
+                  <div className="flex items-center justify-between">
+                    <h2 className="">Meal items</h2>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="max-w-max"
+                      onClick={() => handleAddMealItem()}
+                    >
+                      Add to Meal
+                    </Button>
+                  </div>
+                  {mealItems.map((item, index) => (
+                    <MealItemEditor
                       key={index}
-                      mealEntry={entry}
-                      onUpdateMealEntry={(updatedEntry) =>
-                        handleUpdateMealEntry(index, updatedEntry)
+                      mealItem={item}
+                      onUpdateMealItem={(updatedItem) =>
+                        handleUpdateMealItem(index, updatedItem)
                       }
-                      onRemoveMealEntry={() => handleRemoveMealEntry(index)}
+                      onRemoveMealItem={() => handleRemoveMealItem(index)}
                     />
-                  ) : (
-                    <DrinkEntryEditor
-                      key={index}
-                      mealEntry={entry}
-                      onUpdateMealEntry={(updatedEntry) =>
-                        handleUpdateMealEntry(index, updatedEntry)
-                      }
-                      onRemoveMealEntry={() => handleRemoveMealEntry(index)}
-                    />
-                  )
-                )}
+                  ))}
+                </div>
 
-                <NotesInput note={note} onNoteChange={setNote} />
+                <NotesInput note={notes} onNoteChange={setNotes} />
 
                 <SaveButtonDrawer
                   title="Save Meal"
                   isPending={isPending}
-                  isDisabled={mealEntries.length === 0}
+                  isDisabled={mealItems.length === 0}
                   onClick={handleSubmit}
                 />
               </div>
@@ -170,4 +157,4 @@ const AddNutrition = () => {
   );
 };
 
-export default AddNutrition;
+export default AddMeal;

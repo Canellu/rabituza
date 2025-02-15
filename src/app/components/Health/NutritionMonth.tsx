@@ -1,10 +1,10 @@
 import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
-import { NutritionEntry, NutritionTarget } from '@/types/Nutrition';
+import { Meal, NutritionTarget } from '@/types/Nutrition';
 import { format, isToday } from 'date-fns';
 
 type NutritionMonthProps = {
-  entries?: NutritionEntry[];
+  entries?: Meal[];
   target?: NutritionTarget;
 };
 

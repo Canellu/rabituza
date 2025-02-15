@@ -19,6 +19,7 @@ interface FoodSearchProps {
   onChange: (value: string) => void;
   onClear?: () => void;
   placeholder?: string;
+  className?: string;
 }
 
 export const FoodSearch = ({
@@ -27,6 +28,7 @@ export const FoodSearch = ({
   onChange,
   onSelect,
   onClear,
+  className = '',
 }: FoodSearchProps) => {
   const [isSearching, setIsSearching] = useState(false);
   const [searchResults, setSearchResults] = useState<Food[]>([]);
@@ -88,7 +90,8 @@ export const FoodSearch = ({
         !searchResults?.length &&
           !isSearching &&
           !(value.length >= 2) &&
-          '[&_[cmdk-input-wrapper]]:border-b-0'
+          '[&_[cmdk-input-wrapper]]:border-b-0',
+        className
       )}
     >
       <CommandInput

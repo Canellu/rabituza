@@ -4,7 +4,7 @@ import { getNutrition } from '@/lib/database/nutrition/getNutrition';
 import { getNutritionTargets } from '@/lib/database/nutrition/getNutritionTargets';
 import { cn } from '@/lib/utils';
 import { getSession } from '@/lib/utils/userSession';
-import { NutritionEntry } from '@/types/Nutrition';
+import { Meal } from '@/types/Nutrition';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import NutritionMonth from './NutritionMonth';
@@ -23,7 +23,7 @@ const Health = () => {
     enabled: !!userId,
   });
 
-  const { data: nutritionEntries = [] } = useQuery({
+  const { data: meals = [] } = useQuery({
     queryKey: ['nutritionEntries', userId],
     queryFn: async () => {
       if (!userId) throw new Error('User ID is null');
@@ -65,7 +65,7 @@ const Health = () => {
         </section>
       )}
 
-      {nutritionEntries.length > 0 && (
+      {meals.length > 0 && (
         <div className="flex flex-col gap-4">
           <MealCard />
         </div>
@@ -75,7 +75,7 @@ const Health = () => {
   );
 };
 
-const MealCard = ({ meal }: { meal?: NutritionEntry }) => {
+const MealCard = ({ meal }: { meal?: Meal }) => {
   if (!meal) return null;
   return (
     <div className="bg-white border p-5 rounded-xl text-stone-800 flex flex-col justify-between gap-4">

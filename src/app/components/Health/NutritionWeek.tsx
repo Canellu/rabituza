@@ -1,9 +1,9 @@
 import { cn } from '@/lib/utils';
-import { NutritionEntry, NutritionTarget } from '@/types/Nutrition';
+import { Meal, NutritionTarget } from '@/types/Nutrition';
 import { addDays, format, isToday, startOfWeek } from 'date-fns';
 
 type NutritionWeekProps = {
-  entries?: NutritionEntry[];
+  entries?: Meal[];
   targets?: NutritionTarget[];
 };
 

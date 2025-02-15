@@ -1,11 +1,11 @@
 'use client';
 
 import { ChartConfig, ChartContainer } from '@/components/ui/chart';
-import { NutritionEntry } from '@/types/Nutrition';
+import { Meal } from '@/types/Nutrition';
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 
 type NutritionYearProps = {
-  entries?: NutritionEntry[];
+  entries?: Meal[];
 };
 
 const chartConfig = {

@@ -1,4 +1,4 @@
-import { NutritionEntry } from '@/types/Nutrition';
+import { Meal } from '@/types/Nutrition';
 import {
   collection,
   doc,
@@ -9,10 +9,7 @@ import { db } from '../firebaseConfig';
 
 export async function createNutrition(
   userId: string,
-  nutritionData: Omit<
-    NutritionEntry,
-    'id' | 'userId' | 'createdAt' | 'updatedAt'
-  >
+  nutritionData: Omit<Meal, 'id' | 'userId' | 'createdAt' | 'updatedAt'>
 ) {
   const nutritionId = doc(collection(db, 'nutrition')).id;
 

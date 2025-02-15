@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 import useVibrate from '../lib/hooks/useVibrate';
 import AddActivities from './components/Activities/AddActivities';
 import AddGoal from './components/AddGoal';
-import AddNutrition from './components/Health/NutritionEntry/AddNutrition';
+import AddMeal from './components/Health/Meal/AddMeal';
 import LogoutButton from './components/LogoutButton';
 import RefreshButton from './components/RefreshButton';
 import ThemeToggle from './components/ThemeToggle';
@@ -72,7 +72,7 @@ const Menu = () => {
                   <Leaf className="text-green-700" />
                 )}
               </h1>
-              {tab.value === Tab.Health && <AddNutrition />}
+              {tab.value === Tab.Health && <AddMeal />}
               {tab.value === Tab.Activities && <AddActivities />}
               {tab.value === Tab.Goals && <AddGoal />}
               {tab.value === Tab.Profile && (
