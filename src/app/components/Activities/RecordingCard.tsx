@@ -73,8 +73,8 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
           return 'Recording...';
         } else {
           return (
-            <div className="flex items-center justify-center gap-2 text-sm">
-              <Spinner />
+            <div className="flex items-center justify-center gap-2 text-sm text-stone-700">
+              <Spinner size="size-4" color="text-stone-500" />
               <span>Waiting for location data...</span>
             </div>
           );
@@ -188,11 +188,27 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
         </Button>
       </div>
 
+      <div className="flex flex-wrap gap-1 items-center justify-center p-2 text-xs rounded-md border bg-stone-100">
+        {locations.map((location) => {
+          return (
+            <span key={location.timestamp}>
+              {new Date(location.timestamp).toLocaleTimeString('en-US', {
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+              })}
+              ,
+            </span>
+          );
+        })}
+      </div>
       <div className="border rounded-md overflow-hidden">
         <div
           className={cn(
             'flex items-center justify-center p-4',
             isRecording &&
+              locations.length > 0 &&
               'bg-green-500 text-green-800 font-semibold animate-pulse'
           )}
         >
@@ -200,7 +216,7 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
         </div>
         <div className={cn('flex flex-col bg-secondary text-stone-700 ')}>
           {locations.length === 0 && (
-            <div className="flex items-center justify-center p-2 italic text-sm border-t">
+            <div className="flex items-center justify-center p-2 italic text-xs border-t">
               <span>No location data recorded</span>
             </div>
           )}

@@ -17,6 +17,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { MapPin, Trash2 } from 'lucide-react';
 import { useState } from 'react';
+import { toast } from 'sonner';
 import DeleteDialog from '../DeleteDialog';
 import * as ResizablePanel from '../ResizablePanel';
 import DrivingCardHeader from './DrivingCardHeader';
@@ -86,6 +87,7 @@ const ActivityCardDriving = ({
   };
 
   const confirmDelete = async () => {
+    toast(`Delete activity: ${activity.id}, userId: ${userId}`);
     if (userId && activity.id) {
       const activityDate = new Date(activity.activityDate).toLocaleDateString();
       await deleteEntriesByDate(activityDate); // Delete entries by date
