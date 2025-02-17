@@ -5,36 +5,47 @@ const DRIVING_DB = 'drivingData';
 
 export const initDB = async () => {
   try {
-    // Test IndexedDB availability
-    const testRequest = indexedDB.open('test');
-    await new Promise((resolve, reject) => {
-      testRequest.onerror = () => reject(new Error('IndexedDB not available'));
-      testRequest.onsuccess = () => {
-        testRequest.result.close();
-        resolve(true);
-      };
-    });
-
-    return await openDB(DRIVING_DB, 1, {
+    console.log('Attempting to open database:', DRIVING_DB);
+    const db = await openDB(DRIVING_DB, 1, {
       upgrade(db) {
+        console.log('Running database upgrade');
         if (!db.objectStoreNames.contains('locations')) {
+          console.log('Creating locations store');
           db.createObjectStore('locations', {
             keyPath: 'timestamp',
           });
         }
       },
       blocked() {
-        throw new Error('Database blocked - another version is open');
+        const error = new Error('Database blocked - another version is open');
+        console.error(error);
+        throw error;
       },
       blocking() {
-        throw new Error('Database blocking - newer version attempting to open');
+        const error = new Error(
+          'Database blocking - newer version attempting to open'
+        );
+        console.error(error);
+        throw error;
       },
       terminated() {
-        throw new Error('Database terminated unexpectedly');
+        const error = new Error('Database terminated unexpectedly');
+        console.error(error);
+        throw error;
       },
     });
+
+    console.log('Database opened successfully');
+    return db;
   } catch (error) {
-    console.error('Failed to initialize IndexedDB:', error);
+    // Enhanced error logging
+    console.error('Failed to initialize IndexedDB:', {
+      error,
+      type: error instanceof Error ? 'Error' : typeof error,
+      name: error instanceof Error ? error.name : 'Unknown',
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+    });
     throw error;
   }
 };
@@ -67,12 +78,14 @@ export const getAllLocationsFromDB = async (): Promise<GeoLocation[]> => {
   return locations;
 };
 
-export const getLocationsBySessionId = async (sessionId: string): Promise<GeoLocation[]> => {
+export const getLocationsBySessionId = async (
+  sessionId: string
+): Promise<GeoLocation[]> => {
   const db = await initDB();
   const tx = db.transaction('locations', 'readonly');
   const store = tx.objectStore('locations');
   const allLocations = await store.getAll();
-  return allLocations.filter(location => location.sessionId === sessionId);
+  return allLocations.filter((location) => location.sessionId === sessionId);
 };
 
 export const deleteEntriesByDate = async (date: string): Promise<void> => {

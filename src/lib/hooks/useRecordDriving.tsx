@@ -51,7 +51,7 @@ const useRecordDriving = () => {
         dbRef.current = await initDB();
         const allLocations = await getAllLocationsFromDB();
         setLocations(allLocations);
-        toast.success(`Loaded ${allLocations.length} locations from storage`);
+        toast.success(`Successfully initialized storage`);
       } catch (error) {
         console.error('Error initializing IndexedDB:', error);
         toast.error('Failed to initialize storage');
@@ -96,6 +96,26 @@ const useRecordDriving = () => {
       return;
     }
 
+    // Request permission first
+    try {
+      await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(
+          resolve,
+          (error) => {
+            if (error.code === error.PERMISSION_DENIED) {
+              toast.error('Location permission denied. Please allow location access to record routes.');
+            }
+            reject(error);
+          },
+          { enableHighAccuracy: true }
+        );
+      });
+    } catch (error) {
+      console.error('Permission error:', error);
+      return; // Exit early if permission denied
+    }
+
+    // Continue with recording if permission granted
     try {
       const db = await getDB();
 
@@ -148,14 +168,33 @@ const useRecordDriving = () => {
           }
         },
         (error) => {
-          console.error('Error watching position:', error);
-          toast.error('Failed to track location');
-          setRecordingState(RecordingStates.STOPPED);
+          // Enhanced error handling for geolocation errors
+          let errorMessage = 'Failed to track location: ';
+          switch (error.code) {
+            case error.PERMISSION_DENIED:
+              errorMessage += 'Location permission denied';
+              break;
+            case error.POSITION_UNAVAILABLE:
+              errorMessage += 'Location information unavailable';
+              break;
+            case error.TIMEOUT:
+              errorMessage += 'Location request timed out';
+              break;
+            default:
+              errorMessage += error.message;
+          }
+          console.error('Geolocation error:', {
+            code: error.code,
+            message: error.message,
+            fullError: error,
+          });
+          toast.error(errorMessage);
+          setRecordingState(RecordingStates.ERROR);
         },
         {
           enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 5000,
+          timeout: 30000, // Increased timeout
+          maximumAge: 0, // Get fresh positions
         }
       );
 

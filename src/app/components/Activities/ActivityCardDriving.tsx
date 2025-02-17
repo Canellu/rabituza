@@ -91,14 +91,16 @@ const ActivityCardDriving = ({
 
     try {
       const activityDate = new Date(activity.activityDate).toLocaleDateString();
-      
+
       // Try to delete IDB entries first
       try {
         await deleteEntriesByDate(activityDate);
         toast('Local route data deleted successfully');
       } catch (idbError) {
         console.error('Failed to delete local route data:', idbError);
-        toast('Failed to delete local route data, but continuing with activity deletion');
+        toast(
+          'Failed to delete local route data, but continuing with activity deletion'
+        );
         // Continue with activity deletion even if IDB fails
       }
 
@@ -114,6 +116,57 @@ const ActivityCardDriving = ({
 
   const handleExit = () => {
     setShowCard('driving');
+  };
+
+  const requestLocationPermission = async () => {
+    try {
+      // First check if permissions API is available
+      if ('permissions' in navigator) {
+        const permission = await navigator.permissions.query({
+          name: 'geolocation',
+        });
+        console.log('Permission state:', permission.state);
+
+        if (permission.state === 'denied') {
+          toast.error(
+            'Location access is blocked. Please enable it in your Safari settings',
+            {
+              description: 'Settings > Safari > Location',
+              duration: 5000,
+            }
+          );
+          return;
+        }
+      }
+
+      const result = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(
+          () => resolve(true),
+          (error) => {
+            console.log('Geolocation error:', error.code, error.message);
+            if (error.code === error.PERMISSION_DENIED) {
+              toast.error('Please allow location access to record routes', {
+                description: 'Check Safari settings if no prompt appears',
+                duration: 5000,
+              });
+            }
+            resolve(false);
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 5000,
+            maximumAge: 0,
+          }
+        );
+      });
+
+      if (result) {
+        setShowCard('recording');
+      }
+    } catch (error) {
+      console.error('Error requesting location:', error);
+      toast.error('Failed to access location services');
+    }
   };
 
   return (
@@ -187,7 +240,7 @@ const ActivityCardDriving = ({
                         size="sm"
                         onClick={(e) => {
                           e.stopPropagation();
-                          setShowCard('recording');
+                          requestLocationPermission();
                         }}
                       >
                         <MapPin /> Record route
