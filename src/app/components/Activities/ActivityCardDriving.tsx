@@ -4,7 +4,7 @@ import { deleteActivity } from '@/lib/database/activities/deleteActivity';
 import { deleteEntriesByDate } from '@/lib/idb/driving';
 import formatTrafficCondition from '@/lib/utils/formatTrafficCondition';
 import {
-  calculateRouteDuration,
+  calculateTotalRouteDuration,
   formatDuration,
 } from '@/lib/utils/geolocation';
 import { getSession } from '@/lib/utils/userSession';
@@ -20,6 +20,7 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import DeleteDialog from '../DeleteDialog';
 import * as ResizablePanel from '../ResizablePanel';
+import Spinner from '../Spinner';
 import DrivingCardHeader from './DrivingCardHeader';
 import RecordingCard from './RecordingCard';
 interface ActivityCardDrivingProps {
@@ -35,34 +36,11 @@ const ActivityCardDriving = ({
   const userId = getSession();
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [loadingPermission, setLoadingPermission] = useState(false);
   const [showCard, setShowCard] = useState<'recording' | 'driving'>('driving');
   const activityOutdated =
     new Date(activity.activityDate).toDateString() !==
     new Date().toDateString();
-
-  const calculateTotalRouteDuration = (
-    routes: DrivingDataType['routes'] = []
-  ) => {
-    return routes.reduce(
-      (total, route) => {
-        const duration = calculateRouteDuration(route.geolocations);
-        const totalSeconds =
-          (total.hours || 0) * 3600 +
-          total.minutes * 60 +
-          total.seconds +
-          duration.hours * 3600 +
-          duration.minutes * 60 +
-          duration.seconds;
-
-        return {
-          hours: Math.floor(totalSeconds / 3600),
-          minutes: Math.floor((totalSeconds % 3600) / 60),
-          seconds: totalSeconds % 60,
-        };
-      },
-      { hours: 0, minutes: 0, seconds: 0 }
-    );
-  };
 
   const { mutate: deleteActivityMutation } = useMutation({
     mutationFn: ({
@@ -119,6 +97,7 @@ const ActivityCardDriving = ({
   };
 
   const requestLocationPermission = async () => {
+    setLoadingPermission(true); // Set loading state to true
     try {
       // First check if permissions API is available
       if ('permissions' in navigator) {
@@ -166,6 +145,8 @@ const ActivityCardDriving = ({
     } catch (error) {
       console.error('Error requesting location:', error);
       toast.error('Failed to access location services');
+    } finally {
+      setLoadingPermission(false); // Reset loading state
     }
   };
 
@@ -242,8 +223,14 @@ const ActivityCardDriving = ({
                           e.stopPropagation();
                           requestLocationPermission();
                         }}
+                        disabled={loadingPermission}
                       >
-                        <MapPin /> Record route
+                        {loadingPermission ? (
+                          <Spinner color="text-black" />
+                        ) : (
+                          <MapPin />
+                        )}
+                        {loadingPermission ? 'Loading...' : 'Record route'}
                       </Button>
                     )}
                   {activity.routes && activity.routes.length > 0 && (

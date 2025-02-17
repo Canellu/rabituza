@@ -1,4 +1,28 @@
-import { GeoLocation } from '@/types/Activity';
+import { DrivingDataType, GeoLocation } from '@/types/Activity';
+
+export const calculateTotalRouteDuration = (
+  routes: DrivingDataType['routes'] = []
+) => {
+  return routes.reduce(
+    (total, route) => {
+      const duration = calculateRouteDuration(route.geolocations);
+      const totalSeconds =
+        (total.hours || 0) * 3600 +
+        total.minutes * 60 +
+        total.seconds +
+        duration.hours * 3600 +
+        duration.minutes * 60 +
+        duration.seconds;
+
+      return {
+        hours: Math.floor(totalSeconds / 3600),
+        minutes: Math.floor((totalSeconds % 3600) / 60),
+        seconds: totalSeconds % 60,
+      };
+    },
+    { hours: 0, minutes: 0, seconds: 0 }
+  );
+};
 
 export const calculateRouteDuration = (geolocations: GeoLocation[]) => {
   if (geolocations.length < 2) return { hours: 0, minutes: 0, seconds: 0 };

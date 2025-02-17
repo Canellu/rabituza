@@ -25,6 +25,7 @@ const useRecordDriving = () => {
   );
   const [locations, setLocations] = useState<GeoLocation[]>([]);
   const [dataSize, setDataSize] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const watchIdRef = useRef<number | null>(null);
   const dbRef = useRef<IDBPDatabase | null>(null);
 
@@ -91,8 +92,11 @@ const useRecordDriving = () => {
   };
 
   const startRecording = async () => {
+    setIsLoading(true);
     if (!navigator.geolocation) {
+      console.error('Geolocation is not supported by your browser');
       toast.error('Geolocation is not supported by your browser');
+      setIsLoading(false);
       return;
     }
 
@@ -103,7 +107,9 @@ const useRecordDriving = () => {
           resolve,
           (error) => {
             if (error.code === error.PERMISSION_DENIED) {
-              toast.error('Location permission denied. Please allow location access to record routes.');
+              toast.error(
+                'Location permission denied. Please allow location access to record routes.'
+              );
             }
             reject(error);
           },
@@ -112,6 +118,7 @@ const useRecordDriving = () => {
       });
     } catch (error) {
       console.error('Permission error:', error);
+      setIsLoading(false);
       return; // Exit early if permission denied
     }
 
@@ -133,6 +140,7 @@ const useRecordDriving = () => {
         } catch (error) {
           console.error('Failed to sync locations:', error);
           toast.error('Failed to sync locations');
+          setIsLoading(false);
           return;
         }
       }
@@ -143,7 +151,18 @@ const useRecordDriving = () => {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
             timestamp: position.timestamp,
+            accuracy: position.coords.accuracy,
+            speed: position.coords.speed,
           };
+
+          // Skip points with very poor accuracy (over 100 meters)
+          if (position.coords.accuracy > 100) {
+            console.log(
+              'Skipping low accuracy position:',
+              position.coords.accuracy
+            );
+            return;
+          }
 
           try {
             const tx = db.transaction('locations', 'readwrite');
@@ -175,8 +194,10 @@ const useRecordDriving = () => {
               errorMessage += 'Location permission denied';
               break;
             case error.POSITION_UNAVAILABLE:
-              errorMessage += 'Location information unavailable';
-              break;
+              errorMessage += 'Signal lost - this is normal in tunnels';
+              // Don't change recording state, just notify
+              toast.info('GPS signal weak or lost - this is normal in tunnels');
+              return;
             case error.TIMEOUT:
               errorMessage += 'Location request timed out';
               break;
@@ -188,13 +209,17 @@ const useRecordDriving = () => {
             message: error.message,
             fullError: error,
           });
-          toast.error(errorMessage);
-          setRecordingState(RecordingStates.ERROR);
+
+          // Only show error toast for non-signal loss issues
+          if (error.code !== error.POSITION_UNAVAILABLE) {
+            toast.error(errorMessage);
+            setRecordingState(RecordingStates.ERROR);
+          }
         },
         {
           enableHighAccuracy: true,
-          timeout: 30000, // Increased timeout
-          maximumAge: 0, // Get fresh positions
+          timeout: 30000, // 30 seconds timeout to allow for signal recovery
+          maximumAge: 10000, // Accept positions up to 10 seconds old when in poor signal areas
         }
       );
 
@@ -208,8 +233,11 @@ const useRecordDriving = () => {
       console.error('Error starting recording:', error);
       toast.error('Failed to start recording');
       setRecordingState(RecordingStates.ERROR);
+    } finally {
+      setIsLoading(false);
     }
   };
+
   const stopRecording = () => {
     console.log('Stopping recording');
     clearNavigator();
@@ -254,6 +282,7 @@ const useRecordDriving = () => {
     stopRecording,
     resetRecording,
     setRecordingState,
+    isLoading, // Expose loading state
   };
 };
 

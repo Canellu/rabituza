@@ -42,6 +42,8 @@ export async function createActivity<
         latitude: location.latitude,
         longitude: location.longitude,
         timestamp: location.timestamp,
+        accuracy: location.accuracy,
+        speed: location.speed,
       }));
 
       // Save route to both locations with the same ID

@@ -159,6 +159,8 @@ export type GeoLocation = {
   latitude: number;
   longitude: number;
   timestamp: number;
+  accuracy: number;
+  speed: number | null;
 };
 
 export type Route = {
