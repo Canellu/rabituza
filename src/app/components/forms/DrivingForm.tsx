@@ -97,7 +97,6 @@ const DrivingForm = ({ onClose, initialData }: DrivingFormProps) => {
       weatherConditions,
       trafficConditions,
       distance: distance !== '' ? Number(distance) : 0,
-      route: [],
       note,
     };
 

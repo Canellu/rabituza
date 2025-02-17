@@ -1,10 +1,29 @@
 import { Food } from '@/types/Food';
 import { openDB } from 'idb';
 
-const DATABASE_NAME = 'foodsDatabase';
-const STORE_NAME = 'foodsStore';
 const DB_VERSION = 1;
 const chunkCount = 22; // Number of chunk files in /public/data/foods
+const DATABASE_NAME = 'foodsDatabase';
+const STORE_NAME = 'foodsStore';
+
+export const countFoodDataEntries = async (): Promise<number> => {
+  const db = await openDB(DATABASE_NAME, 1);
+  const tx = db.transaction(STORE_NAME, 'readonly');
+  const store = tx.objectStore(STORE_NAME);
+  const count = await store.count();
+  return count;
+};
+
+export const estimateFoodDataSize = async (): Promise<number> => {
+  const db = await openDB(DATABASE_NAME, 1);
+  const tx = db.transaction(STORE_NAME, 'readonly');
+  const store = tx.objectStore(STORE_NAME);
+  const foods = await store.getAll();
+  const sizeInBytes = foods.reduce((total, food) => {
+    return total + new Blob([JSON.stringify(food)]).size;
+  }, 0);
+  return sizeInBytes;
+};
 
 // ✅ Open IndexedDB and ensure correct schema
 export const openFoodDB = async () => {

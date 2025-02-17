@@ -1,63 +1,125 @@
 import { Button } from '@/components/ui/button';
-import { CardHeader } from '@/components/ui/card';
-import useRecordDriving from '@/lib/hooks/useRecordDriving';
+import { updateActivity } from '@/lib/database/activities/updateActivity';
+import useRecordDriving, {
+  RecordingStates,
+} from '@/lib/hooks/useRecordDriving';
+import { getAllLocationsFromDB } from '@/lib/idb/driving';
 import { cn } from '@/lib/utils';
-import { Car, Pause, RotateCcw } from 'lucide-react';
+import { BaseActivityType, DrivingDataType } from '@/types/Activity';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Car, RotateCcw } from 'lucide-react';
 import { useState } from 'react';
+import { GiPauseButton } from 'react-icons/gi';
 import ResetDialog from '../ResetDialog';
 import SaveDialog from '../SaveDialog';
+import DrivingCardHeader from './DrivingCardHeader';
+import RecordedSessionList from './RecordedSessionList';
 
 interface RecordingCardProps {
-  onCancel: () => void;
+  activity: BaseActivityType & DrivingDataType;
+  onExit: () => void;
 }
 
-const RecordingCard = ({ onCancel }: RecordingCardProps) => {
+const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
   const {
-    isRecording,
-    isPaused,
+    recordingState,
     locations,
+    setLocations,
     startRecording,
     pauseRecording,
     stopRecording,
     resetRecording,
+    setRecordingState,
+    sessionId,
   } = useRecordDriving();
 
   const [showResetModal, setShowResetModal] = useState(false);
   const [showSaveModal, setShowSaveModal] = useState(false);
 
+  const queryClient = useQueryClient(); // Initialize query client
+
+  // Set up mutation for updating the activity
+  const { mutate } = useMutation({
+    mutationFn: async (updatedActivity: BaseActivityType & DrivingDataType) => {
+      await updateActivity(activity.userId, activity.id, updatedActivity);
+    },
+    onSuccess: () => {
+      // Invalidate and refetch activities query to ensure UI is up-to-date
+      queryClient.invalidateQueries({
+        queryKey: ['activities', activity.userId],
+      });
+      console.log('Activity updated with new route');
+    },
+    onError: (error) => {
+      console.error('Failed to update activity:', error);
+    },
+  });
+
+  const isRecording = recordingState === RecordingStates.RECORDING;
+  const isPaused = recordingState === RecordingStates.PAUSED;
+  const isIdle = recordingState === RecordingStates.IDLING;
+  const isStopped = recordingState === RecordingStates.STOPPED;
+
   const getRecordingText = () => {
-    if (isRecording) return 'Recording...';
-    if (isPaused) return 'Paused';
-    if (!isRecording && !isPaused && locations.length > 0) return 'Stopped';
-    return 'Start Recording';
+    switch (recordingState) {
+      case RecordingStates.RECORDING:
+        return 'Recording';
+      case RecordingStates.PAUSED:
+        return 'Paused';
+      case RecordingStates.STOPPED:
+        return 'Stopped';
+      case RecordingStates.IDLING:
+      default:
+        return 'Start Recording';
+    }
   };
 
-  const handleResetRecording = () => {
-    setShowResetModal(true);
+  const handleConfirmSaveRecording = async () => {
+    console.log('Saved recordings');
+    setRecordingState(RecordingStates.NOT_STARTED);
+    setShowSaveModal(false);
+
+    // Sync local state with IndexedDB
+    const allLocations = await getAllLocationsFromDB();
+
+    // Filter locations for the current active sessionId
+    const currentSessionLocations = allLocations.filter(
+      (location) => location.sessionId === sessionId
+    );
+
+    // Create updated activity without routes field
+    const { routes: _, ...activityWithoutRoutes } = activity;
+    const updatedActivity = {
+      ...activityWithoutRoutes,
+      routes: [currentSessionLocations], // This will only be used by updateActivity for the subcollection
+    };
+
+    mutate(updatedActivity);
+    resetRecording();
   };
 
   const confirmResetRecording = () => {
+    console.log('Resetting recordings');
     resetRecording();
     setShowResetModal(false);
   };
 
-  const handleSaveRecording = () => {
-    setShowSaveModal(true);
+  const handleExit = () => {
+    if (isRecording || isPaused) {
+      stopRecording();
+      resetRecording();
+    }
+    onExit();
   };
 
-  const handleConfirmSaveRecording = () => {
-    // Logic to save the recorded session
-    setShowSaveModal(false);
-  };
+  // Determine if there are locations for the current session ID
+  const hasCurrentSessionLocations = locations.some(
+    (location) => location.sessionId === sessionId
+  );
 
   return (
-    <div
-      className={cn(
-        'border rounded-xl p-4  bg-white relative',
-        'flex flex-col gap-3'
-      )}
-    >
-      <CardHeader />
+    <div className={cn('relative p-4', 'flex flex-col gap-3')}>
+      <DrivingCardHeader activity={activity} />
       <div className={cn('text-lg font-medium text-center')}>
         <Car className={cn(isRecording && 'animate-bounce', ' mx-auto')} />
         <span className={cn(isRecording && 'animate-pulse')}>
@@ -69,7 +131,7 @@ const RecordingCard = ({ onCancel }: RecordingCardProps) => {
           onClick={startRecording}
           size="icon"
           variant="secondary"
-          disabled={isRecording}
+          disabled={isRecording || isStopped}
         >
           <div className="bg-destructive size-3.5 rounded-full" />
         </Button>
@@ -79,7 +141,7 @@ const RecordingCard = ({ onCancel }: RecordingCardProps) => {
           variant="secondary"
           disabled={!isRecording || isPaused}
         >
-          <Pause />
+          <GiPauseButton className="text-stone-700" />
         </Button>
         <Button
           onClick={stopRecording}
@@ -90,28 +152,24 @@ const RecordingCard = ({ onCancel }: RecordingCardProps) => {
           <div className="bg-destructive size-3.5 rounded-sm" />
         </Button>
         <Button
-          onClick={handleResetRecording}
+          onClick={() => setShowResetModal(true)}
           size="icon"
           variant="secondary"
-          disabled={!isRecording && !isPaused && locations.length === 0}
+          disabled={isRecording || !hasCurrentSessionLocations}
         >
           <RotateCcw />
         </Button>
       </div>
 
-      {locations && locations.length > 0 && (
-        <p className={cn('text-sm font-medium text-stone-500 text-center')}>
-          Data points: {locations.length}
-        </p>
-      )}
+      <RecordedSessionList locations={locations} sessionId={sessionId || ''} />
 
-      <div className="flex justify-between items-center gap-2">
-        <Button variant="secondary" size="sm" onClick={onCancel}>
-          Cancel
+      <div className="flex justify-between items-center gap-2 mt-4">
+        <Button variant="secondary" size="sm" onClick={handleExit}>
+          Exit
         </Button>
-        {!isRecording && !isPaused && locations.length > 0 && (
-          <Button size="sm" onClick={handleSaveRecording}>
-            Save Recording
+        {isStopped && locations.length > 0 && (
+          <Button size="sm" onClick={() => setShowSaveModal(true)}>
+            Save Current Recording
           </Button>
         )}
       </div>

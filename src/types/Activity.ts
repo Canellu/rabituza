@@ -158,8 +158,11 @@ export type DrivingPurpose =
 export type GeoLocation = {
   latitude: number;
   longitude: number;
-  timestamp: Date;
+  timestamp: number;
+  sessionId: string;
 };
+
+export type Route = GeoLocation[];
 
 export type DrivingDataType = {
   type: typeof ActivityTypes.Driving;
@@ -168,7 +171,7 @@ export type DrivingDataType = {
   weatherConditions: WeatherCondition;
   trafficConditions: TrafficCondition;
   distance?: number;
-  route?: GeoLocation[];
+  routes?: Route[];
 };
 
 export type ActivityDataType =
