@@ -3,6 +3,7 @@ import { cn } from '@/lib/utils';
 import { ActivityType } from '@/types/Activity';
 import { format, isToday } from 'date-fns';
 import ActivityBadgeIcon from './ActivityBadgeIcon';
+import ActivityBadgeNumber from './ActivityBadgeNumber';
 
 type ActivitiesMonthProps = {
   activities?: ActivityType[];
@@ -31,6 +32,14 @@ const ActivitiesMonth = ({ activities = [] }: ActivitiesMonthProps) => {
     )[0]?.type;
   };
 
+  const getActivityCount = (date: Date) => {
+    return activities.filter(
+      (activity) =>
+        new Date(activity.activityDate).toLocaleDateString() ===
+        date.toLocaleDateString()
+    ).length;
+  };
+
   return (
     <Calendar
       mode="single"
@@ -56,7 +65,7 @@ const ActivitiesMonth = ({ activities = [] }: ActivitiesMonthProps) => {
           const hasActivityForDay = hasActivity(date);
           const isTodayDate = isToday(date);
           const mostRecentType = getMostRecentActivityType(date);
-
+          const activityCount = getActivityCount(date);
           if (isOutsideDay) return null;
 
           return (
@@ -70,7 +79,11 @@ const ActivitiesMonth = ({ activities = [] }: ActivitiesMonthProps) => {
               >
                 {format(date, 'd')}
               </div>
-              {mostRecentType && (
+              {activityCount > 1 && (
+                <ActivityBadgeNumber count={activityCount} />
+              )}
+
+              {mostRecentType && activityCount === 1 && (
                 <ActivityBadgeIcon
                   activityType={mostRecentType}
                   className="absolute -top-1 -right-1"

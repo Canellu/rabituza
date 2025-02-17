@@ -2,6 +2,7 @@ import { cn } from '@/lib/utils';
 import { ActivityType } from '@/types/Activity';
 import { addDays, format, isToday, startOfWeek } from 'date-fns';
 import ActivityBadgeIcon from './ActivityBadgeIcon';
+import ActivityBadgeNumber from './ActivityBadgeNumber';
 
 type ActivitiesWeekProps = {
   activities?: ActivityType[];
@@ -31,14 +32,22 @@ const ActivitiesWeek = ({ activities = [] }: ActivitiesWeekProps) => {
     )[0]?.type;
   };
 
+  const getActivityCount = (date: Date) => {
+    return activities.filter(
+      (activity) =>
+        new Date(activity.activityDate).toLocaleDateString() ===
+        date.toLocaleDateString()
+    ).length;
+  };
+
   return (
     <div className="flex justify-between border p-4 rounded-xl bg-gradient-to-b from-white to-emerald-50">
       {Array.from({ length: 7 }, (_, i) => {
         const date = addDays(weekStart, i);
         const isCurrentDay = isToday(date);
         const hasActivityForDay = hasActivity(date);
+        const activityCount = getActivityCount(date);
         const mostRecentType = getMostRecentActivityType(date);
-
         return (
           <div key={i} className="flex flex-col items-center gap-3">
             <div className="text-sm font-medium text-stone-600">
@@ -54,7 +63,11 @@ const ActivitiesWeek = ({ activities = [] }: ActivitiesWeekProps) => {
               >
                 <span className="text-sm font-medium">{format(date, 'd')}</span>
               </div>
-              {mostRecentType && (
+              {activityCount > 1 && (
+                <ActivityBadgeNumber count={activityCount} />
+              )}
+
+              {mostRecentType && activityCount === 1 && (
                 <ActivityBadgeIcon
                   activityType={mostRecentType}
                   className="absolute -top-1 -right-1"
