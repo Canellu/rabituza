@@ -7,19 +7,24 @@ import useRecordDriving, {
 import { getAllLocationsFromDB } from '@/lib/idb/driving';
 import { cn } from '@/lib/utils';
 import bytesToText from '@/lib/utils/bytesToText';
-import { formatTime } from '@/lib/utils/geolocation';
+import {
+  calculateAccuracyMetrics,
+  calculateSpeedMetrics,
+} from '@/lib/utils/geolocation';
+import { formatTime } from '@/lib/utils/time';
 import {
   BaseActivityType,
   DrivingDataType,
   DrivingSessionStatuses,
 } from '@/types/Activity';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { RotateCcw } from 'lucide-react';
+import { Crosshair, Gauge, RotateCcw } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { GiPauseButton } from 'react-icons/gi';
 import EndSessionDialog from '../EndSessionDialog';
 import ResetDialog from '../ResetDialog';
 import SaveDialog from '../SaveDialog';
+import Spinner from '../Spinner';
 import DrivingCardHeader from './DrivingCardHeader';
 import SavedRoutesList from './SavedRoutesList';
 
@@ -39,7 +44,6 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
     resetRecording,
     isResetting,
     isStartingRecording,
-    permissionStatus,
   } = useRecordDriving();
 
   const [showResetModal, setShowResetModal] = useState(false);
@@ -138,6 +142,9 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
 
   const { value: dataAmount, unit: dataUnit } = bytesToText(dataSize);
 
+  const { average: avgAccuracy } = calculateAccuracyMetrics(locations);
+  const { average: avgSpeed } = calculateSpeedMetrics(locations);
+
   return (
     <div
       className={cn(
@@ -195,7 +202,12 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
               'bg-green-500 text-green-800 font-semibold '
           )}
         >
-          {isStartingRecording && 'Initializing...'}
+          {isStartingRecording && (
+            <div className="flex items-center justify-center gap-2 text-sm text-stone-700">
+              <Spinner size="size-4" color="text-stone-700" />
+              <span>Initializing...</span>
+            </div>
+          )}
           <span
             className={cn(
               (isStartingRecording || isRecording) && 'animate-pulse'
@@ -221,24 +233,22 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
                   {dataAmount} {dataUnit}
                 </span>
               </div>
-              <div className="flex items-center justify-evenly px-4 py-2 border-t ">
-                <span>
-                  {new Date(locations[0].timestamp).toLocaleTimeString(
-                    'en-US',
-                    {
-                      hour12: false,
-                      hour: '2-digit',
-                      minute: '2-digit',
-                      second: '2-digit',
-                    }
-                  )}
-                </span>
+              <div className="flex items-center justify-around px-4 py-2 border-t ">
+                <span>{formatTime(new Date(locations[0].timestamp))}</span>
                 <span>-</span>
                 <span>
                   {formatTime(
                     new Date(locations[locations.length - 1].timestamp)
                   )}
                 </span>
+              </div>
+              <div className="px-4 py-2 border-t flex items-center justify-between">
+                <div className="flex items-center justify-center gap-2">
+                  <Crosshair className="size-5" /> {avgAccuracy.toFixed(2)}m
+                </div>
+                <div className="flex items-center justify-center gap-2">
+                  <Gauge className="size-5" /> {avgSpeed.toFixed(2)}m
+                </div>
               </div>
             </>
           )}

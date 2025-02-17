@@ -47,30 +47,12 @@ export const estimateDrivingDataSize = async (): Promise<number> => {
   return sizeInBytes;
 };
 
-export const countDrivingDataEntries = async (): Promise<number> => {
-  const db = await getDBConnection();
-  const tx = db.transaction('locations', 'readonly');
-  const store = tx.objectStore('locations');
-  const count = await store.count();
-  return count;
-};
-
 export const getAllLocationsFromDB = async (): Promise<GeoLocation[]> => {
   const db = await getDBConnection();
   const tx = db.transaction('locations', 'readonly');
   const store = tx.objectStore('locations');
   const locations = await store.getAll();
   return locations;
-};
-
-export const getLocationsBySessionId = async (
-  sessionId: string
-): Promise<GeoLocation[]> => {
-  const db = await getDBConnection();
-  const tx = db.transaction('locations', 'readonly');
-  const store = tx.objectStore('locations');
-  const allLocations = await store.getAll();
-  return allLocations.filter((location) => location.sessionId === sessionId);
 };
 
 export const deleteEntriesByDate = async (date: string): Promise<void> => {

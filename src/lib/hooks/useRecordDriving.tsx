@@ -210,7 +210,9 @@ const useRecordDriving = () => {
               return;
             case error.TIMEOUT:
               errorMessage += 'Location request timed out';
-              break;
+              // Notify user about the timeout but don't set to ERROR
+              toast.info('GPS signal weak or lost - attempting to reconnect');
+              return;
             default:
               errorMessage += error.message;
           }
@@ -221,15 +223,17 @@ const useRecordDriving = () => {
           });
 
           // Only show error toast for non-signal loss issues
-          if (error.code !== error.POSITION_UNAVAILABLE) {
+          if (
+            error.code !== error.POSITION_UNAVAILABLE &&
+            error.code !== error.TIMEOUT
+          ) {
             toast.error(errorMessage);
             setRecordingState(RecordingStates.ERROR);
           }
         },
         {
           enableHighAccuracy: true,
-          timeout: 30000, // 30 seconds timeout to allow for signal recovery
-          maximumAge: 10000, // Accept positions up to 10 seconds old when in poor signal areas
+          timeout: 15000, // To notify user about a timeout if it occurs
         }
       );
 
