@@ -182,6 +182,7 @@ const ActivityCardDriving = ({
                         e.stopPropagation();
                         setShowCard('recording');
                       }}
+                      disabled={true}
                     >
                       <MapPin />
                     </Button>
