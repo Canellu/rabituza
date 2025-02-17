@@ -115,11 +115,10 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
   };
 
   const handleConfirmEndSesson = async () => {
-    const { routes: existingRoutes, ...activityWithoutRoutes } = activity;
+    const { routes: _, ...activityWithoutRoutes } = activity;
 
     const updatedActivity = {
       ...activityWithoutRoutes,
-      routes: existingRoutes || [],
       status: DrivingSessionStatuses.completed,
     };
 
