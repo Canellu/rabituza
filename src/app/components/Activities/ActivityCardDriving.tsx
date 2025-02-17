@@ -2,13 +2,20 @@ import { Button } from '@/components/ui/button';
 import { CARD_ANIMATION_CONFIG } from '@/constants/animationConfig';
 import { deleteActivity } from '@/lib/database/activities/deleteActivity';
 import { deleteEntriesByDate } from '@/lib/idb/driving';
-import { cn } from '@/lib/utils';
 import formatTrafficCondition from '@/lib/utils/formatTrafficCondition';
+import {
+  calculateRouteDuration,
+  formatDuration,
+} from '@/lib/utils/geolocation';
 import { getSession } from '@/lib/utils/userSession';
-import { BaseActivityType, DrivingDataType } from '@/types/Activity';
+import {
+  BaseActivityType,
+  DrivingDataType,
+  DrivingSessionStatuses,
+} from '@/types/Activity';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { Trash2 } from 'lucide-react';
+import { MapPin, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import DeleteDialog from '../DeleteDialog';
 import * as ResizablePanel from '../ResizablePanel';
@@ -28,9 +35,33 @@ const ActivityCardDriving = ({
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showCard, setShowCard] = useState<'recording' | 'driving'>('driving');
-  const routeDisabled =
+  const activityOutdated =
     new Date(activity.activityDate).toDateString() !==
     new Date().toDateString();
+
+  const calculateTotalRouteDuration = (
+    routes: DrivingDataType['routes'] = []
+  ) => {
+    return routes.reduce(
+      (total, route) => {
+        const duration = calculateRouteDuration(route.geolocations);
+        const totalSeconds =
+          (total.hours || 0) * 3600 +
+          total.minutes * 60 +
+          total.seconds +
+          duration.hours * 3600 +
+          duration.minutes * 60 +
+          duration.seconds;
+
+        return {
+          hours: Math.floor(totalSeconds / 3600),
+          minutes: Math.floor((totalSeconds % 3600) / 60),
+          seconds: totalSeconds % 60,
+        };
+      },
+      { hours: 0, minutes: 0, seconds: 0 }
+    );
+  };
 
   const { mutate: deleteActivityMutation } = useMutation({
     mutationFn: ({
@@ -66,8 +97,6 @@ const ActivityCardDriving = ({
   const handleExit = () => {
     setShowCard('driving');
   };
-
-  console.log(activity.routes);
 
   return (
     <>
@@ -105,7 +134,7 @@ const ActivityCardDriving = ({
             >
               <DrivingCardHeader activity={activity} />
 
-              <div className="space-y-2 text-sm">
+              <div className="flex flex-col gap-2 text-sm">
                 <p className="font-medium border px-2 py-1 text-stone-700 text-nowrap rounded-md bg-stone-50 first-letter:capitalize max-w-max">
                   {activity.purpose}
                 </p>
@@ -134,23 +163,54 @@ const ActivityCardDriving = ({
                       )}
                   </div>
 
-                  <Button
-                    size="sm"
-                    className={cn(
-                      'rounded-full ',
-                      routeDisabled ? 'text-secondary-foreground' : 'text-white'
+                  {!activityOutdated &&
+                    activity.status === DrivingSessionStatuses.inProgress && (
+                      <Button
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setShowCard('recording');
+                        }}
+                      >
+                        <MapPin /> Record route
+                      </Button>
                     )}
-                    variant={routeDisabled ? 'secondary' : 'default'}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setShowCard('recording');
-                    }}
-                    disabled={routeDisabled}
-                  >
-                    <span className="font-bold">
-                      {routeDisabled ? 'No recording' : 'Record route'}
+                  {activity.routes && activity.routes.length > 0 && (
+                    <Button
+                      size="icon"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setShowCard('recording');
+                      }}
+                    >
+                      <MapPin />
+                    </Button>
+                  )}
+                </div>
+
+                <div className="bg-stone-100 p-2 rounded-md mt-3 text-sm text-stone-700">
+                  {activity.routes && activity.routes.length > 0 ? (
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center justify-between">
+                        <span>
+                          {activity.routes.length} route
+                          {activity.routes.length > 1 ? 's' : ''} saved
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between text-xs text-stone-500">
+                        <span>
+                          Total recording time:{' '}
+                          {formatDuration(
+                            calculateTotalRouteDuration(activity.routes)
+                          )}
+                        </span>
+                      </div>
+                    </div>
+                  ) : (
+                    <span className="text-stone-500">
+                      No routes recorded yet
                     </span>
-                  </Button>
+                  )}
                 </div>
               </div>
             </motion.div>

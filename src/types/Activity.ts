@@ -159,10 +159,20 @@ export type GeoLocation = {
   latitude: number;
   longitude: number;
   timestamp: number;
-  sessionId: string;
 };
 
-export type Route = GeoLocation[];
+export type Route = {
+  id: string;
+  createdAt: Date;
+  geolocations: GeoLocation[];
+};
+
+export const DrivingSessionStatuses = {
+  completed: 'completed',
+  inProgress: 'in_progress',
+} as const;
+export type DrivingSessionStatus =
+  (typeof DrivingSessionStatuses)[keyof typeof DrivingSessionStatuses];
 
 export type DrivingDataType = {
   type: typeof ActivityTypes.Driving;
@@ -171,7 +181,8 @@ export type DrivingDataType = {
   weatherConditions: WeatherCondition;
   trafficConditions: TrafficCondition;
   distance?: number;
-  routes?: Route[];
+  routes?: Route[]; // Subcollection in Firestore
+  status: DrivingSessionStatus;
 };
 
 export type ActivityDataType =

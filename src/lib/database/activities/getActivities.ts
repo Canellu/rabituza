@@ -114,9 +114,11 @@ export const getActivities = async (
           case ActivityTypes.Driving:
             const routesCollectionRef = collection(doc.ref, 'routes');
             const routesSnapshot = await getDocs(routesCollectionRef);
-            const routes: Route[] = routesSnapshot.docs.map(
-              (routeDoc) => routeDoc.data().geolocations
-            );
+            const routes: Route[] = routesSnapshot.docs.map((routeDoc) => ({
+              id: routeDoc.id,
+              createdAt: routeDoc.data().createdAt.toDate(),
+              geolocations: routeDoc.data().geolocations,
+            }));
 
             return {
               ...baseActivity,
@@ -125,6 +127,7 @@ export const getActivities = async (
               weatherConditions: data.weatherConditions,
               trafficConditions: data.trafficConditions,
               distance: data.distance,
+              status: data.status,
               routes,
             };
           default:

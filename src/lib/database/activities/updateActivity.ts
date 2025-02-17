@@ -4,19 +4,17 @@ import {
   DrivingDataType,
 } from '@/types/Activity';
 import {
-  addDoc,
   collection,
   doc,
-  GeoPoint,
   serverTimestamp,
-  Timestamp,
+  setDoc,
   updateDoc,
 } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 
 export async function updateActivity<
   T extends ActivityDataType &
-    Pick<BaseActivityType, 'ratings' | 'activityDate'>
+    Pick<BaseActivityType, 'ratings' | 'activityDate' | 'note'>
 >(userId: string, activityId: string, activityData: T) {
   const globalActivityRef = doc(db, 'activities', activityId);
   const userActivityRef = doc(db, `users/${userId}/activities`, activityId);
@@ -31,20 +29,18 @@ export async function updateActivity<
       const userRoutesRef = collection(userActivityRef, 'routes');
 
       const newRoute = routes[0];
-      const geolocations = newRoute.map((location) => ({
-        location: new GeoPoint(location.latitude, location.longitude),
-        timestamp: Timestamp.fromMillis(location.timestamp),
-        sessionId: location.sessionId,
-      }));
+      const routeId = doc(collection(db, 'temp')).id;
 
-      // Add route to both locations
+      // Add route to both locations with the same ID
       await Promise.all([
-        addDoc(globalRoutesRef, {
-          geolocations,
+        setDoc(doc(globalRoutesRef, routeId), {
+          id: routeId,
+          geolocations: newRoute.geolocations,
           createdAt: serverTimestamp(),
         }),
-        addDoc(userRoutesRef, {
-          geolocations,
+        setDoc(doc(userRoutesRef, routeId), {
+          id: routeId,
+          geolocations: newRoute.geolocations,
           createdAt: serverTimestamp(),
         }),
       ]);

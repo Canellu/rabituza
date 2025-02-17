@@ -12,6 +12,7 @@ import {
   DrivingDataType,
   DrivingPurpose,
   DrivingPurposes,
+  DrivingSessionStatuses,
   TrafficCondition,
   TrafficConditions,
   WeatherCondition,
@@ -97,6 +98,7 @@ const DrivingForm = ({ onClose, initialData }: DrivingFormProps) => {
       weatherConditions,
       trafficConditions,
       distance: distance !== '' ? Number(distance) : 0,
+      status: DrivingSessionStatuses.inProgress,
       note,
     };
 
@@ -127,9 +129,7 @@ const DrivingForm = ({ onClose, initialData }: DrivingFormProps) => {
       />
 
       <div className="space-y-1">
-        <Label className="block text-sm font-medium text-gray-700">
-          Distance (km)
-        </Label>
+        <Label className="text-sm">Distance (km)</Label>
         <Input
           type="text"
           inputMode="numeric"

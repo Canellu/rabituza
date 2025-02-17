@@ -2,10 +2,8 @@ import { ActivityDataType, BaseActivityType } from '@/types/Activity';
 import {
   collection,
   doc,
-  GeoPoint,
   serverTimestamp,
   setDoc,
-  Timestamp,
   writeBatch,
 } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
@@ -39,16 +37,23 @@ export async function createActivity<
     const userRoutesRef = collection(userActivityRef, 'routes');
 
     for (const route of activityData.routes) {
-      const geolocations = route.map((location) => ({
-        location: new GeoPoint(location.latitude, location.longitude),
-        timestamp: Timestamp.fromMillis(location.timestamp),
-        sessionId: location.sessionId,
+      const routeId = doc(collection(db, 'temp')).id;
+      const geolocations = route.geolocations.map((location) => ({
+        latitude: location.latitude,
+        longitude: location.longitude,
+        timestamp: location.timestamp,
       }));
 
-      // Save route to both locations
+      // Save route to both locations with the same ID
       await Promise.all([
-        setDoc(doc(globalRoutesRef), { geolocations }),
-        setDoc(doc(userRoutesRef), { geolocations }),
+        setDoc(doc(globalRoutesRef, routeId), {
+          id: routeId,
+          geolocations,
+        }),
+        setDoc(doc(userRoutesRef, routeId), {
+          id: routeId,
+          geolocations,
+        }),
       ]);
     }
   }

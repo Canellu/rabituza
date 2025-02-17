@@ -1,42 +1,75 @@
+import {
+  estimateDrivingDataSize,
+  getAllLocationsFromDB,
+} from '@/lib/idb/driving';
 import { GeoLocation } from '@/types/Activity';
-import { openDB } from 'idb';
+import { IDBPDatabase, openDB } from 'idb';
 import { useEffect, useRef, useState } from 'react';
-import { v4 as uuidv4 } from 'uuid'; // Import UUID library
 
 const DRIVING_DB = 'drivingData';
 
 export const RecordingStates = {
-  NOT_STARTED: 'NOT_STARTED',
   RECORDING: 'RECORDING',
   IDLING: 'IDLING',
   PAUSED: 'PAUSED',
   STOPPED: 'STOPPED',
+  ERROR: 'ERROR',
 } as const;
 
 export type RecordingState =
   (typeof RecordingStates)[keyof typeof RecordingStates];
 
-import { getAllLocationsFromDB } from '@/lib/idb/driving'; // Import the function
-
 const useRecordDriving = () => {
   const [recordingState, setRecordingState] = useState<RecordingState>(
-    RecordingStates.NOT_STARTED
+    RecordingStates.IDLING
   );
   const [locations, setLocations] = useState<GeoLocation[]>([]);
-  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [dataSize, setDataSize] = useState<number>(0);
   const watchIdRef = useRef<number | null>(null);
+  const dbRef = useRef<IDBPDatabase | null>(null);
 
+  // Update data size whenever locations change
   useEffect(() => {
-    const loadLocations = async () => {
-      const allLocations = await getAllLocationsFromDB();
-      setLocations(allLocations);
-      console.log(allLocations);
+    const updateDataSize = async () => {
+      const size = await estimateDrivingDataSize();
+      setDataSize(size);
+    };
+    updateDataSize();
+  }, [locations]);
+
+  // On mount: Initialize IndexedDB and load locations
+  // On unmount: Clear geolocation watch and close DB connection
+  useEffect(() => {
+    const initDBAndLoadLocations = async () => {
+      try {
+        // Initialize DB
+        dbRef.current = await openDB(DRIVING_DB, 1, {
+          upgrade(db) {
+            if (!db.objectStoreNames.contains('locations')) {
+              db.createObjectStore('locations', {
+                keyPath: 'timestamp',
+              });
+            }
+          },
+        });
+
+        // Load locations
+        const allLocations = await getAllLocationsFromDB();
+        setLocations(allLocations);
+        console.log(allLocations);
+      } catch (error) {
+        console.error('Error initializing IndexedDB:', error);
+      }
     };
 
-    loadLocations();
+    initDBAndLoadLocations();
 
-    // Cleanup function to clear geolocation watch on unmount
+    // Cleanup function
     return () => {
+      if (dbRef.current) {
+        dbRef.current.close();
+        dbRef.current = null;
+      }
       clearNavigator();
     };
   }, []);
@@ -49,21 +82,18 @@ const useRecordDriving = () => {
   };
 
   const getDB = async () => {
-    try {
-      return openDB(DRIVING_DB, 1, {
+    if (!dbRef.current) {
+      dbRef.current = await openDB(DRIVING_DB, 1, {
         upgrade(db) {
           if (!db.objectStoreNames.contains('locations')) {
-            // Use a composite key of timestamp and sessionId
             db.createObjectStore('locations', {
-              keyPath: ['timestamp', 'sessionId'],
+              keyPath: 'timestamp',
             });
           }
         },
       });
-    } catch (error) {
-      console.error('Error opening IndexedDB:', error);
-      throw error;
     }
+    return dbRef.current;
   };
 
   const startRecording = async () => {
@@ -72,50 +102,81 @@ const useRecordDriving = () => {
       return;
     }
 
-    let currentSessionId = sessionId;
+    try {
+      const db = await getDB();
 
-    if (recordingState === RecordingStates.PAUSED) {
-      setRecordingState(RecordingStates.RECORDING);
-      console.log('Resumed recording');
-    } else {
-      currentSessionId = uuidv4();
-      setSessionId(currentSessionId);
-      setRecordingState(RecordingStates.RECORDING);
-      console.log('Started recording');
-    }
+      if (recordingState === RecordingStates.PAUSED) {
+        // Verify all locations are synced before resuming
+        const tx = db.transaction('locations', 'readwrite');
+        const store = tx.objectStore('locations');
+        const dbLocations = await store.getAll();
 
-    const db = await getDB();
-    watchIdRef.current = navigator.geolocation.watchPosition(
-      async (position) => {
-        if (currentSessionId) {
+        // Verify local state matches DB state
+        const syncMismatch = locations.length !== dbLocations.length;
+        if (syncMismatch) {
+          setLocations(dbLocations); // Sync local state with DB
+          console.log('Synced local state with DB before resuming');
+        }
+
+        await tx.done;
+      }
+
+      // Start watching position before updating state
+      watchIdRef.current = navigator.geolocation.watchPosition(
+        async (position) => {
           const newLocation: GeoLocation = {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
             timestamp: position.timestamp,
-            sessionId: currentSessionId,
           };
 
-          // Update local state
-          setLocations((prevLocations) => [...prevLocations, newLocation]);
+          try {
+            // Start new transaction
+            const tx = db.transaction('locations', 'readwrite');
+            const store = tx.objectStore('locations');
+            await store.put(newLocation);
+            await tx.done;
 
-          // Add to IndexedDB using the composite key
-          const tx = db.transaction('locations', 'readwrite');
-          await tx.store.put(newLocation);
-        } else {
-          console.error('Session ID is null, cannot log location');
+            // Update locations state, handling potential duplicate timestamps
+            // If a location with the same timestamp exists, update it
+            // Otherwise, append the new location to the array
+            setLocations((prevLocations) => {
+              const index = prevLocations.findIndex(
+                (loc) => loc.timestamp === newLocation.timestamp
+              );
+
+              if (index !== -1) {
+                const newLocations = [...prevLocations];
+                newLocations[index] = newLocation;
+                return newLocations;
+              }
+              return [...prevLocations, newLocation];
+            });
+          } catch (error) {
+            console.error('Error saving location to IndexedDB:', error);
+          }
+        },
+        (error) => {
+          console.error('Error watching position:', error);
+          setRecordingState(RecordingStates.STOPPED);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 5000,
         }
-      },
-      (error) => {
-        console.error('Error watching position:', error);
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 5000,
-      }
-    );
+      );
 
-    return;
+      setRecordingState(RecordingStates.RECORDING);
+      console.log(
+        recordingState === RecordingStates.PAUSED
+          ? 'Resumed recording'
+          : 'Started recording'
+      );
+    } catch (error) {
+      console.error('Error starting recording:', error);
+      setRecordingState(RecordingStates.ERROR);
+    }
   };
 
   const stopRecording = () => {
@@ -124,7 +185,7 @@ const useRecordDriving = () => {
     setRecordingState(RecordingStates.STOPPED);
   };
 
-  const pauseRecording = () => {
+  const pauseRecording = async () => {
     console.log('Pausing recording');
     clearNavigator();
     setRecordingState(RecordingStates.PAUSED);
@@ -132,46 +193,36 @@ const useRecordDriving = () => {
 
   const resetRecording = async () => {
     clearNavigator();
-    setRecordingState(RecordingStates.IDLING);
-    if (!sessionId) {
-      console.error('Session ID is null, cannot clear locations');
-      return;
-    }
+
     try {
       const db = await getDB();
       const tx = db.transaction('locations', 'readwrite');
       const store = tx.objectStore('locations');
       const allLocations = await store.getAll();
-  
-      // Filter and delete locations with the current session ID
+
+      // Delete locations
       for (const location of allLocations) {
-        if (location.sessionId === sessionId) {
-          await store.delete([location.timestamp, location.sessionId]); // Use composite key
-        }
+        await store.delete(location.timestamp);
       }
-  
-      // Update local state to remove locations with the current session ID
-      setLocations((prevLocations) =>
-        prevLocations.filter((location) => location.sessionId !== sessionId)
-      );
-  
+
       await tx.done;
-      console.log(`Cleared locations for session ID: ${sessionId}`);
     } catch (error) {
       console.error('Error clearing IndexedDB:', error);
     }
+    setLocations([]);
+    setRecordingState(RecordingStates.IDLING);
   };
 
   return {
     recordingState,
     locations,
+    dataSize,
     setLocations,
     startRecording,
     pauseRecording,
     stopRecording,
     resetRecording,
     setRecordingState,
-    sessionId,
   };
 };
 
