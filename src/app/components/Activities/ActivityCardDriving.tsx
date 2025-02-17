@@ -129,7 +129,7 @@ const ActivityCardDriving = ({
 
         if (permission.state === 'denied') {
           toast.error(
-            'Location access is blocked. Please enable it in your Safari settings',
+            'Location access is blocked. Please enable it in your Browser settings',
             {
               description: 'Settings > Safari > Location',
               duration: 5000,
@@ -139,14 +139,14 @@ const ActivityCardDriving = ({
         }
       }
 
-      const result = await new Promise((resolve, reject) => {
+      const result = await new Promise((resolve, _reject) => {
         navigator.geolocation.getCurrentPosition(
           () => resolve(true),
           (error) => {
             console.log('Geolocation error:', error.code, error.message);
             if (error.code === error.PERMISSION_DENIED) {
               toast.error('Please allow location access to record routes', {
-                description: 'Check Safari settings if no prompt appears',
+                description: 'Check Browser settings if no prompt appears',
                 duration: 5000,
               });
             }
