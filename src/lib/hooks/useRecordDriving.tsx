@@ -1,11 +1,10 @@
 import {
+  clearAllLocations,
   estimateDrivingDataSize,
-  getAllLocationsFromDB,
-  initDB,
+  getDBConnection,
 } from '@/lib/idb/driving';
 import { GeoLocation } from '@/types/Activity';
-import { IDBPDatabase } from 'idb';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 export const RecordingStates = {
@@ -19,57 +18,39 @@ export const RecordingStates = {
 export type RecordingState =
   (typeof RecordingStates)[keyof typeof RecordingStates];
 
+const MIN_INTERVAL_MS = 1000; // Minimum interval of 1 seconds, dont record datapoints any faster
+
 const useRecordDriving = () => {
+  const [locations, setLocations] = useState<GeoLocation[]>([]);
+  const [dataSize, setDataSize] = useState<number>(0);
+  const [isResetting, setIsResetting] = useState<boolean>(false);
+  const [isStartingRecording, setIsStartingRecording] =
+    useState<boolean>(false);
+  const [permissionStatus, setPermissionStatus] = useState<
+    'granted' | 'denied' | 'prompt'
+  >('prompt');
   const [recordingState, setRecordingState] = useState<RecordingState>(
     RecordingStates.IDLING
   );
-  const [locations, setLocations] = useState<GeoLocation[]>([]);
-  const [dataSize, setDataSize] = useState<number>(0);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const watchIdRef = useRef<number | null>(null);
-  const dbRef = useRef<IDBPDatabase | null>(null);
+  const lastTimestampRef = useRef<number | null>(null);
 
-  // Update data size whenever locations change
-  useEffect(() => {
-    const updateDataSize = async () => {
-      try {
-        const size = await estimateDrivingDataSize();
-        setDataSize(size);
-      } catch (error) {
-        console.error('Failed to estimate data size:', error);
-        toast.error('Failed to calculate storage size');
-      }
-    };
-    updateDataSize();
-  }, [locations]);
+  const resetRecording = async () => {
+    setIsResetting(true);
+    clearNavigator();
 
-  // On mount: Initialize IndexedDB and load locations
-  // On unmount: Clear geolocation watch and close DB connection
-  // Initialize IndexedDB and load locations
-  useEffect(() => {
-    const initDBAndLoadLocations = async () => {
-      try {
-        dbRef.current = await initDB();
-        const allLocations = await getAllLocationsFromDB();
-        setLocations(allLocations);
-        toast.success(`Successfully initialized storage`);
-      } catch (error) {
-        console.error('Error initializing IndexedDB:', error);
-        toast.error('Failed to initialize storage');
-        setRecordingState(RecordingStates.ERROR);
-      }
-    };
-
-    initDBAndLoadLocations();
-
-    return () => {
-      if (dbRef.current) {
-        dbRef.current.close();
-        dbRef.current = null;
-      }
-      clearNavigator();
-    };
-  }, []);
+    try {
+      await clearAllLocations();
+      setLocations([]);
+      setRecordingState(RecordingStates.IDLING);
+    } catch (error) {
+      console.error('Error clearing IndexedDB:', error);
+      toast.error('Error clearing IndexedDB');
+    } finally {
+      setIsResetting(false);
+    }
+  };
 
   const clearNavigator = () => {
     if (watchIdRef.current !== null) {
@@ -78,35 +59,53 @@ const useRecordDriving = () => {
     }
   };
 
-  const getDB = async () => {
-    if (!dbRef.current) {
-      try {
-        dbRef.current = await initDB();
-      } catch (error) {
-        console.error('Failed to get DB connection:', error);
-        toast.error('Failed to connect to storage');
-        throw error;
-      }
+  const updateDataSize = async () => {
+    try {
+      const size = await estimateDrivingDataSize();
+      setDataSize(size);
+    } catch (error) {
+      console.error('Failed to estimate storage size:', error);
+      toast.error('Failed to estimate storage size');
     }
-    return dbRef.current;
   };
 
   const startRecording = async () => {
-    setIsLoading(true);
+    setIsStartingRecording(true);
     if (!navigator.geolocation) {
       console.error('Geolocation is not supported by your browser');
       toast.error('Geolocation is not supported by your browser');
-      setIsLoading(false);
+      setIsStartingRecording(false);
       return;
     }
 
-    // Request permission first
     try {
+      if ('permissions' in navigator) {
+        const permission = await navigator.permissions.query({
+          name: 'geolocation',
+        });
+        setPermissionStatus(permission.state);
+        if (permission.state === 'denied') {
+          toast.error(
+            'Location access is blocked. Please enable it in your Browser settings',
+            {
+              description: 'Settings > Browser > Location',
+              duration: 5000,
+            }
+          );
+          setIsStartingRecording(false);
+          return;
+        }
+      }
+
       await new Promise((resolve, reject) => {
         navigator.geolocation.getCurrentPosition(
-          resolve,
+          () => {
+            setPermissionStatus('granted');
+            resolve(true);
+          },
           (error) => {
             if (error.code === error.PERMISSION_DENIED) {
+              setPermissionStatus('denied');
               toast.error(
                 'Location permission denied. Please allow location access to record routes.'
               );
@@ -118,13 +117,13 @@ const useRecordDriving = () => {
       });
     } catch (error) {
       console.error('Permission error:', error);
-      setIsLoading(false);
+      setIsStartingRecording(false);
       return; // Exit early if permission denied
     }
 
     // Continue with recording if permission granted
     try {
-      const db = await getDB();
+      const db = await getDBConnection();
 
       if (recordingState === RecordingStates.PAUSED) {
         try {
@@ -140,7 +139,7 @@ const useRecordDriving = () => {
         } catch (error) {
           console.error('Failed to sync locations:', error);
           toast.error('Failed to sync locations');
-          setIsLoading(false);
+          setIsStartingRecording(false);
           return;
         }
       }
@@ -164,22 +163,33 @@ const useRecordDriving = () => {
             return;
           }
 
+          // Check if the new location is within the minimum interval
+          if (
+            lastTimestampRef.current &&
+            newLocation.timestamp - lastTimestampRef.current < MIN_INTERVAL_MS
+          ) {
+            console.log('Skipping location due to minimum interval');
+            return;
+          }
+
+          lastTimestampRef.current = newLocation.timestamp;
+
           try {
             const tx = db.transaction('locations', 'readwrite');
             const store = tx.objectStore('locations');
             await store.put(newLocation);
             await tx.done;
+            updateDataSize();
 
             setLocations((prevLocations) => {
-              const index = prevLocations.findIndex(
+              const exists = prevLocations.some(
                 (loc) => loc.timestamp === newLocation.timestamp
               );
-              if (index !== -1) {
-                const newLocations = [...prevLocations];
-                newLocations[index] = newLocation;
-                return newLocations;
+
+              if (!exists) {
+                return [...prevLocations, newLocation];
               }
-              return [...prevLocations, newLocation];
+              return prevLocations;
             });
           } catch (error) {
             console.error('Failed to save location:', error);
@@ -224,24 +234,13 @@ const useRecordDriving = () => {
       );
 
       setRecordingState(RecordingStates.RECORDING);
-      toast.success(
-        recordingState === RecordingStates.PAUSED
-          ? 'Resumed recording'
-          : 'Started recording'
-      );
     } catch (error) {
       console.error('Error starting recording:', error);
       toast.error('Failed to start recording');
       setRecordingState(RecordingStates.ERROR);
     } finally {
-      setIsLoading(false);
+      setIsStartingRecording(false);
     }
-  };
-
-  const stopRecording = () => {
-    console.log('Stopping recording');
-    clearNavigator();
-    setRecordingState(RecordingStates.STOPPED);
   };
 
   const pauseRecording = async () => {
@@ -250,39 +249,23 @@ const useRecordDriving = () => {
     setRecordingState(RecordingStates.PAUSED);
   };
 
-  const resetRecording = async () => {
+  const stopRecording = () => {
+    console.log('Stopping recording');
     clearNavigator();
-
-    try {
-      const db = await getDB();
-      const tx = db.transaction('locations', 'readwrite');
-      const store = tx.objectStore('locations');
-      const allLocations = await store.getAll();
-
-      // Delete locations
-      for (const location of allLocations) {
-        await store.delete(location.timestamp);
-      }
-
-      await tx.done;
-    } catch (error) {
-      console.error('Error clearing IndexedDB:', error);
-    }
-    setLocations([]);
-    setRecordingState(RecordingStates.IDLING);
+    setRecordingState(RecordingStates.STOPPED);
   };
 
   return {
     recordingState,
     locations,
     dataSize,
-    setLocations,
     startRecording,
     pauseRecording,
     stopRecording,
     resetRecording,
-    setRecordingState,
-    isLoading, // Expose loading state
+    isResetting,
+    isStartingRecording,
+    permissionStatus,
   };
 };
 

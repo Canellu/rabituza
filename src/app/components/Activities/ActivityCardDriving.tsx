@@ -20,7 +20,6 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import DeleteDialog from '../DeleteDialog';
 import * as ResizablePanel from '../ResizablePanel';
-import Spinner from '../Spinner';
 import DrivingCardHeader from './DrivingCardHeader';
 import RecordingCard from './RecordingCard';
 interface ActivityCardDrivingProps {
@@ -36,7 +35,6 @@ const ActivityCardDriving = ({
   const userId = getSession();
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [loadingPermission, setLoadingPermission] = useState(false);
   const [showCard, setShowCard] = useState<'recording' | 'driving'>('driving');
   const activityOutdated =
     new Date(activity.activityDate).toDateString() !==
@@ -94,60 +92,6 @@ const ActivityCardDriving = ({
 
   const handleExit = () => {
     setShowCard('driving');
-  };
-
-  const requestLocationPermission = async () => {
-    setLoadingPermission(true); // Set loading state to true
-    try {
-      // First check if permissions API is available
-      if ('permissions' in navigator) {
-        const permission = await navigator.permissions.query({
-          name: 'geolocation',
-        });
-        console.log('Permission state:', permission.state);
-
-        if (permission.state === 'denied') {
-          toast.error(
-            'Location access is blocked. Please enable it in your Browser settings',
-            {
-              description: 'Settings > Safari > Location',
-              duration: 5000,
-            }
-          );
-          return;
-        }
-      }
-
-      const result = await new Promise((resolve, _reject) => {
-        navigator.geolocation.getCurrentPosition(
-          () => resolve(true),
-          (error) => {
-            console.log('Geolocation error:', error.code, error.message);
-            if (error.code === error.PERMISSION_DENIED) {
-              toast.error('Please allow location access to record routes', {
-                description: 'Check Browser settings if no prompt appears',
-                duration: 5000,
-              });
-            }
-            resolve(false);
-          },
-          {
-            enableHighAccuracy: true,
-            timeout: 5000,
-            maximumAge: 0,
-          }
-        );
-      });
-
-      if (result) {
-        setShowCard('recording');
-      }
-    } catch (error) {
-      console.error('Error requesting location:', error);
-      toast.error('Failed to access location services');
-    } finally {
-      setLoadingPermission(false); // Reset loading state
-    }
   };
 
   return (
@@ -221,30 +165,26 @@ const ActivityCardDriving = ({
                         size="sm"
                         onClick={(e) => {
                           e.stopPropagation();
-                          requestLocationPermission();
+                          setShowCard('recording');
                         }}
-                        disabled={loadingPermission}
                       >
-                        {loadingPermission ? (
-                          <Spinner color="text-black" />
-                        ) : (
-                          <MapPin />
-                        )}
-                        {loadingPermission ? 'Loading...' : 'Record route'}
+                        <MapPin /> Record route
                       </Button>
                     )}
-                  {activity.routes && activity.routes.length > 0 && (
-                    <Button
-                      size="icon"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setShowCard('recording');
-                      }}
-                      disabled={true}
-                    >
-                      <MapPin />
-                    </Button>
-                  )}
+                  {activity.routes &&
+                    activity.routes.length > 0 &&
+                    activity.status === DrivingSessionStatuses.completed && (
+                      <Button
+                        size="icon"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setShowCard('recording');
+                        }}
+                        disabled={true}
+                      >
+                        <MapPin />
+                      </Button>
+                    )}
                 </div>
 
                 <div className="bg-stone-100 p-2 rounded-md mt-3 text-sm text-stone-700">

@@ -1,5 +1,44 @@
 import { DrivingDataType, GeoLocation } from '@/types/Activity';
 
+export const calculateSpeedMetrics = (geolocations: GeoLocation[]) => {
+  const speeds = geolocations
+    .map((loc) => loc.speed || 0)
+    .sort((a, b) => a - b);
+  const totalSpeed = speeds.reduce((total, speed) => total + speed, 0);
+  const mid = Math.floor(speeds.length / 2);
+
+  return {
+    max: speeds[speeds.length - 1] || 0,
+    min: speeds[0] || 0,
+    average: totalSpeed / speeds.length,
+    median:
+      speeds.length % 2 !== 0
+        ? speeds[mid]
+        : (speeds[mid - 1] + speeds[mid]) / 2,
+  };
+};
+
+export const calculateAccuracyMetrics = (geolocations: GeoLocation[]) => {
+  const accuracies = geolocations
+    .map((loc) => loc.accuracy)
+    .sort((a, b) => a - b);
+  const totalAccuracy = accuracies.reduce(
+    (total, accuracy) => total + accuracy,
+    0
+  );
+  const mid = Math.floor(accuracies.length / 2);
+
+  return {
+    max: accuracies[accuracies.length - 1] || 0,
+    min: accuracies[0] || 0,
+    average: totalAccuracy / accuracies.length,
+    median:
+      accuracies.length % 2 !== 0
+        ? accuracies[mid]
+        : (accuracies[mid - 1] + accuracies[mid]) / 2,
+  };
+};
+
 export const calculateTotalRouteDuration = (
   routes: DrivingDataType['routes'] = []
 ) => {

@@ -20,7 +20,6 @@ import { GiPauseButton } from 'react-icons/gi';
 import EndSessionDialog from '../EndSessionDialog';
 import ResetDialog from '../ResetDialog';
 import SaveDialog from '../SaveDialog';
-import Spinner from '../Spinner';
 import DrivingCardHeader from './DrivingCardHeader';
 import SavedRoutesList from './SavedRoutesList';
 
@@ -33,11 +32,14 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
   const {
     recordingState,
     locations,
+    dataSize,
     startRecording,
     pauseRecording,
     stopRecording,
     resetRecording,
-    dataSize,
+    isResetting,
+    isStartingRecording,
+    permissionStatus,
   } = useRecordDriving();
 
   const [showResetModal, setShowResetModal] = useState(false);
@@ -68,25 +70,19 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
 
   const getRecordingText = () => {
     switch (recordingState) {
-      case RecordingStates.RECORDING: {
-        if (locations.length > 0) {
-          return 'Recording...';
-        } else {
-          return (
-            <div className="flex items-center justify-center gap-2 text-sm text-stone-700">
-              <Spinner size="size-4" color="text-stone-500" />
-              <span>Waiting for location data...</span>
-            </div>
-          );
-        }
-      }
+      case RecordingStates.RECORDING:
+        return 'Recording...';
       case RecordingStates.PAUSED:
         return 'Paused';
       case RecordingStates.STOPPED:
         return 'Stopped';
-      case RecordingStates.IDLING:
-      default:
+      case RecordingStates.IDLING: {
+        if (isStartingRecording) return '';
         return 'Start recording';
+      }
+
+      default:
+        return '';
     }
   };
 
@@ -146,7 +142,7 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
   return (
     <div
       className={cn(
-        'relative p-4 rounded-lg',
+        'p-4 rounded-lg',
         'flex flex-col gap-3 border-2 border-transparent transition-all duration-500',
         (isRecording || isPaused) && 'border-green-600'
       )}
@@ -158,7 +154,7 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
           onClick={startRecording}
           size="icon"
           variant="secondary"
-          disabled={isRecording || isStopped}
+          disabled={isStartingRecording || isRecording || isStopped}
         >
           <div className="bg-destructive size-3.5 rounded-full" />
         </Button>
@@ -182,37 +178,32 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
           onClick={() => setShowResetModal(true)}
           size="icon"
           variant="secondary"
-          disabled={isRecording || locations.length === 0 || isIdle}
+          disabled={
+            isResetting || isRecording || locations.length === 0 || isIdle
+          }
         >
           <RotateCcw />
         </Button>
       </div>
 
-      <div className="flex flex-wrap gap-1 items-center justify-center p-2 text-xs rounded-md border bg-stone-100">
-        {locations.map((location) => {
-          return (
-            <span key={location.timestamp}>
-              {new Date(location.timestamp).toLocaleTimeString('en-US', {
-                hour12: false,
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-              })}
-              ,
-            </span>
-          );
-        })}
-      </div>
       <div className="border rounded-md overflow-hidden">
         <div
           className={cn(
             'flex items-center justify-center p-4',
+
             isRecording &&
               locations.length > 0 &&
-              'bg-green-500 text-green-800 font-semibold animate-pulse'
+              'bg-green-500 text-green-800 font-semibold '
           )}
         >
-          {getRecordingText()}
+          {isStartingRecording && 'Initializing...'}
+          <span
+            className={cn(
+              (isStartingRecording || isRecording) && 'animate-pulse'
+            )}
+          >
+            {getRecordingText()}
+          </span>
         </div>
         <div className={cn('flex flex-col bg-secondary text-stone-700 ')}>
           {locations.length === 0 && (
@@ -255,22 +246,37 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
         </div>
       </div>
 
-      <div className="space-y-1">
-        <Label className="text-sm">Saved Routes</Label>
-        <SavedRoutesList routes={activity.routes} />
-      </div>
+      {activity.routes && activity.routes.length > 0 && (
+        <div className="space-y-1">
+          <Label className="text-sm">Saved Routes</Label>
+          <SavedRoutesList routes={activity.routes} />
+        </div>
+      )}
 
       <div className="flex justify-between items-center gap-2 mt-4">
-        <Button variant="secondary" size="sm" onClick={handleExit}>
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={handleExit}
+          disabled={isResetting || isStartingRecording}
+        >
           Exit
         </Button>
         {isStopped && locations.length > 0 && (
-          <Button size="sm" onClick={() => setShowSaveModal(true)}>
+          <Button
+            size="sm"
+            onClick={() => setShowSaveModal(true)}
+            disabled={isResetting || isStartingRecording}
+          >
             Save Current Recording
           </Button>
         )}
         {isIdle && activity.routes && activity.routes.length > 0 && (
-          <Button size="sm" onClick={() => setShowEndSessionModal(true)}>
+          <Button
+            size="sm"
+            onClick={() => setShowEndSessionModal(true)}
+            disabled={isResetting || isStartingRecording}
+          >
             End session
           </Button>
         )}

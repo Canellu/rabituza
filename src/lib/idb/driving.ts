@@ -1,57 +1,43 @@
 import { GeoLocation } from '@/types/Activity';
-import { openDB } from 'idb';
+import { IDBPDatabase, openDB } from 'idb';
+import { toast } from 'sonner';
 
 const DRIVING_DB = 'drivingData';
+let dbPromise: Promise<IDBPDatabase> | null = null;
 
-export const initDB = async () => {
-  try {
-    console.log('Attempting to open database:', DRIVING_DB);
-    const db = await openDB(DRIVING_DB, 1, {
+const initDB = async () => {
+  if (!dbPromise) {
+    dbPromise = openDB(DRIVING_DB, 1, {
       upgrade(db) {
-        console.log('Running database upgrade');
         if (!db.objectStoreNames.contains('locations')) {
-          console.log('Creating locations store');
           db.createObjectStore('locations', {
             keyPath: 'timestamp',
           });
         }
       },
       blocked() {
-        const error = new Error('Database blocked - another version is open');
-        console.error(error);
-        throw error;
+        console.error('Database blocked - another version is open');
+        toast.error('Database blocked - another version is open');
       },
       blocking() {
-        const error = new Error(
-          'Database blocking - newer version attempting to open'
-        );
-        console.error(error);
-        throw error;
+        console.error('Database blocking - newer version attempting to open');
+        toast.error('Database blocking - newer version attempting to open');
       },
       terminated() {
-        const error = new Error('Database terminated unexpectedly');
-        console.error(error);
-        throw error;
+        console.error('Database terminated unexpectedly');
+        toast.error('Database terminated unexpectedly');
       },
     });
-
-    console.log('Database opened successfully');
-    return db;
-  } catch (error) {
-    // Enhanced error logging
-    console.error('Failed to initialize IndexedDB:', {
-      error,
-      type: error instanceof Error ? 'Error' : typeof error,
-      name: error instanceof Error ? error.name : 'Unknown',
-      message: error instanceof Error ? error.message : String(error),
-      stack: error instanceof Error ? error.stack : undefined,
-    });
-    throw error;
   }
+  return dbPromise;
+};
+
+export const getDBConnection = async (): Promise<IDBPDatabase> => {
+  return await initDB();
 };
 
 export const estimateDrivingDataSize = async (): Promise<number> => {
-  const db = await initDB();
+  const db = await getDBConnection();
   const tx = db.transaction('locations', 'readonly');
   const store = tx.objectStore('locations');
   const locations = await store.getAll();
@@ -61,9 +47,8 @@ export const estimateDrivingDataSize = async (): Promise<number> => {
   return sizeInBytes;
 };
 
-// Update other functions to use initDB
 export const countDrivingDataEntries = async (): Promise<number> => {
-  const db = await initDB();
+  const db = await getDBConnection();
   const tx = db.transaction('locations', 'readonly');
   const store = tx.objectStore('locations');
   const count = await store.count();
@@ -71,7 +56,7 @@ export const countDrivingDataEntries = async (): Promise<number> => {
 };
 
 export const getAllLocationsFromDB = async (): Promise<GeoLocation[]> => {
-  const db = await initDB();
+  const db = await getDBConnection();
   const tx = db.transaction('locations', 'readonly');
   const store = tx.objectStore('locations');
   const locations = await store.getAll();
@@ -81,7 +66,7 @@ export const getAllLocationsFromDB = async (): Promise<GeoLocation[]> => {
 export const getLocationsBySessionId = async (
   sessionId: string
 ): Promise<GeoLocation[]> => {
-  const db = await initDB();
+  const db = await getDBConnection();
   const tx = db.transaction('locations', 'readonly');
   const store = tx.objectStore('locations');
   const allLocations = await store.getAll();
@@ -89,7 +74,7 @@ export const getLocationsBySessionId = async (
 };
 
 export const deleteEntriesByDate = async (date: string): Promise<void> => {
-  const db = await initDB();
+  const db = await getDBConnection();
   const tx = db.transaction('locations', 'readwrite');
   const store = tx.objectStore('locations');
 
@@ -102,5 +87,16 @@ export const deleteEntriesByDate = async (date: string): Promise<void> => {
     }
   }
 
+  await tx.done;
+};
+
+export const clearAllLocations = async (): Promise<void> => {
+  const db = await getDBConnection();
+  const tx = db.transaction('locations', 'readwrite');
+  const store = tx.objectStore('locations');
+  const allKeys = await store.getAllKeys();
+  for (const key of allKeys) {
+    await store.delete(key);
+  }
   await tx.done;
 };
