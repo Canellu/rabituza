@@ -1,4 +1,4 @@
-import { DrivingDataType, GeoLocation } from '@/types/Activity';
+import { DrivingDataType, GeoLocation, Route } from '@/types/Activity';
 
 export const calculateSpeedMetrics = (geolocations: GeoLocation[]) => {
   const speeds = geolocations
@@ -120,4 +120,60 @@ export const getRouteTimestamps = (geolocations: GeoLocation[]) => {
     start: new Date(firstTimestamp),
     end: new Date(lastTimestamp),
   };
+};
+
+export const generateGeoJSON = (routes: Route[]) => {
+  return routes.map((route) => ({
+    type: 'Feature',
+    properties: {
+      id: route.id,
+      createdAt: route.createdAt,
+    },
+    geometry: {
+      type: 'LineString',
+      coordinates: route.geolocations.map((geo) => [
+        geo.longitude,
+        geo.latitude,
+      ]),
+    },
+  }));
+};
+
+export const encodeRouteToPolyline = (route: Route): string => {
+  let lastLat = 0;
+  let lastLng = 0;
+  let result = '';
+
+  route.geolocations.forEach(({ latitude, longitude }) => {
+    const latE5 = Math.round(latitude * 1e5);
+    const lngE5 = Math.round(longitude * 1e5);
+
+    const dLat = latE5 - lastLat;
+    const dLng = lngE5 - lastLng;
+
+    lastLat = latE5;
+    lastLng = lngE5;
+
+    result += encodeSignedNumber(dLat) + encodeSignedNumber(dLng);
+  });
+
+  return result;
+};
+
+const encodeSignedNumber = (num: number): string => {
+  let sgnNum = num << 1;
+  if (num < 0) {
+    sgnNum = ~sgnNum;
+  }
+  return encodeNumber(sgnNum);
+};
+
+const encodeNumber = (num: number): string => {
+  let encoded = '';
+  while (num >= 0x20) {
+    encoded += String.fromCharCode((0x20 | (num & 0x1f)) + 63);
+    num >>= 5;
+  }
+  encoded += String.fromCharCode(num + 63);
+  return encoded;
 };

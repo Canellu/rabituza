@@ -35,7 +35,9 @@ const ActivityCardDriving = ({
   const userId = getSession();
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [showCard, setShowCard] = useState<'recording' | 'driving'>('driving');
+  const [showCard, setShowCard] = useState<'recording' | 'driving' | 'map'>(
+    'driving'
+  );
   const activityOutdated =
     new Date(activity.activityDate).toDateString() !==
     new Date().toDateString();

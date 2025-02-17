@@ -19,7 +19,7 @@ import {
 } from '@/types/Activity';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Crosshair, Gauge, RotateCcw } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { GiPauseButton } from 'react-icons/gi';
 import EndSessionDialog from '../EndSessionDialog';
 import ResetDialog from '../ResetDialog';
@@ -135,10 +135,6 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
     resetRecording();
     onExit();
   };
-
-  useEffect(() => {
-    console.log(locations, activity);
-  }, [locations, activity]);
 
   const { value: dataAmount, unit: dataUnit } = bytesToText(dataSize);
 
