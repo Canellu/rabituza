@@ -42,7 +42,16 @@ const useRecordDriving = () => {
   useEffect(() => {
     const initDBAndLoadLocations = async () => {
       try {
-        // Initialize DB
+        // Test for IndexedDB availability and private browsing mode
+        const testRequest = indexedDB.open('test');
+        testRequest.onerror = () => {
+          console.error(
+            'IndexedDB is not available (possibly private browsing mode)'
+          );
+          setRecordingState(RecordingStates.ERROR);
+        };
+
+        // Initialize DB with error handling
         dbRef.current = await openDB(DRIVING_DB, 1, {
           upgrade(db) {
             if (!db.objectStoreNames.contains('locations')) {
@@ -51,14 +60,25 @@ const useRecordDriving = () => {
               });
             }
           },
+          blocked() {
+            console.error('Database blocked - another version is open');
+          },
+          blocking() {
+            console.error(
+              'Database blocking - newer version attempting to open'
+            );
+          },
+          terminated() {
+            console.error('Database terminated unexpectedly');
+          },
         });
 
         // Load locations
         const allLocations = await getAllLocationsFromDB();
         setLocations(allLocations);
-        console.log(allLocations);
       } catch (error) {
         console.error('Error initializing IndexedDB:', error);
+        setRecordingState(RecordingStates.ERROR);
       }
     };
 
@@ -104,6 +124,24 @@ const useRecordDriving = () => {
 
     try {
       const db = await getDB();
+
+      // Test storage availability
+      try {
+        const testData = { test: 'data' };
+        const tx = db.transaction('locations', 'readwrite');
+        await tx.objectStore('locations').add({
+          ...testData,
+          timestamp: Date.now(),
+        });
+        await tx.done;
+      } catch (error) {
+        console.error('Storage test failed:', error);
+        alert(
+          'Unable to store data. You might be in private browsing mode or out of storage space.'
+        );
+        setRecordingState(RecordingStates.ERROR);
+        return;
+      }
 
       if (recordingState === RecordingStates.PAUSED) {
         // Verify all locations are synced before resuming
