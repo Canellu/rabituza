@@ -1,12 +1,12 @@
 import {
   estimateDrivingDataSize,
   getAllLocationsFromDB,
+  initDB,
 } from '@/lib/idb/driving';
 import { GeoLocation } from '@/types/Activity';
-import { IDBPDatabase, openDB } from 'idb';
+import { IDBPDatabase } from 'idb';
 import { useEffect, useRef, useState } from 'react';
-
-const DRIVING_DB = 'drivingData';
+import { toast } from 'sonner';
 
 export const RecordingStates = {
   RECORDING: 'RECORDING',
@@ -31,60 +31,36 @@ const useRecordDriving = () => {
   // Update data size whenever locations change
   useEffect(() => {
     const updateDataSize = async () => {
-      const size = await estimateDrivingDataSize();
-      setDataSize(size);
+      try {
+        const size = await estimateDrivingDataSize();
+        setDataSize(size);
+      } catch (error) {
+        console.error('Failed to estimate data size:', error);
+        toast.error('Failed to calculate storage size');
+      }
     };
     updateDataSize();
   }, [locations]);
 
   // On mount: Initialize IndexedDB and load locations
   // On unmount: Clear geolocation watch and close DB connection
+  // Initialize IndexedDB and load locations
   useEffect(() => {
     const initDBAndLoadLocations = async () => {
       try {
-        // Test for IndexedDB availability and private browsing mode
-        const testRequest = indexedDB.open('test');
-        testRequest.onerror = () => {
-          console.error(
-            'IndexedDB is not available (possibly private browsing mode)'
-          );
-          setRecordingState(RecordingStates.ERROR);
-        };
-
-        // Initialize DB with error handling
-        dbRef.current = await openDB(DRIVING_DB, 1, {
-          upgrade(db) {
-            if (!db.objectStoreNames.contains('locations')) {
-              db.createObjectStore('locations', {
-                keyPath: 'timestamp',
-              });
-            }
-          },
-          blocked() {
-            console.error('Database blocked - another version is open');
-          },
-          blocking() {
-            console.error(
-              'Database blocking - newer version attempting to open'
-            );
-          },
-          terminated() {
-            console.error('Database terminated unexpectedly');
-          },
-        });
-
-        // Load locations
+        dbRef.current = await initDB();
         const allLocations = await getAllLocationsFromDB();
         setLocations(allLocations);
+        toast.success(`Loaded ${allLocations.length} locations from storage`);
       } catch (error) {
         console.error('Error initializing IndexedDB:', error);
+        toast.error('Failed to initialize storage');
         setRecordingState(RecordingStates.ERROR);
       }
     };
 
     initDBAndLoadLocations();
 
-    // Cleanup function
     return () => {
       if (dbRef.current) {
         dbRef.current.close();
@@ -103,63 +79,44 @@ const useRecordDriving = () => {
 
   const getDB = async () => {
     if (!dbRef.current) {
-      dbRef.current = await openDB(DRIVING_DB, 1, {
-        upgrade(db) {
-          if (!db.objectStoreNames.contains('locations')) {
-            db.createObjectStore('locations', {
-              keyPath: 'timestamp',
-            });
-          }
-        },
-      });
+      try {
+        dbRef.current = await initDB();
+      } catch (error) {
+        console.error('Failed to get DB connection:', error);
+        toast.error('Failed to connect to storage');
+        throw error;
+      }
     }
     return dbRef.current;
   };
 
   const startRecording = async () => {
     if (!navigator.geolocation) {
-      alert('Geolocation is not supported by your browser.');
+      toast.error('Geolocation is not supported by your browser');
       return;
     }
 
     try {
       const db = await getDB();
 
-      // Test storage availability
-      try {
-        const testData = { test: 'data' };
-        const tx = db.transaction('locations', 'readwrite');
-        await tx.objectStore('locations').add({
-          ...testData,
-          timestamp: Date.now(),
-        });
-        await tx.done;
-      } catch (error) {
-        console.error('Storage test failed:', error);
-        alert(
-          'Unable to store data. You might be in private browsing mode or out of storage space.'
-        );
-        setRecordingState(RecordingStates.ERROR);
-        return;
-      }
-
       if (recordingState === RecordingStates.PAUSED) {
-        // Verify all locations are synced before resuming
-        const tx = db.transaction('locations', 'readwrite');
-        const store = tx.objectStore('locations');
-        const dbLocations = await store.getAll();
+        try {
+          const tx = db.transaction('locations', 'readwrite');
+          const store = tx.objectStore('locations');
+          const dbLocations = await store.getAll();
 
-        // Verify local state matches DB state
-        const syncMismatch = locations.length !== dbLocations.length;
-        if (syncMismatch) {
-          setLocations(dbLocations); // Sync local state with DB
-          console.log('Synced local state with DB before resuming');
+          if (locations.length !== dbLocations.length) {
+            setLocations(dbLocations);
+            toast.info('Synced locations with storage');
+          }
+          await tx.done;
+        } catch (error) {
+          console.error('Failed to sync locations:', error);
+          toast.error('Failed to sync locations');
+          return;
         }
-
-        await tx.done;
       }
 
-      // Start watching position before updating state
       watchIdRef.current = navigator.geolocation.watchPosition(
         async (position) => {
           const newLocation: GeoLocation = {
@@ -169,20 +126,15 @@ const useRecordDriving = () => {
           };
 
           try {
-            // Start new transaction
             const tx = db.transaction('locations', 'readwrite');
             const store = tx.objectStore('locations');
             await store.put(newLocation);
             await tx.done;
 
-            // Update locations state, handling potential duplicate timestamps
-            // If a location with the same timestamp exists, update it
-            // Otherwise, append the new location to the array
             setLocations((prevLocations) => {
               const index = prevLocations.findIndex(
                 (loc) => loc.timestamp === newLocation.timestamp
               );
-
               if (index !== -1) {
                 const newLocations = [...prevLocations];
                 newLocations[index] = newLocation;
@@ -191,11 +143,13 @@ const useRecordDriving = () => {
               return [...prevLocations, newLocation];
             });
           } catch (error) {
-            console.error('Error saving location to IndexedDB:', error);
+            console.error('Failed to save location:', error);
+            toast.error('Failed to save location');
           }
         },
         (error) => {
           console.error('Error watching position:', error);
+          toast.error('Failed to track location');
           setRecordingState(RecordingStates.STOPPED);
         },
         {
@@ -206,17 +160,17 @@ const useRecordDriving = () => {
       );
 
       setRecordingState(RecordingStates.RECORDING);
-      console.log(
+      toast.success(
         recordingState === RecordingStates.PAUSED
           ? 'Resumed recording'
           : 'Started recording'
       );
     } catch (error) {
       console.error('Error starting recording:', error);
+      toast.error('Failed to start recording');
       setRecordingState(RecordingStates.ERROR);
     }
   };
-
   const stopRecording = () => {
     console.log('Stopping recording');
     clearNavigator();
