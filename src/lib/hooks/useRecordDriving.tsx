@@ -147,10 +147,10 @@ const useRecordDriving = () => {
       watchIdRef.current = navigator.geolocation.watchPosition(
         async (position) => {
           const newLocation: GeoLocation = {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
+            latitude: parseFloat(position.coords.latitude.toFixed(4)),
+            longitude: parseFloat(position.coords.longitude.toFixed(4)),
             timestamp: position.timestamp,
-            accuracy: position.coords.accuracy,
+            accuracy: Math.round(position.coords.accuracy),
             speed: position.coords.speed,
           };
 
