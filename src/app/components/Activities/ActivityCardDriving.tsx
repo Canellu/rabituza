@@ -73,19 +73,14 @@ const ActivityCardDriving = ({
       // Try to delete IDB entries first
       try {
         await deleteEntriesByDate(activityDate);
-        toast('Local route data deleted successfully');
       } catch (idbError) {
         console.error('Failed to delete local route data:', idbError);
-        toast(
-          'Failed to delete local route data, but continuing with activity deletion'
-        );
         // Continue with activity deletion even if IDB fails
       }
 
       // Delete the activity from Firestore
       deleteActivityMutation({ userId, activityId: activity.id });
       setShowDeleteDialog(false);
-      toast('Activity deleted successfully');
     } catch (error) {
       console.error('Failed to delete activity:', error);
       toast('Failed to delete activity. Please try again.');
