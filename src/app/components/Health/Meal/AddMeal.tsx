@@ -2,19 +2,19 @@
 
 import { Button } from '@/components/ui/button';
 import {
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-} from '@/components/ui/drawer';
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'; // Import Dialog components
 import { createNutrition } from '@/lib/database/nutrition/nutrients/createNutrition';
 import { getSession } from '@/lib/utils/userSession';
 import { Meal, MealItem, MealType, MealTypes } from '@/types/Nutrition';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
+import AnimateHeight from '../../AnimateHeight';
 import DateTimePicker from '../../DateTimePicker';
 import NotesInput from '../../NotesInput';
-import * as ResizablePanel from '../../ResizablePanel';
 import SaveButtonDrawer from '../../SaveButtonDrawer';
 import MealItemEditor from './MealItemEditor';
 import MealTypeSelector from './MealTypeSelector';
@@ -97,20 +97,20 @@ const AddMeal = () => {
         Add meal
       </Button>
 
-      <Drawer
+      <Dialog
         open={isOpen}
         onOpenChange={(open) => {
           setIsOpen(open);
-          if (!open) resetForm(); // Reset form when drawer is closed
+          if (!open) resetForm(); // Reset form when dialog is closed
         }}
       >
-        <DrawerContent className="fixed flex flex-col bg-white border border-gray-200 border-b-none rounded-t-[10px] bottom-0 left-0 right-0 h-full max-h-[98%] mx-[-1px]">
-          <DrawerHeader>
-            <DrawerTitle>Add Meal</DrawerTitle>
-          </DrawerHeader>
+        <DialogContent className="max-w-lg w-[96%] h-[96dvh] overflow-y-auto rounded-lg flex flex-col p-0 py-6">
+          <DialogHeader>
+            <DialogTitle>Add Meal</DialogTitle>
+          </DialogHeader>
           <div className="flex-grow overflow-y-auto">
-            <div className="p-4 pb-16 h-full overflow-auto">
-              <div className="flex flex-col gap-4">
+            <div className="h-full overflow-auto">
+              <div className="flex flex-col gap-4 p-4">
                 <DateTimePicker date={mealDate} onDateChange={setMealDate} />
 
                 <MealTypeSelector
@@ -130,26 +130,20 @@ const AddMeal = () => {
                       Add to Meal
                     </Button>
                   </div>
-                  {mealItems.length > 0 && (
-                    <ResizablePanel.Root value={'mealItems'}>
-                      <ResizablePanel.Content value="mealItems">
-                        <div className="flex flex-col gap-2">
-                          {mealItems.map((item, index) => (
-                            <MealItemEditor
-                              key={index}
-                              mealItem={item}
-                              onUpdateMealItem={(updatedItem) =>
-                                handleUpdateMealItem(index, updatedItem)
-                              }
-                              onRemoveMealItem={() =>
-                                handleRemoveMealItem(index)
-                              }
-                            />
-                          ))}
-                        </div>
-                      </ResizablePanel.Content>
-                    </ResizablePanel.Root>
-                  )}
+                  <AnimateHeight isOpen={mealItems.length > 0}>
+                    <div className="flex flex-col gap-2">
+                      {mealItems.map((item, index) => (
+                        <MealItemEditor
+                          key={index}
+                          mealItem={item}
+                          onUpdateMealItem={(updatedItem) =>
+                            handleUpdateMealItem(index, updatedItem)
+                          }
+                          onRemoveMealItem={() => handleRemoveMealItem(index)}
+                        />
+                      ))}
+                    </div>
+                  </AnimateHeight>
                 </div>
 
                 <NotesInput note={notes} onNoteChange={setNotes} />
@@ -163,8 +157,8 @@ const AddMeal = () => {
               </div>
             </div>
           </div>
-        </DrawerContent>
-      </Drawer>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };
