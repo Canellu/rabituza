@@ -8,7 +8,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Food, Portion } from '@/types/Food';
-import { MealItem } from '@/types/Nutrition';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { BaseNutritionStringed } from './BaseNutritionInputs';
 import { FoodSearch } from './FoodSearch';
@@ -16,26 +15,26 @@ import { FoodSearch } from './FoodSearch';
 interface MealSearchFormProps {
   itemName: string;
   setItemName: Dispatch<SetStateAction<string>>;
-  mealItem: MealItem;
-  onUpdateMealItem: (item: MealItem) => void;
+  calories: string;
+  setCalories: Dispatch<SetStateAction<string>>;
+  quantity: string;
+  setQuantity: Dispatch<SetStateAction<string>>;
+  baseNutrition: BaseNutritionStringed;
+  setBaseNutrition: Dispatch<SetStateAction<BaseNutritionStringed>>;
 }
 
 const MealSearchForm = ({
   itemName,
   setItemName,
-  mealItem,
-  onUpdateMealItem,
+  calories,
+  setCalories,
+  quantity,
+  setQuantity,
+  baseNutrition,
+  setBaseNutrition,
 }: MealSearchFormProps) => {
   const [selectedPortion, setSelectedPortion] = useState<Portion | null>(null);
   const [portions, setPortions] = useState<Portion[]>([]);
-  const [portionAmount, setPortionAmount] = useState('');
-  const [baseNutrition, setBaseNutrition] = useState<BaseNutritionStringed>({
-    calories: '',
-    protein: '',
-    carbs: '',
-    fat: '',
-    fiber: '',
-  });
 
   const handleSearchSelect = (food: Food) => {
     console.log(food);
@@ -46,6 +45,10 @@ const MealSearchForm = ({
     }
   };
 
+  const handleSearchClear = () => {
+    setPortions([]);
+  };
+
   return (
     <>
       <FoodSearch
@@ -53,9 +56,9 @@ const MealSearchForm = ({
         value={itemName}
         onChange={(text) => {
           setItemName(text);
-          onUpdateMealItem({ ...mealItem, name: text });
         }}
         onSelect={handleSearchSelect}
+        onClear={handleSearchClear}
         className="flex-shrink"
       />
       <div className="space-y-2">
@@ -70,13 +73,9 @@ const MealSearchForm = ({
                 name="portionAmount"
                 type="text"
                 inputMode="numeric"
-                value={portionAmount}
+                value={quantity}
                 onChange={(e) => {
-                  setPortionAmount(e.target.value);
-                  onUpdateMealItem({
-                    ...mealItem,
-                    name: e.target.value,
-                  });
+                  setQuantity(e.target.value);
                 }}
                 className="text-ellipsis"
               />

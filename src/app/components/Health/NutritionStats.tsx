@@ -87,7 +87,7 @@ const NutritionStats = ({
             className={cn(
               'text-7xl font-semibold text-center ',
               'transition-colors duration-200 ease-in-out',
-              isOvereaten ? 'text-yellow-600' : 'text-emerald-800'
+              isOvereaten ? 'text-orange-500' : 'text-emerald-800'
             )}
           >
             <AnimatedValue value={todaysCalories} />
@@ -96,7 +96,7 @@ const NutritionStats = ({
             className={cn(
               'text-sm',
               'transition-colors duration-200 ease-in-out',
-              isOvereaten ? 'text-yellow-700' : 'text-emerald-900'
+              isOvereaten ? 'text-orange-600' : 'text-emerald-900'
             )}
           >
             {isOvereaten ? 'calories exceeding target' : 'remaining calories'}

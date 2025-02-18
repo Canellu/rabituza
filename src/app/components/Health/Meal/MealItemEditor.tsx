@@ -66,12 +66,12 @@ const MealItemEditor = ({
   return (
     <ResizablePanel.Root
       value={isExpanded}
-      className="bg-white border p-4 rounded-md relative pr-11 space-y-2"
+      className="bg-white border p-4 rounded-md relative space-y-2"
     >
       {/* Header */}
       <div
         className={cn(
-          'flex-row-reverse items-center justify-between',
+          'flex-row-reverse items-center justify-between pr-8',
           isExpanded === 'expanded' && 'mb-2'
         )}
         onClick={() => setIsExpanded('expanded')}
@@ -149,8 +149,12 @@ const MealItemEditor = ({
             <MealSearchForm
               itemName={itemName}
               setItemName={setItemName}
-              mealItem={mealItem}
-              onUpdateMealItem={onUpdateMealItem}
+              calories={calories}
+              setCalories={setCalories}
+              quantity={quantity}
+              setQuantity={setQuantity}
+              baseNutrition={baseNutrition}
+              setBaseNutrition={setBaseNutrition}
             />
           )}
 
