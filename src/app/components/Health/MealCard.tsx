@@ -44,7 +44,7 @@ const MealCard = ({ meal }: MealCardProps) => {
     mutationFn: ({ userId, mealId }: { userId: string; mealId: string }) =>
       deleteNutrition(userId, mealId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['meals', userId] });
+      queryClient.invalidateQueries({ queryKey: ['nutrients', userId] });
     },
     onError: (error) => {
       console.error('Failed to delete meal:', error);

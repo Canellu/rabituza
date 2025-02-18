@@ -1,5 +1,8 @@
 'use client';
 
+import { Progress } from '@/components/ui/progress';
+import { cn } from '@/lib/utils';
+import { calculateMealsTotals } from '@/lib/utils/nutrition';
 import { Meal, NutritionTarget } from '@/types/Nutrition';
 import { easeInOut, motion } from 'framer-motion';
 import AnimatedValue from '../AnimatedValue';
@@ -29,19 +32,22 @@ const NutritionStats = ({
     (meal) => meal.mealDate.toDateString() === selectedDay.toDateString()
   );
 
-  // Calculate total calories from all meal items for the selected day
-  const totalMealCalories = mealsForSelectedDay.reduce((total, meal) => {
-    return (
-      total +
-      meal.mealItems.reduce((mealTotal, item) => mealTotal + item.calories, 0)
-    );
-  }, 0);
+  // Calculate total nutritional values for the selected day using calculateMealsTotals
+  const totalNutrients = calculateMealsTotals(mealsForSelectedDay);
 
   // Calculate remaining calories by subtracting total meal calories from target calories
   const remainingCalories =
     isTargetDay && nutritionTarget
-      ? nutritionTarget.calories - totalMealCalories
+      ? nutritionTarget.calories - totalNutrients.calories
       : '-';
+
+  const remainingCaloriesValue =
+    typeof remainingCalories === 'number' ? remainingCalories : 0;
+  const isOvereaten = remainingCaloriesValue < 0;
+  const todaysCalories = isOvereaten
+    ? `${Math.abs(remainingCaloriesValue)}`
+    : remainingCaloriesValue;
+
   if (isLoading) {
     return (
       <div className="h-[174px] flex items-center flex-col gap-3 justify-center animate-pulse">
@@ -59,6 +65,13 @@ const NutritionStats = ({
     );
   }
 
+  const nutrients = [
+    { label: 'Carbs', value: totalNutrients.carbs },
+    { label: 'Protein', value: totalNutrients.protein },
+    { label: 'Fat', value: totalNutrients.fat },
+    { label: 'Fiber', value: totalNutrients.fiber },
+  ];
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -68,37 +81,71 @@ const NutritionStats = ({
     >
       <div className="flex">
         <div className="text-center flex flex-col">
-          <span className="text-7xl font-semibold text-emerald-800 text-center">
-            <AnimatedValue value={remainingCalories} />
+          <span
+            className={cn(
+              'text-7xl font-semibold text-center ',
+              'transition-colors duration-200 ease-in-out',
+              isOvereaten ? 'text-yellow-600' : 'text-emerald-800'
+            )}
+          >
+            <AnimatedValue value={todaysCalories} />
           </span>
-          <span className="text-emerald-900 text-sm">remaining calories</span>
+          <span
+            className={cn(
+              'text-sm',
+              'transition-colors duration-200 ease-in-out',
+              isOvereaten ? 'text-yellow-700' : 'text-emerald-900'
+            )}
+          >
+            {isOvereaten ? 'calories exceeding target' : 'remaining calories'}
+          </span>
         </div>
       </div>
       <div className="grid grid-cols-4 gap-2 w-full text-stone-700">
-        <div className="flex flex-col gap-1 items-center text-center bg-emerald-50 border rounded-lg py-2 px-2">
-          <span className="text-xs text-emerald-800">Carbs</span>
-          <span className="font-medium text-sm text-emerald-900">
-            {isTargetDay ? nutritionTarget.carbs : '-'}
-          </span>
-        </div>
-        <div className="flex flex-col gap-1 items-center text-center bg-emerald-50 border rounded-lg py-2 px-2">
-          <span className="text-xs text-emerald-800">Protein</span>
-          <span className="font-medium text-sm text-emerald-900">
-            {isTargetDay ? nutritionTarget.protein : '-'}
-          </span>
-        </div>
-        <div className="flex flex-col gap-1 items-center text-center bg-emerald-50 border rounded-lg py-2 px-2">
-          <span className="text-xs text-emerald-800">Fat</span>
-          <span className="font-medium text-sm text-emerald-900">
-            {isTargetDay ? nutritionTarget.fat : '-'}
-          </span>
-        </div>
-        <div className="flex flex-col gap-1 items-center text-center bg-emerald-50 border rounded-lg py-2 px-2">
-          <span className="text-xs text-emerald-800">Fiber</span>
-          <span className="font-medium text-sm text-emerald-900">
-            {isTargetDay ? nutritionTarget.fiber : '-'}
-          </span>
-        </div>
+        {nutrients.map((nutrient) => {
+          const targetValue =
+            nutritionTarget[
+              nutrient.label.toLowerCase() as keyof Pick<
+                NutritionTarget,
+                'carbs' | 'protein' | 'fat' | 'fiber'
+              >
+            ];
+          const percentage = targetValue
+            ? Math.min((nutrient.value / targetValue) * 100, 100)
+            : 0;
+
+          // Determine if the nutrient value is exceeding or below the target
+          const isExceeding =
+            nutrient.label === 'Carbs' || nutrient.label === 'Fat'
+              ? nutrient.value > targetValue
+              : nutrient.value < targetValue;
+
+          return (
+            <div
+              key={nutrient.label}
+              className={cn(
+                'flex flex-col gap-1 items-center text-center',
+                'border rounded-lg py-2 px-2',
+                'bg-secondary'
+              )}
+            >
+              <span className={cn('text-xs font-medium')}>
+                {nutrient.label}
+              </span>
+              <div className={cn('font-medium text-xs')}>
+                <AnimatedValue value={nutrient.value} /> /{' '}
+                <span>{String(targetValue)}</span>
+              </div>
+              <Progress
+                value={percentage}
+                className={cn('w-full h-2 border')}
+                classNameIndicator={cn(
+                  isExceeding ? 'bg-orange-500' : 'bg-emerald-600'
+                )}
+              />
+            </div>
+          );
+        })}
       </div>
     </motion.div>
   );

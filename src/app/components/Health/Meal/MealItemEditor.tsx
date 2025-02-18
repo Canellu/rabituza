@@ -66,7 +66,7 @@ const MealItemEditor = ({
   return (
     <ResizablePanel.Root
       value={isExpanded}
-      className="bg-white border p-4 rounded-md relative pr-11"
+      className="bg-white border p-4 rounded-md relative pr-11 space-y-2"
     >
       {/* Header */}
       <div
@@ -95,7 +95,7 @@ const MealItemEditor = ({
         size="icon"
         variant="ghost"
         onClick={onRemoveMealItem}
-        className="absolute top-0.5 right-0.5"
+        className="absolute top-0.5 right-0.5 !m-0"
       >
         <X />
       </Button>

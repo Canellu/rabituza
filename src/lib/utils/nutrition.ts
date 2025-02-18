@@ -1,3 +1,4 @@
+import { Meal } from '@/types/Nutrition';
 import { User } from '@/types/User';
 import { differenceInYears } from 'date-fns';
 
@@ -155,3 +156,38 @@ export const nutritionalGoals = {
     fiberAdjustment: 1.1, // Slight fiber increase
   },
 } as const;
+
+export const calculateMealTotals = (meal: Meal) => {
+  const totals = meal.mealItems.reduce(
+    (acc, item) => {
+      acc.carbs += item.carbs;
+      acc.fat += item.fat;
+      acc.fiber += item.fiber;
+      acc.protein += item.protein;
+      acc.calories += item.calories;
+      return acc;
+    },
+    { carbs: 0, fat: 0, fiber: 0, protein: 0, calories: 0 }
+  );
+
+  return totals;
+};
+
+export const calculateMealsTotals = (meals: Meal[]) => {
+  const totals = meals.reduce(
+    (acc, meal) => {
+      const mealTotals = calculateMealTotals(meal);
+      acc.carbs += mealTotals.carbs;
+      acc.fat += mealTotals.fat;
+      acc.fiber += mealTotals.fiber;
+      acc.protein += mealTotals.protein;
+      acc.calories += mealTotals.calories;
+      return acc;
+    },
+    { carbs: 0, fat: 0, fiber: 0, protein: 0, calories: 0 }
+  );
+
+  return totals;
+};
+
+// ... existing code ...

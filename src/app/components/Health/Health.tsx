@@ -24,7 +24,7 @@ const Health = () => {
   });
 
   const { data: meals = [] } = useQuery({
-    queryKey: ['meals', userId],
+    queryKey: ['nutrients', userId],
     queryFn: async () => {
       if (!userId) throw new Error('User ID is null');
       return getNutrition(userId);
@@ -73,7 +73,7 @@ const Health = () => {
       {meals.length > 0 && (
         <div className="space-y-2">
           <h2 className="text-xl font-semibold">Today&apos;s Meals</h2>
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
             {meals.map((meal) => (
               <MealCard key={meal.id} meal={meal} />
             ))}

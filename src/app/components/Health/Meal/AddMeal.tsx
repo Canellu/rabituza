@@ -39,7 +39,7 @@ const AddMeal = () => {
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({
-        queryKey: ['nutrition', userId],
+        queryKey: ['nutrients', userId],
         exact: true,
       });
       setIsOpen(false);
