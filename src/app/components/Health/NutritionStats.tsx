@@ -1,6 +1,7 @@
 'use client';
 
 import { Progress } from '@/components/ui/progress';
+import ScrollShadow from '@/components/ui/ScrollShadow';
 import { cn } from '@/lib/utils';
 import { calculateMealsTotals } from '@/lib/utils/nutrition';
 import { Meal, NutritionTarget } from '@/types/Nutrition';
@@ -42,8 +43,9 @@ const NutritionStats = ({
       : '-';
 
   const remainingCaloriesValue =
-    typeof remainingCalories === 'number' ? remainingCalories : 0;
-  const isOvereaten = remainingCaloriesValue < 0;
+    typeof remainingCalories === 'number' ? remainingCalories : '-';
+  const isOvereaten =
+    typeof remainingCaloriesValue === 'number' && remainingCaloriesValue < 0;
   const todaysCalories = isOvereaten
     ? `${Math.abs(remainingCaloriesValue)}`
     : remainingCaloriesValue;
@@ -66,10 +68,10 @@ const NutritionStats = ({
   }
 
   const nutrients = [
-    { label: 'Carbs', value: totalNutrients.carbs },
     { label: 'Protein', value: totalNutrients.protein },
-    { label: 'Fat', value: totalNutrients.fat },
     { label: 'Fiber', value: totalNutrients.fiber },
+    { label: 'Carbs', value: totalNutrients.carbs },
+    { label: 'Fat', value: totalNutrients.fat },
   ];
 
   return (
@@ -101,52 +103,62 @@ const NutritionStats = ({
           </span>
         </div>
       </div>
-      <div className="grid grid-cols-4 gap-2 w-full text-stone-700">
-        {nutrients.map((nutrient) => {
-          const targetValue =
-            nutritionTarget[
-              nutrient.label.toLowerCase() as keyof Pick<
-                NutritionTarget,
-                'carbs' | 'protein' | 'fat' | 'fiber'
-              >
-            ];
-          const percentage = targetValue
-            ? Math.min((nutrient.value / targetValue) * 100, 100)
-            : 0;
 
-          // Determine if the nutrient value is exceeding or below the target
-          const isExceeding =
-            nutrient.label === 'Carbs' || nutrient.label === 'Fat'
-              ? nutrient.value > targetValue
-              : nutrient.value < targetValue;
+      <ScrollShadow orientation="horizontal" className="w-full" hideScrollBar>
+        <div className={cn('flex gap-2 w-full text-stone-700')}>
+          {nutrients.map((nutrient) => {
+            const targetValue =
+              nutritionTarget[
+                nutrient.label.toLowerCase() as keyof Pick<
+                  NutritionTarget,
+                  'carbs' | 'protein' | 'fat' | 'fiber'
+                >
+              ];
 
-          return (
-            <div
-              key={nutrient.label}
-              className={cn(
-                'flex flex-col gap-1 items-center text-center',
-                'border rounded-lg py-2 px-2',
-                'bg-secondary'
-              )}
-            >
-              <span className={cn('text-xs font-medium')}>
-                {nutrient.label}
-              </span>
-              <div className={cn('font-medium text-xs')}>
-                <AnimatedValue value={nutrient.value} /> /{' '}
-                <span>{String(targetValue)}</span>
-              </div>
-              <Progress
-                value={percentage}
-                className={cn('w-full h-2 border')}
-                classNameIndicator={cn(
-                  isExceeding ? 'bg-orange-500' : 'bg-emerald-600'
+            const percentage = targetValue
+              ? Math.min((nutrient.value / targetValue) * 100, 100)
+              : 0;
+
+            // Determine if the nutrient value is exceeding or below the target
+            const isExceeding =
+              nutrient.label === 'Carbs' || nutrient.label === 'Fat'
+                ? nutrient.value > targetValue
+                : nutrient.value < targetValue;
+
+            return (
+              <div
+                key={nutrient.label}
+                className={cn(
+                  'flex flex-col gap-1 items-start',
+                  'px-4 py-3 min-w-32',
+                  'border bg-white rounded-xl',
+                  'text-xs font-semibold'
                 )}
-              />
-            </div>
-          );
-        })}
-      </div>
+              >
+                <p>{nutrient.label}</p>
+                <div className="text-stone-800 space-x-px mb-1">
+                  <AnimatedValue value={isTargetDay ? nutrient.value : '-'} />
+                  <span>/</span>
+                  <span className="text-stone-500">
+                    {isTargetDay ? `${String(targetValue)}g` : '-'}
+                  </span>
+                </div>
+
+                <Progress
+                  value={percentage}
+                  className={cn('w-full h-2')}
+                  classNameIndicator={cn(
+                    'bg-gradient-to-r rounded-r-full',
+                    isExceeding
+                      ? 'from-orange-600 to-orange-300'
+                      : 'from-emerald-700 to-emerald-300'
+                  )}
+                />
+              </div>
+            );
+          })}
+        </div>
+      </ScrollShadow>
     </motion.div>
   );
 };

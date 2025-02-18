@@ -5,6 +5,7 @@ import { getNutritionTargets } from '@/lib/database/nutrition/targets/getNutriti
 import { cn } from '@/lib/utils';
 import { getSession } from '@/lib/utils/userSession';
 import { useQuery } from '@tanstack/react-query';
+import { Frown } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import MealCard from './MealCard';
 import NutritionMonth from './NutritionMonth';
@@ -44,6 +45,10 @@ const Health = () => {
     console.log(meals, meals.length);
   }, [meals]);
 
+  const todaysMeals = meals.filter(
+    (meal) => meal.mealDate.toDateString() === selectedDay.toDateString()
+  );
+
   return (
     <div className="h-full space-y-10">
       <NutritionDayPicker
@@ -70,16 +75,28 @@ const Health = () => {
         </section>
       )}
 
-      {meals.length > 0 && (
-        <div className="space-y-2">
-          <h2 className="text-xl font-semibold">Today&apos;s Meals</h2>
+      <div className="space-y-2">
+        <h2 className="text-xl font-semibold">Meals</h2>
+        {todaysMeals.length > 0 ? (
           <div className="flex flex-col gap-2">
-            {meals.map((meal) => (
-              <MealCard key={meal.id} meal={meal} />
-            ))}
+            {todaysMeals
+              .filter(
+                (meal) =>
+                  meal.mealDate.toDateString() === selectedDay.toDateString()
+              )
+              .map((meal) => (
+                <MealCard key={meal.id} meal={meal} />
+              ))}
           </div>
-        </div>
-      )}
+        ) : (
+          <div className="bg-secondary border rounded-xl p-4 white flex items-center gap-2 text-stone-600">
+            <Frown className="size-5" />
+            <span className="leading-none mt-px">
+              No meals addded on this date
+            </span>
+          </div>
+        )}
+      </div>
       <NutritionMonth target={nutritionTarget} />
     </div>
   );
