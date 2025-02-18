@@ -1,4 +1,5 @@
 import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 import {
   LOWER_BODY_STRETCHES,
   SPLITS_AND_PANCAKE_STRETCHES,
@@ -60,15 +61,21 @@ const StretchGroup = ({
   onStretchChange,
 }: StretchGroupProps) => (
   <div>
-    <h3 className="font-medium text-stone-700 mb-2">{title}</h3>
-    <div className="grid grid-cols-2 gap-2">
+    <h3 className="font-medium text-stone-700 mb-4">{title}</h3>
+    <div className="grid grid-cols-2 gap-y-1.5 gap-x-2">
       {stretches.map((stretch) => (
-        <div key={stretch} className="flex items-center gap-2">
+        <div key={stretch} className="flex items-center">
           <Checkbox
+            id={stretch}
             checked={selectedStretches.includes(stretch)}
             onCheckedChange={() => onStretchChange(stretch)}
           />
-          <span>{stretch}</span>
+          <Label
+            htmlFor={stretch}
+            className="font-normal w-full px-2 pt-1.5 pb-1 max-w-none whitespace-nowrap"
+          >
+            {stretch}
+          </Label>
         </div>
       ))}
     </div>

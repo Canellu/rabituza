@@ -89,7 +89,7 @@ const StretchingForm = ({ onClose, initialData }: StretchingFormProps) => {
   };
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-6">
       <DateTimePicker date={activityDate} onDateChange={setActivityDate} />
       <ActivityRatings ratings={ratings} onChange={setRatings} />
 
