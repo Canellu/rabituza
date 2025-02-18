@@ -8,7 +8,7 @@ import {
   serverTimestamp,
   setDoc,
 } from 'firebase/firestore';
-import { db } from '../firebaseConfig';
+import { db } from '../../firebaseConfig';
 
 export async function createOrUpdateNutritionTarget(
   userId: string,

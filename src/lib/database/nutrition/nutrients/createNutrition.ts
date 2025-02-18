@@ -1,17 +1,12 @@
 import { Meal } from '@/types/Nutrition';
-import {
-  collection,
-  doc,
-  serverTimestamp,
-  writeBatch,
-} from 'firebase/firestore';
-import { db } from '../firebaseConfig';
+import { collection, doc, serverTimestamp, setDoc } from 'firebase/firestore';
+import { db } from '../../firebaseConfig';
 
 export async function createNutrition(
   userId: string,
   nutritionData: Omit<Meal, 'id' | 'userId' | 'createdAt' | 'updatedAt'>
 ) {
-  const nutritionId = doc(collection(db, 'nutrition')).id;
+  const nutritionId = doc(collection(db, 'nutrients')).id;
 
   const nutritionWithUserAndId = {
     ...(nutritionData as object),
@@ -21,11 +16,9 @@ export async function createNutrition(
     updatedAt: serverTimestamp(),
   };
 
-  const userNutritionRef = doc(db, `users/${userId}/nutrition`, nutritionId);
+  const userNutritionRef = doc(db, `users/${userId}/nutrients`, nutritionId);
 
-  const batch = writeBatch(db);
-  batch.set(userNutritionRef, nutritionWithUserAndId);
-  await batch.commit();
+  await setDoc(userNutritionRef, nutritionWithUserAndId);
 
   return nutritionId;
 }

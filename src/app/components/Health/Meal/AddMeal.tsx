@@ -7,13 +7,14 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from '@/components/ui/drawer';
-import { createNutrition } from '@/lib/database/nutrition/createNutrition';
+import { createNutrition } from '@/lib/database/nutrition/nutrients/createNutrition';
 import { getSession } from '@/lib/utils/userSession';
 import { Meal, MealItem, MealType, MealTypes } from '@/types/Nutrition';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import DateTimePicker from '../../DateTimePicker';
 import NotesInput from '../../NotesInput';
+import * as ResizablePanel from '../../ResizablePanel';
 import SaveButtonDrawer from '../../SaveButtonDrawer';
 import MealItemEditor from './MealItemEditor';
 import MealTypeSelector from './MealTypeSelector';
@@ -21,11 +22,12 @@ import MealTypeSelector from './MealTypeSelector';
 const AddMeal = () => {
   const userId = getSession();
   const queryClient = useQueryClient();
+
   const [isOpen, setIsOpen] = useState(false);
+
   const [mealDate, setMealDate] = useState(new Date());
   const [mealType, setMealType] = useState<MealType>(MealTypes.Breakfast);
   const [mealItems, setMealItems] = useState<MealItem[]>([]);
-
   const [notes, setNotes] = useState('');
 
   const { mutate, isPending } = useMutation({
@@ -102,7 +104,7 @@ const AddMeal = () => {
           if (!open) resetForm(); // Reset form when drawer is closed
         }}
       >
-        <DrawerContent className="ixed flex flex-col bg-white border border-gray-200 border-b-none rounded-t-[10px] bottom-0 left-0 right-0 h-full max-h-[98%] mx-[-1px]">
+        <DrawerContent className="fixed flex flex-col bg-white border border-gray-200 border-b-none rounded-t-[10px] bottom-0 left-0 right-0 h-full max-h-[98%] mx-[-1px]">
           <DrawerHeader>
             <DrawerTitle>Add Meal</DrawerTitle>
           </DrawerHeader>
@@ -128,16 +130,26 @@ const AddMeal = () => {
                       Add to Meal
                     </Button>
                   </div>
-                  {mealItems.map((item, index) => (
-                    <MealItemEditor
-                      key={index}
-                      mealItem={item}
-                      onUpdateMealItem={(updatedItem) =>
-                        handleUpdateMealItem(index, updatedItem)
-                      }
-                      onRemoveMealItem={() => handleRemoveMealItem(index)}
-                    />
-                  ))}
+                  {mealItems.length > 0 && (
+                    <ResizablePanel.Root value={'mealItems'}>
+                      <ResizablePanel.Content value="mealItems">
+                        <div className="flex flex-col gap-2">
+                          {mealItems.map((item, index) => (
+                            <MealItemEditor
+                              key={index}
+                              mealItem={item}
+                              onUpdateMealItem={(updatedItem) =>
+                                handleUpdateMealItem(index, updatedItem)
+                              }
+                              onRemoveMealItem={() =>
+                                handleRemoveMealItem(index)
+                              }
+                            />
+                          ))}
+                        </div>
+                      </ResizablePanel.Content>
+                    </ResizablePanel.Root>
+                  )}
                 </div>
 
                 <NotesInput note={notes} onNoteChange={setNotes} />

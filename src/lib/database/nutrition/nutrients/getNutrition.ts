@@ -1,10 +1,10 @@
 import { Meal } from '@/types/Nutrition';
 import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../firebaseConfig';
+import { db } from '../../firebaseConfig';
 
 export const getNutrition = async (userId: string): Promise<Meal[]> => {
   try {
-    const nutritionRef = collection(db, `users/${userId}/nutrition`);
+    const nutritionRef = collection(db, `users/${userId}/nutrients`);
     const querySnapshot = await getDocs(nutritionRef);
 
     const nutritionEntries = querySnapshot.docs.map((doc) => {

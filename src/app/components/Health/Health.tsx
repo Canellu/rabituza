@@ -1,12 +1,12 @@
 'use client';
 
-import { getNutrition } from '@/lib/database/nutrition/getNutrition';
-import { getNutritionTargets } from '@/lib/database/nutrition/getNutritionTargets';
+import { getNutrition } from '@/lib/database/nutrition/nutrients/getNutrition';
+import { getNutritionTargets } from '@/lib/database/nutrition/targets/getNutritionTargets';
 import { cn } from '@/lib/utils';
 import { getSession } from '@/lib/utils/userSession';
-import { Meal } from '@/types/Nutrition';
 import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import MealCard from './MealCard';
 import NutritionMonth from './NutritionMonth';
 import NutritionStats from './NutritionStats';
 import { AddNutritionTarget } from './NutritionTarget/AddNutritionTarget';
@@ -24,7 +24,7 @@ const Health = () => {
   });
 
   const { data: meals = [] } = useQuery({
-    queryKey: ['nutritionEntries', userId],
+    queryKey: ['meals', userId],
     queryFn: async () => {
       if (!userId) throw new Error('User ID is null');
       return getNutrition(userId);
@@ -40,6 +40,10 @@ const Health = () => {
     selectedDay >= nutritionTarget?.startDate &&
     selectedDay <= nutritionTarget?.endDate;
 
+  useEffect(() => {
+    console.log(meals, meals.length);
+  }, [meals]);
+
   return (
     <div className="h-full space-y-10">
       <NutritionDayPicker
@@ -48,6 +52,7 @@ const Health = () => {
       />
 
       <NutritionStats
+        meals={meals}
         isLoading={isLoading}
         nutritionTarget={nutritionTarget}
         isInTargetPeriod={isInTargetPeriod}
@@ -66,42 +71,16 @@ const Health = () => {
       )}
 
       {meals.length > 0 && (
-        <div className="flex flex-col gap-4">
-          <MealCard />
+        <div className="space-y-2">
+          <h2 className="text-xl font-semibold">Today&apos;s Meals</h2>
+          <div className="flex flex-col gap-4">
+            {meals.map((meal) => (
+              <MealCard key={meal.id} meal={meal} />
+            ))}
+          </div>
         </div>
       )}
       <NutritionMonth target={nutritionTarget} />
-    </div>
-  );
-};
-
-const MealCard = ({ meal }: { meal?: Meal }) => {
-  if (!meal) return null;
-  return (
-    <div className="bg-white border p-5 rounded-xl text-stone-800 flex flex-col justify-between gap-4">
-      <div className="flex flex-col">
-        <span className="font-medium first-letter:capitalize">
-          a{meal.mealType}
-        </span>
-        <span className="text-sm text-stone-600">Calories kcal</span>
-      </div>
-
-      <div className="flex items-end justify-between gap-2">
-        <div className="flex gap-1">
-          <div className="space-x-1 text-[10px] rounded-full bg-stone-50 border px-2.5 py-1.5">
-            <span className="text-stone-500">Carbs</span>
-            <span className="font-medium">0%</span>
-          </div>
-          <div className="space-x-1 text-[10px] rounded-full bg-stone-50 border px-2.5 py-1.5">
-            <span className="text-stone-500">Protein</span>
-            <span className="font-medium">0%</span>
-          </div>
-          <div className="space-x-1 text-[10px] rounded-full bg-stone-50 border px-2.5 py-1.5">
-            <span className="text-stone-500">Fat</span>
-            <span className="font-medium">0%</span>
-          </div>
-        </div>
-      </div>
     </div>
   );
 };

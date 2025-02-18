@@ -1,10 +1,12 @@
 'use client';
 
-import { NutritionTarget } from '@/types/Nutrition';
+import { Meal, NutritionTarget } from '@/types/Nutrition';
 import { easeInOut, motion } from 'framer-motion';
+import AnimatedValue from '../AnimatedValue';
 import Spinner from '../Spinner';
 
 interface NutritionStatsProps {
+  meals: Meal[];
   isLoading: boolean;
   nutritionTarget: NutritionTarget | null;
   isInTargetPeriod: boolean;
@@ -12,6 +14,7 @@ interface NutritionStatsProps {
 }
 
 const NutritionStats = ({
+  meals,
   isLoading,
   nutritionTarget,
   isInTargetPeriod,
@@ -21,6 +24,24 @@ const NutritionStats = ({
     isInTargetPeriod &&
     nutritionTarget?.daysOfWeek.includes(selectedDay.getDay());
 
+  // Filter meals for the selected day
+  const mealsForSelectedDay = meals.filter(
+    (meal) => meal.mealDate.toDateString() === selectedDay.toDateString()
+  );
+
+  // Calculate total calories from all meal items for the selected day
+  const totalMealCalories = mealsForSelectedDay.reduce((total, meal) => {
+    return (
+      total +
+      meal.mealItems.reduce((mealTotal, item) => mealTotal + item.calories, 0)
+    );
+  }, 0);
+
+  // Calculate remaining calories by subtracting total meal calories from target calories
+  const remainingCalories =
+    isTargetDay && nutritionTarget
+      ? nutritionTarget.calories - totalMealCalories
+      : '-';
   if (isLoading) {
     return (
       <div className="h-[174px] flex items-center flex-col gap-3 justify-center animate-pulse">
@@ -48,7 +69,7 @@ const NutritionStats = ({
       <div className="flex">
         <div className="text-center flex flex-col">
           <span className="text-7xl font-semibold text-emerald-800 text-center">
-            {isTargetDay ? nutritionTarget.calories : '-'}
+            <AnimatedValue value={remainingCalories} />
           </span>
           <span className="text-emerald-900 text-sm">remaining calories</span>
         </div>

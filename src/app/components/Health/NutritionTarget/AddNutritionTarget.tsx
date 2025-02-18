@@ -8,7 +8,7 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from '@/components/ui/drawer';
-import { createOrUpdateNutritionTarget } from '@/lib/database/nutrition/createOrUpdateNutritionTarget';
+import { createOrUpdateNutritionTarget } from '@/lib/database/nutrition/targets/createOrUpdateNutritionTarget';
 import { getUser } from '@/lib/database/user/getUser';
 import {
   activityLevels,

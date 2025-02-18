@@ -1,6 +1,6 @@
 import { NutritionTarget } from '@/types/Nutrition';
 import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../firebaseConfig';
+import { db } from '../../firebaseConfig';
 
 export const getNutritionTargets = async (
   userId: string

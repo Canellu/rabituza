@@ -7,8 +7,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
-import { MealItem } from '@/types/Nutrition';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { ChangeEvent, Dispatch, SetStateAction } from 'react';
 import BaseNutritionInputs, {
   BaseNutritionStringed,
 } from './BaseNutritionInputs';
@@ -16,35 +15,44 @@ import BaseNutritionInputs, {
 interface MealManualFormProps {
   itemName: string;
   setItemName: Dispatch<SetStateAction<string>>;
-  onUpdateMealItem: (item: MealItem) => void;
+  calories: string;
+  setCalories: Dispatch<SetStateAction<string>>;
+  quantity: string;
+  setQuantity: Dispatch<SetStateAction<string>>;
+  baseNutrition: BaseNutritionStringed;
+  setBaseNutrition: Dispatch<SetStateAction<BaseNutritionStringed>>;
 }
 
 const MealManualForm = ({
-  onUpdateMealItem,
   itemName,
   setItemName,
+  calories,
+  setCalories,
+  quantity,
+  setQuantity,
+  baseNutrition,
+  setBaseNutrition,
 }: MealManualFormProps) => {
-  const [quantity, setQuantity] = useState('');
-  const [baseNutrition, setBaseNutrition] = useState<BaseNutritionStringed>({
-    calories: '',
-    protein: '',
-    carbs: '',
-    fat: '',
-    fiber: '',
-  });
+  const handleChangeCalories = (e: ChangeEvent<HTMLInputElement>) => {
+    setCalories(e.target.value);
+    const calculatedCalories = Number(e.target.value) * Number(quantity);
+    if (calculatedCalories > 0) {
+      setBaseNutrition((prev) => ({
+        ...prev,
+        calories: calculatedCalories.toString(),
+      }));
+    }
+  };
 
-  const handleUpdateMealItem = () => {
-    const updatedMealItem = {
-      name: itemName,
-      quantity: Number(quantity),
-      calories: Number(baseNutrition.calories),
-      protein: Number(baseNutrition.protein),
-      carbs: Number(baseNutrition.carbs),
-      fat: Number(baseNutrition.fat),
-      fiber: Number(baseNutrition.fiber),
-    };
-
-    onUpdateMealItem(updatedMealItem);
+  const handleChangeQuantity = (e: ChangeEvent<HTMLInputElement>) => {
+    setQuantity(e.target.value);
+    const calculatedCalories = Number(calories) * Number(e.target.value);
+    if (calculatedCalories > 0) {
+      setBaseNutrition((prev) => ({
+        ...prev,
+        calories: calculatedCalories.toString(),
+      }));
+    }
   };
 
   return (
@@ -64,7 +72,13 @@ const MealManualForm = ({
         <div className="flex-1 space-y-1">
           <Label className="text-sm">Calories</Label>
           <div className="relative">
-            <Input type="text" inputMode="numeric" placeholder="kcal" />
+            <Input
+              type="text"
+              inputMode="numeric"
+              placeholder="kcal"
+              value={calories}
+              onChange={handleChangeCalories}
+            />
             <div
               className={cn(
                 'absolute top-1/2 -translate-y-1/2 right-0',
@@ -90,9 +104,7 @@ const MealManualForm = ({
             inputMode="numeric"
             placeholder="0"
             value={quantity}
-            onChange={(e) => {
-              setQuantity(e.target.value);
-            }}
+            onChange={handleChangeQuantity}
           />
         </div>
       </div>
