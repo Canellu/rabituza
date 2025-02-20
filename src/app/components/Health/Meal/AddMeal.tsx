@@ -12,6 +12,7 @@ import { getSession } from '@/lib/utils/userSession';
 import { Meal, MealItem, MealType, MealTypes } from '@/types/Nutrition';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AnimatePresence } from 'framer-motion';
+import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import DateTimePicker from '../../DateTimePicker';
 import NotesInput from '../../NotesInput';
@@ -129,15 +130,20 @@ const AddMeal = () => {
                   onMealTypeChange={setMealType}
                 />
 
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  onClick={() => handleAddMealItem()}
-                >
-                  Add to Meal
-                </Button>
-                <div className="bg-stone-50 rounded-md border p-4 flex flex-col gap-4">
-                  <div className="flex flex-col gap-2">
+                <div className="bg-stone-50 rounded-md border p-4 flex flex-col gap-3">
+                  <div className="flex justify-between items-center">
+                    <h2 className="font-medium flex items-center gap-2">
+                      Add items to meal
+                    </h2>
+                    <Button
+                      size="icon"
+                      variant="outline"
+                      onClick={() => handleAddMealItem()}
+                    >
+                      <Plus />
+                    </Button>
+                  </div>
+                  <div className="flex flex-col gap-1">
                     <AnimatePresence mode="wait" initial={false}>
                       {mealItems.map((item) => (
                         <MealItemEditor

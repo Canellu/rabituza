@@ -1,16 +1,8 @@
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import { ChangeEvent, Dispatch, SetStateAction } from 'react';
-import BaseNutritionInputs, {
-  BaseNutritionStringed,
-} from './BaseNutritionInputs';
+import { BaseNutritionStringed } from './BaseNutritionInputs';
 
 interface MealManualFormProps {
   itemName: string;
@@ -19,7 +11,6 @@ interface MealManualFormProps {
   setCalories: Dispatch<SetStateAction<string>>;
   quantity: string;
   setQuantity: Dispatch<SetStateAction<string>>;
-  baseNutrition: BaseNutritionStringed;
   setBaseNutrition: Dispatch<SetStateAction<BaseNutritionStringed>>;
 }
 
@@ -30,31 +21,39 @@ const MealManualForm = ({
   setCalories,
   quantity,
   setQuantity,
-  baseNutrition,
   setBaseNutrition,
 }: MealManualFormProps) => {
   const handleChangeCalories = (e: ChangeEvent<HTMLInputElement>) => {
-    setCalories(e.target.value);
-    const calculatedCalories = Number(e.target.value) * Number(quantity);
-    if (calculatedCalories > 0) {
+    const newCaloriesPerUnit = e.target.value;
+    setCalories(newCaloriesPerUnit);
+
+    if (Number(newCaloriesPerUnit) > 0 && Number(quantity) > 0) {
+      const calculatedCalories = Number(newCaloriesPerUnit) * Number(quantity);
       setBaseNutrition((prev) => ({
         ...prev,
-        calories: calculatedCalories.toString(),
+        calories: Math.round(calculatedCalories).toString(),
       }));
     }
   };
 
   const handleChangeQuantity = (e: ChangeEvent<HTMLInputElement>) => {
-    setQuantity(e.target.value);
-    const calculatedCalories = Number(calories) * Number(e.target.value);
-    setBaseNutrition((prev) => ({
-      ...prev,
-      calories: calculatedCalories.toString(),
-    }));
+    const inputValue = e.target.value;
+    setQuantity(inputValue);
+
+    if (inputValue && Number(inputValue) > 0) {
+      const newQuantity = Number(inputValue).toFixed(2);
+      if (Number(calories) > 0) {
+        const calculatedCalories = Number(calories) * Number(newQuantity);
+        setBaseNutrition((prev) => ({
+          ...prev,
+          calories: Math.round(calculatedCalories).toString(),
+        }));
+      }
+    }
   };
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-4">
       <div className="space-y-1">
         <Label className="text-sm">Name</Label>
         <Input
@@ -67,9 +66,24 @@ const MealManualForm = ({
           className="flex-grow"
         />
       </div>
-      <div className="flex items-center justify-between gap-2">
-        <div className="flex-1 space-y-1">
-          <Label className="text-sm">Calories</Label>
+      <div className="grid grid-cols-7 gap-2 items-end">
+        <div className="flex-1 space-y-1 col-span-2">
+          <Label htmlFor="quantity" className="text-sm">
+            Amount
+          </Label>
+          <Input
+            id="quantity"
+            name="quantity"
+            type="number"
+            inputMode="numeric"
+            placeholder="0"
+            min={0}
+            value={quantity}
+            onChange={handleChangeQuantity}
+          />
+        </div>
+        <div className="flex-1 space-y-1 col-span-5">
+          <Label className="text-sm">Calories per unit</Label>
           <div className="relative">
             <Input
               type="text"
@@ -92,42 +106,7 @@ const MealManualForm = ({
             </div>
           </div>
         </div>
-        <div className="flex-1 space-y-1">
-          <Label htmlFor="quantity" className="text-sm">
-            Quantity
-          </Label>
-          <Input
-            id="quantity"
-            name="quantity"
-            type="number"
-            inputMode="numeric"
-            placeholder="0"
-            min={0}
-            value={quantity}
-            onChange={handleChangeQuantity}
-          />
-        </div>
       </div>
-      <Accordion type="single" defaultValue="" collapsible>
-        <AccordionItem value="nutrition" className="border-none">
-          <AccordionTrigger
-            className={cn(
-              '[&>svg]:h-4 [&>svg]:w-4 [&>svg]:text-stone-800 ',
-              'text-start hover:no-underline border rounded-md p-3 bg-white text-sm',
-              'data-[state=open]:rounded-b-none bg-stone-100',
-              'transition-all duration-200 ease-in-out '
-            )}
-          >
-            Total nutrition
-          </AccordionTrigger>
-          <AccordionContent className="pb-2">
-            <BaseNutritionInputs
-              value={baseNutrition}
-              setValue={setBaseNutrition}
-            />
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
     </div>
   );
 };

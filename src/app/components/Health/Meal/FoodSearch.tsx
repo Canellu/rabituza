@@ -99,6 +99,7 @@ export const FoodSearch = ({
         'outline outline-2 outline-transparent outline-offset-2',
         ' focus-within:outline-lime-400',
         !isSearching && !showNoResults && '[&_[cmdk-input-wrapper]]:border-b-0',
+        !isSearching && !showNoResults && 'h-10',
         className
       )}
     >

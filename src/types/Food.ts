@@ -1,3 +1,10 @@
+export const NutrientIds = {
+  PROTEIN: 'Protein',
+  CARBS: 'Karbo',
+  FAT: 'Fett',
+  FIBER: 'Fiber',
+} as const;
+
 export type Nutrient = {
   sourceId: string;
   nutrientId: string;

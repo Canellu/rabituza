@@ -11,11 +11,14 @@ import {
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { CARD_ANIMATION_OPACITY_CONFIG } from '@/constants/animationConfig';
 import { cn } from '@/lib/utils';
+import { Food, NutrientIds, Portion } from '@/types/Food';
 import { motion } from 'framer-motion';
-import { Trash } from 'lucide-react';
+import { ForkKnife, Trash } from 'lucide-react';
 import CardBadge from '../../CardBadge';
 import { MealItemWithId } from './AddMeal';
-import { BaseNutritionStringed } from './BaseNutritionInputs';
+import BaseNutritionInputs, {
+  BaseNutritionStringed,
+} from './BaseNutritionInputs';
 import MealManualForm from './MealManualForm';
 import MealSearchForm from './MealSearchForm';
 
@@ -31,6 +34,12 @@ const InputModes = {
 } as const;
 export type InputMode = (typeof InputModes)[keyof typeof InputModes];
 
+const formatNumber = {
+  calories: (num: number) => Math.round(num).toString(),
+  nutrients: (num: number) => num.toFixed(1),
+  amount: (num: number) => num.toFixed(2),
+};
+
 const MealItemEditor = ({
   mealItem,
   onUpdateMealItem,
@@ -42,6 +51,8 @@ const MealItemEditor = ({
   const [itemName, setItemName] = useState(mealItem.name || '');
   const [calories, setCalories] = useState('');
   const [quantity, setQuantity] = useState('');
+  const [selectedFood, setSelectedFood] = useState<Food | null>(null);
+  const [selectedPortion, setSelectedPortion] = useState<Portion | null>(null);
   const [baseNutrition, setBaseNutrition] = useState<BaseNutritionStringed>({
     calories: '',
     protein: '',
@@ -65,6 +76,50 @@ const MealItemEditor = ({
 
     onUpdateMealItem(updatedMealItem);
     setAccordion('');
+  };
+
+  // Update handleBaseNutritionChange
+  const handleBaseNutritionChange = (value: BaseNutritionStringed) => {
+    if (inputMode === InputModes.SEARCH && selectedFood && selectedPortion) {
+      const amount = Number(quantity);
+      const portionRatio = selectedPortion.quantity / 100;
+      const calories = amount * portionRatio * selectedFood.calories.quantity;
+      const protein = selectedFood.constituents.find(
+        (n) => n.nutrientId === NutrientIds.PROTEIN
+      );
+      const carbs = selectedFood.constituents.find(
+        (n) => n.nutrientId === NutrientIds.CARBS
+      );
+      const fat = selectedFood.constituents.find(
+        (n) => n.nutrientId === NutrientIds.FAT
+      );
+      const fiber = selectedFood.constituents.find(
+        (n) => n.nutrientId === NutrientIds.FIBER
+      );
+
+      setBaseNutrition((prev) => ({
+        ...prev,
+        calories: formatNumber.calories(calories),
+        protein: formatNumber.nutrients(
+          (protein?.quantity || 0) * amount * portionRatio
+        ),
+        carbs: formatNumber.nutrients(
+          (carbs?.quantity || 0) * amount * portionRatio
+        ),
+        fat: formatNumber.nutrients(
+          (fat?.quantity || 0) * amount * portionRatio
+        ),
+        fiber: formatNumber.nutrients(
+          (fiber?.quantity || 0) * amount * portionRatio
+        ),
+      }));
+    } else if (inputMode === InputModes.MANUAL && Number(calories) > 0) {
+      const newQuantity = Number(value.calories) / Number(calories);
+      setQuantity(formatNumber.amount(newQuantity));
+      setBaseNutrition(value);
+    } else {
+      setBaseNutrition(value);
+    }
   };
 
   return (
@@ -93,7 +148,9 @@ const MealItemEditor = ({
                   </CardBadge>
                 )}
                 <h2 className="text-sm leading-relaxed">
-                  {mealItem.name || 'Add item'}
+                  {mealItem.name || (
+                    <ForkKnife className="size-5 text-stone-700" />
+                  )}
                 </h2>
               </div>
             </div>
@@ -136,7 +193,6 @@ const MealItemEditor = ({
                 setCalories={setCalories}
                 quantity={quantity}
                 setQuantity={setQuantity}
-                baseNutrition={baseNutrition}
                 setBaseNutrition={setBaseNutrition}
               />
             )}
@@ -149,10 +205,19 @@ const MealItemEditor = ({
                 setCalories={setCalories}
                 quantity={quantity}
                 setQuantity={setQuantity}
+                selectedFood={selectedFood}
+                setSelectedFood={setSelectedFood}
+                selectedPortion={selectedPortion}
+                setSelectedPortion={setSelectedPortion}
                 baseNutrition={baseNutrition}
                 setBaseNutrition={setBaseNutrition}
               />
             )}
+
+            <BaseNutritionInputs
+              value={baseNutrition}
+              setValue={handleBaseNutritionChange}
+            />
 
             <div className="flex items-center justify-center gap-2">
               <Button

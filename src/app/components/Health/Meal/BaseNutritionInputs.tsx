@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import { BaseNutrition } from '@/types/Nutrition';
-import { Dispatch, SetStateAction } from 'react';
+import { ChangeEvent, Fragment } from 'react';
 
 // Create a new type that allows string values for nutrition fields
 export type BaseNutritionStringed = Omit<
@@ -20,7 +20,7 @@ export type BaseNutritionStringed = Omit<
 
 interface BaseNutritionInputsProps {
   value: BaseNutritionStringed;
-  setValue: Dispatch<SetStateAction<BaseNutritionStringed>>;
+  setValue: (value: BaseNutritionStringed) => void;
   className?: string;
 }
 
@@ -29,133 +29,84 @@ const BaseNutritionInputs = ({
   setValue,
   className = '',
 }: BaseNutritionInputsProps) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setValue({
+      ...value,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const nutritionFields = [
+    {
+      id: 'calories',
+      label: 'Calories',
+      unit: 'kcal',
+      labelClass: 'col-span-3',
+      inputClass: 'col-span-4',
+    },
+    {
+      id: 'protein',
+      label: 'Protein',
+      unit: 'g',
+      labelClass: 'col-span-4',
+      inputClass: 'col-span-3',
+    },
+    {
+      id: 'carbs',
+      label: 'Carbs',
+      unit: 'g',
+      labelClass: 'col-span-4',
+      inputClass: 'col-span-3',
+    },
+    {
+      id: 'fat',
+      label: 'Fat',
+      unit: 'g',
+      labelClass: 'col-span-4',
+      inputClass: 'col-span-3',
+    },
+    {
+      id: 'fiber',
+      label: 'Fiber',
+      unit: 'g',
+      labelClass: 'col-span-4',
+      inputClass: 'col-span-3',
+    },
+  ] as const;
+
   return (
     <div
       className={cn(
-        'grid grid-cols-2 gap-2 border rounded-b-md p-4 bg-white border-t-0',
+        'grid grid-cols-7 gap-2 border rounded-md p-4 bg-white',
         className
       )}
     >
-      <Label htmlFor="calories" className="self-center text-sm font-normal">
-        Calories
-      </Label>
-      <div className="relative">
-        <Input
-          id="calories"
-          name="calories"
-          type="text"
-          inputMode="numeric"
-          value={value.calories}
-          onChange={(e) =>
-            setValue((prev) => ({
-              ...prev,
-              calories: e.target.value,
-            }))
-          }
-          autoComplete="off"
-          placeholder="Calories"
-          className="pr-12"
-        />
-        <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-sm text-muted-foreground">
-          kcal
-        </div>
-      </div>
-      <Label htmlFor="protein" className="self-center text-sm font-normal">
-        Protein
-      </Label>
-      <div className="relative">
-        <Input
-          id="protein"
-          name="protein"
-          type="text"
-          inputMode="numeric"
-          value={value.protein}
-          onChange={(e) =>
-            setValue((prev) => ({
-              ...prev,
-              protein: e.target.value,
-            }))
-          }
-          autoComplete="off"
-          placeholder="Protein"
-          className="pr-8"
-        />
-        <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-sm text-muted-foreground">
-          g
-        </div>
-      </div>
-      <Label htmlFor="carbs" className="self-center text-sm font-normal">
-        Carbs
-      </Label>
-      <div className="relative">
-        <Input
-          id="carbs"
-          name="carbs"
-          type="text"
-          inputMode="numeric"
-          value={value.carbs}
-          onChange={(e) =>
-            setValue((prev) => ({
-              ...prev,
-              carbs: e.target.value,
-            }))
-          }
-          autoComplete="off"
-          placeholder="Carbs"
-          className="pr-8"
-        />
-        <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-sm text-muted-foreground">
-          g
-        </div>
-      </div>
-      <Label htmlFor="fat" className="self-center text-sm font-normal">
-        Fat
-      </Label>
-      <div className="relative">
-        <Input
-          id="fat"
-          name="fat"
-          type="text"
-          inputMode="numeric"
-          value={value.fat}
-          onChange={(e) => {
-            setValue((prev) => ({
-              ...prev,
-              fat: e.target.value,
-            }));
-          }}
-          autoComplete="off"
-          placeholder="Fat"
-          className="pr-8"
-        />
-        <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-sm text-muted-foreground">
-          g
-        </div>
-      </div>
-      <Label htmlFor="fiber" className="self-center text-sm font-normal">
-        Fiber
-      </Label>
-      <div className="relative">
-        <Input
-          id="fiber"
-          name="fiber"
-          type="text"
-          inputMode="numeric"
-          value={value.fiber}
-          onChange={(e) =>
-            setValue((prev) => ({
-              ...prev,
-              fiber: e.target.value,
-            }))
-          }
-          autoComplete="off"
-          placeholder="Fiber"
-          className="pr-8"
-        />
-        <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-sm text-muted-foreground">
-          g
-        </div>
-      </div>
+      {nutritionFields.map(({ id, label, unit, labelClass, inputClass }) => (
+        <Fragment key={id}>
+          <Label
+            htmlFor={id}
+            className={cn(labelClass, 'self-center text-sm font-normal')}
+          >
+            {label}
+          </Label>
+          <div className={cn('relative', inputClass)}>
+            <Input
+              id={id}
+              name={id}
+              type="text"
+              inputMode="numeric"
+              value={value[id as keyof BaseNutritionStringed]}
+              onChange={handleChange}
+              autoComplete="off"
+              placeholder={label}
+              className={unit === 'kcal' ? 'pr-12' : 'pr-8'}
+            />
+            <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-sm text-muted-foreground">
+              {unit}
+            </div>
+          </div>
+        </Fragment>
+      ))}
     </div>
   );
 };
