@@ -47,12 +47,10 @@ const MealManualForm = ({
   const handleChangeQuantity = (e: ChangeEvent<HTMLInputElement>) => {
     setQuantity(e.target.value);
     const calculatedCalories = Number(calories) * Number(e.target.value);
-    if (calculatedCalories > 0) {
-      setBaseNutrition((prev) => ({
-        ...prev,
-        calories: calculatedCalories.toString(),
-      }));
-    }
+    setBaseNutrition((prev) => ({
+      ...prev,
+      calories: calculatedCalories.toString(),
+    }));
   };
 
   return (
@@ -103,6 +101,7 @@ const MealManualForm = ({
             type="number"
             inputMode="numeric"
             placeholder="0"
+            min={0}
             value={quantity}
             onChange={handleChangeQuantity}
           />

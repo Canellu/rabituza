@@ -39,6 +39,7 @@ const MealCard = ({ meal }: MealCardProps) => {
     0
   );
   const totalFat = meal.mealItems.reduce((sum, item) => sum + item.fat, 0);
+  const totalFiber = meal.mealItems.reduce((sum, item) => sum + item.fiber, 0);
 
   const { mutate: deleteMeal } = useMutation({
     mutationFn: ({ userId, mealId }: { userId: string; mealId: string }) =>
@@ -65,6 +66,7 @@ const MealCard = ({ meal }: MealCardProps) => {
     { label: 'Carbs', value: totalCarbs },
     { label: 'Protein', value: totalProtein },
     { label: 'Fat', value: totalFat },
+    { label: 'Fiber', value: totalFiber },
   ];
 
   return (

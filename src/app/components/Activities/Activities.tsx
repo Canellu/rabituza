@@ -1,11 +1,12 @@
 'use client';
 
+// Change the import from drawer to dialog
 import {
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-} from '@/components/ui/drawer';
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   STAGGER_CHILD_VARIANTS,
@@ -33,7 +34,9 @@ const Activities = () => {
   const [selectedActivity, setSelectedActivity] = useState<ActivityType | null>(
     null
   );
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  // Rename isDrawerOpen to isOpen for consistency
+  const [isOpen, setIsOpen] = useState(false);
+
   const userId = getSession();
   const { data: activities, isLoading } = useQuery({
     queryKey: ['activities', userId],
@@ -44,7 +47,7 @@ const Activities = () => {
 
   const handleEditActivity = (activity: ActivityType) => {
     setSelectedActivity(activity);
-    setIsDrawerOpen(true);
+    setIsOpen(true);
   };
 
   if (isLoading) {
@@ -148,21 +151,25 @@ const Activities = () => {
         </motion.div>
       </section>
 
-      <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
-        <DrawerContent className="fixed flex flex-col bg-white border border-gray-200 border-b-none rounded-t-[10px] bottom-0 left-0 right-0 h-full max-h-[98%] mx-[-1px]">
-          <DrawerHeader>
-            <DrawerTitle>Edit Activity</DrawerTitle>
-          </DrawerHeader>
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent className="max-w-lg w-[96%] h-[96dvh] overflow-y-auto rounded-lg flex flex-col p-0 py-6">
+          <DialogHeader>
+            <DialogTitle>Edit Activity</DialogTitle>
+          </DialogHeader>
           {selectedActivity && (
-            <div className="p-4 pb-16 h-full overflow-auto">
-              <ActivityForm
-                selectedActivity={selectedActivity}
-                onClose={() => setIsDrawerOpen(false)}
-              />
+            <div className="flex-grow overflow-y-auto">
+              <div className="h-full overflow-auto">
+                <div className="p-4">
+                  <ActivityForm
+                    selectedActivity={selectedActivity}
+                    onClose={() => setIsOpen(false)}
+                  />
+                </div>
+              </div>
             </div>
           )}
-        </DrawerContent>
-      </Drawer>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

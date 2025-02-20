@@ -1,14 +1,18 @@
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { cn } from '@/lib/utils';
 import { MealItem } from '@/types/Nutrition';
-import { X } from 'lucide-react';
 import { useState } from 'react';
 
-import { Separator } from '@/components/ui/separator';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { cn } from '@/lib/utils';
+import { Trash } from 'lucide-react';
 import CardBadge from '../../CardBadge';
-import * as ResizablePanel from '../../ResizablePanel';
 import { BaseNutritionStringed } from './BaseNutritionInputs';
 import MealManualForm from './MealManualForm';
 import MealSearchForm from './MealSearchForm';
@@ -30,9 +34,7 @@ const MealItemEditor = ({
   onUpdateMealItem,
   onRemoveMealItem,
 }: MealItemEditor) => {
-  const [isExpanded, setIsExpanded] = useState<'expanded' | 'collapsed'>(
-    'expanded'
-  );
+  const [accordion, setAccordion] = useState('edit');
   const [inputMode, setInputMode] = useState<InputMode>(InputModes.MANUAL);
 
   const [itemName, setItemName] = useState(mealItem.name || '');
@@ -55,54 +57,44 @@ const MealItemEditor = ({
       protein:
         Number(baseNutrition.protein) > 0 ? Number(baseNutrition.protein) : 0,
       carbs: Number(baseNutrition.carbs) > 0 ? Number(baseNutrition.carbs) : 0,
-      fat: Number(baseNutrition.fat) > 0 ? 0 : Number(baseNutrition.fat),
+      fat: Number(baseNutrition.fat) > 0 ? Number(baseNutrition.fat) : 0,
       fiber: Number(baseNutrition.fiber) > 0 ? Number(baseNutrition.fiber) : 0,
     };
 
     onUpdateMealItem(updatedMealItem);
-    setIsExpanded('collapsed');
+    setAccordion('');
   };
 
   return (
-    <ResizablePanel.Root
-      value={isExpanded}
-      className="bg-white border p-4 rounded-md relative space-y-2"
+    <Accordion
+      type="single"
+      collapsible
+      className="w-full"
+      value={accordion}
+      onValueChange={(value) => setAccordion(value)}
     >
-      {/* Header */}
-      <div
-        className={cn(
-          'flex-row-reverse items-center justify-between pr-8',
-          isExpanded === 'expanded' && 'mb-2'
-        )}
-        onClick={() => setIsExpanded('expanded')}
-      >
-        <CardBadge className="float-right whitespace-nowrap ml-1 py-1">
-          {baseNutrition.calories} kcal
-        </CardBadge>
-        {/* Title */}
-        <h2
+      <AccordionItem value="edit" className="border-none">
+        <AccordionTrigger
           className={cn(
-            'font-medium first-letter:capitalize leading-relaxed',
-            !itemName && 'text-stone-500 font-normal'
+            '[&>svg]:h-4 [&>svg]:w-4 [&>svg]:text-stone-800 hover:no-underline ',
+            'text-start border rounded-md py-3 px-4 bg-stone-50',
+            'data-[state=open]:rounded-b-none'
           )}
         >
-          {itemName || 'Food/Drink'}
-        </h2>
-      </div>
-
-      {/* X button */}
-      <Button
-        size="icon"
-        variant="ghost"
-        onClick={onRemoveMealItem}
-        className="absolute top-0.5 right-0.5 !m-0"
-      >
-        <X />
-      </Button>
-
-      <ResizablePanel.Content value="expanded">
-        <Separator className="mb-2" />
-        <div className="flex flex-col gap-4">
+          <div className="flex flex-col items-start gap-1 grow pr-2">
+            <div className="w-full">
+              {mealItem.calories > 0 && (
+                <CardBadge className="whitespace-nowrap float-right">
+                  {mealItem.calories} kcal
+                </CardBadge>
+              )}
+              <h2 className="text-sm leading-relaxed">
+                {mealItem.name || 'Fill out form'}
+              </h2>
+            </div>
+          </div>
+        </AccordionTrigger>
+        <AccordionContent className="border border-t-0 rounded-b-md p-4  pt-6 bg-white flex flex-col gap-4">
           {/* Input Mode selector */}
           <div className="space-y-1">
             <Label className="text-sm">Input mode</Label>
@@ -158,40 +150,33 @@ const MealItemEditor = ({
             />
           )}
 
-          <Button
-            variant="default"
-            size="sm"
-            onClick={handleClickConfirm}
-            disabled={
-              (!baseNutrition.calories &&
-                Number(baseNutrition.calories) === 0) ||
-              !itemName
-            }
-          >
-            Confirm
-          </Button>
-        </div>
-      </ResizablePanel.Content>
-      <ResizablePanel.Content value="collapsed">
-        <div className="flex gap-2 flex-col items-start">
-          <div className="text-xs flex gap-2 flex-nowrap text-nowrap text-stone-500">
-            {Object.entries(baseNutrition).map(([key, value], index) => {
-              if (key === 'calories') return null;
-              if (Number(value) === 0 || !value) return null;
-              return (
-                <div key={key}>
-                  <span>
-                    {key[0].toUpperCase() + key.slice(1)}:{' '}
-                    {baseNutrition[key as keyof BaseNutritionStringed]}
-                  </span>
-                  <span>{key === 'calories' ? 'kcal' : 'g'}</span>
-                </div>
-              );
-            })}
+          <div className="flex items-center justify-center gap-2">
+            <Button
+              size="icon"
+              variant="secondary"
+              onClick={onRemoveMealItem}
+              className="shrink-0 size-9 "
+            >
+              <Trash />
+            </Button>
+            <Button
+              variant="default"
+              size="sm"
+              onClick={handleClickConfirm}
+              disabled={
+                (!baseNutrition.calories &&
+                  Number(baseNutrition.calories) === 0) ||
+                baseNutrition.calories === '0' ||
+                !itemName
+              }
+              className="w-full"
+            >
+              Confirm
+            </Button>
           </div>
-        </div>
-      </ResizablePanel.Content>
-    </ResizablePanel.Root>
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
   );
 };
 

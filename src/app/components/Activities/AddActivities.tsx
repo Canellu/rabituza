@@ -2,11 +2,11 @@
 
 import { Button } from '@/components/ui/button';
 import {
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-} from '@/components/ui/drawer';
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,17 +21,18 @@ import { Fragment, useState } from 'react';
 
 const AddActivities = () => {
   const [selectedActivity, setSelectedActivity] = useState<string | null>(null);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false); // renamed from isDrawerOpen
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const handleActivitySelect = (id: string) => {
     setSelectedActivity(id);
     setIsDropdownOpen(false);
-    setIsDrawerOpen(true);
+    setIsOpen(true); // updated
   };
 
-  const handleDrawerOpenChange = (open: boolean) => {
-    setIsDrawerOpen(open);
+  // Replace handleDrawerOpenChange with simpler function
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
     if (!open) {
       setIsDropdownOpen(false);
     }
@@ -76,13 +77,13 @@ const AddActivities = () => {
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <Drawer open={isDrawerOpen} onOpenChange={handleDrawerOpenChange}>
-        <DrawerContent className="fixed flex flex-col bg-white border border-gray-200 border-b-none rounded-t-[10px] bottom-0 left-0 right-0 h-full max-h-[98%] mx-[-1px]">
-          <DrawerHeader>
-            <DrawerTitle>
+      <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+        <DialogContent className="max-w-lg w-[96%] h-[96dvh] overflow-y-auto rounded-lg flex flex-col p-0 py-6">
+          <DialogHeader>
+            <DialogTitle>
               {activityOptions.find((e) => e.id === selectedActivity)?.label}
-            </DrawerTitle>
-          </DrawerHeader>
+            </DialogTitle>
+          </DialogHeader>
           {selectedActivity && (
             <>
               {activityOptions.find((e) => e.id === selectedActivity)
@@ -93,8 +94,8 @@ const AddActivities = () => {
                       (e) => e.id === selectedActivity
                     )?.Component;
                     return ActivityForm ? (
-                      <div className="p-4 pb-16 h-full overflow-auto">
-                        <ActivityForm onClose={() => setIsDrawerOpen(false)} />
+                      <div className="p-4">
+                        <ActivityForm onClose={() => setIsOpen(false)} />
                       </div>
                     ) : null;
                   })()}
@@ -102,8 +103,8 @@ const AddActivities = () => {
               )}
             </>
           )}
-        </DrawerContent>
-      </Drawer>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };

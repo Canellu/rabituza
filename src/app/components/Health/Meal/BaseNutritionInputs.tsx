@@ -115,12 +115,12 @@ const BaseNutritionInputs = ({
           type="text"
           inputMode="numeric"
           value={value.fat}
-          onChange={(e) =>
+          onChange={(e) => {
             setValue((prev) => ({
               ...prev,
               fat: e.target.value,
-            }))
-          }
+            }));
+          }}
           placeholder="Fat"
           className="pr-8"
         />

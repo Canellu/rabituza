@@ -69,7 +69,6 @@ const CalisthenicsExerciseSelector = ({
       )
     );
   };
-
   const updateSetGroup = (
     exerciseIndex: number,
     setGroupIndex: number,
@@ -94,7 +93,6 @@ const CalisthenicsExerciseSelector = ({
       )
     );
   };
-
   const hasDuration = (exercise: CalisthenicsExerciseType) => {
     return (
       'hasDuration' in
@@ -103,7 +101,6 @@ const CalisthenicsExerciseSelector = ({
       ]
     );
   };
-
   return (
     <div className="space-y-2">
       <Select
@@ -206,7 +203,9 @@ const CalisthenicsExerciseSelector = ({
                         <Input
                           type="text"
                           inputMode="numeric"
-                          value={setGroup.sets}
+                          value={
+                            setGroup.sets === 0 ? '' : setGroup.sets.toString()
+                          }
                           maxLength={2}
                           onChange={(e) =>
                             updateSetGroup(
@@ -229,7 +228,6 @@ const CalisthenicsExerciseSelector = ({
                           placeholder="0"
                         />
                       </div>
-
                       {hasDuration(exercise) ? (
                         <div className="flex gap-1.5 items-center justify-end">
                           <Clock className="size-4 text-stone-700" />
@@ -237,7 +235,11 @@ const CalisthenicsExerciseSelector = ({
                             <Input
                               type="text"
                               inputMode="numeric"
-                              value={setGroup.duration}
+                              value={
+                                setGroup.duration === 0
+                                  ? ''
+                                  : setGroup.duration?.toString()
+                              }
                               onChange={(e) =>
                                 updateSetGroup(
                                   exerciseIndex,
@@ -246,15 +248,6 @@ const CalisthenicsExerciseSelector = ({
                                   e.target.value
                                 )
                               }
-                              onFocus={(e) => {
-                                e.target.value = '';
-                                updateSetGroup(
-                                  exerciseIndex,
-                                  setGroupIndex,
-                                  'duration',
-                                  ''
-                                );
-                              }}
                               maxLength={3}
                               className="w-[72px] h-8 px-1.5 pr-9"
                               placeholder="0"
@@ -269,7 +262,11 @@ const CalisthenicsExerciseSelector = ({
                               <Input
                                 type="text"
                                 inputMode="numeric"
-                                value={setGroup.weight}
+                                value={
+                                  setGroup.weight === 0
+                                    ? ''
+                                    : setGroup.weight?.toString()
+                                }
                                 onChange={(e) =>
                                   updateSetGroup(
                                     exerciseIndex,
@@ -278,15 +275,6 @@ const CalisthenicsExerciseSelector = ({
                                     e.target.value
                                   )
                                 }
-                                onFocus={(e) => {
-                                  e.target.value = '';
-                                  updateSetGroup(
-                                    exerciseIndex,
-                                    setGroupIndex,
-                                    'weight',
-                                    ''
-                                  );
-                                }}
                                 maxLength={2}
                                 className="w-14 h-8 px-1.5 pr-6"
                                 placeholder="0"
@@ -306,8 +294,11 @@ const CalisthenicsExerciseSelector = ({
                             <Input
                               type="text"
                               inputMode="numeric"
-                              value={setGroup.reps}
-                              maxLength={2}
+                              value={
+                                setGroup.reps === 0
+                                  ? ''
+                                  : setGroup.reps?.toString()
+                              }
                               onChange={(e) =>
                                 updateSetGroup(
                                   exerciseIndex,
@@ -316,15 +307,7 @@ const CalisthenicsExerciseSelector = ({
                                   e.target.value
                                 )
                               }
-                              onFocus={(e) => {
-                                e.target.value = '';
-                                updateSetGroup(
-                                  exerciseIndex,
-                                  setGroupIndex,
-                                  'reps',
-                                  ''
-                                );
-                              }}
+                              maxLength={2}
                               className="w-12 h-8 px-1.5"
                               placeholder="0"
                             />
@@ -336,7 +319,11 @@ const CalisthenicsExerciseSelector = ({
                               <Input
                                 type="text"
                                 inputMode="numeric"
-                                value={setGroup.weight}
+                                value={
+                                  setGroup.weight === 0
+                                    ? ''
+                                    : setGroup.weight?.toString()
+                                }
                                 onChange={(e) =>
                                   updateSetGroup(
                                     exerciseIndex,
@@ -345,15 +332,6 @@ const CalisthenicsExerciseSelector = ({
                                     e.target.value
                                   )
                                 }
-                                onFocus={(e) => {
-                                  e.target.value = '';
-                                  updateSetGroup(
-                                    exerciseIndex,
-                                    setGroupIndex,
-                                    'weight',
-                                    ''
-                                  );
-                                }}
                                 maxLength={3}
                                 className="w-16 h-8 px-1.5 pr-6"
                                 placeholder="0"

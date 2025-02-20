@@ -12,7 +12,6 @@ import { getSession } from '@/lib/utils/userSession';
 import { Meal, MealItem, MealType, MealTypes } from '@/types/Nutrition';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import AnimateHeight from '../../AnimateHeight';
 import DateTimePicker from '../../DateTimePicker';
 import NotesInput from '../../NotesInput';
 import SaveButtonDrawer from '../../SaveButtonDrawer';
@@ -72,7 +71,9 @@ const AddMeal = () => {
   };
 
   const handleSubmit = () => {
+    console.log('Submit');
     if (!userId || !mealType) return;
+    console.log(userId, mealType);
 
     const data = {
       mealDate,
@@ -118,32 +119,26 @@ const AddMeal = () => {
                   onMealTypeChange={setMealType}
                 />
 
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  onClick={() => handleAddMealItem()}
+                >
+                  Add to Meal
+                </Button>
                 <div className="bg-stone-50 rounded-md border p-4 flex flex-col gap-4">
-                  <div className="flex items-center justify-between">
-                    <h2 className="">Meal items</h2>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="max-w-max"
-                      onClick={() => handleAddMealItem()}
-                    >
-                      Add to Meal
-                    </Button>
+                  <div className="flex flex-col gap-2">
+                    {mealItems.map((item, index) => (
+                      <MealItemEditor
+                        key={index}
+                        mealItem={item}
+                        onUpdateMealItem={(updatedItem) =>
+                          handleUpdateMealItem(index, updatedItem)
+                        }
+                        onRemoveMealItem={() => handleRemoveMealItem(index)}
+                      />
+                    ))}
                   </div>
-                  <AnimateHeight isOpen={mealItems.length > 0}>
-                    <div className="flex flex-col gap-2">
-                      {mealItems.map((item, index) => (
-                        <MealItemEditor
-                          key={index}
-                          mealItem={item}
-                          onUpdateMealItem={(updatedItem) =>
-                            handleUpdateMealItem(index, updatedItem)
-                          }
-                          onRemoveMealItem={() => handleRemoveMealItem(index)}
-                        />
-                      ))}
-                    </div>
-                  </AnimateHeight>
                 </div>
 
                 <NotesInput note={notes} onNoteChange={setNotes} />
@@ -151,7 +146,12 @@ const AddMeal = () => {
                 <SaveButtonDrawer
                   title="Save Meal"
                   isPending={isPending}
-                  isDisabled={mealItems.length === 0}
+                  isDisabled={
+                    mealItems.length === 0 ||
+                    mealItems.some(
+                      (item) => item.name === '' || item.calories === 0
+                    )
+                  }
                   onClick={handleSubmit}
                 />
               </div>
