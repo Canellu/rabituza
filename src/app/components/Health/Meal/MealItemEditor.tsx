@@ -12,10 +12,10 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { CARD_ANIMATION_OPACITY_CONFIG } from '@/constants/animationConfig';
 import { cn } from '@/lib/utils';
 import { Food, NutrientIds, Portion } from '@/types/Food';
+import { MealItem } from '@/types/Nutrition';
 import { motion } from 'framer-motion';
 import { ForkKnife, Trash } from 'lucide-react';
 import CardBadge from '../../CardBadge';
-import { MealItemWithId } from './AddMeal';
 import BaseNutritionInputs, {
   BaseNutritionStringed,
 } from './BaseNutritionInputs';
@@ -23,8 +23,8 @@ import MealManualForm from './MealManualForm';
 import MealSearchForm from './MealSearchForm';
 
 interface MealItemEditor {
-  mealItem: MealItemWithId;
-  onUpdateMealItem: (mealItem: MealItemWithId) => void;
+  mealItem: MealItem;
+  onUpdateMealItem: (mealItem: MealItem) => void;
   onRemoveMealItem: () => void;
 }
 
@@ -62,7 +62,7 @@ const MealItemEditor = ({
   });
 
   const handleClickConfirm = () => {
-    const updatedMealItem: MealItemWithId = {
+    const updatedMealItem: MealItem = {
       ...mealItem,
       name: itemName,
       calories:

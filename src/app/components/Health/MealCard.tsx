@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/dialog';
 import { CARD_ANIMATION_CONFIG } from '@/constants/animationConfig';
 import { deleteNutrition } from '@/lib/database/nutrition/nutrients/deleteNutrition';
+import { cn } from '@/lib/utils';
 import { getSession } from '@/lib/utils/userSession';
 import { Meal } from '@/types/Nutrition';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -21,9 +22,10 @@ import CardBadge from '../CardBadge';
 
 interface MealCardProps {
   meal: Meal;
+  onEdit: () => void;
 }
 
-const MealCard = ({ meal }: MealCardProps) => {
+const MealCard = ({ meal, onEdit }: MealCardProps) => {
   const userId = getSession();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const queryClient = useQueryClient();
@@ -74,7 +76,7 @@ const MealCard = ({ meal }: MealCardProps) => {
       <motion.div
         className="relative"
         {...CARD_ANIMATION_CONFIG}
-        // onClick={onEdit} // Use onEdit prop to trigger edit mode
+        onClick={onEdit}
       >
         <div className="absolute inset-1 bg-red-500 rounded-xl flex items-center justify-end px-4">
           <Trash2 className="text-secondary" />
@@ -101,16 +103,32 @@ const MealCard = ({ meal }: MealCardProps) => {
             </CardBadge>
           </div>
 
+          <div className="flex flex-col gap-1.5">
+            {meal.mealItems.map((item, index) => (
+              <div
+                key={item.name}
+                className={cn(
+                  'flex items-center justify-between',
+                  'bg-stone-50 rounded-md px-2.5 py-1.5 text-xs border',
+                  'text-stone-700'
+                )}
+              >
+                {item.name}
+                {index !== meal.mealItems.length - 1 && ', '}
+              </div>
+            ))}
+          </div>
+
           <div className="flex items-end justify-between gap-2">
-            <div className="flex gap-1">
+            <div className="flex flex-wrap gap-1">
               {nutrients.map((nutrient) => (
                 <div
                   key={nutrient.label}
-                  className="space-x-1 text-[10px] rounded-full bg-stone-50 border px-2.5 py-1.5"
+                  className="space-x-1 text-[10px] rounded-full bg-stone-50 border px-2 py-1"
                 >
                   <span className="text-stone-500">{nutrient.label}</span>
                   <span className="font-medium">
-                    {nutrient.value > 0 ? `${nutrient.value}g` : '-'}
+                    {nutrient.value > 0 ? `${nutrient.value.toFixed(1)}g` : '-'}
                   </span>
                 </div>
               ))}

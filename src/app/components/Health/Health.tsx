@@ -1,11 +1,19 @@
 'use client';
 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { getNutrition } from '@/lib/database/nutrition/nutrients/getNutrition';
 import { getNutritionTargets } from '@/lib/database/nutrition/targets/getNutritionTargets';
 import { cn } from '@/lib/utils';
 import { getSession } from '@/lib/utils/userSession';
+import { Meal } from '@/types/Nutrition';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
+import MealForm from './Meal/MealForm';
 import MealCard from './MealCard';
 import NutritionMonth from './NutritionMonth';
 import NutritionStats from './NutritionStats';
@@ -43,6 +51,13 @@ const Health = () => {
   const todaysMeals = meals.filter(
     (meal) => meal.mealDate.toDateString() === selectedDay.toDateString()
   );
+  const [isMealDialogOpen, setIsMealDialogOpen] = useState(false);
+  const [selectedMeal, setSelectedMeal] = useState<Meal | null>(null);
+
+  const handleEditMeal = (meal: Meal) => {
+    setSelectedMeal(meal);
+    setIsMealDialogOpen(true);
+  };
 
   return (
     <div className="h-full space-y-10">
@@ -74,23 +89,37 @@ const Health = () => {
         <h2 className="text-xl font-semibold">Meals</h2>
         {todaysMeals.length > 0 ? (
           <div className="flex flex-col gap-2">
-            {todaysMeals
-              .filter(
-                (meal) =>
-                  meal.mealDate.toDateString() === selectedDay.toDateString()
-              )
-              .map((meal) => (
-                <MealCard key={meal.id} meal={meal} />
-              ))}
+            {todaysMeals.map((meal) => (
+              <MealCard
+                key={meal.id}
+                meal={meal}
+                onEdit={() => handleEditMeal(meal)}
+              />
+            ))}
           </div>
         ) : (
           <div className="border p-4 bg-white rounded-xl">
             <span className="text-sm font-medium text-stone-600 ">
-              No meals addded on this date
+              No meals added on this date
             </span>
           </div>
         )}
       </div>
+
+      <Dialog open={isMealDialogOpen} onOpenChange={setIsMealDialogOpen}>
+        <DialogContent className="max-w-lg w-[96%] h-[96dvh] overflow-y-auto rounded-lg flex flex-col p-0 py-6">
+          <DialogHeader>
+            <DialogTitle>Edit Meal</DialogTitle>
+          </DialogHeader>
+          {selectedMeal && (
+            <MealForm
+              initialMeal={selectedMeal}
+              onClose={() => setIsMealDialogOpen(false)}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+
       <NutritionMonth target={nutritionTarget} />
     </div>
   );
