@@ -32,6 +32,8 @@ export const FoodSearch = ({
 }: FoodSearchProps) => {
   const [isSearching, setIsSearching] = useState(false);
   const [searchResults, setSearchResults] = useState<Food[]>([]);
+  const [showNoResults, setShowNoResults] = useState(false); // Add this state
+
   const { foods, isLoading } = useFoods();
   const commandListRef = useRef<HTMLDivElement>(null);
 
@@ -45,6 +47,7 @@ export const FoodSearch = ({
     setIsSearching(false);
     if (isLoading || !searchTerm || searchTerm.length < 2) {
       setSearchResults([]);
+      setShowNoResults(false); // Hide no results message
       return;
     }
 
@@ -74,12 +77,18 @@ export const FoodSearch = ({
     });
 
     setSearchResults(matchedFoods || []);
+    setShowNoResults(true); // Show no results message only after search
   }, 300);
 
   const handleClear = () => {
-    onClear?.();
-    onChange('');
     setSearchResults([]);
+    setShowNoResults(false);
+    onClear?.();
+  };
+  const handleSelect = (food: Food) => {
+    setSearchResults([]);
+    setShowNoResults(false);
+    onSelect(food);
   };
 
   return (
@@ -87,10 +96,9 @@ export const FoodSearch = ({
       className={cn(
         'rounded-md border',
         '[&_[cmdk-input-wrapper]]:pr-1',
-        !searchResults?.length &&
-          !isSearching &&
-          !(value.length >= 2) &&
-          '[&_[cmdk-input-wrapper]]:border-b-0',
+        'outline outline-2 outline-transparent outline-offset-2',
+        ' focus-within:outline-lime-400',
+        !isSearching && !showNoResults && '[&_[cmdk-input-wrapper]]:border-b-0',
         className
       )}
     >
@@ -99,13 +107,14 @@ export const FoodSearch = ({
         value={value}
         onValueChange={(newValue) => {
           onChange?.(newValue);
-          setIsSearching(true);
+          if (value.length > 2) setIsSearching(true);
           handleSearch(newValue);
         }}
         clearButton={!!value}
         onClear={() => {
           handleClear();
         }}
+        className="text-base"
       />
 
       <CommandList
@@ -118,21 +127,22 @@ export const FoodSearch = ({
             <span>Searching...</span>
           </div>
         )}
-        {value.length >= 2 && searchResults !== undefined && !isSearching && (
-          <CommandEmpty className="p-2 text-sm text-muted-foreground">
-            No results found.
-          </CommandEmpty>
-        )}
+        {value.length >= 2 &&
+          searchResults !== undefined &&
+          !isSearching &&
+          showNoResults &&
+          searchResults.length === 0 && (
+            <CommandEmpty className="p-2 text-sm text-muted-foreground">
+              No results found.
+            </CommandEmpty>
+          )}
         {searchResults && searchResults.length > 0 && (
           <CommandGroup>
             {searchResults.map((food) => (
               <CommandItem
                 key={food.foodId}
                 value={food.foodName}
-                onSelect={() => {
-                  setSearchResults([]);
-                  onSelect(food);
-                }}
+                onSelect={() => handleSelect(food)}
               >
                 <Check
                   className={cn(

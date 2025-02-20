@@ -1,3 +1,9 @@
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -7,9 +13,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { cn } from '@/lib/utils';
 import { Food, Portion } from '@/types/Food';
-import { Dispatch, SetStateAction, useState } from 'react';
-import { BaseNutritionStringed } from './BaseNutritionInputs';
+import { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
+import BaseNutritionInputs, {
+  BaseNutritionStringed,
+} from './BaseNutritionInputs';
 import { FoodSearch } from './FoodSearch';
 
 interface MealSearchFormProps {
@@ -33,20 +42,39 @@ const MealSearchForm = ({
   baseNutrition,
   setBaseNutrition,
 }: MealSearchFormProps) => {
+  const [selectedFood, setSelectedFood] = useState<Food | null>(null);
   const [selectedPortion, setSelectedPortion] = useState<Portion | null>(null);
-  const [portions, setPortions] = useState<Portion[]>([]);
 
   const handleSearchSelect = (food: Food) => {
     console.log(food);
-    setItemName(food.foodName);
+    setSelectedFood(food);
     if (food.portions.length > 0) {
       setSelectedPortion(food.portions[0]);
-      setPortions(food.portions);
     }
   };
 
   const handleSearchClear = () => {
-    setPortions([]);
+    setItemName('');
+  };
+
+  const handleChangeCalories = (e: ChangeEvent<HTMLInputElement>) => {
+    setCalories(e.target.value);
+    const calculatedCalories = Number(e.target.value) * Number(quantity);
+    if (calculatedCalories > 0) {
+      setBaseNutrition((prev) => ({
+        ...prev,
+        calories: calculatedCalories.toString(),
+      }));
+    }
+  };
+
+  const handleChangeQuantity = (e: ChangeEvent<HTMLInputElement>) => {
+    setQuantity(e.target.value);
+    const calculatedCalories = Number(calories) * Number(e.target.value);
+    setBaseNutrition((prev) => ({
+      ...prev,
+      calories: calculatedCalories.toString(),
+    }));
   };
 
   return (
@@ -61,9 +89,9 @@ const MealSearchForm = ({
         onClear={handleSearchClear}
         className="flex-shrink"
       />
-      <div className="space-y-2">
-        {portions.length > 0 && (
-          <div className="flex gap-2 items-end">
+      {selectedFood && selectedFood?.portions.length > 0 && (
+        <div className="space-y-2">
+          <div className="grid grid-cols-4 gap-2 items-end">
             <div className="flex-1 space-y-1">
               <Label htmlFor="portionAmount" className="text-sm">
                 Amount
@@ -74,40 +102,65 @@ const MealSearchForm = ({
                 type="text"
                 inputMode="numeric"
                 value={quantity}
-                onChange={(e) => {
-                  setQuantity(e.target.value);
-                }}
+                onChange={handleChangeQuantity}
+                autoComplete="off"
+                placeholder="0"
                 className="text-ellipsis"
               />
             </div>
-            <div className="flex-1 space-y-1">
+            <div className="flex-1 space-y-1 col-span-3">
               <Label className="text-sm">Portion size</Label>
               <Select
                 value={selectedPortion?.portionName}
                 onValueChange={(value) => {
-                  const portion = portions.find((p) => p.portionName === value);
-                  setSelectedPortion(portion || null);
+                  if (selectedFood) {
+                    const portion = selectedFood.portions.find(
+                      (p) => p.portionName === value
+                    );
+                    setSelectedPortion(portion || null);
+                  }
                 }}
               >
-                <SelectTrigger>
+                <SelectTrigger className="text-start">
                   <SelectValue placeholder="Select portion" />
                 </SelectTrigger>
                 <SelectContent>
-                  {portions.map((portion) => (
-                    <SelectItem
-                      key={portion.portionName}
-                      value={portion.portionName}
-                    >
-                      {portion.portionName} ({portion.quantity}
-                      {portion.unit})
-                    </SelectItem>
-                  ))}
+                  {selectedFood &&
+                    selectedFood.portions.map((portion) => (
+                      <SelectItem
+                        key={portion.portionName}
+                        value={portion.portionName}
+                      >
+                        {portion.portionName} ({portion.quantity}
+                        {portion.unit})
+                      </SelectItem>
+                    ))}
                 </SelectContent>
               </Select>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
+      <Accordion type="single" defaultValue="" collapsible>
+        <AccordionItem value="nutrition" className="border-none">
+          <AccordionTrigger
+            className={cn(
+              '[&>svg]:h-4 [&>svg]:w-4 [&>svg]:text-stone-800 ',
+              'text-start hover:no-underline border rounded-md p-3 bg-white text-sm',
+              'data-[state=open]:rounded-b-none bg-stone-100',
+              'transition-all duration-200 ease-in-out '
+            )}
+          >
+            Total nutrition
+          </AccordionTrigger>
+          <AccordionContent className="pb-2">
+            <BaseNutritionInputs
+              value={baseNutrition}
+              setValue={setBaseNutrition}
+            />
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
     </>
   );
 };

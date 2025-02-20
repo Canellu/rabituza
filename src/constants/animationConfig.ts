@@ -7,6 +7,13 @@ export const CARD_ANIMATION_CONFIG = {
   transition: { duration: 0.25, ease: easeInOut },
 };
 
+export const CARD_ANIMATION_OPACITY_CONFIG = {
+  initial: { opacity: 0.2 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0.2 },
+  transition: { duration: 0.25, ease: easeInOut },
+};
+
 export const STAGGER_CHILD_VARIANTS = {
   hidden: { opacity: 0, x: -10 },
   visible: {

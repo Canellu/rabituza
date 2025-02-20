@@ -52,6 +52,7 @@ const BaseNutritionInputs = ({
               calories: e.target.value,
             }))
           }
+          autoComplete="off"
           placeholder="Calories"
           className="pr-12"
         />
@@ -75,6 +76,7 @@ const BaseNutritionInputs = ({
               protein: e.target.value,
             }))
           }
+          autoComplete="off"
           placeholder="Protein"
           className="pr-8"
         />
@@ -98,6 +100,7 @@ const BaseNutritionInputs = ({
               carbs: e.target.value,
             }))
           }
+          autoComplete="off"
           placeholder="Carbs"
           className="pr-8"
         />
@@ -121,6 +124,7 @@ const BaseNutritionInputs = ({
               fat: e.target.value,
             }));
           }}
+          autoComplete="off"
           placeholder="Fat"
           className="pr-8"
         />
@@ -144,6 +148,7 @@ const BaseNutritionInputs = ({
               fiber: e.target.value,
             }))
           }
+          autoComplete="off"
           placeholder="Fiber"
           className="pr-8"
         />

@@ -62,6 +62,7 @@ const MealManualForm = ({
           id="itemName"
           placeholder=""
           value={itemName}
+          autoComplete="off"
           onChange={(e) => setItemName(e.currentTarget.value)}
           className="flex-grow"
         />
@@ -107,14 +108,14 @@ const MealManualForm = ({
           />
         </div>
       </div>
-      <Accordion type="single" defaultValue="nutrition" collapsible>
+      <Accordion type="single" defaultValue="" collapsible>
         <AccordionItem value="nutrition" className="border-none">
           <AccordionTrigger
             className={cn(
               '[&>svg]:h-4 [&>svg]:w-4 [&>svg]:text-stone-800 ',
               'text-start hover:no-underline border rounded-md p-3 bg-white text-sm',
               'data-[state=open]:rounded-b-none bg-stone-100',
-              'transition-all duration-200 ease-in-out'
+              'transition-all duration-200 ease-in-out '
             )}
           >
             Total nutrition

@@ -11,12 +11,17 @@ import { createNutrition } from '@/lib/database/nutrition/nutrients/createNutrit
 import { getSession } from '@/lib/utils/userSession';
 import { Meal, MealItem, MealType, MealTypes } from '@/types/Nutrition';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import DateTimePicker from '../../DateTimePicker';
 import NotesInput from '../../NotesInput';
 import SaveButtonDrawer from '../../SaveButtonDrawer';
 import MealItemEditor from './MealItemEditor';
 import MealTypeSelector from './MealTypeSelector';
+
+export interface MealItemWithId extends MealItem {
+  tempId: string;
+}
 
 const AddMeal = () => {
   const userId = getSession();
@@ -26,7 +31,21 @@ const AddMeal = () => {
 
   const [mealDate, setMealDate] = useState(new Date());
   const [mealType, setMealType] = useState<MealType>(MealTypes.Breakfast);
-  const [mealItems, setMealItems] = useState<MealItem[]>([]);
+  const [mealItems, setMealItems] = useState<MealItemWithId[]>([]);
+
+  const handleAddMealItem = () => {
+    const newItem: MealItemWithId = {
+      tempId: crypto.randomUUID(),
+      name: '',
+      calories: 0,
+      protein: 0,
+      carbs: 0,
+      fat: 0,
+      fiber: 0,
+    };
+    setMealItems([...mealItems, newItem]);
+  };
+
   const [notes, setNotes] = useState('');
 
   const { mutate, isPending } = useMutation({
@@ -48,19 +67,10 @@ const AddMeal = () => {
     },
   });
 
-  const handleAddMealItem = () => {
-    const newItem: MealItem = {
-      name: '',
-      calories: 0,
-      protein: 0,
-      carbs: 0,
-      fat: 0,
-      fiber: 0,
-    };
-    setMealItems([...mealItems, newItem]);
-  };
-
-  const handleUpdateMealItem = (index: number, updatedEntry: MealItem) => {
+  const handleUpdateMealItem = (
+    index: number,
+    updatedEntry: MealItemWithId
+  ) => {
     const updatedEntries = [...mealItems];
     updatedEntries[index] = updatedEntry;
     setMealItems(updatedEntries);
@@ -128,16 +138,29 @@ const AddMeal = () => {
                 </Button>
                 <div className="bg-stone-50 rounded-md border p-4 flex flex-col gap-4">
                   <div className="flex flex-col gap-2">
-                    {mealItems.map((item, index) => (
-                      <MealItemEditor
-                        key={index}
-                        mealItem={item}
-                        onUpdateMealItem={(updatedItem) =>
-                          handleUpdateMealItem(index, updatedItem)
-                        }
-                        onRemoveMealItem={() => handleRemoveMealItem(index)}
-                      />
-                    ))}
+                    <AnimatePresence mode="wait" initial={false}>
+                      {mealItems.map((item) => (
+                        <MealItemEditor
+                          key={item.tempId}
+                          mealItem={item}
+                          onUpdateMealItem={(updatedItem) =>
+                            handleUpdateMealItem(
+                              mealItems.findIndex(
+                                (i) => i.tempId === item.tempId
+                              ),
+                              { ...updatedItem, tempId: item.tempId }
+                            )
+                          }
+                          onRemoveMealItem={() =>
+                            handleRemoveMealItem(
+                              mealItems.findIndex(
+                                (i) => i.tempId === item.tempId
+                              )
+                            )
+                          }
+                        />
+                      ))}
+                    </AnimatePresence>
                   </div>
                 </div>
 
