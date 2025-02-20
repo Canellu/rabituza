@@ -6,7 +6,13 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { ThemeProvider } from 'next-themes';
 import { ReactNode, useEffect, useState } from 'react';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 inutes
+    },
+  },
+});
 
 export const Providers = ({ children }: { children: ReactNode }) => {
   const [mounted, setMounted] = useState(false);

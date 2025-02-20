@@ -36,7 +36,6 @@ const Activities = () => {
     queryKey: ['activities', userId],
     queryFn: () => (userId ? getActivities(userId) : Promise.resolve([])),
     enabled: !!userId,
-    staleTime: 0,
   });
 
   const showActivitiesList = selectedTab !== 'year';

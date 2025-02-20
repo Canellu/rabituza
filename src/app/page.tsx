@@ -30,9 +30,13 @@ const Menu = () => {
     vibrateOnRelease();
   };
 
-  const handleTabPress = (tab: Tab) => {
-    setTab(tab);
-    router.replace('/');
+  const handleTabPress = (newTab: Tab) => {
+    if (tab !== newTab) {
+      setTab(newTab);
+      if (params.get('tab')) {
+        router.replace(`/`);
+      }
+    }
   };
 
   useEffect(() => {
