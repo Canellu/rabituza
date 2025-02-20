@@ -155,7 +155,7 @@ const MealItemEditor = ({
               </div>
             </div>
           </AccordionTrigger>
-          <AccordionContent className="border border-t-0 rounded-b-md p-4  pt-6 bg-white flex flex-col gap-4">
+          <AccordionContent className="border border-t-0 rounded-b-md p-4 bg-white flex flex-col gap-4">
             {/* Input Mode selector */}
             <div className="space-y-1">
               <Label className="text-sm">Input mode</Label>

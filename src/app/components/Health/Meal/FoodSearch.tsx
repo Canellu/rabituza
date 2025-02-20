@@ -1,16 +1,10 @@
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { useDebounce } from '@/lib/hooks/useDebounce';
 import useFoods from '@/lib/hooks/useFoods';
 import { cn } from '@/lib/utils';
 import { Food } from '@/types/Food';
-import { Check, Loader2 } from 'lucide-react';
+import { Loader2, Search, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 interface FoodSearchProps {
@@ -28,11 +22,10 @@ export const FoodSearch = ({
   onChange,
   onSelect,
   onClear,
-  className = '',
 }: FoodSearchProps) => {
   const [isSearching, setIsSearching] = useState(false);
   const [searchResults, setSearchResults] = useState<Food[]>([]);
-  const [showNoResults, setShowNoResults] = useState(false); // Add this state
+  const [showNoResults, setShowNoResults] = useState(false);
 
   const { foods, isLoading } = useFoods();
   const commandListRef = useRef<HTMLDivElement>(null);
@@ -47,37 +40,32 @@ export const FoodSearch = ({
     setIsSearching(false);
     if (isLoading || !searchTerm || searchTerm.length < 2) {
       setSearchResults([]);
-      setShowNoResults(false); // Hide no results message
+      setShowNoResults(false);
       return;
     }
 
-    const searchTermLower = searchTerm.toLowerCase();
-    const searchWords = searchTermLower.split(/[\s,]+/).filter(Boolean);
+    const normalizeText = (text: string) =>
+      text
+        .toLowerCase()
+        .replace(/[^\w\s]/g, '')
+        .split(/\s+/)
+        .filter(Boolean);
+
+    const searchWords = normalizeText(searchTerm);
 
     const matchedFoods = foods?.filter((food) => {
-      const foodWords = food.foodName
-        .toLowerCase()
-        .split(/[\s,]+/)
-        .filter(Boolean);
-      const nameMatch = searchWords.some((searchWord) =>
-        foodWords.some((foodWord) => foodWord.startsWith(searchWord))
+      const foodWords = normalizeText(food.foodName);
+      const allKeywordWords = food.searchKeywords.flatMap(normalizeText);
+
+      const combinedWords = [...foodWords, ...allKeywordWords];
+
+      return searchWords.every((searchWord) =>
+        combinedWords.includes(searchWord)
       );
-
-      const keywordMatch = food.searchKeywords.some((keyword) => {
-        const keywordWords = keyword
-          .toLowerCase()
-          .split(/[\s,]+/)
-          .filter(Boolean);
-        return searchWords.some((searchWord) =>
-          keywordWords.some((keywordWord) => keywordWord.startsWith(searchWord))
-        );
-      });
-
-      return nameMatch || keywordMatch;
     });
 
     setSearchResults(matchedFoods || []);
-    setShowNoResults(true); // Show no results message only after search
+    setShowNoResults(true);
   }, 300);
 
   const handleClear = () => {
@@ -85,6 +73,7 @@ export const FoodSearch = ({
     setShowNoResults(false);
     onClear?.();
   };
+
   const handleSelect = (food: Food) => {
     setSearchResults([]);
     setShowNoResults(false);
@@ -92,77 +81,76 @@ export const FoodSearch = ({
   };
 
   return (
-    <Command
-      className={cn(
-        'rounded-md border',
-        '[&_[cmdk-input-wrapper]]:pr-1',
-        'outline outline-2 outline-transparent outline-offset-2',
-        ' focus-within:outline-lime-400',
-        !isSearching && !showNoResults && '[&_[cmdk-input-wrapper]]:border-b-0',
-        !isSearching && !showNoResults && 'h-10',
-        className
-      )}
-    >
-      <CommandInput
-        placeholder={placeholder}
-        value={value}
-        onValueChange={(newValue) => {
-          onChange?.(newValue);
-          if (value.length > 2) setIsSearching(true);
-          handleSearch(newValue);
-        }}
-        clearButton={!!value}
-        onClear={() => {
-          handleClear();
-        }}
-        className="text-base"
-      />
+    <div className={cn()}>
+      <div className="relative">
+        <div className="flex items-center justify-center absolute top-0 left-0 h-full aspect-square">
+          <Search className="size-4 text-stone-400" />
+        </div>
+        <Input
+          type="text"
+          placeholder={placeholder}
+          value={value}
+          onChange={(e) => {
+            onChange?.(e.target.value);
+            if (e.target.value.length > 2) setIsSearching(true);
+            handleSearch(e.target.value);
+          }}
+          className={cn('px-9')}
+        />
+        <Button
+          size="icon"
+          variant="ghost"
+          onClick={handleClear}
+          className="absolute right-0 top-0 text-stone-400"
+        >
+          <X />
+        </Button>
+      </div>
 
-      <CommandList
-        ref={commandListRef}
-        className="max-h-[200px] overflow-y-auto"
-      >
-        {isSearching && (
-          <div className="p-2 text-sm text-muted-foreground flex items-center gap-2">
-            <Loader2 className="h-4 w-4 animate-spin" />
-            <span>Searching...</span>
+      {value.length >= 2 &&
+        !isSearching &&
+        showNoResults &&
+        searchResults.length === 0 && (
+          <div className="p-2 text-sm text-muted-foreground border bg-white rounded-md mt-1">
+            No results found.
           </div>
         )}
-        {value.length >= 2 &&
-          searchResults !== undefined &&
-          !isSearching &&
-          showNoResults &&
-          searchResults.length === 0 && (
-            <CommandEmpty className="p-2 text-sm text-muted-foreground">
-              No results found.
-            </CommandEmpty>
+
+      {(!!searchResults.length || (value.length >= 2 && isSearching)) && (
+        <div className="max-h-[300px] overflow-y-auto border rounded-md mt-1 overscroll-contain relative">
+          {isSearching && (
+            <div
+              className={cn(
+                'p-2 text-sm text-muted-foreground flex items-center gap-2'
+              )}
+            >
+              <Loader2 className="h-4 w-4 animate-spin" />
+              <span>Searching...</span>
+            </div>
           )}
-        {searchResults && searchResults.length > 0 && (
-          <CommandGroup>
-            {searchResults.map((food) => (
-              <CommandItem
-                key={food.foodId}
-                value={food.foodName}
-                onSelect={() => handleSelect(food)}
-              >
-                <Check
-                  className={cn(
-                    'mr-2 h-4 w-4',
-                    value === food.foodName ? 'opacity-100' : 'opacity-0'
-                  )}
-                />
-                <div className="flex flex-col">
-                  <span>{food.foodName}</span>
-                  <span className="text-xs text-muted-foreground">
-                    {food.calories?.quantity || 0}{' '}
-                    {food.calories?.unit || 'kcal'} / 100g
-                  </span>
-                </div>
-              </CommandItem>
-            ))}
-          </CommandGroup>
-        )}
-      </CommandList>
-    </Command>
+          {searchResults.map((food) => (
+            <div
+              key={food.foodId}
+              onClick={() => handleSelect(food)}
+              className="p-2 cursor-pointer hover:bg-gray-100 select-none"
+            >
+              <div className="flex flex-col">
+                <span>{food.foodName}</span>
+                <span className="text-xs text-muted-foreground">
+                  {food.calories?.quantity || 0} {food.calories?.unit || 'kcal'}{' '}
+                  / 100g
+                </span>
+              </div>
+            </div>
+          ))}
+          {!!searchResults.length && (
+            <div className="px-2 py-1 text-xs text-muted-foreground sticky bottom-0 border-t bg-stone-50 w-full">
+              {searchResults.length} result
+              {searchResults.length > 1 ? 's' : ''} found
+            </div>
+          )}
+        </div>
+      )}
+    </div>
   );
 };

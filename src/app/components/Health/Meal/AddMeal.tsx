@@ -139,6 +139,9 @@ const AddMeal = () => {
                       size="icon"
                       variant="outline"
                       onClick={() => handleAddMealItem()}
+                      disabled={mealItems.some(
+                        (item) => item.name === '' || item.calories === 0
+                      )}
                     >
                       <Plus />
                     </Button>

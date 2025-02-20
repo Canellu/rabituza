@@ -8,7 +8,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Food, NutrientIds, Portion } from '@/types/Food';
-import { ChangeEvent, Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 import { BaseNutritionStringed } from './BaseNutritionInputs';
 import { FoodSearch } from './FoodSearch';
 
@@ -66,7 +66,6 @@ const MealSearchForm = ({
   const handleSearchSelect = (food: Food) => {
     setSelectedFood(food);
     setItemName(food.foodName);
-    setCalories(food.calories.quantity.toString());
 
     if (food.portions.length > 0) {
       const initialPortion = food.portions[0];
@@ -88,10 +87,10 @@ const MealSearchForm = ({
     });
   };
 
-  const handleChangeQuantity = (e: ChangeEvent<HTMLInputElement>) => {
-    setQuantity(e.target.value);
+  const handleChangeQuantity = (value: string) => {
+    setQuantity(value);
     if (selectedFood && selectedPortion) {
-      calculateNutrition(Number(e.target.value), selectedPortion, selectedFood);
+      calculateNutrition(Number(value), selectedPortion, selectedFood);
     }
   };
 
@@ -132,7 +131,10 @@ const MealSearchForm = ({
               type="text"
               inputMode="numeric"
               value={quantity}
-              onChange={handleChangeQuantity}
+              onChange={(e) => handleChangeQuantity(e.target.value)}
+              onFocus={() => {
+                handleChangeQuantity('');
+              }}
               autoComplete="off"
               placeholder="0"
               className="text-ellipsis"
