@@ -6,9 +6,15 @@ import ActivityBadgeNumber from './ActivityBadgeNumber';
 
 type ActivitiesWeekProps = {
   activities?: ActivityType[];
+  onDateSelect: (date: Date) => void;
+  selectedDate: Date;
 };
 
-const ActivitiesWeek = ({ activities = [] }: ActivitiesWeekProps) => {
+const ActivitiesWeek = ({
+  activities = [],
+  onDateSelect,
+  selectedDate,
+}: ActivitiesWeekProps) => {
   const hasActivity = (date: Date) =>
     activities.some(
       (activity) =>
@@ -45,20 +51,29 @@ const ActivitiesWeek = ({ activities = [] }: ActivitiesWeekProps) => {
       {Array.from({ length: 7 }, (_, i) => {
         const date = addDays(weekStart, i);
         const isCurrentDay = isToday(date);
+        const isSelected =
+          date.toLocaleDateString() === selectedDate.toLocaleDateString();
         const hasActivityForDay = hasActivity(date);
         const activityCount = getActivityCount(date);
         const mostRecentType = getMostRecentActivityType(date);
+
         return (
-          <div key={i} className="flex flex-col items-center gap-3">
+          <div
+            key={i}
+            className="flex flex-col items-center gap-3 cursor-pointer"
+            onClick={() => onDateSelect(date)}
+          >
             <div className="text-sm font-medium text-stone-600">
               {format(date, 'EEE')}
             </div>
             <div className="relative">
               <div
                 className={cn(
-                  'size-9 rounded-full flex items-center justify-center',
-                  hasActivityForDay && 'bg-primary/50 font-semibold',
-                  isCurrentDay && 'border-2 border-primary/50'
+                  'size-9 rounded-full flex items-center justify-center transition-colors',
+                  'select-none',
+                  hasActivityForDay && 'bg-primary/40 font-semibold',
+                  isCurrentDay && 'border-2 border-primary/40',
+                  isSelected && 'border-2 border-primary'
                 )}
               >
                 <span className="text-sm font-medium">{format(date, 'd')}</span>

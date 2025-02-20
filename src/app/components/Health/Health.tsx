@@ -5,8 +5,7 @@ import { getNutritionTargets } from '@/lib/database/nutrition/targets/getNutriti
 import { cn } from '@/lib/utils';
 import { getSession } from '@/lib/utils/userSession';
 import { useQuery } from '@tanstack/react-query';
-import { Frown } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import MealCard from './MealCard';
 import NutritionMonth from './NutritionMonth';
 import NutritionStats from './NutritionStats';
@@ -40,10 +39,6 @@ const Health = () => {
   const isInTargetPeriod =
     selectedDay >= nutritionTarget?.startDate &&
     selectedDay <= nutritionTarget?.endDate;
-
-  useEffect(() => {
-    console.log(meals, meals.length);
-  }, [meals]);
 
   const todaysMeals = meals.filter(
     (meal) => meal.mealDate.toDateString() === selectedDay.toDateString()
@@ -89,9 +84,8 @@ const Health = () => {
               ))}
           </div>
         ) : (
-          <div className="bg-secondary border rounded-xl p-4 white flex items-center gap-2 text-stone-600">
-            <Frown className="size-5" />
-            <span className="leading-none mt-px">
+          <div className="border p-4 bg-white rounded-xl">
+            <span className="text-sm font-medium text-stone-600 ">
               No meals addded on this date
             </span>
           </div>

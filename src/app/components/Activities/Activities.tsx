@@ -8,42 +8,44 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  STAGGER_CHILD_VARIANTS,
-  STAGGER_CONTAINER_CONFIG,
-} from '@/constants/animationConfig';
 import { getActivities } from '@/lib/database/activities/getActivities';
 import { getSession } from '@/lib/utils/userSession';
-import { ActivityType, ActivityTypes } from '@/types/Activity';
+import { ActivityType } from '@/types/Activity';
 import { useQuery } from '@tanstack/react-query';
-import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
 import Spinner from '../Spinner';
+import ActivitiesList from './ActivitiesList';
 import ActivitiesMonth from './ActivitiesMonth';
 import AcitvitiesWeek from './ActivitiesWeek';
 import ActivitiesYear from './ActivitiesYear';
-import ActivityCardCalisthenics from './ActivityCardCalisthenics';
-import ActivityCardClimbing from './ActivityCardClimbing';
-import ActivityCardDriving from './ActivityCardDriving';
-import ActivityCardGym from './ActivityCardGym';
-import ActivityCardHangboard from './ActivityCardHangboard';
-import ActivityCardStretching from './ActivityCardStretching';
 import ActivityForm from './ActivityForm';
 
 const Activities = () => {
+  const userId = getSession();
+
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedActivity, setSelectedActivity] = useState<ActivityType | null>(
     null
   );
-  // Rename isDrawerOpen to isOpen for consistency
-  const [isOpen, setIsOpen] = useState(false);
+  const [selectedTab, setSelectedTab] = useState<'week' | 'month' | 'year'>(
+    'week'
+  );
 
-  const userId = getSession();
   const { data: activities, isLoading } = useQuery({
     queryKey: ['activities', userId],
     queryFn: () => (userId ? getActivities(userId) : Promise.resolve([])),
     enabled: !!userId,
     staleTime: 0,
   });
+
+  const showActivitiesList = selectedTab !== 'year';
+
+  const filteredActivities = activities?.filter(
+    (activity) =>
+      new Date(activity.activityDate).toLocaleDateString() ===
+      selectedDate.toLocaleDateString()
+  );
 
   const handleEditActivity = (activity: ActivityType) => {
     setSelectedActivity(activity);
@@ -60,11 +62,16 @@ const Activities = () => {
       </div>
     );
   }
-
   return (
     <div className="h-full space-y-10">
       <section className="space-y-4">
-        <Tabs defaultValue="week" className="w-full">
+        <Tabs
+          value={selectedTab}
+          onValueChange={(value) =>
+            setSelectedTab(value as 'week' | 'month' | 'year')
+          }
+          className="w-full"
+        >
           <TabsList className="w-full justify-evenly">
             <TabsTrigger value="week" className="flex-grow">
               Week
@@ -78,10 +85,18 @@ const Activities = () => {
           </TabsList>
 
           <TabsContent value="week">
-            <AcitvitiesWeek activities={activities} />
+            <AcitvitiesWeek
+              activities={activities}
+              onDateSelect={setSelectedDate}
+              selectedDate={selectedDate}
+            />
           </TabsContent>
           <TabsContent value="month">
-            <ActivitiesMonth activities={activities} />
+            <ActivitiesMonth
+              activities={activities}
+              onDateSelect={setSelectedDate}
+              selectedDate={selectedDate}
+            />
           </TabsContent>
           <TabsContent value="year">
             <ActivitiesYear activities={activities} />
@@ -89,67 +104,13 @@ const Activities = () => {
         </Tabs>
       </section>
 
-      <section className="space-y-3">
-        <h2 className="text-xl font-semibold">Recent activities</h2>
-        <motion.div className="space-y-4 pb-10" {...STAGGER_CONTAINER_CONFIG}>
-          <AnimatePresence>
-            {activities?.map((activity) => (
-              <motion.div key={activity.id} variants={STAGGER_CHILD_VARIANTS}>
-                {(() => {
-                  switch (activity.type) {
-                    case ActivityTypes.Climbing:
-                      return (
-                        <ActivityCardClimbing
-                          activity={activity}
-                          onEdit={() => handleEditActivity(activity)}
-                        />
-                      );
-                    case ActivityTypes.Calisthenics:
-                      return (
-                        <ActivityCardCalisthenics
-                          activity={activity}
-                          onEdit={() => handleEditActivity(activity)}
-                        />
-                      );
-                    case ActivityTypes.Stretching:
-                      return (
-                        <ActivityCardStretching
-                          activity={activity}
-                          onEdit={() => handleEditActivity(activity)}
-                        />
-                      );
-                    case ActivityTypes.Hangboard:
-                      return (
-                        <ActivityCardHangboard
-                          activity={activity}
-                          onEdit={() => handleEditActivity(activity)}
-                        />
-                      );
-
-                    case ActivityTypes.Gym:
-                      return (
-                        <ActivityCardGym
-                          activity={activity}
-                          onEdit={() => handleEditActivity(activity)}
-                        />
-                      );
-
-                    case ActivityTypes.Driving:
-                      return (
-                        <ActivityCardDriving
-                          activity={activity}
-                          onEdit={() => handleEditActivity(activity)}
-                        />
-                      );
-                    default:
-                      return null;
-                  }
-                })()}
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </motion.div>
-      </section>
+      {showActivitiesList && (
+        <ActivitiesList
+          activities={filteredActivities}
+          selectedDate={selectedDate}
+          onEditActivity={handleEditActivity}
+        />
+      )}
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="max-w-lg w-[96%] h-[96dvh] overflow-y-auto rounded-lg flex flex-col p-0 py-6">
