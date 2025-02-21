@@ -1,3 +1,4 @@
+import { Progress } from '@/components/ui/progress';
 import ScrollShadow from '@/components/ui/ScrollShadow';
 import { getUsers } from '@/lib/database/user/getUsers';
 import { cn } from '@/lib/utils';
@@ -94,8 +95,8 @@ const YourPeers = ({ activities }: YourPeersProps) => {
                     <UserProfilePicture user={user} />
                     <p
                       className={cn(
-                        'text-center text-sm first-letter:capitalize',
-                        'inter font-semibold text-stone-500 border px-2 py-1 rounded-full',
+                        'text-center text-sm first-letter:capitalize border border-white/50',
+                        'geist-mono font-semibold text-stone-800 tracking-wide border px-2 py-1 rounded-full',
                         'bg-gradient-to-br from-stone-100 to-stone-200 shadow-inner'
                       )}
                     >
@@ -103,11 +104,23 @@ const YourPeers = ({ activities }: YourPeersProps) => {
                     </p>
                   </div>
                   <div className="flex flex-col justify-between gap-2 h-full">
-                    <p className="max-w-[20ch] break-words whitespace-pre-wrap text-sm first-letter:capitalize first-letter:text-emerald-600 first-letter:text-lg">
+                    <p className="max-w-[20ch] break-words whitespace-pre-wrap text-sm first-letter:capitalize first-letter:text-emerald-600 first-letter:text-lg ">
                       {user?.bio}
                     </p>
+
+                    <div>
+                      <span className="text-sm font-medium">Lvl. 2</span>
+                      <Progress
+                        value={50}
+                        className={cn('w-full h-2 border border-stone-200')}
+                        classNameIndicator={cn(
+                          'bg-gradient-to-r rounded-r-full',
+                          'from-emerald-700 to-emerald-300'
+                        )}
+                      />
+                    </div>
                     <div className="space-y-0.5">
-                      <p className="text-sm font-medium">
+                      <p className="text-sm">
                         {userActivities.length} activities logged
                       </p>
                       <p className="text-xs">
