@@ -104,14 +104,30 @@ const YourPeers = ({ activities }: YourPeersProps) => {
                     </p>
                   </div>
                   <div className="flex flex-col justify-between gap-2 h-full">
-                    <p className="max-w-[20ch] break-words whitespace-pre-wrap text-sm first-letter:capitalize first-letter:text-emerald-600 first-letter:text-lg ">
+                    <p className="max-w-[20ch] break-words whitespace-pre-wrap text-sm first-letter:capitalize first-letter:text-emerald-600 first-letter:text-lg first-letter:font-semibold ">
                       {user?.bio}
                     </p>
 
-                    <div>
-                      <span className="text-sm font-medium">Lvl. 2</span>
+                    <div className="flex flex-col gap-1">
+                      <span className="text-sm font-medium">Lorem</span>
                       <Progress
                         value={50}
+                        className={cn('w-full h-2 border border-stone-200')}
+                        classNameIndicator={cn(
+                          'bg-gradient-to-r rounded-r-full',
+                          'from-emerald-700 to-emerald-300'
+                        )}
+                      />
+                      <Progress
+                        value={80}
+                        className={cn('w-full h-2 border border-stone-200')}
+                        classNameIndicator={cn(
+                          'bg-gradient-to-r rounded-r-full',
+                          'from-emerald-700 to-emerald-300'
+                        )}
+                      />
+                      <Progress
+                        value={20}
                         className={cn('w-full h-2 border border-stone-200')}
                         classNameIndicator={cn(
                           'bg-gradient-to-r rounded-r-full',
