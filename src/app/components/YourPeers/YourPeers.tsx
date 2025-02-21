@@ -1,10 +1,19 @@
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import ScrollShadow from '@/components/ui/ScrollShadow';
 import { getUsers } from '@/lib/database/user/getUsers';
 import { cn } from '@/lib/utils';
 import { getSession } from '@/lib/utils/userSession';
 import { ActivityType } from '@/types/Activity';
+import { User } from '@/types/User';
 import { useQuery } from '@tanstack/react-query';
 import { subWeeks } from 'date-fns'; // Import subWeeks to calculate the date one week ago
+import { useState } from 'react';
+import WorkInProgress from '../WorkInProgress';
 import PeerCard from './PeerCard';
 
 interface YourPeersProps {
@@ -18,11 +27,24 @@ const YourPeers = ({ activities }: YourPeersProps) => {
     queryFn: () => getUsers(),
   });
 
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const handleSelectPeer = (user: User) => {
+    setSelectedUser(user);
+    setIsDialogOpen(true);
+  };
+
+  const closeDialog = () => {
+    setIsDialogOpen(false);
+    setSelectedUser(null);
+  };
+
   if (isLoadingUsers) {
     return <p>Loading users...</p>;
   }
 
-  const oneWeekAgo = subWeeks(new Date(), 1); // Calculate the date one week ago
+  const oneWeekAgo = subWeeks(new Date(), 1);
 
   const filteredUsers = users?.filter((user) => {
     const userActivities = activities.filter(
@@ -33,7 +55,6 @@ const YourPeers = ({ activities }: YourPeersProps) => {
         new Date(b.activityDate).getTime() - new Date(a.activityDate).getTime()
     )[0];
 
-    // Filter out users whose last activity is more than one week ago
     return (
       user.id !== userId &&
       lastActivity &&
@@ -44,7 +65,7 @@ const YourPeers = ({ activities }: YourPeersProps) => {
   return (
     <div className="flex flex-col gap-2">
       <h2 className="text-xl font-semibold flex items-center gap-2">
-        Active Peers{' '}
+        Active Peers
         <div
           className={cn(
             'relative',
@@ -76,11 +97,31 @@ const YourPeers = ({ activities }: YourPeersProps) => {
                 key={user.id}
                 user={user}
                 userActivities={userActivities}
+                onSelectPeer={() => handleSelectPeer(user)}
               />
             );
           })}
         </div>
       </ScrollShadow>
+
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-lg w-[96%] max-h-[96dvh] overflow-y-auto rounded-lg flex flex-col p-0 py-6">
+          <DialogHeader>
+            <DialogTitle className="first-letter:capitalize">
+              {selectedUser?.username}
+            </DialogTitle>
+          </DialogHeader>
+          {selectedUser && (
+            <div className="flex-grow overflow-y-auto">
+              <div className="h-full overflow-auto">
+                <div className="p-4">
+                  <WorkInProgress />
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

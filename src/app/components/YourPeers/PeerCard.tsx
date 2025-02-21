@@ -3,15 +3,15 @@ import { cn } from '@/lib/utils';
 import { ActivityType } from '@/types/Activity';
 import { User } from '@/types/User';
 import { format } from 'date-fns';
-import React from 'react';
 import UserProfilePicture from './UserProfilePicture';
 
 interface PeerCardProps {
   user: User;
   userActivities: ActivityType[];
+  onSelectPeer: () => void;
 }
 
-const PeerCard: React.FC<PeerCardProps> = ({ user, userActivities }) => {
+const PeerCard = ({ user, userActivities, onSelectPeer }: PeerCardProps) => {
   const lastActivity = userActivities.sort(
     (a, b) =>
       new Date(b.activityDate).getTime() - new Date(a.activityDate).getTime()
@@ -24,11 +24,12 @@ const PeerCard: React.FC<PeerCardProps> = ({ user, userActivities }) => {
         'flex justify-between relative shrink-0 p-4',
         'bg-gradient-to-tr from-stone-50 via-stone-200 to-stone-50 rounded-3xl cursor-pointer shadow'
       )}
+      onClick={() => onSelectPeer()}
     >
       <div
         className={cn('absolute z-10 inset-0.5 bg-stone-100 rounded-[1.4rem]')}
       />
-      <div className="z-20 flex items-center justify-center gap-8">
+      <div className="z-20 flex items-center justify-center gap-6">
         <div className="flex flex-col gap-4">
           <UserProfilePicture user={user} />
           <p
