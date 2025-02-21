@@ -1,8 +1,6 @@
 'use client';
 
-import { CALISTHENICS_EXERCISES } from '@/constants/calisthenicsExercises';
 import { getActivities } from '@/lib/database/activities/getActivities';
-import { formatDuration } from '@/lib/utils/time';
 import { ActivityTypes, CalisthenicsExerciseType } from '@/types/Activity';
 import { useQuery } from '@tanstack/react-query';
 import ToughestCountdown from './ToughestCountdown';
@@ -62,7 +60,7 @@ const Home = () => {
       {activities && <YourPeers activities={activities} />}
 
       {/* Calisthenics Card */}
-      <div className="border rounded-xl p-4 bg-white flex flex-col gap-2">
+      {/* <div className="border rounded-xl p-4 bg-white flex flex-col gap-2">
         <div className="flex gap-4 items-center justify-between">
           <div>
             <h2 className="text-lg font-semibold">Calisthenics Summary</h2>
@@ -124,7 +122,7 @@ const Home = () => {
               })}
           </ul>
         )}
-      </div>
+      </div> */}
     </div>
   );
 };
