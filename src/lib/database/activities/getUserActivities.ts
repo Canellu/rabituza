@@ -8,27 +8,15 @@ import {
   HangboardEdgeType,
   Route,
 } from '@/types/Activity';
-import { collection, getDocs, query, where } from 'firebase/firestore';
+import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 
-export const getActivities = async (
-  dateFrom?: Date,
-  dateTo?: Date
+export const getUserActivities = async (
+  userId: string
 ): Promise<ActivityType[]> => {
   try {
-    const activitiesRef = collection(db, `activities`);
-
-    let querySnapshot;
-    if (dateFrom && dateTo) {
-      const activitiesQuery = query(
-        activitiesRef,
-        where('activityDate', '>=', dateFrom),
-        where('activityDate', '<=', dateTo)
-      );
-      querySnapshot = await getDocs(activitiesQuery);
-    } else {
-      querySnapshot = await getDocs(activitiesRef);
-    }
+    const activitiesRef = collection(db, `users/${userId}/activities`);
+    const querySnapshot = await getDocs(activitiesRef);
 
     const activities = await Promise.all(
       querySnapshot.docs.map(async (doc) => {

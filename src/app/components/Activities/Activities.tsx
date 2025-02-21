@@ -8,7 +8,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { getActivities } from '@/lib/database/activities/getActivities';
+import { getUserActivities } from '@/lib/database/activities/getUserActivities';
 import { getSession } from '@/lib/utils/userSession';
 import { ActivityType } from '@/types/Activity';
 import { useQuery } from '@tanstack/react-query';
@@ -34,7 +34,7 @@ const Activities = () => {
 
   const { data: activities, isLoading } = useQuery({
     queryKey: ['activities', userId],
-    queryFn: () => (userId ? getActivities(userId) : Promise.resolve([])),
+    queryFn: () => (userId ? getUserActivities(userId) : Promise.resolve([])),
     enabled: !!userId,
   });
 
