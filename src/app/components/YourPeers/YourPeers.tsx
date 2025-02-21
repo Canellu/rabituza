@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { getSession } from '@/lib/utils/userSession';
 import { ActivityType } from '@/types/Activity';
 import { useQuery } from '@tanstack/react-query';
-import { format } from 'date-fns';
+import { format, subWeeks } from 'date-fns'; // Import subWeeks to calculate the date one week ago
 import UserProfilePicture from './UserProfilePicture';
 
 interface YourPeersProps {
@@ -22,14 +22,42 @@ const YourPeers = ({ activities }: YourPeersProps) => {
     return <p>Loading users...</p>;
   }
 
+  const oneWeekAgo = subWeeks(new Date(), 1); // Calculate the date one week ago
+
   const filteredUsers = users?.filter((user) => {
-    return user.id !== userId;
+    const userActivities = activities.filter(
+      (activity) => activity.userId === user.id
+    );
+    const lastActivity = userActivities.sort(
+      (a, b) =>
+        new Date(b.activityDate).getTime() - new Date(a.activityDate).getTime()
+    )[0];
+
+    // Filter out users whose last activity is more than one week ago
+    return (
+      user.id !== userId &&
+      lastActivity &&
+      new Date(lastActivity.activityDate) > oneWeekAgo
+    );
   });
 
   return (
     <div className="flex flex-col gap-2">
-      <h2 className="text-xl font-semibold">
-        Your Peers ({filteredUsers?.length})
+      <h2 className="text-xl font-semibold flex items-center gap-2">
+        Active Peers{' '}
+        <div
+          className={cn(
+            'relative',
+            'bg-gradient-to-tr from-stone-50 via-stone-200 to-stone-50 rounded-md cursor-pointer shadow'
+          )}
+        >
+          <div
+            className={cn('absolute z-10 inset-0.5 bg-stone-100/50 rounded-sm')}
+          />
+          <div className="size-7 flex items-center justify-center">
+            <p className="text-center z-20 text-lg">{filteredUsers?.length}</p>
+          </div>
+        </div>
       </h2>
       <ScrollShadow
         orientation="horizontal"
@@ -53,7 +81,6 @@ const YourPeers = ({ activities }: YourPeersProps) => {
                 key={user.id}
                 className={cn(
                   'flex justify-between relative shrink-0 p-4',
-                  '',
                   'bg-gradient-to-tr from-stone-50 via-stone-200 to-stone-50 rounded-3xl cursor-pointer shadow'
                 )}
               >
