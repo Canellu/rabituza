@@ -55,35 +55,16 @@ const Home = () => {
   const calisthenicsSessionCount = calisthenicsActivities?.length || 0;
 
   return (
-    <div className="">
+    <div className="flex flex-col gap-12 pb-10">
       <ToughestCountdown />
-      <div className="activity-counts mt-4">
-        <h2 className="text-lg font-bold">Activity Counts</h2>
-        {isLoading ? (
-          <p>Loading activities...</p>
-        ) : (
-          <ul className="list-disc pl-5">
-            <li className="text-sm font-semibold">
-              Total Activities: {totalCount}
-            </li>
-            {counts &&
-              Object.entries(counts).map(([type, count]) => {
-                return (
-                  <li key={type} className="text-sm">
-                    {type}: {count}
-                  </li>
-                );
-              })}
-          </ul>
-        )}
-      </div>
+
       {/* Calisthenics Card */}
       <div className="border rounded-xl p-4 bg-white flex flex-col gap-2">
         <div className="flex gap-4 items-center justify-between">
           <div>
             <h2 className="text-lg font-semibold">Calisthenics Summary</h2>
-            <p className="text-stone-600 text-sm">
-              Totals for all logged sessions
+            <p className="text-stone-600 text-xs">
+              Total stats for all users on Rabituza
             </p>
           </div>
           <div className="flex flex-col items-center justify-center border-2 px-4 pt-3 pb-2 rounded-xl">
@@ -119,6 +100,27 @@ const Home = () => {
                 );
               })}
         </section>
+      </div>
+
+      <div className="mt-4">
+        <h2 className="text-lg font-bold">Activity Counts</h2>
+        {isLoading ? (
+          <p>Loading activities...</p>
+        ) : (
+          <ul className="list-disc pl-5">
+            <li className="text-sm font-semibold">
+              Total Activities: {totalCount}
+            </li>
+            {counts &&
+              Object.entries(counts).map(([type, count]) => {
+                return (
+                  <li key={type} className="text-sm">
+                    {type}: {count}
+                  </li>
+                );
+              })}
+          </ul>
+        )}
       </div>
     </div>
   );
