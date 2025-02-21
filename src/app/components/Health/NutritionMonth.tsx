@@ -4,19 +4,41 @@ import { Meal, NutritionTarget } from '@/types/Nutrition';
 import { format, isToday } from 'date-fns';
 
 type NutritionMonthProps = {
-  entries?: Meal[];
+  meals?: Meal[];
   target?: NutritionTarget;
+  onDateSelect: (date: Date) => void;
+  selectedDate: Date;
 };
 
-const NutritionMonth = ({ entries = [], target }: NutritionMonthProps) => {
+const NutritionMonth = ({
+  meals = [],
+  target,
+  onDateSelect,
+  selectedDate,
+}: NutritionMonthProps) => {
   const currentYear = new Date().getFullYear();
 
   const hasEntry = (date: Date) =>
-    entries.some(
+    meals.some(
       (entry) =>
         new Date(entry.mealDate).toLocaleDateString() ===
         date.toLocaleDateString()
     );
+
+  const totalCaloriesForDay = (date: Date) =>
+    meals
+      .filter(
+        (meal) =>
+          new Date(meal.mealDate).toLocaleDateString() ===
+          date.toLocaleDateString()
+      )
+      .reduce((total, meal) => {
+        const mealCalories = meal.mealItems.reduce(
+          (itemTotal, item) => itemTotal + item.calories,
+          0
+        );
+        return total + mealCalories;
+      }, 0);
 
   const isTargetDay = (date: Date) => {
     if (!target) return false;
@@ -33,6 +55,7 @@ const NutritionMonth = ({ entries = [], target }: NutritionMonthProps) => {
       mode="single"
       className="rounded-xl border w-full flex items-center justify-center bg-gradient-to-b from-white to-emerald-50 py-5"
       showOutsideDays={false}
+      weekStartsOn={1}
       fromDate={new Date(currentYear, 0, 1)}
       toDate={new Date(currentYear, 11, 31)}
       classNames={{
@@ -47,20 +70,39 @@ const NutritionMonth = ({ entries = [], target }: NutritionMonthProps) => {
       components={{
         Day: ({ date, displayMonth }) => {
           const isOutsideDay = displayMonth.getMonth() !== date.getMonth();
-          const hasEntryForDay = hasEntry(date);
+          const hasMealForDay = hasEntry(date);
           const isTodayDate = isToday(date);
           const isTargetDayDate = isTargetDay(date);
+          const totalCalories = totalCaloriesForDay(date);
+          const exceedsTargetCalories =
+            target && totalCalories > target.calories;
+          const isSelected =
+            date.toLocaleDateString() === selectedDate.toLocaleDateString();
 
           if (isOutsideDay) return null;
 
           return (
-            <div className="relative">
+            <div
+              className="relative cursor-pointer"
+              onClick={() => onDateSelect(date)}
+            >
               <div
                 className={cn(
-                  'flex items-center justify-center size-9 rounded-full',
-                  hasEntryForDay && 'bg-primary/50',
-                  isTargetDayDate && 'border-2 border-stone-200',
-                  isTodayDate && 'border-2 border-primary/50'
+                  'flex items-center justify-center size-9 rounded-full transition-colors',
+                  'select-none duration-500',
+                  isTodayDate && 'border-2 border-primary/40',
+                  isTargetDayDate &&
+                    !hasMealForDay &&
+                    'border-2 border-stone-200',
+                  isTargetDayDate &&
+                    hasMealForDay &&
+                    exceedsTargetCalories &&
+                    'bg-orange-300',
+                  isTargetDayDate &&
+                    hasMealForDay &&
+                    !exceedsTargetCalories &&
+                    'bg-primary/50',
+                  isSelected && 'border-2 border-primary'
                 )}
               >
                 {format(date, 'd')}

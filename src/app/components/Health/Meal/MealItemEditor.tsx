@@ -54,11 +54,11 @@ const MealItemEditor = ({
   const [selectedFood, setSelectedFood] = useState<Food | null>(null);
   const [selectedPortion, setSelectedPortion] = useState<Portion | null>(null);
   const [baseNutrition, setBaseNutrition] = useState<BaseNutritionStringed>({
-    calories: '',
-    protein: '',
-    carbs: '',
-    fat: '',
-    fiber: '',
+    calories: mealItem.calories.toString() || '',
+    protein: mealItem.protein.toString() || '',
+    carbs: mealItem.carbs.toString() || '',
+    fat: mealItem.fat.toString() || '',
+    fiber: mealItem.fiber.toString() || '',
   });
 
   const handleClickConfirm = () => {

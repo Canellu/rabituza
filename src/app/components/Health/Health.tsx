@@ -42,14 +42,14 @@ const Health = () => {
 
   const today = new Date();
   // Start the week 3 days before today
-  const [selectedDay, setSelectedDay] = useState(today);
+  const [selectedDate, setSelectedDate] = useState(today);
   const nutritionTarget = nutritionTargets[0];
   const isInTargetPeriod =
-    selectedDay >= nutritionTarget?.startDate &&
-    selectedDay <= nutritionTarget?.endDate;
+    selectedDate >= nutritionTarget?.startDate &&
+    selectedDate <= nutritionTarget?.endDate;
 
   const todaysMeals = meals.filter(
-    (meal) => meal.mealDate.toDateString() === selectedDay.toDateString()
+    (meal) => meal.mealDate.toDateString() === selectedDate.toDateString()
   );
   const [isMealDialogOpen, setIsMealDialogOpen] = useState(false);
   const [selectedMeal, setSelectedMeal] = useState<Meal | null>(null);
@@ -62,8 +62,8 @@ const Health = () => {
   return (
     <div className="h-full space-y-10">
       <NutritionDayPicker
-        selectedDay={selectedDay}
-        setSelectedDay={setSelectedDay}
+        selectedDate={selectedDate}
+        setSelectedDate={setSelectedDate}
       />
 
       <NutritionStats
@@ -71,7 +71,7 @@ const Health = () => {
         isLoading={isLoading}
         nutritionTarget={nutritionTarget}
         isInTargetPeriod={isInTargetPeriod}
-        selectedDay={selectedDay}
+        selectedDay={selectedDate}
       />
 
       {!isLoading && (
@@ -120,7 +120,12 @@ const Health = () => {
         </DialogContent>
       </Dialog>
 
-      <NutritionMonth target={nutritionTarget} />
+      <NutritionMonth
+        meals={meals}
+        target={nutritionTarget}
+        onDateSelect={setSelectedDate}
+        selectedDate={selectedDate}
+      />
     </div>
   );
 };

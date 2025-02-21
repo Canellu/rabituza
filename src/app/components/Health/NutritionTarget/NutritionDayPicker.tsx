@@ -3,13 +3,13 @@ import { addDays, format } from 'date-fns';
 import { motion } from 'framer-motion';
 
 interface NutritionDayPickerProps {
-  selectedDay: Date;
-  setSelectedDay: (date: Date) => void;
+  selectedDate: Date;
+  setSelectedDate: (date: Date) => void;
 }
 
 const NutritionDayPicker = ({
-  selectedDay,
-  setSelectedDay,
+  selectedDate,
+  setSelectedDate: setSelectedDay,
 }: NutritionDayPickerProps) => {
   const today = new Date();
   const weekStart = addDays(today, -3);
@@ -19,7 +19,7 @@ const NutritionDayPicker = ({
       {Array.from({ length: 7 }).map((_, i) => {
         const date = addDays(weekStart, i);
         const isSelected =
-          format(date, 'yyyy-MM-dd') === format(selectedDay, 'yyyy-MM-dd');
+          format(date, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd');
         const isToday =
           format(date, 'yyyy-MM-dd') === format(today, 'yyyy-MM-dd');
 
