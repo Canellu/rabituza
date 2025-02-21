@@ -15,7 +15,7 @@ const UserProfilePicture = ({ user }: UserProfilePictureProps) => {
         alt="User Avatar"
         width={112}
         height={112}
-        className="rounded-full object-cover size-20"
+        className="rounded-full object-cover size-14"
       />
     );
   }
