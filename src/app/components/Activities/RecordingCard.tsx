@@ -270,10 +270,11 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
               </div>
               <div className="px-4 py-2 border-t flex items-center justify-between">
                 <div className="flex items-center justify-center gap-2">
-                  <Crosshair className="size-5" /> {avgAccuracy.toFixed(2)}m
+                  <Crosshair className="size-5" /> {avgAccuracy.toFixed(1)}m
                 </div>
                 <div className="flex items-center justify-center gap-2">
-                  <Gauge className="size-5" /> {avgSpeed.toFixed(2)}m
+                  <Gauge className="size-5" /> {(avgSpeed * 3.6).toFixed(1)}{' '}
+                  km/h
                 </div>
               </div>
             </>
