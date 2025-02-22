@@ -43,9 +43,9 @@ const PeerCard = ({ user, userActivities, onSelectPeer }: PeerCardProps) => {
           </p>
         </div>
         <div className="flex flex-col justify-between gap-2 h-full">
-          <p className="max-w-[20ch] break-words whitespace-pre-wrap text-sm first-letter:capitalize first-letter:text-emerald-600 first-letter:text-lg first-letter:font-semibold ">
+          {/* <p className="max-w-[20ch] break-words whitespace-pre-wrap text-sm first-letter:capitalize first-letter:text-emerald-600 first-letter:text-lg first-letter:font-semibold ">
             {user?.bio}
-          </p>
+          </p> */}
 
           <div className="flex flex-col gap-1">
             <span className="text-sm font-medium">Lorem</span>

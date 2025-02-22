@@ -1,5 +1,7 @@
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
+import { Label } from '@/components/ui/label'; // Import Label from shadcn
+import { Switch } from '@/components/ui/switch'; // Import Switch from shadcn
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'; // Import ToggleGroup components
 import { updateActivity } from '@/lib/database/activities/updateActivity';
 import useRecordDriving, {
   RecordingStates,
@@ -44,6 +46,10 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
     resetRecording,
     isResetting,
     isStartingRecording,
+    minInterval,
+    setMinInterval,
+    isIntervalEnabled,
+    setIsIntervalEnabled,
   } = useRecordDriving();
 
   const [showResetModal, setShowResetModal] = useState(false);
@@ -150,6 +156,30 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
       )}
     >
       <DrivingCardHeader activity={activity} />
+
+      <div className="flex items-center justify-between gap-2">
+        <ToggleGroup
+          type="single"
+          value={minInterval.toString()}
+          onValueChange={(value) => setMinInterval(Number(value))}
+          className="flex flex-grow justify-evenly gap-1 border bg-stone-50 rounded-md p-1"
+        >
+          {['100', '250', '500', '1000'].map((interval) => (
+            <ToggleGroupItem
+              key={interval}
+              value={interval}
+              className="data-[state=on]:bg-stone-200 capitalize px-2 py-1 h-8 flex-grow"
+              disabled={!isIntervalEnabled}
+            >
+              {interval}
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
+        <Switch
+          checked={isIntervalEnabled}
+          onCheckedChange={(checked) => setIsIntervalEnabled(checked)}
+        />
+      </div>
 
       <div className="items-center flex justify-center gap-4 my-4">
         <Button

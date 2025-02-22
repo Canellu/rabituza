@@ -32,10 +32,12 @@ const useRecordDriving = () => {
   const [recordingState, setRecordingState] = useState<RecordingState>(
     RecordingStates.IDLING
   );
-
+  const [minInterval, setMinInterval] = useState<number>(MIN_INTERVAL_MS);
+  const [isIntervalEnabled, setIsIntervalEnabled] = useState<
+    boolean | undefined
+  >(true);
   const watchIdRef = useRef<number | null>(null);
   const lastTimestampRef = useRef<number | null>(null);
-
   const resetRecording = async () => {
     setIsResetting(true);
     clearNavigator();
@@ -51,14 +53,12 @@ const useRecordDriving = () => {
       setIsResetting(false);
     }
   };
-
   const clearNavigator = () => {
     if (watchIdRef.current !== null) {
       navigator.geolocation.clearWatch(watchIdRef.current);
       watchIdRef.current = null;
     }
   };
-
   const updateDataSize = async () => {
     try {
       const size = await estimateDrivingDataSize();
@@ -68,7 +68,6 @@ const useRecordDriving = () => {
       toast.error('Failed to estimate storage size');
     }
   };
-
   const startRecording = async () => {
     setIsStartingRecording(true);
     if (!navigator.geolocation) {
@@ -77,7 +76,6 @@ const useRecordDriving = () => {
       setIsStartingRecording(false);
       return;
     }
-
     try {
       if ('permissions' in navigator) {
         const permission = await navigator.permissions.query({
@@ -96,7 +94,6 @@ const useRecordDriving = () => {
           return;
         }
       }
-
       await new Promise((resolve, reject) => {
         navigator.geolocation.getCurrentPosition(
           () => {
@@ -120,17 +117,14 @@ const useRecordDriving = () => {
       setIsStartingRecording(false);
       return; // Exit early if permission denied
     }
-
     // Continue with recording if permission granted
     try {
       const db = await getDBConnection();
-
       if (recordingState === RecordingStates.PAUSED) {
         try {
           const tx = db.transaction('locations', 'readwrite');
           const store = tx.objectStore('locations');
           const dbLocations = await store.getAll();
-
           if (locations.length !== dbLocations.length) {
             setLocations(dbLocations);
             toast.info('Synced locations with storage');
@@ -143,7 +137,6 @@ const useRecordDriving = () => {
           return;
         }
       }
-
       watchIdRef.current = navigator.geolocation.watchPosition(
         async (position) => {
           const newLocation: GeoLocation = {
@@ -153,7 +146,6 @@ const useRecordDriving = () => {
             accuracy: Math.round(position.coords.accuracy),
             speed: position.coords.speed,
           };
-
           // Skip points with very poor accuracy (over 100 meters)
           if (position.coords.accuracy > 100) {
             console.log(
@@ -162,30 +154,26 @@ const useRecordDriving = () => {
             );
             return;
           }
-
           // Check if the new location is within the minimum interval
           if (
+            isIntervalEnabled &&
             lastTimestampRef.current &&
-            newLocation.timestamp - lastTimestampRef.current < MIN_INTERVAL_MS
+            newLocation.timestamp - lastTimestampRef.current < minInterval
           ) {
             console.log('Skipping location due to minimum interval');
             return;
           }
-
           lastTimestampRef.current = newLocation.timestamp;
-
           try {
             const tx = db.transaction('locations', 'readwrite');
             const store = tx.objectStore('locations');
             await store.put(newLocation);
             await tx.done;
             updateDataSize();
-
             setLocations((prevLocations) => {
               const exists = prevLocations.some(
                 (loc) => loc.timestamp === newLocation.timestamp
               );
-
               if (!exists) {
                 return [...prevLocations, newLocation];
               }
@@ -221,7 +209,6 @@ const useRecordDriving = () => {
             message: error.message,
             fullError: error,
           });
-
           // Only show error toast for non-signal loss issues
           if (
             error.code !== error.POSITION_UNAVAILABLE &&
@@ -236,7 +223,6 @@ const useRecordDriving = () => {
           timeout: 15000, // To notify user about a timeout if it occurs
         }
       );
-
       setRecordingState(RecordingStates.RECORDING);
     } catch (error) {
       console.error('Error starting recording:', error);
@@ -246,19 +232,16 @@ const useRecordDriving = () => {
       setIsStartingRecording(false);
     }
   };
-
   const pauseRecording = async () => {
     console.log('Pausing recording');
     clearNavigator();
     setRecordingState(RecordingStates.PAUSED);
   };
-
   const stopRecording = () => {
     console.log('Stopping recording');
     clearNavigator();
     setRecordingState(RecordingStates.STOPPED);
   };
-
   return {
     recordingState,
     locations,
@@ -270,6 +253,10 @@ const useRecordDriving = () => {
     isResetting,
     isStartingRecording,
     permissionStatus,
+    minInterval,
+    setMinInterval, // Expose setter to change interval
+    isIntervalEnabled,
+    setIsIntervalEnabled, // Expose setter to toggle interval
   };
 };
 

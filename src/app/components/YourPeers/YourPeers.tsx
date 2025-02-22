@@ -35,11 +35,6 @@ const YourPeers = ({ activities }: YourPeersProps) => {
     setIsDialogOpen(true);
   };
 
-  const closeDialog = () => {
-    setIsDialogOpen(false);
-    setSelectedUser(null);
-  };
-
   if (isLoadingUsers) {
     return <p>Loading users...</p>;
   }
