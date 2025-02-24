@@ -12,6 +12,7 @@ import {
   DrivingDataType,
   DrivingPurpose,
   DrivingPurposes,
+  DrivingSessionStatus,
   DrivingSessionStatuses,
   TrafficCondition,
   TrafficConditions,
@@ -23,6 +24,7 @@ import { useState } from 'react';
 import { ActivityRatings } from '../Activities/ActivityRatings';
 import DateTimePicker from '../DateTimePicker';
 import DrivingPurposeSelector from '../DrivingPurposeSelector';
+import DrivingStatusSelector from '../DrivingStatusSelector';
 import NotesInput from '../NotesInput';
 import SaveButtonDrawer from '../SaveButtonDrawer';
 import SessionDurationSelector from '../SessionDurationSelector';
@@ -37,6 +39,9 @@ interface DrivingFormProps {
 const DrivingForm = ({ onClose, initialData }: DrivingFormProps) => {
   const userId = getSession();
   const queryClient = useQueryClient();
+  const [status, setStatus] = useState<DrivingSessionStatus>(
+    initialData?.status || DrivingSessionStatuses.inProgress
+  );
 
   const [activityDate, setActivityDate] = useState<Date>(
     initialData?.activityDate || new Date()
@@ -98,7 +103,7 @@ const DrivingForm = ({ onClose, initialData }: DrivingFormProps) => {
       weatherConditions,
       trafficConditions,
       distance: distance !== '' ? Number(distance) : 0,
-      status: DrivingSessionStatuses.inProgress,
+      status,
       note,
     };
 
@@ -139,6 +144,8 @@ const DrivingForm = ({ onClose, initialData }: DrivingFormProps) => {
           className="mt-1 p-2 border rounded-md w-full"
         />
       </div>
+
+      <DrivingStatusSelector status={status} onStatusChange={setStatus} />
 
       <NotesInput note={note} onNoteChange={setNote} />
 

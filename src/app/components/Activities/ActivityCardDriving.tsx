@@ -21,6 +21,7 @@ import { toast } from 'sonner';
 import DeleteDialog from '../DeleteDialog';
 import * as ResizablePanel from '../ResizablePanel';
 import DrivingCardHeader from './DrivingCardHeader';
+import MapDialog from './MapDialog';
 import RecordingCard from './RecordingCard';
 interface ActivityCardDrivingProps {
   activity: BaseActivityType & DrivingDataType;
@@ -38,6 +39,7 @@ const ActivityCardDriving = ({
   const [showCard, setShowCard] = useState<'recording' | 'driving' | 'map'>(
     'driving'
   );
+  const [isMapDialogOpen, setIsMapDialogOpen] = useState(false); // New state for map dialog
   const activityOutdated =
     new Date(activity.activityDate).toDateString() !==
     new Date().toDateString();
@@ -175,9 +177,8 @@ const ActivityCardDriving = ({
                         size="icon"
                         onClick={(e) => {
                           e.stopPropagation();
-                          setShowCard('recording');
+                          setIsMapDialogOpen(true); // Open the map dialog
                         }}
-                        disabled={true}
                       >
                         <MapPin />
                       </Button>
@@ -219,6 +220,13 @@ const ActivityCardDriving = ({
         open={showDeleteDialog}
         onClose={() => setShowDeleteDialog(false)}
         onConfirm={confirmDelete}
+      />
+
+      {/* Map Dialog */}
+      <MapDialog
+        open={isMapDialogOpen}
+        onClose={() => setIsMapDialogOpen(false)}
+        activity={activity}
       />
     </>
   );

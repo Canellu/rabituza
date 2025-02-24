@@ -1,8 +1,8 @@
 'use client';
 
 import { getActivities } from '@/lib/database/activities/getActivities';
-import { ActivityTypes, CalisthenicsExerciseType } from '@/types/Activity';
 import { useQuery } from '@tanstack/react-query';
+
 import ToughestCountdown from './ToughestCountdown';
 import YourPeers from './YourPeers/YourPeers';
 
@@ -11,47 +11,6 @@ const Home = () => {
     queryKey: ['activities'],
     queryFn: () => getActivities(),
   });
-
-  const counts = activities?.reduce((acc, activity) => {
-    acc[activity.type] = (acc[activity.type] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
-
-  const totalCount = activities?.length || 0;
-
-  // Filter calisthenics activities
-  const calisthenicsActivities = activities?.filter(
-    (activity) => activity.type === ActivityTypes.Calisthenics
-  );
-
-  // Calculate total reps or duration for each exercise
-  const exerciseStats = calisthenicsActivities?.reduce((acc, activity) => {
-    activity.exercises.forEach((exercise: CalisthenicsExerciseType) => {
-      const totalReps = exercise.setGroups.reduce(
-        (sum, setGroup) => sum + (setGroup.reps || 0) * setGroup.sets,
-        0
-      );
-      const totalDuration = exercise.setGroups.reduce(
-        (sum, setGroup) => sum + (setGroup.duration || 0) * setGroup.sets,
-        0
-      );
-
-      if (totalDuration > 0) {
-        acc[exercise.name] = {
-          type: 'duration',
-          value: (acc[exercise.name]?.value || 0) + totalDuration,
-        };
-      } else {
-        acc[exercise.name] = {
-          type: 'reps',
-          value: (acc[exercise.name]?.value || 0) + totalReps,
-        };
-      }
-    });
-    return acc;
-  }, {} as Record<string, { type: string; value: number }>);
-
-  const calisthenicsSessionCount = calisthenicsActivities?.length || 0;
 
   return (
     <div className="flex flex-col gap-12 pb-10">

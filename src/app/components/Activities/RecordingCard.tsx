@@ -9,10 +9,6 @@ import useRecordDriving, {
 import { getAllLocationsFromDB } from '@/lib/idb/driving';
 import { cn } from '@/lib/utils';
 import bytesToText from '@/lib/utils/bytesToText';
-import {
-  calculateAccuracyMetrics,
-  calculateSpeedMetrics,
-} from '@/lib/utils/geolocation';
 import { formatTime } from '@/lib/utils/time';
 import {
   BaseActivityType,
@@ -40,6 +36,8 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
     recordingState,
     locations,
     dataSize,
+    currentSpeed,
+    currentAccuracy,
     startRecording,
     pauseRecording,
     stopRecording,
@@ -143,9 +141,6 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
   };
 
   const { value: dataAmount, unit: dataUnit } = bytesToText(dataSize);
-
-  const { average: avgAccuracy } = calculateAccuracyMetrics(locations);
-  const { average: avgSpeed } = calculateSpeedMetrics(locations);
 
   return (
     <div
@@ -270,10 +265,10 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
               </div>
               <div className="px-4 py-2 border-t flex items-center justify-between">
                 <div className="flex items-center justify-center gap-2">
-                  <Crosshair className="size-5" /> {avgAccuracy.toFixed(1)}m
+                  <Crosshair className="size-5" /> {currentAccuracy.toFixed(1)}m
                 </div>
                 <div className="flex items-center justify-center gap-2">
-                  <Gauge className="size-5" /> {(avgSpeed * 3.6).toFixed(1)}{' '}
+                  <Gauge className="size-5" /> {(currentSpeed * 3.6).toFixed(1)}{' '}
                   km/h
                 </div>
               </div>

@@ -220,7 +220,7 @@ const useRecordDriving = () => {
         },
         {
           enableHighAccuracy: true,
-          timeout: 15000, // To notify user about a timeout if it occurs
+          timeout: 15000,
         }
       );
       setRecordingState(RecordingStates.RECORDING);
@@ -242,6 +242,11 @@ const useRecordDriving = () => {
     clearNavigator();
     setRecordingState(RecordingStates.STOPPED);
   };
+  // Add these calculations
+  const currentSpeed =
+    locations.length > 0 ? locations[locations.length - 1].speed || 0 : 0;
+  const currentAccuracy =
+    locations.length > 0 ? locations[locations.length - 1].accuracy : 0;
   return {
     recordingState,
     locations,
@@ -254,9 +259,11 @@ const useRecordDriving = () => {
     isStartingRecording,
     permissionStatus,
     minInterval,
-    setMinInterval, // Expose setter to change interval
+    setMinInterval,
     isIntervalEnabled,
-    setIsIntervalEnabled, // Expose setter to toggle interval
+    setIsIntervalEnabled,
+    currentSpeed,
+    currentAccuracy,
   };
 };
 

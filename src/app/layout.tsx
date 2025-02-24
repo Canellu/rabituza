@@ -84,6 +84,10 @@ export default async function RootLayout({
           name="apple-mobile-web-app-status-bar-style"
           content="black-translucent"
         />
+        <link
+          href="https://api.tiles.mapbox.com/mapbox-gl-js/v3.10.0/mapbox-gl.css"
+          rel="stylesheet"
+        />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased bg-stone-50 dark:bg-stone-900`}
