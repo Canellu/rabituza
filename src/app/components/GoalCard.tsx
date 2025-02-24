@@ -21,9 +21,16 @@ interface GoalCardProps {
   draggingId: string | null;
   deleteGoal: () => void;
   onCheck: (goal: GoalType) => void;
+  onEdit: () => void;
 }
 
-const GoalCard = ({ goal, isOrdering, deleteGoal, onCheck }: GoalCardProps) => {
+const GoalCard = ({
+  goal,
+  isOrdering,
+  deleteGoal,
+  onCheck,
+  onEdit,
+}: GoalCardProps) => {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const handleDelete = () => {
@@ -67,7 +74,7 @@ const GoalCard = ({ goal, isOrdering, deleteGoal, onCheck }: GoalCardProps) => {
               handleDelete();
             }
           }}
-          onClick={() => onCheck(goal)}
+          onClick={() => onEdit()}
         >
           <GripVertical
             className={cn(
@@ -106,6 +113,10 @@ const GoalCard = ({ goal, isOrdering, deleteGoal, onCheck }: GoalCardProps) => {
               'size-5 bg-white',
               'data-[state=checked]:bg-emerald-100 data-[state=checked]:text-emerald-700 data-[state=checked]:border-emerald-100'
             )}
+            onClick={(e) => {
+              e.stopPropagation();
+              onCheck(goal);
+            }}
             checked={goal.status === GoalStatus.Completed}
           />
         </motion.div>

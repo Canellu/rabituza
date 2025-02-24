@@ -1,6 +1,12 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   STAGGER_CHILD_VARIANTS,
@@ -19,6 +25,7 @@ import { ArrowDownUp } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useDebounce } from '../../lib/hooks/useDebounce';
 import GoalCard from './GoalCard';
+import GoalForm from './GoalForm';
 import Spinner from './Spinner';
 
 const Goals = () => {
@@ -29,10 +36,17 @@ const Goals = () => {
   const [localGoals, setLocalGoals] = useState<GoalType[]>([]);
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const [isOrdering, setIsOrdering] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedGoal, setSelectedGoal] = useState<GoalType | null>(null);
 
   const splittedGoals = splitGoalsByTimePeriod(localGoals);
   const haveGoals = splittedGoals[activeTab]?.length > 0;
   const year = new Date().getFullYear();
+
+  const handleEditGoal = (goal: GoalType) => {
+    setSelectedGoal(goal);
+    setIsDialogOpen(true);
+  };
 
   const { isLoading, error, data } = useQuery<GoalType[], Error>({
     queryKey: ['goals', userId],
@@ -226,6 +240,7 @@ const Goals = () => {
                     draggingId={draggingId}
                     deleteGoal={() => handleDelete(goal)}
                     onCheck={handleCheck}
+                    onEdit={() => handleEditGoal(goal)}
                   />
                 </Reorder.Item>
               </motion.div>
@@ -260,6 +275,26 @@ const Goals = () => {
           Error fetching goals
         </div>
       )}
+
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-lg w-[96%] h-[96dvh] overflow-y-auto rounded-lg flex flex-col p-0 py-6">
+          <DialogHeader>
+            <DialogTitle>Edit Goal</DialogTitle>
+          </DialogHeader>
+          {selectedGoal && (
+            <div className="flex-grow overflow-y-auto">
+              <div className="h-full overflow-auto">
+                <div className="p-4">
+                  <GoalForm
+                    initialGoal={selectedGoal}
+                    onClose={() => setIsDialogOpen(false)}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
