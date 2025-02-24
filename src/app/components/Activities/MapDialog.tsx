@@ -59,7 +59,6 @@ const MapDialog = ({ open, onClose, activity }: MapDialogProps) => {
     }
     try {
       const accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN || '';
-      console.log('Mapbox token:', accessToken); // Add this temporarily
       mapboxgl.accessToken = accessToken;
       const selectedRoute = sortedRoutes[selectedRouteIndex];
       const coordinates = selectedRoute.geolocations.map((geo) => [
