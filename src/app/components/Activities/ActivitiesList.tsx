@@ -1,7 +1,5 @@
 import { ActivityType, ActivityTypes } from '@/types/Activity';
 import { format } from 'date-fns';
-import { AnimatePresence, motion } from 'framer-motion';
-import { STAGGER_CHILD_VARIANTS, STAGGER_CONTAINER_CONFIG } from '@/constants/animationConfig';
 import ActivityCardCalisthenics from './ActivityCardCalisthenics';
 import ActivityCardClimbing from './ActivityCardClimbing';
 import ActivityCardDriving from './ActivityCardDriving';
@@ -15,7 +13,11 @@ type ActivitiesListProps = {
   onEditActivity: (activity: ActivityType) => void;
 };
 
-const ActivitiesList = ({ activities, selectedDate, onEditActivity }: ActivitiesListProps) => {
+const ActivitiesList = ({
+  activities,
+  selectedDate,
+  onEditActivity,
+}: ActivitiesListProps) => {
   return (
     <section className="space-y-3">
       <h2 className="flex flex-col -space-y-1">
@@ -26,10 +28,10 @@ const ActivitiesList = ({ activities, selectedDate, onEditActivity }: Activities
           {format(selectedDate, 'EEEE, do MMMM')}
         </span>
       </h2>
-      <motion.div className="space-y-4 pb-10" {...STAGGER_CONTAINER_CONFIG}>
-        <AnimatePresence mode="wait">
-          {activities?.map((activity) => (
-            <motion.div key={activity.id} variants={STAGGER_CHILD_VARIANTS}>
+      <div className="space-y-4 pb-10">
+        {activities?.map((activity) => {
+          return (
+            <div key={activity.id}>
               {(() => {
                 switch (activity.type) {
                   case ActivityTypes.Climbing:
@@ -78,20 +80,18 @@ const ActivitiesList = ({ activities, selectedDate, onEditActivity }: Activities
                     return null;
                 }
               })()}
-            </motion.div>
-          ))}
+            </div>
+          );
+        })}
 
-          {activities?.length === 0 && (
-            <motion.div variants={STAGGER_CHILD_VARIANTS}>
-              <div className="border p-4 bg-white rounded-xl">
-                <span className="text-sm font-medium text-stone-600">
-                  No activities logged for this date
-                </span>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.div>
+        {activities?.length === 0 && (
+          <div className="border p-4 bg-white rounded-xl">
+            <span className="text-sm font-medium text-stone-600">
+              No activities logged for this date
+            </span>
+          </div>
+        )}
+      </div>
     </section>
   );
 };
