@@ -6,6 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -13,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
 import { BaseActivityType, DrivingDataType } from '@/types/Activity';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -30,6 +32,7 @@ const MapDialog = ({ open, onClose, activity }: MapDialogProps) => {
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const [isDialogReady, setIsDialogReady] = useState(false);
   const [selectedRouteIndex, setSelectedRouteIndex] = useState<number>(0);
+  const [isSmoothing, setIsSmoothing] = useState(true);
 
   // Handle dialog ready state
   useEffect(() => {
@@ -47,7 +50,8 @@ const MapDialog = ({ open, onClose, activity }: MapDialogProps) => {
     const bLastTimestamp = b.geolocations[b.geolocations.length - 1].timestamp;
     return aLastTimestamp - bLastTimestamp;
   });
-  // Update the map initialization useEffect to use sortedRoutes
+
+  // Update the map initialization
   useEffect(() => {
     if (
       !isDialogReady ||
@@ -61,10 +65,11 @@ const MapDialog = ({ open, onClose, activity }: MapDialogProps) => {
       const accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN || '';
       mapboxgl.accessToken = accessToken;
       const selectedRoute = sortedRoutes[selectedRouteIndex];
-      const coordinates = selectedRoute.geolocations.map((geo) => [
-        geo.longitude,
-        geo.latitude,
-      ]);
+
+      // Filter coordinates based on interval
+      const coordinates = selectedRoute.geolocations
+        .filter((_, index) => index % (isSmoothing ? 3 : 1) === 0)
+        .map((geo) => [geo.longitude, geo.latitude]);
       const bounds = coordinates.reduce(
         (bounds, coord) => bounds.extend(coord as [number, number]),
         new mapboxgl.LngLatBounds(
@@ -72,16 +77,17 @@ const MapDialog = ({ open, onClose, activity }: MapDialogProps) => {
           coordinates[0] as [number, number]
         )
       );
+
       const map = new mapboxgl.Map({
         container: mapContainerRef.current,
         style: 'mapbox://styles/mapbox/streets-v12',
-        // style: 'mapbox://styles/mapbox/light-v11',
+        bounds: bounds, // Set initial bounds
+        fitBoundsOptions: {
+          padding: 50,
+        },
       });
 
-      map.on('error', (e) => {
-        console.error('Map error:', e);
-      });
-
+      // Remove the separate fitBounds call since we're handling it in initialization
       map.on('load', () => {
         const routeId = `route-${selectedRouteIndex}`;
 
@@ -103,10 +109,10 @@ const MapDialog = ({ open, onClose, activity }: MapDialogProps) => {
           id: routeId,
           type: 'line',
           source: routeId,
-          layout: {},
           paint: {
-            'line-color': '#888',
-            'line-width': 4,
+            'line-color': '#737373',
+            'line-width': 3,
+            'line-opacity': 0.7,
           },
         });
 
@@ -124,6 +130,7 @@ const MapDialog = ({ open, onClose, activity }: MapDialogProps) => {
             'icon-ignore-placement': true,
           },
         });
+
         // Load the arrow image
         map.loadImage('/icons/chevron-right.png', (error, image) => {
           if (error) throw error;
@@ -131,32 +138,28 @@ const MapDialog = ({ open, onClose, activity }: MapDialogProps) => {
             map.addImage('arrow', image);
           }
         });
+
         // Add start and end markers
         // Add start marker
-        new mapboxgl.Marker({ color: '#888' })
+        new mapboxgl.Marker({ color: '#4ade80' })
           .setLngLat(coordinates[0] as [number, number])
           .setPopup(
             new mapboxgl.Popup({
               offset: 25,
               className: 'custom-popup',
-            }).setHTML('Start')
+            }).setText('Start')
           )
           .addTo(map);
         // Add end marker
-        new mapboxgl.Marker({ color: '#10b981' })
+        new mapboxgl.Marker({ color: '#fb923c' })
           .setLngLat(coordinates[coordinates.length - 1] as [number, number])
           .setPopup(
             new mapboxgl.Popup({
               offset: 25,
               className: 'custom-popup',
-            }).setHTML('End')
+            }).setText('End')
           )
           .addTo(map);
-        // Fit the map to the route bounds with padding
-        map.fitBounds(bounds, {
-          padding: 50,
-          duration: 0,
-        });
       });
       mapRef.current = map;
     } catch (error) {
@@ -168,7 +171,13 @@ const MapDialog = ({ open, onClose, activity }: MapDialogProps) => {
         mapRef.current = null;
       }
     };
-  }, [isDialogReady, activity.routes, selectedRouteIndex, sortedRoutes]);
+  }, [
+    isDialogReady,
+    activity.routes,
+    selectedRouteIndex,
+    sortedRoutes,
+    isSmoothing,
+  ]);
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -179,25 +188,38 @@ const MapDialog = ({ open, onClose, activity }: MapDialogProps) => {
         <div className="p-4 space-y-4">
           {sortedRoutes && sortedRoutes.length > 0 ? (
             <>
-              <Select
-                value={selectedRouteIndex.toString()}
-                onValueChange={(value) => setSelectedRouteIndex(Number(value))}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a route" />
-                </SelectTrigger>
-                <SelectContent>
-                  {sortedRoutes.map((route, index) => (
-                    <SelectItem key={route.id} value={index.toString()}>
-                      Route {index + 1}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="space-y-4">
+                <Select
+                  value={selectedRouteIndex.toString()}
+                  onValueChange={(value) =>
+                    setSelectedRouteIndex(Number(value))
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a route" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {sortedRoutes.map((route, index) => (
+                      <SelectItem key={route.id} value={index.toString()}>
+                        Route {index + 1}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
               <div
                 ref={mapContainerRef}
                 className="w-full h-[350px] rounded-md border"
               />
+              <div className="flex items-center justify-between border rounded-md p-2 bg-stone-50">
+                <Label className="text-sm">Route Smoothing</Label>
+                <Switch
+                  checked={isSmoothing}
+                  onCheckedChange={(checked) => {
+                    setIsSmoothing(checked);
+                  }}
+                />
+              </div>
               <RouteStatistics route={sortedRoutes[selectedRouteIndex]} />
             </>
           ) : (
