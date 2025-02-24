@@ -58,7 +58,9 @@ const MapDialog = ({ open, onClose, activity }: MapDialogProps) => {
       return;
     }
     try {
-      mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN || '';
+      const accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN || '';
+      console.log('Mapbox token:', accessToken); // Add this temporarily
+      mapboxgl.accessToken = accessToken;
       const selectedRoute = sortedRoutes[selectedRouteIndex];
       const coordinates = selectedRoute.geolocations.map((geo) => [
         geo.longitude,
@@ -73,8 +75,14 @@ const MapDialog = ({ open, onClose, activity }: MapDialogProps) => {
       );
       const map = new mapboxgl.Map({
         container: mapContainerRef.current,
-        style: 'mapbox://styles/mapbox/light-v11',
+        style: 'mapbox://styles/mapbox/streets-v12',
+        // style: 'mapbox://styles/mapbox/light-v11',
       });
+
+      map.on('error', (e) => {
+        console.error('Map error:', e);
+      });
+
       map.on('load', () => {
         const routeId = `route-${selectedRouteIndex}`;
 
