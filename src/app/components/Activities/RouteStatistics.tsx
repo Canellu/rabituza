@@ -7,36 +7,59 @@ import {
 import { Route } from '@/types/Activity';
 
 interface RouteStatisticsProps {
-  route: Route;
+  routes: Route[];
 }
 
-const RouteStatistics = ({ route }: RouteStatisticsProps) => {
-  const calculateRouteStats = (route: Route) => {
-    const {
-      max: maxSpeed,
-      average: avgSpeed,
-    } = calculateSpeedMetrics(route.geolocations);
-    const { average: avgAccuracy } = calculateAccuracyMetrics(route.geolocations);
-    const dataSize = new TextEncoder().encode(JSON.stringify(route)).length;
-    const { value: dataAmount, unit: dataUnit } = bytesToText(dataSize);
+const RouteStatistics = ({ routes }: RouteStatisticsProps) => {
+  const calculateRouteStats = (routes: Route[]) => {
+    let totalMaxSpeed = 0;
+    let totalAvgSpeed = 0;
+    let totalAvgAccuracy = 0;
+    let totalDataSize = 0;
+    let totalDurationMs = 0;
+    let startTime = Infinity;
+    let endTime = 0;
 
-    const start = route.geolocations[0].timestamp;
-    const end = route.geolocations[route.geolocations.length - 1].timestamp;
-    const durationMs = end - start;
+    routes.forEach((route) => {
+      const { max: maxSpeed, average: avgSpeed } = calculateSpeedMetrics(
+        route.geolocations
+      );
+      const { average: avgAccuracy } = calculateAccuracyMetrics(
+        route.geolocations
+      );
+      const dataSize = new TextEncoder().encode(JSON.stringify(route)).length;
+
+      totalMaxSpeed = Math.max(totalMaxSpeed, maxSpeed);
+      totalAvgSpeed += avgSpeed;
+      totalAvgAccuracy += avgAccuracy;
+      totalDataSize += dataSize;
+
+      const start = route.geolocations[0].timestamp;
+      const end = route.geolocations[route.geolocations.length - 1].timestamp;
+      totalDurationMs += end - start;
+
+      startTime = Math.min(startTime, start);
+      endTime = Math.max(endTime, end);
+    });
+
+    const avgSpeed = totalAvgSpeed / routes.length;
+    const avgAccuracy = totalAvgAccuracy / routes.length;
+    const { value: dataAmount, unit: dataUnit } = bytesToText(totalDataSize);
+
     const duration = formatDuration({
-      hours: Math.floor(durationMs / (1000 * 60 * 60)),
-      minutes: Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60)),
-      seconds: Math.floor((durationMs % (1000 * 60)) / 1000),
+      hours: Math.floor(totalDurationMs / (1000 * 60 * 60)),
+      minutes: Math.floor((totalDurationMs % (1000 * 60 * 60)) / (1000 * 60)),
+      seconds: Math.floor((totalDurationMs % (1000 * 60)) / 1000),
     });
 
     // Format timestamps
-    const startTime = new Date(start).toLocaleString('en-US', {
+    const formattedStartTime = new Date(startTime).toLocaleString('en-US', {
       hour: '2-digit',
       minute: '2-digit',
       second: '2-digit',
       hour12: false,
     });
-    const endTime = new Date(end).toLocaleString('en-US', {
+    const formattedEndTime = new Date(endTime).toLocaleString('en-US', {
       hour: '2-digit',
       minute: '2-digit',
       second: '2-digit',
@@ -44,17 +67,17 @@ const RouteStatistics = ({ route }: RouteStatisticsProps) => {
     });
 
     return {
-      maxSpeed: maxSpeed.toFixed(1),
+      maxSpeed: totalMaxSpeed.toFixed(1),
       avgSpeed: avgSpeed.toFixed(1),
       avgAccuracy: avgAccuracy.toFixed(1),
       dataSize: `${dataAmount} ${dataUnit}`,
       duration,
-      startTime,
-      endTime,
+      startTime: formattedStartTime,
+      endTime: formattedEndTime,
     };
   };
 
-  const stats = calculateRouteStats(route);
+  const stats = calculateRouteStats(routes);
 
   const statItems = [
     { label: 'Start Time', value: stats.startTime },

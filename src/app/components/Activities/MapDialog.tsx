@@ -31,7 +31,7 @@ const MapDialog = ({ open, onClose, activity }: MapDialogProps) => {
   const mapContainerRef = useRef(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const [isDialogReady, setIsDialogReady] = useState(false);
-  const [selectedRouteIndex, setSelectedRouteIndex] = useState<number>(0);
+  const [selectedRouteIndex, setSelectedRouteIndex] = useState<number>(0); //  -1 Represent "All routes"
   const [isSmoothing, setIsSmoothing] = useState(true);
 
   // Handle dialog ready state
@@ -64,107 +64,109 @@ const MapDialog = ({ open, onClose, activity }: MapDialogProps) => {
     try {
       const accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN || '';
       mapboxgl.accessToken = accessToken;
-      const selectedRoute = sortedRoutes[selectedRouteIndex];
 
-      // Filter coordinates based on interval
-      const coordinates = selectedRoute.geolocations
-        .filter((_, index) => index % (isSmoothing ? 3 : 1) === 0)
-        .map((geo) => [geo.longitude, geo.latitude]);
-      const bounds = coordinates.reduce(
-        (bounds, coord) => bounds.extend(coord as [number, number]),
-        new mapboxgl.LngLatBounds(
-          coordinates[0] as [number, number],
-          coordinates[0] as [number, number]
+      const allCoordinates = sortedRoutes
+        .filter(
+          (_, index) =>
+            selectedRouteIndex === -1 || selectedRouteIndex === index
         )
-      );
+        .map((route) => ({
+          id: route.id,
+          coordinates: route.geolocations
+            .filter((_, index) => index % (isSmoothing ? 3 : 1) === 0)
+            .map((geo) => [geo.longitude, geo.latitude]),
+        }));
+
+      const bounds = allCoordinates.reduce((totalBounds, { coordinates }) => {
+        coordinates.forEach((coord) => {
+          totalBounds.extend(coord as [number, number]);
+        });
+        return totalBounds;
+      }, new mapboxgl.LngLatBounds(allCoordinates[0].coordinates[0] as [number, number], allCoordinates[0].coordinates[0] as [number, number]));
 
       const map = new mapboxgl.Map({
         container: mapContainerRef.current,
         style: 'mapbox://styles/mapbox/streets-v12',
-        bounds: bounds, // Set initial bounds
+        bounds: bounds,
         fitBoundsOptions: {
           padding: 50,
         },
       });
 
-      // Remove the separate fitBounds call since we're handling it in initialization
       map.on('load', () => {
-        const routeId = `route-${selectedRouteIndex}`;
+        allCoordinates.forEach(({ id, coordinates }, index) => {
+          const routeId = `route-${id}`;
 
-        // Add the main route line
-        map.addSource(routeId, {
-          type: 'geojson',
-          data: {
-            type: 'Feature',
-            geometry: {
-              type: 'LineString',
-              coordinates,
+          map.addSource(routeId, {
+            type: 'geojson',
+            data: {
+              type: 'Feature',
+              geometry: {
+                type: 'LineString',
+                coordinates,
+              },
+              properties: {},
             },
-            properties: {},
-          },
+          });
+
+          map.addLayer({
+            id: routeId,
+            type: 'line',
+            source: routeId,
+            paint: {
+              'line-color': '#737373',
+              'line-width': 3,
+              'line-opacity': 0.7,
+            },
+          });
+
+          map.addLayer({
+            id: `${routeId}-arrows`,
+            type: 'symbol',
+            source: routeId,
+            layout: {
+              'symbol-placement': 'line',
+              'symbol-spacing': 100,
+              'icon-image': 'arrow',
+              'icon-size': 0.7,
+              'icon-allow-overlap': true,
+              'icon-ignore-placement': true,
+            },
+          });
+
+          new mapboxgl.Marker({ color: '#4ade80' })
+            .setLngLat(coordinates[0] as [number, number])
+            .setPopup(
+              new mapboxgl.Popup({
+                offset: 25,
+                className: 'custom-popup',
+              }).setText(`Route ${index + 1} Start`)
+            )
+            .addTo(map);
+
+          new mapboxgl.Marker({ color: '#fb923c' })
+            .setLngLat(coordinates[coordinates.length - 1] as [number, number])
+            .setPopup(
+              new mapboxgl.Popup({
+                offset: 25,
+                className: 'custom-popup',
+              }).setText(`Route ${index + 1} End`)
+            )
+            .addTo(map);
         });
 
-        // Add the main route line
-        map.addLayer({
-          id: routeId,
-          type: 'line',
-          source: routeId,
-          paint: {
-            'line-color': '#737373',
-            'line-width': 3,
-            'line-opacity': 0.7,
-          },
-        });
-
-        // Add arrow symbols along the route
-        map.addLayer({
-          id: `${routeId}-arrows`,
-          type: 'symbol',
-          source: routeId,
-          layout: {
-            'symbol-placement': 'line',
-            'symbol-spacing': 100, // Adjust spacing between arrows
-            'icon-image': 'arrow',
-            'icon-size': 0.7,
-            'icon-allow-overlap': true,
-            'icon-ignore-placement': true,
-          },
-        });
-
-        // Load the arrow image
         map.loadImage('/icons/chevron-right.png', (error, image) => {
           if (error) throw error;
           if (!map.hasImage('arrow') && image) {
             map.addImage('arrow', image);
           }
         });
-
-        // Add start and end markers
-        // Add start marker
-        new mapboxgl.Marker({ color: '#4ade80' })
-          .setLngLat(coordinates[0] as [number, number])
-          .setPopup(
-            new mapboxgl.Popup({
-              offset: 25,
-              className: 'custom-popup',
-            }).setText('Start')
-          )
-          .addTo(map);
-        // Add end marker
-        new mapboxgl.Marker({ color: '#fb923c' })
-          .setLngLat(coordinates[coordinates.length - 1] as [number, number])
-          .setPopup(
-            new mapboxgl.Popup({
-              offset: 25,
-              className: 'custom-popup',
-            }).setText('End')
-          )
-          .addTo(map);
       });
       mapRef.current = map;
     } catch (error) {
       console.error('Error initializing map:', error);
     }
+
     return () => {
       if (mapRef.current) {
         mapRef.current.remove();
@@ -199,6 +201,7 @@ const MapDialog = ({ open, onClose, activity }: MapDialogProps) => {
                     <SelectValue placeholder="Select a route" />
                   </SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="-1">All Routes</SelectItem>
                     {sortedRoutes.map((route, index) => (
                       <SelectItem key={route.id} value={index.toString()}>
                         Route {index + 1}
@@ -220,7 +223,13 @@ const MapDialog = ({ open, onClose, activity }: MapDialogProps) => {
                   }}
                 />
               </div>
-              <RouteStatistics route={sortedRoutes[selectedRouteIndex]} />
+              <RouteStatistics
+                routes={
+                  selectedRouteIndex === -1
+                    ? sortedRoutes
+                    : [sortedRoutes[selectedRouteIndex]]
+                }
+              />
             </>
           ) : (
             <p>No routes available to display on the map.</p>
