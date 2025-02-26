@@ -3,10 +3,9 @@ import {
   ActivityType,
   ActivityTypes,
   BaseActivityType,
-  CalisthenicsExerciseType,
-  GymExerciseType,
   HangboardEdgeType,
   Route,
+  WorkoutExerciseType,
 } from '@/types/Activity';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
@@ -39,11 +38,11 @@ export const getUserActivities = async (
               gym: data.gym,
               grades: data.grades,
             };
-          case ActivityTypes.Calisthenics:
+          case ActivityTypes.Workout:
             return {
               ...baseActivity,
               exercises: data.exercises.map(
-                (exercise: CalisthenicsExerciseType) => ({
+                (exercise: WorkoutExerciseType) => ({
                   name: exercise.name,
                   setGroups: exercise.setGroups.map((setGroup) => {
                     const base = {
@@ -54,7 +53,6 @@ export const getUserActivities = async (
                       return {
                         ...base,
                         duration: setGroup.duration,
-                        weight: setGroup.weight || 0,
                       };
                     } else {
                       return {
@@ -66,31 +64,6 @@ export const getUserActivities = async (
                   }),
                 })
               ),
-            };
-          case ActivityTypes.Gym:
-            return {
-              ...baseActivity,
-              exercises: data.exercises.map((exercise: GymExerciseType) => ({
-                name: exercise.name,
-                setGroups: exercise.setGroups.map((setGroup) => {
-                  const base = {
-                    sets: setGroup.sets,
-                  };
-
-                  if (setGroup.duration !== undefined) {
-                    return {
-                      ...base,
-                      duration: setGroup.duration,
-                    };
-                  } else {
-                    return {
-                      ...base,
-                      reps: setGroup.reps || 0,
-                      weight: setGroup.weight || 0,
-                    };
-                  }
-                }),
-              })),
             };
           case ActivityTypes.Stretching:
             return {

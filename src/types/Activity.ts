@@ -1,11 +1,10 @@
-import { GYM_EXERCISES } from '@/constants/gymExercises';
+import { WORKOUT_EXERCISES } from '@/constants/workoutExercises';
 
 export const ActivityTypes = {
   Rest: 'rest',
   Climbing: 'climbing',
   Hangboard: 'hangboard',
-  Gym: 'gym',
-  Calisthenics: 'calisthenics',
+  Workout: 'workout',
   Stretching: 'stretching',
   WinterSports: 'winter_sports',
   Swimming: 'swimming',
@@ -44,30 +43,6 @@ export type ClimbingDataType = {
   grades: ClimbingGradeType[];
 };
 
-export type CalisthenicsSetType = {
-  sets: number;
-  weight?: number;
-} & (
-  | {
-      reps: number;
-      duration?: never;
-    }
-  | {
-      duration: number;
-      reps?: never;
-    }
-);
-
-export type CalisthenicsExerciseType = {
-  name: string;
-  setGroups: CalisthenicsSetType[];
-};
-
-export type CalisthenicsDataType = {
-  type: typeof ActivityTypes.Calisthenics;
-  exercises: CalisthenicsExerciseType[];
-};
-
 export type StretchingDataType = {
   type: typeof ActivityTypes.Stretching;
   duration: number;
@@ -87,7 +62,7 @@ export type HangboardDataType = {
   edges: HangboardEdgeType[];
 };
 
-export type GymSetType = {
+export type WorkoutSetType = {
   sets: number;
 } & (
   | {
@@ -102,14 +77,14 @@ export type GymSetType = {
     }
 );
 
-export type GymExerciseType = {
-  name: keyof typeof GYM_EXERCISES;
-  setGroups: GymSetType[];
+export type WorkoutExerciseType = {
+  name: keyof typeof WORKOUT_EXERCISES;
+  setGroups: WorkoutSetType[];
 };
 
-export type GymDataType = {
-  type: typeof ActivityTypes.Gym;
-  exercises: GymExerciseType[];
+export type WorkoutDataType = {
+  type: typeof ActivityTypes.Workout;
+  exercises: WorkoutExerciseType[];
 };
 
 export type RestDataType = {
@@ -191,8 +166,7 @@ export type DrivingDataType = {
 
 export type ActivityDataType =
   | ClimbingDataType
-  | GymDataType
-  | CalisthenicsDataType
+  | WorkoutDataType
   | StretchingDataType
   | HangboardDataType
   | RestDataType

@@ -1,37 +1,51 @@
 'use client';
 
+import { WORKOUT_EXERCISES } from '@/constants/workoutExercises';
 import { createActivity } from '@/lib/database/activities/createActivity';
-import { updateActivity } from '@/lib/database/activities/updateActivity'; // Import updateActivity
+import { updateActivity } from '@/lib/database/activities/updateActivity';
+import { hasDuration } from '@/lib/utils/hasDuration';
 import { getSession } from '@/lib/utils/userSession';
 import {
   ActivityRatingsType,
   ActivityTypes,
   BaseActivityType,
-  CalisthenicsDataType,
-  CalisthenicsExerciseType,
+  WorkoutDataType,
 } from '@/types/Activity';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { ActivityRatings } from '../Activities/ActivityRatings';
-import CalisthenicsExerciseSelector from '../CalisthenicsExerciseSelector';
 import DateTimePicker from '../DateTimePicker';
 import NotesInput from '../NotesInput';
 import SaveButtonDrawer from '../SaveButtonDrawer';
+import WorkoutExerciseSelector, {
+  WorkoutExerciseStringedType,
+} from '../WorkoutExerciseSelector';
 
-interface CalisthenicsFormProps {
+interface WorkoutFormProps {
   onClose: () => void;
-  initialData?: BaseActivityType & CalisthenicsDataType;
+  initialData?: BaseActivityType & WorkoutDataType;
 }
 
-const CalisthenicsForm = ({ onClose, initialData }: CalisthenicsFormProps) => {
+const WorkoutForm = ({ onClose, initialData }: WorkoutFormProps) => {
   const userId = getSession();
   const queryClient = useQueryClient();
 
   const [activityDate, setActivityDate] = useState(
     initialData?.activityDate || new Date()
   );
-  const [exercises, setExercises] = useState<CalisthenicsExerciseType[]>(
-    initialData?.exercises || []
+  const [exercises, setExercises] = useState<WorkoutExerciseStringedType[]>(
+    initialData?.exercises.map((exercise) => ({
+      name: exercise.name,
+      setGroups: exercise.setGroups.map((setGroup) => ({
+        sets: setGroup.sets.toString(),
+        ...(hasDuration(exercise.name)
+          ? { duration: setGroup.duration?.toString() || '0' }
+          : {
+              reps: setGroup.reps?.toString() || '0',
+              weight: setGroup.weight?.toString() || '0',
+            }),
+      })),
+    })) || []
   );
   const [ratings, setRatings] = useState<ActivityRatingsType>(
     initialData?.ratings || {
@@ -44,8 +58,7 @@ const CalisthenicsForm = ({ onClose, initialData }: CalisthenicsFormProps) => {
 
   const { mutate, isPending } = useMutation({
     mutationFn: async (
-      data: CalisthenicsDataType &
-        Pick<BaseActivityType, 'ratings' | 'activityDate'>
+      data: WorkoutDataType & Pick<BaseActivityType, 'ratings' | 'activityDate'>
     ) => {
       if (!userId) throw new Error('User is not signed in');
       if (initialData?.id) {
@@ -70,31 +83,29 @@ const CalisthenicsForm = ({ onClose, initialData }: CalisthenicsFormProps) => {
     if (!userId) return;
 
     const data = {
-      type: ActivityTypes.Calisthenics,
+      type: ActivityTypes.Workout,
       activityDate,
       ratings,
       note,
-      exercises: exercises.map((exercise) => ({
-        name: exercise.name,
-        setGroups: exercise.setGroups.map((setGroup) => {
-          const base = {
-            sets: Number(setGroup.sets),
-            weight: Number(setGroup.weight || 0),
-          };
-
-          if ('duration' in setGroup) {
-            return {
-              ...base,
-              duration: Number(setGroup.duration),
-            };
-          } else {
-            return {
-              ...base,
-              reps: Number(setGroup.reps),
-            };
-          }
-        }),
-      })),
+      exercises: exercises.map((exercise) => {
+        return {
+          name: exercise.name,
+          setGroups: exercise.setGroups.map((setGroup) => {
+            if (hasDuration(exercise.name)) {
+              return {
+                sets: Number(setGroup.sets),
+                duration: Number(setGroup.duration),
+              };
+            } else {
+              return {
+                sets: Number(setGroup.sets),
+                reps: Number(setGroup.reps),
+                weight: Number(setGroup.weight),
+              };
+            }
+          }),
+        };
+      }),
     };
 
     mutate(data);
@@ -105,7 +116,7 @@ const CalisthenicsForm = ({ onClose, initialData }: CalisthenicsFormProps) => {
       <DateTimePicker date={activityDate} onDateChange={setActivityDate} />
       <ActivityRatings ratings={ratings} onChange={setRatings} />
 
-      <CalisthenicsExerciseSelector
+      <WorkoutExerciseSelector
         exercises={exercises}
         setExercises={setExercises}
       />
@@ -118,21 +129,21 @@ const CalisthenicsForm = ({ onClose, initialData }: CalisthenicsFormProps) => {
           exercises.length === 0 ||
           exercises.some((exercise) =>
             exercise.setGroups.some((setGroup) => {
-              const hasValidSets = setGroup.sets && Number(setGroup.sets) > 0;
-              console.log(setGroup);
-              if ('duration' in setGroup) {
-                // Duration-based: requires sets and duration
-                return (
-                  !hasValidSets ||
-                  !setGroup.duration ||
-                  Number(setGroup.duration) < 1
-                );
-              } else {
-                // Rep-based: requires sets and reps
-                return (
-                  !hasValidSets || !setGroup.reps || Number(setGroup.reps) < 1
-                );
-              }
+              const hasDuration =
+                'hasDuration' in
+                WORKOUT_EXERCISES[
+                  exercise.name as keyof typeof WORKOUT_EXERCISES
+                ];
+              return (
+                !setGroup.sets ||
+                Number(setGroup.sets) < 1 ||
+                (hasDuration
+                  ? !setGroup.duration || Number(setGroup.duration) < 1
+                  : !setGroup.reps ||
+                    Number(setGroup.reps) < 1 ||
+                    !setGroup.weight ||
+                    Number(setGroup.weight) < 0)
+              );
             })
           )
         }
@@ -142,4 +153,4 @@ const CalisthenicsForm = ({ onClose, initialData }: CalisthenicsFormProps) => {
   );
 };
 
-export default CalisthenicsForm;
+export default WorkoutForm;

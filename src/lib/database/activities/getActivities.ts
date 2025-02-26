@@ -3,10 +3,9 @@ import {
   ActivityType,
   ActivityTypes,
   BaseActivityType,
-  CalisthenicsExerciseType,
-  GymExerciseType,
   HangboardEdgeType,
   Route,
+  WorkoutExerciseType,
 } from '@/types/Activity';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
@@ -51,38 +50,10 @@ export const getActivities = async (
               gym: data.gym,
               grades: data.grades,
             };
-          case ActivityTypes.Calisthenics:
+          case ActivityTypes.Workout:
             return {
               ...baseActivity,
-              exercises: data.exercises.map(
-                (exercise: CalisthenicsExerciseType) => ({
-                  name: exercise.name,
-                  setGroups: exercise.setGroups.map((setGroup) => {
-                    const base = {
-                      sets: setGroup.sets,
-                    };
-
-                    if (setGroup.duration !== undefined) {
-                      return {
-                        ...base,
-                        duration: setGroup.duration,
-                        weight: setGroup.weight || 0,
-                      };
-                    } else {
-                      return {
-                        ...base,
-                        reps: setGroup.reps || 0,
-                        weight: setGroup.weight || 0,
-                      };
-                    }
-                  }),
-                })
-              ),
-            };
-          case ActivityTypes.Gym:
-            return {
-              ...baseActivity,
-              exercises: data.exercises.map((exercise: GymExerciseType) => {
+              exercises: data.exercises.map((exercise: WorkoutExerciseType) => {
                 return {
                   name: exercise.name,
                   setGroups: exercise.setGroups.map((setGroup) => {

@@ -9,22 +9,25 @@ import {
 } from '@/components/ui/dialog';
 import activityOptions from '@/constants/activityOptions';
 import { CARD_ANIMATION_CONFIG } from '@/constants/animationConfig';
-import { GYM_EXERCISES } from '@/constants/gymExercises';
+import { WORKOUT_EXERCISES } from '@/constants/workoutExercises';
 import { deleteActivity } from '@/lib/database/activities/deleteActivity';
 import { getSession } from '@/lib/utils/userSession';
-import { BaseActivityType, GymDataType } from '@/types/Activity';
+import { BaseActivityType, WorkoutDataType } from '@/types/Activity';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { motion } from 'framer-motion';
 import { Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
-interface ActivityCardGymProps {
-  activity: BaseActivityType & GymDataType;
+interface ActivityCardWorkoutProps {
+  activity: BaseActivityType & WorkoutDataType;
   onEdit: () => void;
 }
 
-const ActivityCardGym = ({ activity, onEdit }: ActivityCardGymProps) => {
+const ActivityCardWorkout = ({
+  activity,
+  onEdit,
+}: ActivityCardWorkoutProps) => {
   const queryClient = useQueryClient();
   const userId = getSession();
   const Icon = activityOptions.find((opt) => opt.id === activity.type)?.icon;
@@ -61,7 +64,7 @@ const ActivityCardGym = ({ activity, onEdit }: ActivityCardGymProps) => {
 
   const groupedExercises = activity.exercises.reduce((acc, exercise) => {
     const group =
-      GYM_EXERCISES[exercise.name as keyof typeof GYM_EXERCISES].group;
+      WORKOUT_EXERCISES[exercise.name as keyof typeof WORKOUT_EXERCISES].group;
     if (!acc[group]) {
       acc[group] = [];
     }
@@ -121,8 +124,8 @@ const ActivityCardGym = ({ activity, onEdit }: ActivityCardGymProps) => {
                   <div key={index} className="space-y-1.5">
                     <span className="font-medium text-stone-700">
                       {
-                        GYM_EXERCISES[
-                          exercise.name as keyof typeof GYM_EXERCISES
+                        WORKOUT_EXERCISES[
+                          exercise.name as keyof typeof WORKOUT_EXERCISES
                         ].name
                       }
                     </span>
@@ -194,4 +197,4 @@ const ActivityCardGym = ({ activity, onEdit }: ActivityCardGymProps) => {
   );
 };
 
-export default ActivityCardGym;
+export default ActivityCardWorkout;

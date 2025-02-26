@@ -44,3 +44,6 @@ certificates
 
 # Original food database
 src/data/foods.json
+
+# Google Application Credentials
+rabituza*.json

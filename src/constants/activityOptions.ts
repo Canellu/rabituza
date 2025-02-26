@@ -1,15 +1,14 @@
-import CalisthenicsForm from '@/app/components/forms/CalisthenicsForm';
 import ClimbingForm from '@/app/components/forms/ClimbingForm';
 import DrivingForm from '@/app/components/forms/DrivingForm';
-import GymForm from '@/app/components/forms/GymForm';
 import HangboardForm from '@/app/components/forms/HangboardForm';
 import RestForm from '@/app/components/forms/RestForm';
 import StretchingForm from '@/app/components/forms/StretchingForm';
 import SwimmingForm from '@/app/components/forms/SwimmingForm';
 import WinterSportForm from '@/app/components/forms/WinterSportForm';
+import WorkoutForm from '@/app/components/forms/WorkoutForm';
 import ClimbingIcon from '@/app/components/icons/ClimbingIcon';
 import { ActivityTypes } from '@/types/Activity';
-import { BicepsFlexed, Car, Dumbbell, Grab } from 'lucide-react';
+import { Car, Dumbbell, Grab } from 'lucide-react';
 import { FaSnowboarding, FaSwimmer } from 'react-icons/fa';
 import { GiNightSleep } from 'react-icons/gi';
 import { GrYoga } from 'react-icons/gr';
@@ -37,16 +36,9 @@ const activityOptions = [
     group: ActivityGroups.PHYSICAL,
   },
   {
-    id: ActivityTypes.Calisthenics,
-    label: 'Calisthenics',
-    Component: CalisthenicsForm,
-    icon: BicepsFlexed,
-    group: ActivityGroups.PHYSICAL,
-  },
-  {
-    id: ActivityTypes.Gym,
-    label: 'Gym',
-    Component: GymForm,
+    id: ActivityTypes.Workout,
+    label: 'Workout',
+    Component: WorkoutForm,
     icon: Dumbbell,
     group: ActivityGroups.PHYSICAL,
   },

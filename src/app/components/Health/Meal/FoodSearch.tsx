@@ -5,7 +5,7 @@ import useFoods from '@/lib/hooks/useFoods';
 import { cn } from '@/lib/utils';
 import { Food } from '@/types/Food';
 import { Loader2, Search, X } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 
 interface FoodSearchProps {
   value: string;
@@ -28,13 +28,6 @@ export const FoodSearch = ({
   const [showNoResults, setShowNoResults] = useState(false);
 
   const { foods, isLoading } = useFoods();
-  const commandListRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (commandListRef.current) {
-      commandListRef.current.scrollTop = 0;
-    }
-  }, [searchResults]);
 
   const handleSearch = useDebounce((searchTerm: string) => {
     setIsSearching(false);

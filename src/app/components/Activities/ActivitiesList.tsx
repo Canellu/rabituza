@@ -1,11 +1,10 @@
 import { ActivityType, ActivityTypes } from '@/types/Activity';
 import { format } from 'date-fns';
-import ActivityCardCalisthenics from './ActivityCardCalisthenics';
 import ActivityCardClimbing from './ActivityCardClimbing';
 import ActivityCardDriving from './ActivityCardDriving';
-import ActivityCardGym from './ActivityCardGym';
 import ActivityCardHangboard from './ActivityCardHangboard';
 import ActivityCardStretching from './ActivityCardStretching';
+import ActivityCardWorkout from './ActivityCardWorkout';
 
 type ActivitiesListProps = {
   activities?: ActivityType[];
@@ -41,13 +40,6 @@ const ActivitiesList = ({
                         onEdit={() => onEditActivity(activity)}
                       />
                     );
-                  case ActivityTypes.Calisthenics:
-                    return (
-                      <ActivityCardCalisthenics
-                        activity={activity}
-                        onEdit={() => onEditActivity(activity)}
-                      />
-                    );
                   case ActivityTypes.Stretching:
                     return (
                       <ActivityCardStretching
@@ -62,9 +54,9 @@ const ActivitiesList = ({
                         onEdit={() => onEditActivity(activity)}
                       />
                     );
-                  case ActivityTypes.Gym:
+                  case ActivityTypes.Workout:
                     return (
-                      <ActivityCardGym
+                      <ActivityCardWorkout
                         activity={activity}
                         onEdit={() => onEditActivity(activity)}
                       />
