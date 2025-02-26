@@ -90,7 +90,6 @@ const NutritionMonth = ({
                 className={cn(
                   'flex items-center justify-center size-9 rounded-full transition-colors',
                   'select-none duration-500',
-                  isTodayDate && 'border-2 border-primary/40',
                   isTargetDayDate &&
                     !hasMealForDay &&
                     'border-2 border-stone-200',
@@ -102,6 +101,7 @@ const NutritionMonth = ({
                     hasMealForDay &&
                     !exceedsTargetCalories &&
                     'bg-primary/50',
+                  isTodayDate && 'border-2 border-primary/40',
                   isSelected && 'border-2 border-primary'
                 )}
               >
