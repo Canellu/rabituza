@@ -23,10 +23,6 @@ export const GYM_EXERCISES = {
     name: 'Dumbbell Incline Bench Press',
     group: GYM_EXERCISE_GROUPS.PUSH,
   },
-  tricepRingExtension: {
-    name: 'Tricep Ring Extension',
-    group: GYM_EXERCISE_GROUPS.PUSH,
-  },
   dips: { name: 'Dips', group: GYM_EXERCISE_GROUPS.PUSH },
 
   // Pull
@@ -40,7 +36,10 @@ export const GYM_EXERCISES = {
   },
 
   // Lower
-  squat: { name: 'Squat', group: GYM_EXERCISE_GROUPS.LOWER },
+  squat: {
+    name: 'Squat',
+    group: GYM_EXERCISE_GROUPS.LOWER,
+  },
   legPress: { name: 'Leg Press', group: GYM_EXERCISE_GROUPS.LOWER },
   deadlift: { name: 'Deadlift', group: GYM_EXERCISE_GROUPS.LOWER },
   legExtension: { name: 'Leg Extension', group: GYM_EXERCISE_GROUPS.LOWER },

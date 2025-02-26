@@ -3,6 +3,7 @@
 import { GYM_EXERCISES } from '@/constants/gymExercises';
 import { createActivity } from '@/lib/database/activities/createActivity';
 import { updateActivity } from '@/lib/database/activities/updateActivity';
+import { hasDuration } from '@/lib/utils/hasDuration';
 import { getSession } from '@/lib/utils/userSession';
 import {
   ActivityRatingsType,
@@ -74,23 +75,26 @@ const GymForm = ({ onClose, initialData }: GymFormProps) => {
       activityDate,
       ratings,
       note,
-      exercises: exercises.map((exercise) => ({
-        name: exercise.name,
-        setGroups: exercise.setGroups.map((setGroup) => {
-          if ('duration' in setGroup) {
-            return {
-              sets: Number(setGroup.sets),
-              duration: Number(setGroup.duration),
-            };
-          } else {
-            return {
-              sets: Number(setGroup.sets),
-              reps: Number(setGroup.reps),
-              weight: Number(setGroup.weight),
-            };
-          }
-        }),
-      })),
+      exercises: exercises.map((exercise) => {
+        console.log(exercise);
+        return {
+          name: exercise.name,
+          setGroups: exercise.setGroups.map((setGroup) => {
+            if (hasDuration(exercise.name)) {
+              return {
+                sets: Number(setGroup.sets),
+                duration: Number(setGroup.duration),
+              };
+            } else {
+              return {
+                sets: Number(setGroup.sets),
+                reps: Number(setGroup.reps),
+                weight: Number(setGroup.weight),
+              };
+            }
+          }),
+        };
+      }),
     };
 
     mutate(data);

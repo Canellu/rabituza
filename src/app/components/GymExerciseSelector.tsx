@@ -17,6 +17,7 @@ import {
   GYM_EXERCISES,
   POPULAR_GYM_EXERCISES,
 } from '@/constants/gymExercises';
+import { hasDuration } from '@/lib/utils/hasDuration';
 import { GymExerciseType } from '@/types/Activity';
 import { Clock, Dumbbell, Plus, Weight, X } from 'lucide-react';
 import { Dispatch, SetStateAction } from 'react';
@@ -43,7 +44,7 @@ const GymExerciseSelector = ({
               ...exercise,
               setGroups: [
                 ...exercise.setGroups,
-                hasDuration(exercise)
+                hasDuration(exercise.name)
                   ? {
                       sets: 0,
                       duration: 0,
@@ -100,34 +101,32 @@ const GymExerciseSelector = ({
     );
   };
 
-  const hasDuration = (exercise: GymExerciseType) => {
-    return (
-      'hasDuration' in
-      GYM_EXERCISES[exercise.name as keyof typeof GYM_EXERCISES]
-    );
+  const handleSelectExercise = (exerciseName: keyof typeof GYM_EXERCISES) => {
+    const exerciseHasDuration = hasDuration(exerciseName);
+    setExercises((prev) => [
+      {
+        name: exerciseName,
+        setGroups: [
+          {
+            sets: 0,
+            weight: 0,
+            ...(exerciseHasDuration
+              ? { duration: 0, reps: undefined }
+              : { reps: 0, duration: undefined }),
+          },
+        ],
+      } as GymExerciseType,
+      ...prev,
+    ]);
   };
 
   return (
     <div className="space-y-2">
       <Select
         value=""
-        onValueChange={(value: keyof typeof GYM_EXERCISES) => {
-          const hasDuration = 'hasDuration' in GYM_EXERCISES[value];
-          setExercises((prev) => [
-            {
-              name: value,
-              setGroups: [
-                {
-                  sets: 0,
-                  weight: 0,
-                  ...(hasDuration
-                    ? { duration: 0, reps: undefined }
-                    : { reps: 0, duration: undefined }),
-                },
-              ],
-            } as GymExerciseType,
-            ...prev,
-          ]);
+        onValueChange={(exerciseName) => {
+          console.log(exerciseName);
+          handleSelectExercise(exerciseName as keyof typeof GYM_EXERCISES);
         }}
       >
         <SelectTrigger className="w-full">
@@ -160,6 +159,7 @@ const GymExerciseSelector = ({
                       key as keyof typeof GYM_EXERCISES
                     )
                 )
+                .sort((a, b) => a[1].name.localeCompare(b[1].name))
                 .map(([key, exercise]) => (
                   <SelectItem key={key} value={key}>
                     {exercise.name}
@@ -233,7 +233,7 @@ const GymExerciseSelector = ({
                         />
                       </div>
 
-                      {hasDuration(exercise) ? (
+                      {hasDuration(exercise.name) ? (
                         <div className="flex gap-1.5 items-center justify-end">
                           <Clock className="size-4 text-stone-700" />
                           <div className="relative">

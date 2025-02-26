@@ -82,27 +82,28 @@ export const getActivities = async (
           case ActivityTypes.Gym:
             return {
               ...baseActivity,
-              exercises: data.exercises.map((exercise: GymExerciseType) => ({
-                name: exercise.name,
-                setGroups: exercise.setGroups.map((setGroup) => {
-                  const base = {
-                    sets: setGroup.sets,
-                  };
-
-                  if (setGroup.duration !== undefined) {
-                    return {
-                      ...base,
-                      duration: setGroup.duration,
+              exercises: data.exercises.map((exercise: GymExerciseType) => {
+                return {
+                  name: exercise.name,
+                  setGroups: exercise.setGroups.map((setGroup) => {
+                    const base = {
+                      sets: setGroup.sets,
                     };
-                  } else {
-                    return {
-                      ...base,
-                      reps: setGroup.reps || 0,
-                      weight: setGroup.weight || 0,
-                    };
-                  }
-                }),
-              })),
+                    if (setGroup.duration !== undefined) {
+                      return {
+                        ...base,
+                        duration: setGroup.duration,
+                      };
+                    } else {
+                      return {
+                        ...base,
+                        reps: setGroup.reps || 0,
+                        weight: setGroup.weight || 0,
+                      };
+                    }
+                  }),
+                };
+              }),
             };
           case ActivityTypes.Stretching:
             return {

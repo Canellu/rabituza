@@ -1,3 +1,5 @@
+import { GYM_EXERCISES } from '@/constants/gymExercises';
+
 export const ActivityTypes = {
   Rest: 'rest',
   Climbing: 'climbing',
@@ -101,7 +103,7 @@ export type GymSetType = {
 );
 
 export type GymExerciseType = {
-  name: string;
+  name: keyof typeof GYM_EXERCISES;
   setGroups: GymSetType[];
 };
 
