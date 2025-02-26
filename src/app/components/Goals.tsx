@@ -222,7 +222,12 @@ const Goals = () => {
       {/* Display the goal counter */}
       {haveGoals && (
         <div className="text-stone-700 geist-mono font-medium tracking-tight  px-4 py-2 text-center text-sm border rounded-md max-w-max place-self-center">
-          {completedGoals} of {totalGoals} goals completed
+          {completedGoals > 0 && (
+            <span>
+              {completedGoals} of {totalGoals} goals completed
+            </span>
+          )}
+          {completedGoals === 0 && <span>No goals reached</span>}
         </div>
       )}
 
