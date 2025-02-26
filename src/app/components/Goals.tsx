@@ -43,6 +43,11 @@ const Goals = () => {
   const haveGoals = splittedGoals[activeTab]?.length > 0;
   const year = new Date().getFullYear();
 
+  const totalGoals = splittedGoals[activeTab].length;
+  const completedGoals = splittedGoals[activeTab].filter(
+    (goal) => goal.status === GoalStatus.Completed
+  ).length;
+
   const handleEditGoal = (goal: GoalType) => {
     setSelectedGoal(goal);
     setIsDialogOpen(true);
@@ -214,6 +219,13 @@ const Goals = () => {
         </div>
       </div>
 
+      {/* Display the goal counter */}
+      {haveGoals && (
+        <div className="text-stone-700 geist-mono font-medium tracking-tight  px-4 py-2 text-center text-sm border rounded-md max-w-max place-self-center">
+          {completedGoals} of {totalGoals} goals completed
+        </div>
+      )}
+
       {haveGoals && (
         <Reorder.Group
           axis="y"
@@ -239,8 +251,10 @@ const Goals = () => {
                     isOrdering={isOrdering}
                     draggingId={draggingId}
                     deleteGoal={() => handleDelete(goal)}
-                    onCheck={handleCheck}
-                    onEdit={() => handleEditGoal(goal)}
+                    onCheck={!isOrdering ? handleCheck : undefined}
+                    onEdit={
+                      !isOrdering ? () => handleEditGoal(goal) : undefined
+                    }
                   />
                 </Reorder.Item>
               </motion.div>

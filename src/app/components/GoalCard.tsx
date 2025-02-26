@@ -20,8 +20,8 @@ interface GoalCardProps {
   isOrdering: boolean;
   draggingId: string | null;
   deleteGoal: () => void;
-  onCheck: (goal: GoalType) => void;
-  onEdit: () => void;
+  onCheck?: (goal: GoalType) => void;
+  onEdit?: () => void;
 }
 
 const GoalCard = ({
@@ -74,11 +74,11 @@ const GoalCard = ({
               handleDelete();
             }
           }}
-          onClick={() => onEdit()}
+          onClick={() => onEdit && onEdit()}
         >
           <GripVertical
             className={cn(
-              'size-5 text-stone-400',
+              'size-5 text-stone-500',
               isOrdering ? 'block' : 'hidden'
             )}
           />
@@ -108,17 +108,19 @@ const GoalCard = ({
               </div>
             )}
           </div>
-          <Checkbox
-            className={cn(
-              'size-5 bg-white',
-              'data-[state=checked]:bg-emerald-100 data-[state=checked]:text-emerald-700 data-[state=checked]:border-emerald-100'
-            )}
-            onClick={(e) => {
-              e.stopPropagation();
-              onCheck(goal);
-            }}
-            checked={goal.status === GoalStatus.Completed}
-          />
+          {onCheck && (
+            <Checkbox
+              className={cn(
+                'size-5 bg-white',
+                'data-[state=checked]:bg-emerald-100 data-[state=checked]:text-emerald-700 data-[state=checked]:border-emerald-100'
+              )}
+              onClick={(e) => {
+                e.stopPropagation();
+                onCheck(goal);
+              }}
+              checked={goal.status === GoalStatus.Completed}
+            />
+          )}
         </motion.div>
       </motion.div>
 
