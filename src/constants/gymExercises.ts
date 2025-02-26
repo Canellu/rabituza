@@ -19,12 +19,25 @@ export const GYM_EXERCISES = {
     group: GYM_EXERCISE_GROUPS.PUSH,
   },
   lateralRaise: { name: 'Lateral Raise', group: GYM_EXERCISE_GROUPS.PUSH },
+  dumbbellInclineBenchPress: {
+    name: 'Dumbbell Incline Bench Press',
+    group: GYM_EXERCISE_GROUPS.PUSH,
+  },
+  tricepRingExtension: {
+    name: 'Tricep Ring Extension',
+    group: GYM_EXERCISE_GROUPS.PUSH,
+  },
+  dips: { name: 'Dips', group: GYM_EXERCISE_GROUPS.PUSH },
 
   // Pull
   latPulldown: { name: 'Lat Pulldown', group: GYM_EXERCISE_GROUPS.PULL },
   seatedRow: { name: 'Seated Row', group: GYM_EXERCISE_GROUPS.PULL },
   bicepCurl: { name: 'Bicep Curl', group: GYM_EXERCISE_GROUPS.PULL },
   hammerCurl: { name: 'Hammer Curl', group: GYM_EXERCISE_GROUPS.PULL },
+  chestSupportedRow: {
+    name: 'Chest Supported Row',
+    group: GYM_EXERCISE_GROUPS.PULL,
+  },
 
   // Lower
   squat: { name: 'Squat', group: GYM_EXERCISE_GROUPS.LOWER },
@@ -33,6 +46,18 @@ export const GYM_EXERCISES = {
   legExtension: { name: 'Leg Extension', group: GYM_EXERCISE_GROUPS.LOWER },
   legCurl: { name: 'Leg Curl', group: GYM_EXERCISE_GROUPS.LOWER },
   calfRaise: { name: 'Calf Raise', group: GYM_EXERCISE_GROUPS.LOWER },
+  bulgarianSplitSquat: {
+    name: 'Bulgarian Split Squat',
+    group: GYM_EXERCISE_GROUPS.LOWER,
+  },
+  reverseNordicCurl: {
+    name: 'Reverse Nordic Curl',
+    group: GYM_EXERCISE_GROUPS.LOWER,
+  },
+  romanianDeadLift: {
+    name: 'Romanian Deadlift',
+    group: GYM_EXERCISE_GROUPS.LOWER,
+  },
 
   // Cardio (with duration)
   treadmill: {
