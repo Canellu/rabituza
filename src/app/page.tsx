@@ -93,7 +93,7 @@ const Menu = () => {
 
           {/* Content */}
           <div className={cn('h-[calc(100dvh-84px)] overflow-y-auto')}>
-            <section className={cn('p-6 m-w-3xl mx-auto pb-20')}>
+            <section className={cn('m-w-3xl mx-auto pb-20')}>
               {tab.content}
             </section>
           </div>

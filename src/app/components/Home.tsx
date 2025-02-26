@@ -13,7 +13,7 @@ const Home = () => {
   });
 
   return (
-    <div className="flex flex-col gap-12 pb-10">
+    <div className="p-6 flex flex-col gap-12 pb-10">
       <ToughestCountdown />
 
       {activities && <YourPeers activities={activities} />}

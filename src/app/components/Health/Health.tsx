@@ -60,7 +60,7 @@ const Health = () => {
   };
 
   return (
-    <div className="h-full space-y-10">
+    <div className="p-6 h-full space-y-10">
       <NutritionDayPicker
         selectedDate={selectedDate}
         setSelectedDate={setSelectedDate}

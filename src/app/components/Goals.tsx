@@ -189,8 +189,8 @@ const Goals = () => {
   };
 
   return (
-    <div className="relative flex flex-col gap-4 pb-10 min-h-full">
-      <div className="flex items-center justify-between gap-2">
+    <>
+      <div className="sticky top-0 z-10 py-4 flex items-center justify-between gap-2 bg-stone-50 px-6 ">
         <Tabs
           value={activeTab}
           onValueChange={(value) => setActiveTab(value as TimePeriod)}
@@ -218,103 +218,105 @@ const Goals = () => {
           </Button>
         </div>
       </div>
+      <div className="px-6 relative flex flex-col gap-4 pb-10 min-h-full">
+        {/* Display the goal counter */}
+        {haveGoals && (
+          <div className="text-stone-700 geist-mono font-medium tracking-tight  px-4 py-2 text-center text-sm border rounded-md max-w-max place-self-center">
+            {completedGoals > 0 && (
+              <span>
+                {completedGoals} of {totalGoals} goals completed
+              </span>
+            )}
+            {completedGoals === 0 && <span>No goals reached</span>}
+          </div>
+        )}
 
-      {/* Display the goal counter */}
-      {haveGoals && (
-        <div className="text-stone-700 geist-mono font-medium tracking-tight  px-4 py-2 text-center text-sm border rounded-md max-w-max place-self-center">
-          {completedGoals > 0 && (
-            <span>
-              {completedGoals} of {totalGoals} goals completed
-            </span>
-          )}
-          {completedGoals === 0 && <span>No goals reached</span>}
-        </div>
-      )}
+        {haveGoals && (
+          <Reorder.Group
+            axis="y"
+            values={splittedGoals[activeTab]}
+            onReorder={handleReorder}
+            className="flex flex-col gap-3"
+            {...STAGGER_CONTAINER_CONFIG}
+          >
+            <AnimatePresence>
+              {splittedGoals[activeTab].map((goal) => (
+                <motion.div key={goal.id} variants={STAGGER_CHILD_VARIANTS}>
+                  <Reorder.Item
+                    value={goal}
+                    id={goal.id}
+                    onDragEnd={() => {
+                      handleReorderEnd();
+                      setDraggingId(null);
+                    }}
+                    dragListener={isOrdering && !draggingId}
+                  >
+                    <GoalCard
+                      goal={goal}
+                      isOrdering={isOrdering}
+                      draggingId={draggingId}
+                      deleteGoal={() => handleDelete(goal)}
+                      onCheck={!isOrdering ? handleCheck : undefined}
+                      onEdit={
+                        !isOrdering ? () => handleEditGoal(goal) : undefined
+                      }
+                    />
+                  </Reorder.Item>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </Reorder.Group>
+        )}
 
-      {haveGoals && (
-        <Reorder.Group
-          axis="y"
-          values={splittedGoals[activeTab]}
-          onReorder={handleReorder}
-          className="flex flex-col gap-3"
-          {...STAGGER_CONTAINER_CONFIG}
-        >
-          <AnimatePresence>
-            {splittedGoals[activeTab].map((goal) => (
-              <motion.div key={goal.id} variants={STAGGER_CHILD_VARIANTS}>
-                <Reorder.Item
-                  value={goal}
-                  id={goal.id}
-                  onDragEnd={() => {
-                    handleReorderEnd();
-                    setDraggingId(null);
-                  }}
-                  dragListener={isOrdering && !draggingId}
-                >
-                  <GoalCard
-                    goal={goal}
-                    isOrdering={isOrdering}
-                    draggingId={draggingId}
-                    deleteGoal={() => handleDelete(goal)}
-                    onCheck={!isOrdering ? handleCheck : undefined}
-                    onEdit={
-                      !isOrdering ? () => handleEditGoal(goal) : undefined
-                    }
-                  />
-                </Reorder.Item>
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </Reorder.Group>
-      )}
+        {!isLoading && !error && !haveGoals && (
+          <div className="text-stone-600 text-center p-4 mx-auto">
+            {activeTab === TimePeriod.Year &&
+              `You have no goals for ${year} 🥲`}
+            {activeTab === TimePeriod.Q1 &&
+              'Break down your yearly goals into manageable chunks to start the year strong.'}
+            {activeTab === TimePeriod.Q2 &&
+              'Reflect on your progress and set new goals for the upcoming months.'}
+            {activeTab === TimePeriod.Q3 &&
+              'Reassess your objectives and make adjustments to stay on track.'}
+            {activeTab === TimePeriod.Q4 &&
+              'Finish the year strong by setting clear and achievable goals.'}
+          </div>
+        )}
 
-      {!isLoading && !error && !haveGoals && (
-        <div className="text-stone-600 text-center p-4 mx-auto">
-          {activeTab === TimePeriod.Year && `You have no goals for ${year} 🥲`}
-          {activeTab === TimePeriod.Q1 &&
-            'Break down your yearly goals into manageable chunks to start the year strong.'}
-          {activeTab === TimePeriod.Q2 &&
-            'Reflect on your progress and set new goals for the upcoming months.'}
-          {activeTab === TimePeriod.Q3 &&
-            'Reassess your objectives and make adjustments to stay on track.'}
-          {activeTab === TimePeriod.Q4 &&
-            'Finish the year strong by setting clear and achievable goals.'}
-        </div>
-      )}
+        {isLoading && (
+          <div className="flex flex-col items-center justify-center gap-3">
+            <Spinner />
+            <span className="text-stone-500">Fetching goals...</span>
+          </div>
+        )}
 
-      {isLoading && (
-        <div className="flex flex-col items-center justify-center gap-3">
-          <Spinner />
-          <span className="text-stone-500">Fetching goals...</span>
-        </div>
-      )}
+        {error && (
+          <div className="text-red-500 bg-red-100 rounded-md py-2 px-4 text-center">
+            Error fetching goals
+          </div>
+        )}
 
-      {error && (
-        <div className="text-red-500 bg-red-100 rounded-md py-2 px-4 text-center">
-          Error fetching goals
-        </div>
-      )}
-
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-lg w-[96%] h-[96dvh] overflow-y-auto rounded-lg flex flex-col p-0 py-6">
-          <DialogHeader>
-            <DialogTitle>Edit Goal</DialogTitle>
-          </DialogHeader>
-          {selectedGoal && (
-            <div className="flex-grow overflow-y-auto">
-              <div className="h-full overflow-auto">
-                <div className="p-4">
-                  <GoalForm
-                    initialGoal={selectedGoal}
-                    onClose={() => setIsDialogOpen(false)}
-                  />
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogContent className="max-w-lg w-[96%] h-[96dvh] overflow-y-auto rounded-lg flex flex-col p-0 py-6">
+            <DialogHeader>
+              <DialogTitle>Edit Goal</DialogTitle>
+            </DialogHeader>
+            {selectedGoal && (
+              <div className="flex-grow overflow-y-auto">
+                <div className="h-full overflow-auto">
+                  <div className="p-4">
+                    <GoalForm
+                      initialGoal={selectedGoal}
+                      onClose={() => setIsDialogOpen(false)}
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-    </div>
+            )}
+          </DialogContent>
+        </Dialog>
+      </div>
+    </>
   );
 };
 

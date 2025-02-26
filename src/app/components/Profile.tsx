@@ -35,7 +35,7 @@ const Profile = () => {
   }
 
   return (
-    <div className="flex items-center justify-between flex-col h-full gap-8 pt-4 pb-10">
+    <div className="px-6 flex items-center justify-between flex-col h-full gap-8 py-10">
       <div className="flex items-center flex-col gap-4 w-full">
         <motion.div
           initial={{ opacity: 0 }}
