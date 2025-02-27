@@ -22,8 +22,8 @@ const UserCard = ({
       className={cn(
         'grid grid-cols-5 items-center gap-2',
         'border rounded-xl border-stone-300',
-        'p-4',
-        'shadow'
+        'p-4 bg-white shadow',
+        rank === 0 && 'bg-emerald-50 border-emerald-300'
       )}
       onClick={() => onSelect()}
     >
