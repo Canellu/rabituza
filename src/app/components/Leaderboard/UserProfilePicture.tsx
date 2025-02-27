@@ -5,9 +5,10 @@ import Image from 'next/image';
 
 interface UserProfilePictureProps {
   user: User;
+  isFirst?: boolean;
 }
 
-const UserProfilePicture = ({ user }: UserProfilePictureProps) => {
+const UserProfilePicture = ({ user, isFirst }: UserProfilePictureProps) => {
   if (user.avatar) {
     return (
       <Image
@@ -15,7 +16,10 @@ const UserProfilePicture = ({ user }: UserProfilePictureProps) => {
         alt="User Avatar"
         width={128}
         height={128}
-        className="rounded-full object-cover size-10"
+        className={cn(
+          'rounded-full object-cover size-10 border border-stone-400',
+          isFirst && 'border-emerald-500'
+        )}
       />
     );
   }

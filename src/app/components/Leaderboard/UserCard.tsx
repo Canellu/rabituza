@@ -26,7 +26,7 @@ const UserCard = ({
         'border rounded-xl border-stone-100',
         'p-4 bg-white shadow',
         isFirst &&
-          'bg-amber-50 border-amber-200 py-5 border-2 shadow-amber-300/20 shadow-xl',
+          'bg-emerald-50 border-emerald-200 py-5 border-2 shadow-emerald-300/20 shadow-xl',
         'relative overflow-hidden'
       )}
       onClick={() => onSelect()}
@@ -34,7 +34,7 @@ const UserCard = ({
       <span
         className={cn(
           'font-bold text-stone-700 tracking-tight',
-          isFirst && 'text-amber-700 text-lg'
+          isFirst && 'text-emerald-700 text-lg'
         )}
       >
         # {rank + 1}
@@ -44,31 +44,32 @@ const UserCard = ({
           {rank == 0 && (
             <GiCrown className="absolute -top-3.5 -left-1.5 -rotate-[32deg] text-amber-400 text-3xl" />
           )}
-          <UserProfilePicture user={user} />
+          <UserProfilePicture user={user} isFirst={isFirst} />
         </div>
-        <p
-          className={cn(
-            'first-letter:capitalize font-medium text-stone-700',
-            isFirst && 'text-amber-700 font-semibold'
-          )}
-        >
-          {user.username}
-          {isFirst && (
-            <span
-              className={cn(
-                'line-clamp-1 text-xs ',
-                isFirst && 'text-amber-700'
-              )}
-            >
-              {user?.bio}
-            </span>
-          )}
-        </p>
+        <div>
+          <p
+            className={cn(
+              'first-letter:capitalize font-medium text-stone-700',
+              isFirst && 'text-emerald-700 font-semibold'
+            )}
+          >
+            {user.username}
+          </p>
+
+          <span
+            className={cn(
+              'line-clamp-1 text-xs text-stone-500 ',
+              isFirst && 'text-emerald-600'
+            )}
+          >
+            {user?.bio}
+          </span>
+        </div>
       </div>
       <span
         className={cn(
           'text-stone-700 text-sm font-medium text-end',
-          isFirst && 'text-amber-700 font-bold text-lg'
+          isFirst && 'text-emerald-700 font-bold text-lg'
         )}
       >
         {user.score}
