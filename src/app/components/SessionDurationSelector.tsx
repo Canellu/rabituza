@@ -8,7 +8,7 @@ interface SessionDurationSelectorProps {
   durations?: number[];
 }
 
-const DEFAULT_DURATIONS = [10, 15, 20, 25, 30, 35];
+const DEFAULT_DURATIONS = [10, 20, 30, 40, 60];
 
 const SessionDurationSelector = ({
   duration,
