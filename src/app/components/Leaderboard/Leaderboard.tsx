@@ -9,13 +9,14 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { getActivities } from '@/lib/database/activities/getActivities';
 import { getUsers } from '@/lib/database/user/getUsers';
 import { cn } from '@/lib/utils';
 import { ActivityType } from '@/types/Activity';
 import { User } from '@/types/User';
 import { DialogDescription } from '@radix-ui/react-dialog';
 import { useQuery } from '@tanstack/react-query';
-import { subWeeks } from 'date-fns';
+import { endOfMonth, format, startOfMonth, subWeeks } from 'date-fns';
 import { Info } from 'lucide-react';
 import { useState } from 'react';
 import ActivityDistributionChart from './ActivityDistributionChart';
@@ -23,15 +24,10 @@ import AverageRatings from './AverageRatings';
 import UserCard from './UserCard';
 import UserMonth from './UserMonth';
 
-interface LeaderboardProps {
-  activities: ActivityType[];
-}
-
-const Leaderboard = ({ activities }: LeaderboardProps) => {
-  const { data: users, isLoading: isLoadingUsers } = useQuery({
-    queryKey: ['users'],
-    queryFn: () => getUsers(),
-  });
+const Leaderboard = () => {
+  const dateFrom = startOfMonth(new Date());
+  const dateTo = endOfMonth(new Date());
+  const currentMonth = format(dateFrom, 'MMMM');
 
   const [selectedUser, setSelectedUser] = useState<{
     user: User & { activities: ActivityType[] };
@@ -44,6 +40,15 @@ const Leaderboard = ({ activities }: LeaderboardProps) => {
   } | null>(null);
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const { data: users, isLoading: isLoadingUsers } = useQuery({
+    queryKey: ['users'],
+    queryFn: () => getUsers(),
+  });
+  const { data: activities = [] } = useQuery({
+    queryKey: ['activities', dateFrom, dateTo],
+    queryFn: () => getActivities(dateFrom, dateTo),
+  });
 
   const calculateUserStatistics = (userActivities: ActivityType[]) => {
     const totalActivities = userActivities.length;
@@ -110,7 +115,7 @@ const Leaderboard = ({ activities }: LeaderboardProps) => {
   return (
     <div className="flex flex-col gap-2">
       <h2 className="text-xl font-semibold flex items-center gap-1">
-        <span>Leaderboard</span>
+        <span>Leaderboard - {currentMonth}</span>
         <Popover>
           <PopoverTrigger>
             <Info className="size-4 text-stone-500" />
@@ -119,7 +124,7 @@ const Leaderboard = ({ activities }: LeaderboardProps) => {
             <span className="font-medium">Score Calculation</span>
             <p className="text-sm text-muted-foreground">
               Scores are calculated based on the number of activities. Each
-              activity contributes 50 points. (To be adjusted)
+              activity contributes 50 points.
             </p>
           </PopoverContent>
         </Popover>

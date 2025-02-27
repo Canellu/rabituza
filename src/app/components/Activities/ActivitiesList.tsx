@@ -38,7 +38,7 @@ const ActivitiesList = ({
                   case ActivityTypes.Climbing:
                     return (
                       <ActivityCardClimbing
-                        readOnly
+                        readOnly={readOnly}
                         activity={activity}
                         onEdit={() =>
                           onEditActivity && onEditActivity(activity)
@@ -48,7 +48,7 @@ const ActivitiesList = ({
                   case ActivityTypes.Stretching:
                     return (
                       <ActivityCardStretching
-                        readOnly
+                        readOnly={readOnly}
                         activity={activity}
                         onEdit={() =>
                           onEditActivity && onEditActivity(activity)
@@ -58,7 +58,7 @@ const ActivitiesList = ({
                   case ActivityTypes.Hangboard:
                     return (
                       <ActivityCardHangboard
-                        readOnly
+                        readOnly={readOnly}
                         activity={activity}
                         onEdit={() =>
                           onEditActivity && onEditActivity(activity)
@@ -68,7 +68,7 @@ const ActivitiesList = ({
                   case ActivityTypes.Workout:
                     return (
                       <ActivityCardWorkout
-                        readOnly
+                        readOnly={readOnly}
                         activity={activity}
                         onEdit={() =>
                           onEditActivity && onEditActivity(activity)
@@ -78,7 +78,7 @@ const ActivitiesList = ({
                   case ActivityTypes.Driving:
                     return (
                       <ActivityCardDriving
-                        readOnly
+                        readOnly={readOnly}
                         activity={activity}
                         onEdit={() =>
                           onEditActivity && onEditActivity(activity)
