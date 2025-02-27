@@ -10,7 +10,12 @@ interface UserCardProps {
   onSelect: () => void;
 }
 
-const UserCard = ({ user, rank, userActivities, onSelect }: UserCardProps) => {
+const UserCard = ({
+  user,
+  rank,
+  userActivities: _,
+  onSelect,
+}: UserCardProps) => {
   return (
     <div
       key={user.id}

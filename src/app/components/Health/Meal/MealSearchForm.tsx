@@ -16,7 +16,6 @@ interface MealSearchFormProps {
   itemName: string;
   setItemName: Dispatch<SetStateAction<string>>;
   calories: string;
-  setCalories: Dispatch<SetStateAction<string>>;
   quantity: string;
   setQuantity: Dispatch<SetStateAction<string>>;
   selectedFood: Food | null;
@@ -30,7 +29,6 @@ interface MealSearchFormProps {
 const MealSearchForm = ({
   itemName,
   setItemName,
-  setCalories,
   quantity,
   setQuantity,
   selectedFood,

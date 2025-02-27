@@ -64,7 +64,7 @@ export const saveFoodsToDB = async (foods: Food[]) => {
     try {
       await store.put(food); // ✅ Use put to avoid duplicates
       // console.log(`Saved food: ${food.foodName} (ID: ${food.foodId})`);
-    } catch (error) {
+    } catch (_error) {
       // console.error(`Error saving food ID ${food.foodId}:`, error);
     }
   }

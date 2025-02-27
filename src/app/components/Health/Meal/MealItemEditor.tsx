@@ -202,7 +202,6 @@ const MealItemEditor = ({
                 itemName={itemName}
                 setItemName={setItemName}
                 calories={calories}
-                setCalories={setCalories}
                 quantity={quantity}
                 setQuantity={setQuantity}
                 selectedFood={selectedFood}
