@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button';
 import { CARD_ANIMATION_CONFIG } from '@/constants/animationConfig';
 import { deleteActivity } from '@/lib/database/activities/deleteActivity';
 import { deleteEntriesByDate } from '@/lib/idb/driving';
+import { cn } from '@/lib/utils';
 import formatTrafficCondition from '@/lib/utils/formatTrafficCondition';
 import {
   calculateTotalRouteDuration,
@@ -26,11 +27,13 @@ import RecordingCard from './RecordingCard';
 interface ActivityCardDrivingProps {
   activity: BaseActivityType & DrivingDataType;
   onEdit: () => void;
+  readOnly?: boolean;
 }
 
 const ActivityCardDriving = ({
   activity,
   onEdit,
+  readOnly = false,
 }: ActivityCardDrivingProps) => {
   const queryClient = useQueryClient();
   const userId = getSession();
@@ -115,17 +118,19 @@ const ActivityCardDriving = ({
             </div>
 
             <motion.div
-              className="rounded-xl p-4 space-y-3 bg-white relative"
-              drag="x"
-              dragDirectionLock
-              dragConstraints={{ left: -250, right: 0 }}
-              dragElastic={{ left: 0.5, right: 0 }}
-              dragSnapToOrigin
-              onDragEnd={(_, info) => {
-                if (info.offset.x < -56 * 3) {
-                  handleDelete();
-                }
-              }}
+              className={cn('rounded-xl p-4 space-y-3 bg-white relative')}
+              {...(!readOnly && {
+                drag: 'x',
+                dragDirectionLock: true,
+                dragConstraints: { left: -250, right: 0 },
+                dragElastic: { left: 0.5, right: 0 },
+                dragSnapToOrigin: true,
+                onDragEnd: (_, info) => {
+                  if (info.offset.x < -56 * 3) {
+                    handleDelete();
+                  }
+                },
+              })}
             >
               <DrivingCardHeader activity={activity} />
 
@@ -158,7 +163,8 @@ const ActivityCardDriving = ({
                       )}
                   </div>
 
-                  {!activityOutdated &&
+                  {!readOnly &&
+                    !activityOutdated &&
                     activity.status === DrivingSessionStatuses.inProgress && (
                       <Button
                         size="sm"
@@ -177,7 +183,7 @@ const ActivityCardDriving = ({
                         size="icon"
                         onClick={(e) => {
                           e.stopPropagation();
-                          setIsMapDialogOpen(true); // Open the map dialog
+                          setIsMapDialogOpen(true);
                         }}
                       >
                         <MapPin />
@@ -216,11 +222,13 @@ const ActivityCardDriving = ({
       </ResizablePanel.Root>
 
       {/* Delete Dialog */}
-      <DeleteDialog
-        open={showDeleteDialog}
-        onClose={() => setShowDeleteDialog(false)}
-        onConfirm={confirmDelete}
-      />
+      {!readOnly && (
+        <DeleteDialog
+          open={showDeleteDialog}
+          onClose={() => setShowDeleteDialog(false)}
+          onConfirm={confirmDelete}
+        />
+      )}
 
       {/* Map Dialog */}
       <MapDialog

@@ -97,11 +97,13 @@ export const getActivities = async (
           case ActivityTypes.Driving:
             const routesCollectionRef = collection(doc.ref, 'routes');
             const routesSnapshot = await getDocs(routesCollectionRef);
-            const routes: Route[] = routesSnapshot.docs.map((routeDoc) => ({
-              id: routeDoc.id,
-              createdAt: routeDoc.data().createdAt.toDate(),
-              geolocations: routeDoc.data().geolocations,
-            }));
+            const routes: Route[] = routesSnapshot.docs
+              .map((routeDoc) => ({
+                id: routeDoc.id,
+                createdAt: routeDoc.data().createdAt.toDate(),
+                geolocations: routeDoc.data().geolocations,
+              }))
+              .filter((route) => route.geolocations && route.geolocations.length > 0);
 
             return {
               ...baseActivity,

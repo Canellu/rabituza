@@ -11,6 +11,7 @@ import { ActivityRatingsType } from '@/types/Activity';
 import {
   Battery,
   Dumbbell,
+  Flame,
   InfoIcon,
   LucideIcon,
   Smile,
@@ -34,7 +35,7 @@ const RATING_CONFIG: Record<
   }
 > = {
   intensity: {
-    icon: Dumbbell,
+    icon: Flame,
     label: 'Intensity',
     question: 'How hard was the workout?',
     min: 'very easy',

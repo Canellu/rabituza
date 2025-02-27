@@ -13,9 +13,9 @@ const UserProfilePicture = ({ user }: UserProfilePictureProps) => {
       <Image
         src={user.avatar}
         alt="User Avatar"
-        width={112}
-        height={112}
-        className="rounded-full object-cover size-14"
+        width={128}
+        height={128}
+        className="rounded-full object-cover size-10"
       />
     );
   }

@@ -9,16 +9,18 @@ import ActivityCardWorkout from './ActivityCardWorkout';
 type ActivitiesListProps = {
   activities?: ActivityType[];
   selectedDate: Date;
-  onEditActivity: (activity: ActivityType) => void;
+  onEditActivity?: (activity: ActivityType) => void;
+  readOnly?: boolean;
 };
 
 const ActivitiesList = ({
   activities,
   selectedDate,
   onEditActivity,
+  readOnly,
 }: ActivitiesListProps) => {
   return (
-    <section className="space-y-3">
+    <section className="space-y-3 w-full">
       <h2 className="flex flex-col -space-y-1">
         <span className="text-stone-700 font-medium text-sm">
           Activities for
@@ -36,36 +38,51 @@ const ActivitiesList = ({
                   case ActivityTypes.Climbing:
                     return (
                       <ActivityCardClimbing
+                        readOnly
                         activity={activity}
-                        onEdit={() => onEditActivity(activity)}
+                        onEdit={() =>
+                          onEditActivity && onEditActivity(activity)
+                        }
                       />
                     );
                   case ActivityTypes.Stretching:
                     return (
                       <ActivityCardStretching
+                        readOnly
                         activity={activity}
-                        onEdit={() => onEditActivity(activity)}
+                        onEdit={() =>
+                          onEditActivity && onEditActivity(activity)
+                        }
                       />
                     );
                   case ActivityTypes.Hangboard:
                     return (
                       <ActivityCardHangboard
+                        readOnly
                         activity={activity}
-                        onEdit={() => onEditActivity(activity)}
+                        onEdit={() =>
+                          onEditActivity && onEditActivity(activity)
+                        }
                       />
                     );
                   case ActivityTypes.Workout:
                     return (
                       <ActivityCardWorkout
+                        readOnly
                         activity={activity}
-                        onEdit={() => onEditActivity(activity)}
+                        onEdit={() =>
+                          onEditActivity && onEditActivity(activity)
+                        }
                       />
                     );
                   case ActivityTypes.Driving:
                     return (
                       <ActivityCardDriving
+                        readOnly
                         activity={activity}
-                        onEdit={() => onEditActivity(activity)}
+                        onEdit={() =>
+                          onEditActivity && onEditActivity(activity)
+                        }
                       />
                     );
                   default:

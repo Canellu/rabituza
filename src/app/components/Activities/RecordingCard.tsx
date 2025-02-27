@@ -98,6 +98,13 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
     setShowSaveModal(false);
 
     const allLocations = await getAllLocationsFromDB();
+
+    // Don't save if there are no locations
+    if (!allLocations || allLocations.length === 0) {
+      console.log('No locations to save');
+      return;
+    }
+
     const { routes: _, ...activityWithoutRoutes } = activity;
 
     const updatedActivity = {

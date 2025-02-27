@@ -34,12 +34,15 @@ const RouteStatistics = ({ routes }: RouteStatisticsProps) => {
       totalAvgAccuracy += avgAccuracy;
       totalDataSize += dataSize;
 
-      const start = route.geolocations[0].timestamp;
-      const end = route.geolocations[route.geolocations.length - 1].timestamp;
-      totalDurationMs += end - start;
+      const start = route.geolocations[0]?.timestamp ?? 0;
+      const end =
+        route.geolocations[route.geolocations.length - 1]?.timestamp ?? 0;
 
-      startTime = Math.min(startTime, start);
-      endTime = Math.max(endTime, end);
+      if (start && end) {
+        totalDurationMs += end - start;
+        startTime = Math.min(startTime, start);
+        endTime = Math.max(endTime, end);
+      }
     });
 
     const avgSpeed = totalAvgSpeed / routes.length;

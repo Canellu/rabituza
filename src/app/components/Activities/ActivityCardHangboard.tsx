@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/dialog';
 import activityOptions from '@/constants/activityOptions';
 import { deleteActivity } from '@/lib/database/activities/deleteActivity';
+import { cn } from '@/lib/utils';
 import { getSession } from '@/lib/utils/userSession';
 import { BaseActivityType, HangboardDataType } from '@/types/Activity';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -20,11 +21,13 @@ import { useState } from 'react';
 interface ActivityCardHangboardProps {
   activity: BaseActivityType & HangboardDataType;
   onEdit: () => void;
+  readOnly?: boolean;
 }
 
 const ActivityCardHangboard = ({
   activity,
   onEdit,
+  readOnly = false,
 }: ActivityCardHangboardProps) => {
   const queryClient = useQueryClient();
   const userId = getSession();
@@ -62,7 +65,10 @@ const ActivityCardHangboard = ({
 
   return (
     <>
-      <motion.div className="relative" onClick={onEdit}>
+      <motion.div
+        className={cn('relative', readOnly && 'pointer-events-none touch-none')}
+        onClick={onEdit}
+      >
         <div className="absolute inset-1 bg-red-500 rounded-xl flex items-center justify-end px-4">
           <Trash2 className="text-secondary" />
         </div>
@@ -124,35 +130,37 @@ const ActivityCardHangboard = ({
         </motion.div>
       </motion.div>
 
-      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-        <DialogContent className="max-w-80 rounded-md">
-          <DialogHeader>
-            <DialogTitle className="text-stone-700">
-              Delete Activity
-            </DialogTitle>
-            <DialogDescription>
-              Are you sure you want to delete this activity? This action cannot
-              be undone.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="flex gap-4 flex-row items-center justify-center">
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={() => setShowDeleteDialog(false)}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="destructive"
-              className="w-full"
-              onClick={confirmDelete}
-            >
-              Delete
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {!readOnly && (
+        <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+          <DialogContent className="max-w-80 rounded-md">
+            <DialogHeader>
+              <DialogTitle className="text-stone-700">
+                Delete Activity
+              </DialogTitle>
+              <DialogDescription>
+                Are you sure you want to delete this activity? This action
+                cannot be undone.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter className="flex gap-4 flex-row items-center justify-center">
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => setShowDeleteDialog(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                className="w-full"
+                onClick={confirmDelete}
+              >
+                Delete
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
     </>
   );
 };

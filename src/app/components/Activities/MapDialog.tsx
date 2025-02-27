@@ -3,6 +3,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
@@ -43,8 +44,10 @@ const MapDialog = ({ open, onClose, activity }: MapDialogProps) => {
   const [isMapLoaded, setIsMapLoaded] = useState(false);
 
   const sortedRoutes = activity.routes?.slice().sort((a, b) => {
-    const aLastTimestamp = a.geolocations[a.geolocations.length - 1].timestamp;
-    const bLastTimestamp = b.geolocations[b.geolocations.length - 1].timestamp;
+    const aLastTimestamp =
+      a.geolocations[a.geolocations.length - 1]?.timestamp ?? 0;
+    const bLastTimestamp =
+      b.geolocations[b.geolocations.length - 1]?.timestamp ?? 0;
     return aLastTimestamp - bLastTimestamp;
   });
 
@@ -71,6 +74,7 @@ const MapDialog = ({ open, onClose, activity }: MapDialogProps) => {
 
       const allCoordinates = sortedRoutes
         .filter((_, index) => routeIndex === -1 || routeIndex === index)
+        .filter((route) => route.geolocations.length > 0) // Filter out routes with no geolocations
         .map((route) => ({
           id: route.id,
           coordinates: route.geolocations
@@ -78,8 +82,11 @@ const MapDialog = ({ open, onClose, activity }: MapDialogProps) => {
             .map((geo) => [geo.longitude, geo.latitude]),
         }));
 
+      if (allCoordinates.length === 0) return; // Exit if no valid coordinates
+
       // Calculate new bounds
       const bounds = allCoordinates.reduce((totalBounds, { coordinates }) => {
+        if (coordinates.length === 0) return totalBounds; // Skip empty coordinates
         coordinates.forEach((coord) => {
           totalBounds.extend(coord as [number, number]);
         });
@@ -88,6 +95,7 @@ const MapDialog = ({ open, onClose, activity }: MapDialogProps) => {
 
       // Add new sources and layers
       allCoordinates.forEach(({ id, coordinates }, index) => {
+        if (coordinates.length === 0) return; // Skip routes with no coordinates
         const routeId = `route-${id}`;
 
         map.addSource(routeId, {
@@ -242,6 +250,9 @@ const MapDialog = ({ open, onClose, activity }: MapDialogProps) => {
       <DialogContent className="max-w-lg w-[96%] h-[96dvh] overflow-y-auto rounded-lg flex flex-col p-0 py-6">
         <DialogHeader>
           <DialogTitle>Routes</DialogTitle>
+          <DialogDescription className="sr-only">
+            View and manage your recorded routes on the map
+          </DialogDescription>
         </DialogHeader>
         <div className="p-4 space-y-4">
           {sortedRoutes && sortedRoutes.length > 0 ? (

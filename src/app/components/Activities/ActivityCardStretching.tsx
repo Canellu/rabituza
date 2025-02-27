@@ -10,6 +10,7 @@ import {
 import activityOptions from '@/constants/activityOptions';
 import { CARD_ANIMATION_CONFIG } from '@/constants/animationConfig';
 import { deleteActivity } from '@/lib/database/activities/deleteActivity';
+import { cn } from '@/lib/utils';
 import { getSession } from '@/lib/utils/userSession';
 import { BaseActivityType, StretchingDataType } from '@/types/Activity';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -21,11 +22,13 @@ import { useState } from 'react';
 interface ActivityCardStretchingProps {
   activity: BaseActivityType & StretchingDataType;
   onEdit: () => void;
+  readOnly?: boolean;
 }
 
 const ActivityCardStretching = ({
   activity,
   onEdit,
+  readOnly = false,
 }: ActivityCardStretchingProps) => {
   const queryClient = useQueryClient();
   const userId = getSession();
@@ -64,7 +67,7 @@ const ActivityCardStretching = ({
   return (
     <>
       <motion.div
-        className="relative"
+        className={cn('relative', readOnly && 'pointer-events-none touch-none')}
         {...CARD_ANIMATION_CONFIG}
         onClick={onEdit}
       >
@@ -122,35 +125,37 @@ const ActivityCardStretching = ({
         </motion.div>
       </motion.div>
 
-      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-        <DialogContent className="max-w-80 rounded-md">
-          <DialogHeader>
-            <DialogTitle className="text-stone-700">
-              Delete Activity
-            </DialogTitle>
-            <DialogDescription>
-              Are you sure you want to delete this activity? This action cannot
-              be undone.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="flex gap-4 flex-row items-center justify-center">
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={() => setShowDeleteDialog(false)}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="destructive"
-              className="w-full"
-              onClick={confirmDelete}
-            >
-              Delete
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {!readOnly && (
+        <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+          <DialogContent className="max-w-80 rounded-md">
+            <DialogHeader>
+              <DialogTitle className="text-stone-700">
+                Delete Activity
+              </DialogTitle>
+              <DialogDescription>
+                Are you sure you want to delete this activity? This action
+                cannot be undone.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter className="flex gap-4 flex-row items-center justify-center">
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => setShowDeleteDialog(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                className="w-full"
+                onClick={confirmDelete}
+              >
+                Delete
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
     </>
   );
 };

@@ -13,7 +13,6 @@ import AddMeal from './components/Health/Meal/AddMeal';
 import LogoutButton from './components/LogoutButton';
 import RefreshButton from './components/RefreshButton';
 import ThemeToggle from './components/ThemeToggle';
-import WorkInProgress from './components/WorkInProgress';
 
 const Menu = () => {
   const params = useSearchParams();
@@ -77,7 +76,6 @@ const Menu = () => {
                   <Leaf className="text-green-700" />
                 )}
               </h1>
-              {tab.value === Tab.Home && <WorkInProgress />}
               {tab.value === Tab.Health && <AddMeal />}
               {tab.value === Tab.Activities && <AddActivities />}
               {tab.value === Tab.Goals && <AddGoal />}
