@@ -101,7 +101,7 @@ const Menu = () => {
       {/* Bottom Menu */}
       <TabsList
         className={cn(
-          'fixed inset-x-0 bottom-0 min-h-max flex items-center justify-around pb-5 pt-0 rounded-none z-10',
+          'fixed inset-x-0 bottom-0 min-h-max flex items-center justify-around pb-5 pt-0 rounded-none z-50',
           'bg-stone-900'
         )}
       >
