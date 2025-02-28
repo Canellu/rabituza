@@ -23,7 +23,7 @@ const NotificationTest = () => {
       title: 'Rabituza',
       body: 'This is a test notification from Rabituza!',
       data: {
-        url: '/dashboard',
+        url: '/',
       },
     });
   };
@@ -36,7 +36,7 @@ const NotificationTest = () => {
         title: 'Scheduled Notification',
         body: 'This notification was scheduled to appear 5 seconds later!',
         data: {
-          url: '/dashboard',
+          url: '/',
         },
       },
       5000 // 5 seconds delay

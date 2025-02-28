@@ -70,8 +70,7 @@ export const useNotifications = () => {
       return false;
     }
   };
-  // In the showNotification function, update the notification options
-  // In the showNotification function, we can improve error handling
+
   const showNotification = async (
     options: CustomNotificationOptions
   ): Promise<boolean> => {
@@ -79,19 +78,19 @@ export const useNotifications = () => {
       toast.error('Notifications are not supported in your browser');
       return false;
     }
-  
+
     if (permission !== 'granted') {
       const granted = await requestPermission();
       if (!granted) return false;
     }
-  
+
     try {
       // Check if service worker is registered before proceeding
       if (!('serviceWorker' in navigator)) {
         toast.error('Service Worker is not supported in your browser');
         return false;
       }
-      
+
       const registration = await navigator.serviceWorker.ready;
       await registration.showNotification(options.title, {
         body: options.body,
