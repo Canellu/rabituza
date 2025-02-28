@@ -112,42 +112,64 @@ self.addEventListener('push', (event) => {
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'APP_VISIT') {
     // Save the visit data to IndexedDB
-    saveInactivityData(event.data.timestamp, event.data.threshold);
+    saveInactivityData(event.data.timestamp, event.data.threshold).then(() => {
+      // Perform initial check
+      checkInactivity();
 
-    // Set up periodic checks if not already running
-    if (!checkIntervalId) {
-      checkIntervalId = setInterval(checkInactivity, 10 * 1000); // Check every 10 seconds
-    }
+      // Clear existing interval if any
+      if (checkIntervalId) {
+        clearInterval(checkIntervalId);
+      }
+
+      // Set up new interval
+      checkIntervalId = setInterval(checkInactivity, 10 * 1000);
+    });
   }
 });
 
 // Inactivity check function
 async function checkInactivity() {
-  // Get data from IndexedDB
-  const { lastVisitTime, threshold } = await getInactivityData();
+  try {
+    // Get data from IndexedDB
+    const { lastVisitTime, threshold } = await getInactivityData();
 
-  if (!lastVisitTime || !threshold) return;
+    if (!lastVisitTime || !threshold) {
+      console.log('No inactivity data found');
+      return;
+    }
 
-  const now = Date.now();
-  const timeSinceLastVisit = now - lastVisitTime;
+    const now = Date.now();
+    const timeSinceLastVisit = now - lastVisitTime;
 
-  if (timeSinceLastVisit >= threshold) {
-    // Send notification for inactivity
-    await self.registration.showNotification("Don't be lazy!", {
-      body: "It's been a while since you visited Rabituza.",
-      icon: '/android/android-launchericon-192-192.png',
-      badge: '/android/android-launchericon-96-96.png',
-      data: {
-        url: '/',
-        source: 'inactivity',
-      },
-      vibrate: [100, 50, 100],
-    });
+    console.log(
+      'Time since last visit:',
+      timeSinceLastVisit,
+      'Threshold:',
+      threshold
+    );
 
-    // Clear the check after sending notification
-    clearInterval(checkIntervalId);
-    checkIntervalId = null;
-    await clearInactivityData();
+    if (timeSinceLastVisit >= threshold) {
+      // Send notification for inactivity
+      await self.registration.showNotification("Don't be lazy!", {
+        body: "It's been a while since you visited Rabituza.",
+        icon: '/android/android-launchericon-192-192.png',
+        badge: '/android/android-launchericon-96-96.png',
+        data: {
+          url: '/',
+          source: 'inactivity',
+        },
+        vibrate: [100, 50, 100],
+      });
+
+      // Clear the check after sending notification
+      if (checkIntervalId) {
+        clearInterval(checkIntervalId);
+        checkIntervalId = null;
+      }
+      await clearInactivityData();
+    }
+  } catch (error) {
+    console.error('Error in checkInactivity:', error);
   }
 }
 
