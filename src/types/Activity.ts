@@ -64,15 +64,14 @@ export type HangboardDataType = {
 
 export type WorkoutSetType = {
   sets: number;
+  weight: number;
 } & (
   | {
       reps: number;
-      weight: number;
       duration?: never;
     }
   | {
       duration: number;
-      weight?: never;
       reps?: never;
     }
 );

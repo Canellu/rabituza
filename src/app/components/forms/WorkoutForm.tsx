@@ -38,11 +38,11 @@ const WorkoutForm = ({ onClose, initialData }: WorkoutFormProps) => {
       name: exercise.name,
       setGroups: exercise.setGroups.map((setGroup) => ({
         sets: setGroup.sets.toString(),
+        weight: setGroup.weight?.toString() || '0',
         ...(hasDuration(exercise.name)
           ? { duration: setGroup.duration?.toString() || '0' }
           : {
               reps: setGroup.reps?.toString() || '0',
-              weight: setGroup.weight?.toString() || '0',
             }),
       })),
     })) || []
@@ -95,6 +95,7 @@ const WorkoutForm = ({ onClose, initialData }: WorkoutFormProps) => {
               return {
                 sets: Number(setGroup.sets),
                 duration: Number(setGroup.duration),
+                weight: Number(setGroup.weight),
               };
             } else {
               return {
@@ -139,10 +140,7 @@ const WorkoutForm = ({ onClose, initialData }: WorkoutFormProps) => {
                 Number(setGroup.sets) < 1 ||
                 (hasDuration
                   ? !setGroup.duration || Number(setGroup.duration) < 1
-                  : !setGroup.reps ||
-                    Number(setGroup.reps) < 1 ||
-                    !setGroup.weight ||
-                    Number(setGroup.weight) < 0)
+                  : !setGroup.reps || Number(setGroup.reps) < 1)
               );
             })
           )

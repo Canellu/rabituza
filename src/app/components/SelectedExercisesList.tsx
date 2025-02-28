@@ -182,7 +182,7 @@ const SelectedExercisesList = ({
                             placeholder="0"
                           />
                           <span className="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-stone-500">
-                            min
+                            sec
                           </span>
                         </div>
                       </div>
@@ -218,42 +218,41 @@ const SelectedExercisesList = ({
                             placeholder="0"
                           />
                         </div>
-
-                        <div className="flex gap-1.5 items-center justify-center">
-                          <Weight className="size-4 text-stone-700" />
-                          <div className="relative">
-                            <Input
-                              type="text"
-                              inputMode="numeric"
-                              value={setGroup.weight}
-                              onChange={(e) =>
-                                updateSetGroup(
-                                  exerciseIndex,
-                                  setGroupIndex,
-                                  'weight',
-                                  e.target.value
-                                )
-                              }
-                              onFocus={(e) => {
-                                e.target.value = '';
-                                updateSetGroup(
-                                  exerciseIndex,
-                                  setGroupIndex,
-                                  'weight',
-                                  ''
-                                );
-                              }}
-                              maxLength={3}
-                              className="w-16 h-8 px-1.5 pr-6"
-                              placeholder="0"
-                            />
-                            <span className="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-stone-500">
-                              kg
-                            </span>
-                          </div>
-                        </div>
                       </>
                     )}
+                    <div className="flex gap-1.5 items-center justify-center">
+                      <Weight className="size-4 text-stone-700" />
+                      <div className="relative">
+                        <Input
+                          type="text"
+                          inputMode="numeric"
+                          value={setGroup.weight}
+                          onChange={(e) =>
+                            updateSetGroup(
+                              exerciseIndex,
+                              setGroupIndex,
+                              'weight',
+                              e.target.value
+                            )
+                          }
+                          onFocus={(e) => {
+                            e.target.value = '';
+                            updateSetGroup(
+                              exerciseIndex,
+                              setGroupIndex,
+                              'weight',
+                              ''
+                            );
+                          }}
+                          maxLength={3}
+                          className="w-16 h-8 px-1.5 pr-6"
+                          placeholder="0"
+                        />
+                        <span className="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-stone-500">
+                          kg
+                        </span>
+                      </div>
+                    </div>
                   </div>
                   {exercise.setGroups.length > 1 && (
                     <Button

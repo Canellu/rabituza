@@ -59,6 +59,7 @@ export const getActivities = async (
                   setGroups: exercise.setGroups.map((setGroup) => {
                     const base = {
                       sets: setGroup.sets,
+                      weight: setGroup.weight || 0,
                     };
                     if (setGroup.duration !== undefined) {
                       return {
@@ -69,7 +70,6 @@ export const getActivities = async (
                       return {
                         ...base,
                         reps: setGroup.reps || 0,
-                        weight: setGroup.weight || 0,
                       };
                     }
                   }),
@@ -103,7 +103,9 @@ export const getActivities = async (
                 createdAt: routeDoc.data().createdAt.toDate(),
                 geolocations: routeDoc.data().geolocations,
               }))
-              .filter((route) => route.geolocations && route.geolocations.length > 0);
+              .filter(
+                (route) => route.geolocations && route.geolocations.length > 0
+              );
 
             return {
               ...baseActivity,

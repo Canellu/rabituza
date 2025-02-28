@@ -11,15 +11,14 @@ import SelectedExercisesList from './SelectedExercisesList';
 
 export type WorkoutSetStringedType = {
   sets: string;
+  weight: string;
 } & (
   | {
       reps: string;
-      weight: string;
       duration?: never;
     }
   | {
       duration: string;
-      weight?: never;
       reps?: never;
     }
 );

@@ -135,11 +135,8 @@ const ActivityCardWorkout = ({
                     {exercise.setGroups?.map((setGroup, setIndex) => (
                       <div
                         key={setIndex}
-                        className="flex items-center justify-between bg-stone-50 rounded-md p-2 text-sm"
+                        className="flex items-center justify-end bg-stone-50 rounded-md p-2 text-sm"
                       >
-                        <span className="text-stone-500">
-                          Set {setIndex + 1}
-                        </span>
                         <div className="flex gap-3 text-stone-600">
                           <span>
                             {setGroup.sets}{' '}
@@ -153,8 +150,8 @@ const ActivityCardWorkout = ({
                               {setGroup.reps === 1 ? 'rep' : 'reps'}
                             </span>
                           )}
-                          {setGroup.weight && setGroup.weight > 0 && (
-                            <span>{setGroup.weight}kg</span>
+                          {typeof setGroup.weight === 'number' && (
+                            <span>+{setGroup.weight.toString()} kg</span>
                           )}
                         </div>
                       </div>
