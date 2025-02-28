@@ -3,6 +3,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
@@ -110,6 +111,7 @@ const Health = () => {
         <DialogContent className="max-w-lg w-[96%] h-[96dvh] overflow-y-auto rounded-lg flex flex-col p-0 py-6">
           <DialogHeader>
             <DialogTitle>Edit Meal</DialogTitle>
+            <DialogDescription className="sr-only">Edit Meal</DialogDescription>
           </DialogHeader>
           {selectedMeal && (
             <MealForm

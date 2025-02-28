@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { getUserActivities } from '@/lib/database/activities/getUserActivities';
 import { getSession } from '@/lib/utils/userSession';
 import { ActivityType } from '@/types/Activity';
+import { DialogDescription } from '@radix-ui/react-dialog';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import Spinner from '../Spinner';
@@ -115,6 +116,9 @@ const Activities = () => {
         <DialogContent className="max-w-lg w-[96%] h-[96dvh] overflow-y-auto rounded-lg flex flex-col p-0 py-6">
           <DialogHeader>
             <DialogTitle>Edit Activity</DialogTitle>
+            <DialogDescription className="sr-only">
+              Activity Form
+            </DialogDescription>
           </DialogHeader>
           {selectedActivity && (
             <div className="flex-grow overflow-y-auto">

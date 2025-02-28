@@ -7,6 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'; // Import Dialog components
+import { DialogDescription } from '@radix-ui/react-dialog';
 import { useState } from 'react';
 import MealForm from './MealForm';
 
@@ -23,6 +24,7 @@ const AddMeal = () => {
         <DialogContent className="max-w-lg w-[96%] h-[96dvh] overflow-y-auto rounded-lg flex flex-col p-0 py-6">
           <DialogHeader>
             <DialogTitle>Add Meal</DialogTitle>
+            <DialogDescription className="sr-only">Add Meal</DialogDescription>
           </DialogHeader>
           <MealForm onClose={() => setIsOpen(false)} />
         </DialogContent>

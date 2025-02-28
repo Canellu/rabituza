@@ -3,6 +3,7 @@ import { Calendar } from '@/components/ui/calendar';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
@@ -444,6 +445,9 @@ const ProfileDetails = ({ user }: { user?: User }) => {
         >
           <DialogHeader>
             <DialogTitle>Edit {fieldLabels[selectedField || '']}</DialogTitle>
+            <DialogDescription className="sr-only">
+              Edit profile detail
+            </DialogDescription>
           </DialogHeader>
           <div className="p-2">
             {renderInputField()}

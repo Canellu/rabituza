@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
@@ -133,6 +134,9 @@ const AvatarUpload = ({ user }: AvatarUploadProps) => {
         <DialogContent className="max-w-md w-[96%] rounded-md">
           <DialogHeader>
             <DialogTitle>Upload Your Avatar</DialogTitle>
+            <DialogDescription className="sr-only">
+              Upload Avatar
+            </DialogDescription>
           </DialogHeader>
           <form
             onSubmit={handleUpload}

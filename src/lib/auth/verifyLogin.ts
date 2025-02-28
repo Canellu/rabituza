@@ -9,7 +9,6 @@ export type VerifyLoginError =
   | { type: 'FirestoreError'; message: string; details?: string };
 
 export async function getUserByIdentifier(identifier: string): Promise<User[]> {
-  console.log(identifier);
   try {
     const normalizedIdentifier = identifier.toLowerCase();
     const usernameQuery = query(
