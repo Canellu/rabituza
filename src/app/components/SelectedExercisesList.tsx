@@ -32,11 +32,12 @@ const SelectedExercisesList = ({
                   ? {
                       sets: '',
                       duration: '',
+                      weight: '0',
                     }
                   : {
                       sets: '',
                       reps: '',
-                      weight: '',
+                      weight: '0',
                     },
               ],
             }

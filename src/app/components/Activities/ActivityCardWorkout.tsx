@@ -151,7 +151,10 @@ const ActivityCardWorkout = ({
                             </span>
                           )}
                           {typeof setGroup.weight === 'number' && (
-                            <span>+{setGroup.weight.toString()} kg</span>
+                            <span>
+                              {setGroup.weight > 0 && '+'}
+                              {setGroup.weight.toString()} kg
+                            </span>
                           )}
                         </div>
                       </div>

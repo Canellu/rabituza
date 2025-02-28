@@ -98,7 +98,7 @@ const WorkoutExerciseSelector = ({
             weight: '0',
             ...(exerciseHasDuration
               ? { duration: '', reps: undefined }
-              : { reps: '', duration: undefined }), // Ensure reps is a string
+              : { reps: '', duration: undefined }),
           },
         ],
       } as WorkoutExerciseStringedType,
