@@ -1,6 +1,7 @@
 'use client';
 
 import { Toaster } from '@/components/ui/sonner';
+import { registerServiceWorker } from '@/lib/serviceWorkerRegistration';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { ThemeProvider } from 'next-themes';
@@ -22,6 +23,7 @@ export const Providers = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     setMounted(true);
+    registerServiceWorker();
   }, []);
 
   if (!mounted) {
