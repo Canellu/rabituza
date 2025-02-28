@@ -25,7 +25,6 @@ export const WORKOUT_EXERCISES = {
     name: 'Dumbbell Incline Bench Press',
     group: WORKOUT_EXERCISE_GROUPS.PUSH,
   },
-  dips: { name: 'Dips', group: WORKOUT_EXERCISE_GROUPS.PUSH },
   latPulldown: { name: 'Lat Pulldown', group: WORKOUT_EXERCISE_GROUPS.PULL },
   seatedRow: { name: 'Seated Row', group: WORKOUT_EXERCISE_GROUPS.PULL },
   bicepCurl: { name: 'Bicep Curl', group: WORKOUT_EXERCISE_GROUPS.PULL },
@@ -109,6 +108,10 @@ export const WORKOUT_EXERCISES = {
   },
   kneePushUp: {
     name: 'Knee Push Up',
+    group: WORKOUT_EXERCISE_GROUPS.PUSH,
+  },
+  assistedDip: {
+    name: 'Assisted Dip',
     group: WORKOUT_EXERCISE_GROUPS.PUSH,
   },
   dip: {

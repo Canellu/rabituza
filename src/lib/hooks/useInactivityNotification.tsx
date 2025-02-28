@@ -1,46 +1,25 @@
 import { useEffect } from 'react';
-import useNotifications from './useNotifications';
 
 // Time constants (in milliseconds)
-const TWO_DAYS = 1000 * 30;
+const THIRTY_SECONDS = 1000 * 30; // For testing
 // const TWO_DAYS = 2 * 24 * 60 * 60 * 1000;
 
 export const useInactivityNotification = () => {
-  const { showNotification } = useNotifications();
-
   useEffect(() => {
-    // Check if we need to show an inactivity notification
-    const checkInactivity = () => {
-      const lastActivity = localStorage.getItem('lastActivityTimestamp');
-      const currentTime = Date.now();
+    // Request notification permission if needed
+    if ('Notification' in window && Notification.permission !== 'granted') {
+      Notification.requestPermission();
+    }
 
-      if (!lastActivity) {
-        // First time user, just set the timestamp
-        localStorage.setItem('lastActivityTimestamp', currentTime.toString());
-        return;
-      }
-
-      const lastActivityTime = parseInt(lastActivity, 10);
-      const timeSinceLastActivity = currentTime - lastActivityTime;
-
-      if (timeSinceLastActivity >= TWO_DAYS) {
-        showNotification({
-          title: "Don't be lazy!",
-          body: "It's been a while since you tracked any activity in Rabituza.",
-          data: {
-            url: '/',
-            source: 'inactivity',
-          },
-        });
-      }
-
-      // Update timestamp for this visit
-      localStorage.setItem('lastActivityTimestamp', currentTime.toString());
-    };
-
-    // Only check when the app loads
-    checkInactivity();
-  }, [showNotification]);
+    // Notify service worker about app visit
+    if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+      navigator.serviceWorker.controller.postMessage({
+        type: 'APP_VISIT',
+        timestamp: Date.now(),
+        threshold: THIRTY_SECONDS,
+      });
+    }
+  }, []);
 };
 
 export default useInactivityNotification;

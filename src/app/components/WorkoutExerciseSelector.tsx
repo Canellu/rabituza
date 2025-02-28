@@ -96,7 +96,7 @@ const WorkoutExerciseSelector = ({
         setGroups: [
           {
             sets: '',
-            weight: '',
+            weight: '0',
             ...(exerciseHasDuration
               ? { duration: '', reps: undefined }
               : { reps: '', duration: undefined }), // Ensure reps is a string
@@ -106,6 +106,7 @@ const WorkoutExerciseSelector = ({
       ...prev,
     ]);
     setSearchResults(Object.entries(WORKOUT_EXERCISES));
+    setSearchText('');
   };
 
   return (
