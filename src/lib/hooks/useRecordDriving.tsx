@@ -6,6 +6,7 @@ import {
 import { GeoLocation } from '@/types/Activity';
 import { useRef, useState } from 'react';
 import { toast } from 'sonner';
+import useWakeLock from './useWakeLock';
 
 export const RecordingStates = {
   RECORDING: 'RECORDING',
@@ -38,6 +39,10 @@ const useRecordDriving = () => {
   >(true);
   const watchIdRef = useRef<number | null>(null);
   const lastTimestampRef = useRef<number | null>(null);
+
+  const isActive = recordingState === RecordingStates.RECORDING;
+  useWakeLock(isActive);
+
   const resetRecording = async () => {
     setIsResetting(true);
     clearNavigator();
