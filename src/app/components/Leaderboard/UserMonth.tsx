@@ -33,6 +33,7 @@ const UserMonth = ({ user }: UserMonthProps) => {
       <ActivitiesList
         activities={filteredActivities}
         selectedDate={selectedDate}
+        readOnly
       />
     </div>
   );
