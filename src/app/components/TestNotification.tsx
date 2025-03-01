@@ -1,51 +1,38 @@
 import { Button } from '@/components/ui/button';
 import useNotifications from '@/lib/hooks/useNotifications';
-import { Bell } from 'lucide-react';
-import { toast } from 'sonner';
+import { BellDot, BellPlus } from 'lucide-react';
 
 const TestNotification = () => {
-  const { supported, permission, requestPermission, showNotification } =
-    useNotifications();
+  const { supported, showNotification, requestPermission } = useNotifications();
 
   const sendNotification = async () => {
     if (!supported) {
       console.log('Notifications are not supported in this browser.');
       return;
     }
+    await showNotification({
+      title: 'Notification Test',
+      body: 'Notification Body',
+      icon: '/android/android-launchericon-192-192.png',
+      badge: '/android/android-launchericon-96-96.png',
+      data: {},
+      actions: [],
+    });
+  };
 
-    if (permission === 'granted') {
-      await showNotification({
-        title: 'Notification Test',
-        body: 'Notification Body',
-        icon: '/android/android-launchericon-192-192.png',
-        badge: '/android/android-launchericon-96-96.png',
-        data: {},
-        actions: [],
-      });
-    } else if (permission === 'denied') {
-      console.log('Notifications are blocked by the user.');
-      toast.error('Notifications are blocked by the user.');
-    } else {
-      const granted = await requestPermission();
-      if (granted) {
-        await showNotification({
-          title: 'Notification Test',
-          body: 'Notification Body',
-          icon: '/android/android-launchericon-192-192.png',
-          badge: '/android/android-launchericon-96-96.png',
-          data: {},
-          actions: [],
-        });
-      } else {
-        console.log('Notifications permission denied.');
-      }
-    }
+  const handleRequestPermission = () => {
+    requestPermission();
   };
 
   return (
-    <Button variant="outline" size="icon" onClick={sendNotification}>
-      <Bell />
-    </Button>
+    <div className="space-x-2">
+      <Button variant="secondary" size="icon" onClick={handleRequestPermission}>
+        <BellPlus />
+      </Button>
+      <Button variant="outline" size="icon" onClick={sendNotification}>
+        <BellDot />
+      </Button>
+    </div>
   );
 };
 
