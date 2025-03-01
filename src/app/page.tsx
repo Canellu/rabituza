@@ -12,6 +12,7 @@ import AddGoal from './components/AddGoal';
 import AddMeal from './components/Health/Meal/AddMeal';
 import LogoutButton from './components/LogoutButton';
 import RefreshButton from './components/RefreshButton';
+import TestNotification from './components/TestNotification';
 import ThemeToggle from './components/ThemeToggle';
 
 const Menu = () => {
@@ -76,6 +77,7 @@ const Menu = () => {
                   <Leaf className="text-green-700" />
                 )}
               </h1>
+              {tab.value === Tab.Home && <TestNotification />}
               {tab.value === Tab.Health && <AddMeal />}
               {tab.value === Tab.Activities && <AddActivities />}
               {tab.value === Tab.Goals && <AddGoal />}

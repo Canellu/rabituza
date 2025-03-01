@@ -1,7 +1,6 @@
 'use client';
 
 import { Toaster } from '@/components/ui/sonner';
-import { useInactivityNotification } from '@/lib/hooks/useInactivityNotification';
 import { registerServiceWorker } from '@/lib/serviceWorkerRegistration';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
@@ -21,8 +20,6 @@ export const Providers = ({ children }: { children: ReactNode }) => {
   const [mounted, setMounted] = useState(false);
   const QueryDevToolsEnabled =
     process.env.NEXT_PUBLIC_REACT_QUERY_DEVTOOLS === 'true';
-
-  useInactivityNotification();
 
   useEffect(() => {
     setMounted(true);
