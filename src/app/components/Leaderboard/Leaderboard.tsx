@@ -10,12 +10,13 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { getActivities } from '@/lib/database/activities/getActivities';
+import { getUserActivities } from '@/lib/database/activities/getUserActivities';
 import { getUsers } from '@/lib/database/user/getUsers';
 import { cn } from '@/lib/utils';
 import { ActivityType } from '@/types/Activity';
 import { User } from '@/types/User';
 import { DialogDescription } from '@radix-ui/react-dialog';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { endOfMonth, format, startOfMonth, subWeeks } from 'date-fns';
 import { Info } from 'lucide-react';
 import { useState } from 'react';
@@ -28,6 +29,7 @@ const Leaderboard = () => {
   const dateFrom = startOfMonth(new Date());
   const dateTo = endOfMonth(new Date());
   const currentMonth = format(dateFrom, 'MMMM');
+  const queryClient = useQueryClient();
 
   const [selectedUser, setSelectedUser] = useState<{
     user: User & { activities: ActivityType[] };
@@ -45,40 +47,38 @@ const Leaderboard = () => {
     queryKey: ['users'],
     queryFn: () => getUsers(),
   });
-  const { data: activities = [] } = useQuery({
-    queryKey: ['activities', dateFrom, dateTo],
+  const { data: currentMonthActivities } = useQuery({
+    queryKey: ['activities'],
     queryFn: () => getActivities(dateFrom, dateTo),
   });
 
-  const calculateUserStatistics = (userActivities: ActivityType[]) => {
-    const totalActivities = userActivities.length;
-    const totalIntensity = userActivities.reduce(
-      (sum, activity) => sum + activity.ratings.intensity,
-      0
-    );
-    const totalEnjoyment = userActivities.reduce(
-      (sum, activity) => sum + activity.ratings.enjoyment,
-      0
-    );
-    const totalEnergy = userActivities.reduce(
-      (sum, activity) => sum + activity.ratings.energy,
-      0
-    );
-    return {
-      totalActivities,
-      averageIntensity: (totalIntensity / totalActivities).toFixed(1),
-      averageEnjoyment: (totalEnjoyment / totalActivities).toFixed(1),
-      averageEnergy: (totalEnergy / totalActivities).toFixed(1),
-    };
-  };
+  const handleSelectUserCard = async (user: User) => {
+    // Invalidate and refetch before setting the selected user
+    await queryClient.invalidateQueries({ queryKey: ['activities', 'user'] });
+    const activities = await getUserActivities(user.id);
 
-  const handleSelectUserCard = (user: User) => {
-    const userActivity = activities.filter(
-      (activity) => activity.userId === user.id
-    );
-    const statistics = calculateUserStatistics(userActivity);
+    const statistics = {
+      totalActivities: activities.length,
+      averageIntensity: (
+        activities.reduce(
+          (sum, activity) => sum + activity.ratings.intensity,
+          0
+        ) / activities.length
+      ).toFixed(1),
+      averageEnjoyment: (
+        activities.reduce(
+          (sum, activity) => sum + activity.ratings.enjoyment,
+          0
+        ) / activities.length
+      ).toFixed(1),
+      averageEnergy: (
+        activities.reduce((sum, activity) => sum + activity.ratings.energy, 0) /
+        activities.length
+      ).toFixed(1),
+    };
+
     setSelectedUser({
-      user: { ...user, activities: userActivity },
+      user: { ...user, activities },
       statistics,
     });
     setIsDialogOpen(true);
@@ -92,10 +92,10 @@ const Leaderboard = () => {
 
   const filteredUsers = users
     ?.filter((user) => {
-      const userActivities = activities.filter(
+      const userActivities = currentMonthActivities?.filter(
         (activity) => activity.userId === user.id
       );
-      const lastActivity = userActivities.sort(
+      const lastActivity = userActivities?.sort(
         (a, b) =>
           new Date(b.activityDate).getTime() -
           new Date(a.activityDate).getTime()
@@ -104,10 +104,10 @@ const Leaderboard = () => {
       return lastActivity && new Date(lastActivity.activityDate) > oneWeekAgo;
     })
     .map((user) => {
-      const userActivities = activities.filter(
+      const userActivities = currentMonthActivities?.filter(
         (activity) => activity.userId === user.id
       );
-      const score = userActivities.length * 50;
+      const score = userActivities?.length ? userActivities.length * 50 : 0;
       return { ...user, score };
     })
     .sort((a, b) => b.score - a.score);
@@ -136,7 +136,7 @@ const Leaderboard = () => {
       </div>
       <div className={cn('flex flex-col gap-2', 'w-full text-stone-700')}>
         {filteredUsers?.map((user, index) => {
-          const userActivities = activities.filter(
+          const userActivities = currentMonthActivities?.filter(
             (activity) => activity.userId === user.id
           );
 
@@ -145,7 +145,7 @@ const Leaderboard = () => {
               key={user.id}
               user={user}
               rank={index}
-              userActivities={userActivities}
+              userActivities={userActivities || []}
               onSelect={() => handleSelectUserCard(user)}
             />
           );
