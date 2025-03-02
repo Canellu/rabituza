@@ -38,6 +38,19 @@ const BOULDERING_GYMS = {
       'slab challenge',
     ],
   },
+  bryn: {
+    name: 'Klatreverket Bryn',
+    grades: [
+      'white',
+      'green',
+      'blue',
+      'yellow',
+      'red',
+      'black',
+      'silver',
+      'slab challenge',
+    ],
+  },
 } as const;
 
 export default BOULDERING_GYMS;
