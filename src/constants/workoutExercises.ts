@@ -152,6 +152,10 @@ export const WORKOUT_EXERCISES = {
     name: 'Leg Raises',
     group: WORKOUT_EXERCISE_GROUPS.CORE,
   },
+  birdDog: {
+    name: 'Bird Dog',
+    group: WORKOUT_EXERCISE_GROUPS.CORE,
+  },
 } as const;
 
 export const POPULAR_WORKOUT_EXERCISES = [
