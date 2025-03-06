@@ -110,7 +110,19 @@ const Leaderboard = () => {
       const score = userActivities?.length ? userActivities.length * 50 : 0;
       return { ...user, score };
     })
-    .sort((a, b) => b.score - a.score);
+    .sort((a, b) => {
+      // First compare by score (higher scores first)
+      if (b.score !== a.score) {
+        return b.score - a.score;
+      }
+
+      // If scores are equal, check if either user is "Bao"
+      if (a.username?.toLowerCase() === 'bao') return -1; // a is Bao, so a comes first
+      if (b.username?.toLowerCase() === 'bao') return 1; // b is Bao, so b comes first
+
+      // If neither is Bao or both are Bao, maintain original order
+      return 0;
+    });
 
   return (
     <div className="flex flex-col gap-2">
