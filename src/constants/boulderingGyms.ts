@@ -51,6 +51,19 @@ const BOULDERING_GYMS = {
       'slab challenge',
     ],
   },
+  torshov: {
+    name: 'Klatreverket Torshov',
+    grades: [
+      'white',
+      'green',
+      'blue',
+      'yellow',
+      'red',
+      'black',
+      'silver',
+      'slab challenge',
+    ],
+  },
 } as const;
 
 export default BOULDERING_GYMS;
