@@ -7,7 +7,6 @@ export const calculateSpeedMetrics = (geolocations: GeoLocation[]) => {
   const totalSpeed = speeds.reduce((total, speed) => total + speed, 0);
   const mid = Math.floor(speeds.length / 2);
 
-  console.log(speeds);
   return {
     max: speeds[speeds.length - 1] || 0,
     min: speeds[0] || 0,
