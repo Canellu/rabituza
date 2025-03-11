@@ -30,7 +30,6 @@ export async function getUserByIdentifier(identifier: string): Promise<User[]> {
     usernameSnapshot.forEach((doc) => users.add(doc.data()));
     emailSnapshot.forEach((doc) => users.add(doc.data()));
 
-    console.log(Array.from(users));
     return Array.from(users) as User[];
   } catch (err) {
     throw {
