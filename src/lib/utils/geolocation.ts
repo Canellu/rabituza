@@ -2,11 +2,12 @@ import { DrivingDataType, GeoLocation, Route } from '@/types/Activity';
 
 export const calculateSpeedMetrics = (geolocations: GeoLocation[]) => {
   const speeds = geolocations
-    .map((loc) => loc.speed || 0)
+    .map((loc) => (loc.speed || 0) * 3.6) // Convert m/s to km/h
     .sort((a, b) => a - b);
   const totalSpeed = speeds.reduce((total, speed) => total + speed, 0);
   const mid = Math.floor(speeds.length / 2);
 
+  console.log(speeds);
   return {
     max: speeds[speeds.length - 1] || 0,
     min: speeds[0] || 0,

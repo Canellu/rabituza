@@ -28,7 +28,6 @@ const RouteStatistics = ({ routes }: RouteStatisticsProps) => {
         route.geolocations
       );
       const dataSize = new TextEncoder().encode(JSON.stringify(route)).length;
-
       totalMaxSpeed = Math.max(totalMaxSpeed, maxSpeed);
       totalAvgSpeed += avgSpeed;
       totalAvgAccuracy += avgAccuracy;
@@ -70,8 +69,8 @@ const RouteStatistics = ({ routes }: RouteStatisticsProps) => {
     });
 
     return {
-      maxSpeed: totalMaxSpeed.toFixed(1),
-      avgSpeed: avgSpeed.toFixed(1),
+      maxSpeed: Math.round(totalMaxSpeed).toString(),
+      avgSpeed: Math.round(avgSpeed).toString(),
       avgAccuracy: avgAccuracy.toFixed(1),
       dataSize: `${dataAmount} ${dataUnit}`,
       duration,
