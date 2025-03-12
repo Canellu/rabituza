@@ -101,7 +101,7 @@ const ActivityCardHangboard = ({
           </div>
 
           {activity.note && (
-            <p className="text-sm text-stone-600 line-clamp-2">
+            <p className="text-sm text-stone-600 line-clamp-5 whitespace-pre-line">
               {activity.note}
             </p>
           )}
