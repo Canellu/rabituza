@@ -94,6 +94,10 @@ export const WORKOUT_EXERCISES = {
     name: 'Pull Up',
     group: WORKOUT_EXERCISE_GROUPS.PULL,
   },
+  rearDeltoidFly: {
+    name: 'Rear Deltoid Fly',
+    group: WORKOUT_EXERCISE_GROUPS.PULL,
+  },
   pushUp: {
     name: 'Push Up',
     group: WORKOUT_EXERCISE_GROUPS.PUSH,
