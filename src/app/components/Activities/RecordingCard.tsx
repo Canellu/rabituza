@@ -166,14 +166,16 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
           onValueChange={(value) => setMinInterval(Number(value))}
           className="flex flex-grow justify-evenly gap-1 border bg-stone-50 rounded-md p-1"
         >
-          {['100', '250', '500', '1000'].map((interval) => (
+          {['500', '1000', '2000', '3000', '5000'].map((interval) => (
             <ToggleGroupItem
               key={interval}
               value={interval}
-              className="data-[state=on]:bg-stone-200 capitalize px-2 py-1 h-8 flex-grow"
+              className="data-[state=on]:bg-stone-200 px-2 py-1 h-8 flex-grow"
               disabled={!isIntervalEnabled}
             >
-              {interval}
+              {Number(interval) >= 1000
+                ? (Number(interval) / 1000).toFixed(0)
+                : (Number(interval) / 1000).toFixed(1)}
             </ToggleGroupItem>
           ))}
         </ToggleGroup>
