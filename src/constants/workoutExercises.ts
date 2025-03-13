@@ -110,6 +110,11 @@ export const WORKOUT_EXERCISES = {
     name: 'Incline Push Up',
     group: WORKOUT_EXERCISE_GROUPS.PUSH,
   },
+  tuckPlancheHold: {
+    name: 'Tuck Planche Hold',
+    group: WORKOUT_EXERCISE_GROUPS.PUSH,
+    hasDuration: true,
+  },
   declinePushUp: {
     name: 'Decline Push Up',
     group: WORKOUT_EXERCISE_GROUPS.PUSH,
