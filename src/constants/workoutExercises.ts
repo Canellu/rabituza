@@ -102,6 +102,10 @@ export const WORKOUT_EXERCISES = {
     name: 'Push Up',
     group: WORKOUT_EXERCISE_GROUPS.PUSH,
   },
+  pikePushUp: {
+    name: 'Pike Push Up',
+    group: WORKOUT_EXERCISE_GROUPS.PUSH,
+  },
   inclinePushUp: {
     name: 'Incline Push Up',
     group: WORKOUT_EXERCISE_GROUPS.PUSH,
