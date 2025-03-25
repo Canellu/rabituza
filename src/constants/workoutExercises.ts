@@ -152,6 +152,10 @@ export const WORKOUT_EXERCISES = {
     group: WORKOUT_EXERCISE_GROUPS.CORE,
     hasDuration: true,
   },
+  abWheel: {
+    name: 'Ab Wheel',
+    group: WORKOUT_EXERCISE_GROUPS.CORE,
+  },
   lSit: {
     name: 'L Sit',
     group: WORKOUT_EXERCISE_GROUPS.CORE,
