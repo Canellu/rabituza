@@ -14,7 +14,7 @@ import {
   RunningDataType,
 } from '@/types/Activity';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
 import { ActivityRatings } from '../Activities/ActivityRatings';
 import DateTimePicker from '../DateTimePicker';
 import NotesInput from '../NotesInput';
@@ -27,15 +27,51 @@ interface RunningFormProps {
 }
 
 const RunningForm = ({ onClose, initialData }: RunningFormProps) => {
-  console.log(initialData);
   const userId = getSession();
   const queryClient = useQueryClient();
 
-  // Separate state for minutes and seconds
-  const initialMinutes = initialData?.duration
-    ? Math.floor(initialData.duration / 60)
-    : '';
-  const initialSeconds = initialData?.duration ? initialData.duration % 60 : '';
+  // Calculate duration from route if it exists
+  const calculateInitialDuration = () => {
+    if (initialData?.duration !== undefined) {
+      return initialData.duration;
+    }
+    if (initialData?.routes?.length) {
+      let totalDurationMs = 0;
+      initialData.routes.forEach((route) => {
+        const start = route.geolocations[0]?.timestamp ?? 0;
+        const end =
+          route.geolocations[route.geolocations.length - 1]?.timestamp ?? 0;
+        if (start && end) {
+          totalDurationMs += end - start;
+        }
+      });
+      return Math.floor(totalDurationMs / 1000); // Convert milliseconds to seconds
+    }
+    return 0;
+  };
+
+  // Calculate distance from route if it exists
+  const calculateInitialDistance = () => {
+    if (initialData?.distance) {
+      return initialData.distance.toString();
+    }
+    return '';
+  };
+
+  // Separate state for minutes and seconds using calculated duration
+  const initialDuration = initialData ? calculateInitialDuration() : undefined;
+  const initialMinutes =
+    initialDuration !== undefined && initialDuration !== 0
+      ? Math.floor(initialDuration / 60)
+      : initialDuration === 0
+      ? 0
+      : '';
+  const initialSeconds =
+    initialDuration !== undefined && initialDuration !== 0
+      ? initialDuration % 60
+      : initialDuration === 0
+      ? 0
+      : '';
 
   const [status, setStatus] = useState<DistanceActivitySessionStatus>(
     initialData?.status || DistanceActivitySessionStatuses.inProgress
@@ -57,7 +93,7 @@ const RunningForm = ({ onClose, initialData }: RunningFormProps) => {
   const [durationSeconds, setDurationSeconds] = useState<number | ''>(
     initialSeconds
   );
-  const [distance, setDistance] = useState(initialData?.distance || '');
+  const [distance, setDistance] = useState(calculateInitialDistance());
   const [note, setNote] = useState<string>(initialData?.note || '');
 
   const { mutate, isPending } = useMutation({
@@ -86,34 +122,36 @@ const RunningForm = ({ onClose, initialData }: RunningFormProps) => {
   const handleSubmit = () => {
     if (!userId) return;
 
-    // Calculate total duration in seconds, default to 0 if inputs are empty
-    const totalDurationSeconds =
-      (Number(durationMinutes) || 0) * 60 + (Number(durationSeconds) || 0);
+    // Calculate total duration in seconds, handling empty inputs
+    const minutes = typeof durationMinutes === 'number' ? durationMinutes : 0;
+    const seconds = typeof durationSeconds === 'number' ? durationSeconds : 0;
+    const totalDurationSeconds = minutes * 60 + seconds;
 
     const data = {
       type: ActivityTypes.Running,
       activityDate,
       ratings,
-      // Save 0 if duration wasn't entered, otherwise save calculated value
-      duration: totalDurationSeconds,
-      // Save 0 if distance wasn't entered, otherwise save entered value
+      duration: totalDurationSeconds >= 0 ? totalDurationSeconds : 0,
       distance: distance !== '' ? Number(distance) : 0,
-      status: status,
+      status,
       note,
+      routes: initialData?.routes || [],
     };
-
+    console.log(initialData?.routes);
     mutate(data);
   };
 
   // Helper to handle input changes for numbers
   const handleNumericChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    setter: React.Dispatch<React.SetStateAction<number | ''>>
+    e: ChangeEvent<HTMLInputElement>,
+    setter: Dispatch<SetStateAction<number | ''>>
   ) => {
     const value = e.target.value;
     // Allow empty string or valid numbers
-    if (value === '' || /^\d+$/.test(value)) {
-      setter(value === '' ? '' : parseInt(value, 10));
+    if (value === '') {
+      setter('');
+    } else if (/^\d+$/.test(value)) {
+      setter(parseInt(value, 10));
     }
   };
 
@@ -124,45 +162,49 @@ const RunningForm = ({ onClose, initialData }: RunningFormProps) => {
 
       {/* Duration Inputs */}
       <div className="space-y-1">
-        <Label className="text-sm">Duration (Optional)</Label>{' '}
-        {/* Updated Label */}
+        <Label className="text-sm">Duration</Label>
         <div className="flex items-center gap-2">
-          <div className="flex-1">
+          <div className="flex-1 relative">
             <Input
               type="number"
               inputMode="numeric"
               value={durationMinutes}
-              placeholder="Minutes" // Keep placeholder
+              placeholder="Minutes"
               onChange={(e) => handleNumericChange(e, setDurationMinutes)}
-              className="mt-1 p-2 border rounded-md w-full"
+              className="mt-1 p-2 border rounded-md w-full pr-9"
               min="0"
             />
+            <span className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 mt-px">
+              min
+            </span>
           </div>
           <span>:</span>
-          <div className="flex-1">
+          <div className="flex-1 relative">
             <Input
               type="number"
               inputMode="numeric"
               value={durationSeconds}
-              placeholder="Seconds" // Keep placeholder
+              placeholder="Seconds"
               onChange={(e) => handleNumericChange(e, setDurationSeconds)}
-              className="mt-1 p-2 border rounded-md w-full"
+              className="mt-1 p-2 border rounded-md w-full pr-9"
               min="0"
               max="59"
             />
+            <span className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 mt-px">
+              sec
+            </span>
           </div>
         </div>
       </div>
 
       {/* Distance Input */}
       <div className="space-y-1">
-        <Label className="text-sm">Distance (meters, Optional)</Label>{' '}
-        {/* Updated Label */}
+        <Label className="text-sm">Distance (meters)</Label>
         <Input
           type="text"
           inputMode="numeric"
           value={distance}
-          placeholder="Distance ran" // Keep placeholder
+          placeholder="Distance ran"
           onChange={(e) => setDistance(e.currentTarget.value)}
           className="mt-1 p-2 border rounded-md w-full"
         />

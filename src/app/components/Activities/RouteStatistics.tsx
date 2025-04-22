@@ -3,6 +3,7 @@ import {
   calculateAccuracyMetrics,
   calculateSpeedMetrics,
   formatDuration,
+  haversineDistance,
 } from '@/lib/utils/geolocation';
 import { Route } from '@/types/Activity';
 
@@ -19,6 +20,7 @@ const RouteStatistics = ({ routes }: RouteStatisticsProps) => {
     let totalDurationMs = 0;
     let startTime = Infinity;
     let endTime = 0;
+    let totalDistance = 0;
 
     routes.forEach((route) => {
       const { max: maxSpeed, average: avgSpeed } = calculateSpeedMetrics(
@@ -33,9 +35,19 @@ const RouteStatistics = ({ routes }: RouteStatisticsProps) => {
       totalAvgAccuracy += avgAccuracy;
       totalDataSize += dataSize;
 
-      const start = route.geolocations[0]?.timestamp ?? 0;
-      const end =
-        route.geolocations[route.geolocations.length - 1]?.timestamp ?? 0;
+      const geos = route.geolocations;
+      for (let i = 1; i < geos.length; i++) {
+        totalDistance +=
+          haversineDistance(
+            geos[i - 1].latitude,
+            geos[i - 1].longitude,
+            geos[i].latitude,
+            geos[i].longitude
+          ) / 1000; // convert meters to kilometers
+      }
+
+      const start = geos[0]?.timestamp ?? 0;
+      const end = geos[geos.length - 1]?.timestamp ?? 0;
 
       if (start && end) {
         totalDurationMs += end - start;
@@ -76,6 +88,7 @@ const RouteStatistics = ({ routes }: RouteStatisticsProps) => {
       duration,
       startTime: formattedStartTime,
       endTime: formattedEndTime,
+      totalDistance: totalDistance.toFixed(2), // in km
     };
   };
 
@@ -84,9 +97,10 @@ const RouteStatistics = ({ routes }: RouteStatisticsProps) => {
   const statItems = [
     { label: 'Start Time', value: stats.startTime },
     { label: 'End Time', value: stats.endTime },
-    { label: 'Total Duration', value: stats.duration },
-    { label: 'Maximum Speed', value: `${stats.maxSpeed} km/h` },
+    { label: 'Duration', value: stats.duration },
+    { label: 'Distance', value: `${stats.totalDistance} km` },
     { label: 'Average Speed', value: `${stats.avgSpeed} km/h` },
+    { label: 'Maximum Speed', value: `${stats.maxSpeed} km/h` },
     { label: 'Average Accuracy', value: `${stats.avgAccuracy} meters` },
     { label: 'Route Data Size', value: stats.dataSize },
   ];

@@ -5,6 +5,7 @@ import { deleteEntriesByDate } from '@/lib/idb/activityLocations';
 import { cn } from '@/lib/utils';
 import formatTrafficCondition from '@/lib/utils/formatTrafficCondition';
 import {
+  calculateTotalDistance,
   calculateTotalRouteDuration,
   formatDuration,
 } from '@/lib/utils/geolocation';
@@ -204,10 +205,23 @@ const ActivityCardDriving = ({
                       </div>
                       <div className="flex items-center justify-between text-xs text-stone-500">
                         <span>
-                          Total recording time:{' '}
-                          {formatDuration(
-                            calculateTotalRouteDuration(activity.routes)
-                          )}
+                          Total time:{' '}
+                          <span className="tracking-wider">
+                            {formatDuration(
+                              calculateTotalRouteDuration(activity.routes)
+                            )}
+                          </span>
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between text-xs text-stone-500">
+                        <span>
+                          Total distance:{' '}
+                          <span className="tracking-wider">
+                            {(
+                              calculateTotalDistance(activity.routes) / 1000
+                            ).toFixed(2)}{' '}
+                            km
+                          </span>
                         </span>
                       </div>
                     </div>

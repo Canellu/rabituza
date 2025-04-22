@@ -45,8 +45,8 @@ const activityOptions = [
   },
   {
     id: ActivityTypes.Running,
-    label: 'Running', // Changed label
-    Component: RunningForm, // Updated Component
+    label: 'Running',
+    Component: RunningForm,
     icon: FaRunning,
     group: ActivityGroups.PHYSICAL,
   },

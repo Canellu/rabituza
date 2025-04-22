@@ -5,6 +5,7 @@ import { deleteActivity } from '@/lib/database/activities/deleteActivity';
 // import { deleteEntriesByDate } from '@/lib/idb/running'; // Adjust if needed
 import { cn } from '@/lib/utils';
 import {
+  calculateTotalDistance,
   calculateTotalRouteDuration,
   formatDuration,
 } from '@/lib/utils/geolocation';
@@ -177,17 +178,20 @@ const ActivityCardRunning = ({
                       <MapPin /> Record route
                     </Button>
                   )}
-                  {activity.routes && activity.routes.length > 0 && (
-                    <Button
-                      size="icon"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setIsMapDialogOpen(true);
-                      }}
-                    >
-                      <MapPin />
-                    </Button>
-                  )}
+                  {activity.routes &&
+                    activity.routes.length > 0 &&
+                    activity.status ===
+                      DistanceActivitySessionStatuses.completed && (
+                      <Button
+                        size="icon"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setIsMapDialogOpen(true);
+                        }}
+                      >
+                        <MapPin />
+                      </Button>
+                    )}
                 </div>
 
                 {/* Route summary section */}
@@ -202,10 +206,23 @@ const ActivityCardRunning = ({
                       </div>
                       <div className="flex items-center justify-between text-xs text-stone-500">
                         <span>
-                          Total recording time:{' '}
-                          {formatDuration(
-                            calculateTotalRouteDuration(activity.routes)
-                          )}
+                          Total time:{' '}
+                          <span className="tracking-wider">
+                            {formatDuration(
+                              calculateTotalRouteDuration(activity.routes)
+                            )}
+                          </span>
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between text-xs text-stone-500">
+                        <span>
+                          Total distance:{' '}
+                          <span className="tracking-wider">
+                            {(
+                              calculateTotalDistance(activity.routes) / 1000
+                            ).toFixed(2)}{' '}
+                            km
+                          </span>
                         </span>
                       </div>
                     </div>
