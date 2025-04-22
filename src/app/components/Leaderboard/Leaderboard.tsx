@@ -88,25 +88,22 @@ const Leaderboard = () => {
     return <p>Loading users...</p>;
   }
 
-  const oneWeekAgo = subWeeks(new Date(), 1);
+  // const oneWeekAgo = subWeeks(new Date(), 1); // No longer needed for filtering
 
   const filteredUsers = users
     ?.filter((user) => {
+      // Check if the user has any activities recorded for the current month
       const userActivities = currentMonthActivities?.filter(
         (activity) => activity.userId === user.id
       );
-      const lastActivity = userActivities?.sort(
-        (a, b) =>
-          new Date(b.activityDate).getTime() -
-          new Date(a.activityDate).getTime()
-      )[0];
-
-      return lastActivity && new Date(lastActivity.activityDate) > oneWeekAgo;
+      // Include the user if they have one or more activities this month
+      return userActivities && userActivities.length > 0;
     })
     .map((user) => {
       const userActivities = currentMonthActivities?.filter(
         (activity) => activity.userId === user.id
       );
+      // Calculate score based on the number of activities this month
       const score = userActivities?.length ? userActivities.length * 50 : 0;
       return { ...user, score };
     })
