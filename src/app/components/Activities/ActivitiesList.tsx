@@ -3,6 +3,7 @@ import { format } from 'date-fns';
 import ActivityCardClimbing from './ActivityCardClimbing';
 import ActivityCardDriving from './ActivityCardDriving';
 import ActivityCardHangboard from './ActivityCardHangboard';
+import ActivityCardRunning from './ActivityCardRunning';
 import ActivityCardStretching from './ActivityCardStretching';
 import ActivityCardWorkout from './ActivityCardWorkout';
 
@@ -78,6 +79,16 @@ const ActivitiesList = ({
                   case ActivityTypes.Driving:
                     return (
                       <ActivityCardDriving
+                        readOnly={readOnly}
+                        activity={activity}
+                        onEdit={() =>
+                          onEditActivity && onEditActivity(activity)
+                        }
+                      />
+                    );
+                  case ActivityTypes.Running:
+                    return (
+                      <ActivityCardRunning
                         readOnly={readOnly}
                         activity={activity}
                         onEdit={() =>

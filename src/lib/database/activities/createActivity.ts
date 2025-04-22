@@ -1,4 +1,9 @@
-import { ActivityDataType, BaseActivityType } from '@/types/Activity';
+import {
+  ActivityDataType,
+  BaseActivityType,
+  DrivingDataType,
+  RunningDataType,
+} from '@/types/Activity';
 import {
   collection,
   doc,
@@ -31,12 +36,19 @@ export async function createActivity<
   // Commit the batch for the main activity data
   await batch.commit();
 
+  const routes = (activityData as DrivingDataType | RunningDataType).routes;
+
   // Handle routes as a subcollection for both locations
-  if (activityData.type === 'driving' && activityData.routes) {
+  if (
+    (activityData.type === 'driving' || activityData.type === 'running') &&
+    routes
+  ) {
     const globalRoutesRef = collection(globalActivityRef, 'routes');
     const userRoutesRef = collection(userActivityRef, 'routes');
 
-    for (const route of activityData.routes) {
+    // Type assertion to access routes safely
+
+    for (const route of routes) {
       const routeId = doc(collection(db, 'temp')).id;
       const geolocations = route.geolocations.map((location) => ({
         latitude: location.latitude,

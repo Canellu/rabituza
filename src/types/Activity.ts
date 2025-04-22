@@ -8,6 +8,7 @@ export const ActivityTypes = {
   Stretching: 'stretching',
   WinterSports: 'winter_sports',
   Swimming: 'swimming',
+  Running: 'running',
   Driving: 'driving',
 } as const;
 
@@ -101,6 +102,14 @@ export type SwimmingDataType = {
   // Add swimming specific fields here
 };
 
+export type RunningDataType = {
+  type: typeof ActivityTypes.Running;
+  duration: number; // Seconds
+  distance?: number; // Meters
+  routes?: Route[];
+  status: DistanceActivitySessionStatus;
+};
+
 export const TrafficConditions = {
   empty: 'empty',
   lightTraffic: 'light_traffic',
@@ -145,12 +154,12 @@ export type Route = {
   geolocations: GeoLocation[];
 };
 
-export const DrivingSessionStatuses = {
+export const DistanceActivitySessionStatuses = {
   completed: 'completed',
   inProgress: 'in_progress',
 } as const;
-export type DrivingSessionStatus =
-  (typeof DrivingSessionStatuses)[keyof typeof DrivingSessionStatuses];
+export type DistanceActivitySessionStatus =
+  (typeof DistanceActivitySessionStatuses)[keyof typeof DistanceActivitySessionStatuses];
 
 export type DrivingDataType = {
   type: typeof ActivityTypes.Driving;
@@ -160,7 +169,7 @@ export type DrivingDataType = {
   trafficConditions: TrafficCondition;
   distance?: number;
   routes?: Route[]; // Subcollection in Firestore
-  status: DrivingSessionStatus;
+  status: DistanceActivitySessionStatus;
 };
 
 export type ActivityDataType =
@@ -171,6 +180,7 @@ export type ActivityDataType =
   | RestDataType
   | WinterSportsDataType
   | SwimmingDataType
+  | RunningDataType
   | DrivingDataType;
 
 export type ActivityType = BaseActivityType & ActivityDataType;

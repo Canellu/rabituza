@@ -17,7 +17,7 @@ import { ActivityType } from '@/types/Activity';
 import { User } from '@/types/User';
 import { DialogDescription } from '@radix-ui/react-dialog';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { endOfMonth, format, startOfMonth, subWeeks } from 'date-fns';
+import { endOfMonth, format, startOfMonth } from 'date-fns';
 import { Info } from 'lucide-react';
 import { useState } from 'react';
 import ActivityDistributionChart from './ActivityDistributionChart';

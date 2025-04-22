@@ -6,17 +6,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { DrivingSessionStatus, DrivingSessionStatuses } from '@/types/Activity';
+import {
+  DistanceActivitySessionStatus,
+  DistanceActivitySessionStatuses,
+} from '@/types/Activity';
 
-interface DrivingStatusSelectorProps {
-  status: DrivingSessionStatus;
-  onStatusChange: (status: DrivingSessionStatus) => void;
+interface StatusSelector {
+  status: DistanceActivitySessionStatus;
+  onStatusChange: (status: DistanceActivitySessionStatus) => void;
 }
 
-const DrivingStatusSelector = ({
-  status,
-  onStatusChange,
-}: DrivingStatusSelectorProps) => {
+const StatusSelector = ({ status, onStatusChange }: StatusSelector) => {
   return (
     <div className="space-y-1">
       <Label className="text-sm">Session Status</Label>
@@ -25,10 +25,10 @@ const DrivingStatusSelector = ({
           <SelectValue placeholder="Select status" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value={DrivingSessionStatuses.inProgress}>
+          <SelectItem value={DistanceActivitySessionStatuses.inProgress}>
             In Progress
           </SelectItem>
-          <SelectItem value={DrivingSessionStatuses.completed}>
+          <SelectItem value={DistanceActivitySessionStatuses.completed}>
             Completed
           </SelectItem>
         </SelectContent>
@@ -37,4 +37,4 @@ const DrivingStatusSelector = ({
   );
 };
 
-export default DrivingStatusSelector;
+export default StatusSelector;

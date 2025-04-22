@@ -2,12 +2,12 @@ import { GeoLocation } from '@/types/Activity';
 import { IDBPDatabase, openDB } from 'idb';
 import { toast } from 'sonner';
 
-const DRIVING_DB = 'drivingData';
+const ACTIVITY_LOCATIONS_DB = 'activityLocations';
 let dbPromise: Promise<IDBPDatabase> | null = null;
 
 const initDB = async () => {
   if (!dbPromise) {
-    dbPromise = openDB(DRIVING_DB, 1, {
+    dbPromise = openDB(ACTIVITY_LOCATIONS_DB, 1, {
       upgrade(db) {
         if (!db.objectStoreNames.contains('locations')) {
           db.createObjectStore('locations', {

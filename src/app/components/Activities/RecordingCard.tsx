@@ -6,14 +6,15 @@ import { updateActivity } from '@/lib/database/activities/updateActivity';
 import useRecordDriving, {
   RecordingStates,
 } from '@/lib/hooks/useRecordDriving';
-import { getAllLocationsFromDB } from '@/lib/idb/driving';
+import { getAllLocationsFromDB } from '@/lib/idb/activityLocations';
 import { cn } from '@/lib/utils';
 import bytesToText from '@/lib/utils/bytesToText';
 import { formatTime } from '@/lib/utils/time';
 import {
   BaseActivityType,
+  DistanceActivitySessionStatuses,
   DrivingDataType,
-  DrivingSessionStatuses,
+  RunningDataType,
 } from '@/types/Activity';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Crosshair, Gauge, RotateCcw } from 'lucide-react';
@@ -23,11 +24,13 @@ import EndSessionDialog from '../EndSessionDialog';
 import ResetDialog from '../ResetDialog';
 import SaveDialog from '../SaveDialog';
 import Spinner from '../Spinner';
-import DrivingCardHeader from './DrivingCardHeader';
+import ActivityCardHeader from './ActivityCardHeader';
 import SavedRoutesList from './SavedRoutesList';
 
 interface RecordingCardProps {
-  activity: BaseActivityType & DrivingDataType;
+  activity:
+    | (BaseActivityType & DrivingDataType)
+    | (BaseActivityType & RunningDataType);
   onExit: () => void;
 }
 
@@ -57,7 +60,11 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
   const queryClient = useQueryClient();
 
   const { mutate } = useMutation({
-    mutationFn: async (updatedActivity: BaseActivityType & DrivingDataType) => {
+    mutationFn: async (
+      updatedActivity:
+        | (BaseActivityType & DrivingDataType)
+        | (BaseActivityType & RunningDataType)
+    ) => {
       await updateActivity(activity.userId, activity.id, updatedActivity);
     },
     onSuccess: () => {
@@ -134,7 +141,7 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
 
     const updatedActivity = {
       ...activityWithoutRoutes,
-      status: DrivingSessionStatuses.completed,
+      status: DistanceActivitySessionStatuses.completed,
     };
 
     mutate(updatedActivity);
@@ -157,7 +164,7 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
         (isRecording || isPaused) && 'border-green-600'
       )}
     >
-      <DrivingCardHeader activity={activity} />
+      <ActivityCardHeader activity={activity} />
 
       <div className="flex items-center justify-between gap-2">
         <ToggleGroup

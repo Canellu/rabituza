@@ -18,11 +18,11 @@ export const getUserActivities = async (
     const querySnapshot = await getDocs(activitiesRef);
 
     const activities = await Promise.all(
-      querySnapshot.docs.map(async (doc) => {
-        const data = doc.data();
+      querySnapshot.docs.map(async (docRef) => {
+        const data = docRef.data();
 
         const baseActivity: BaseActivityType & { type: ActivityType } = {
-          id: doc.id,
+          id: docRef.id,
           type: data.type as ActivityType,
           userId: data.userId,
           createdAt: data.createdAt.toDate(),
@@ -83,17 +83,21 @@ export const getUserActivities = async (
                 duration: edge.duration || 0,
               })),
             };
-          case ActivityTypes.Driving:
-            const routesCollectionRef = collection(doc.ref, 'routes');
+          case ActivityTypes.Driving: {
+            // Added block scope
+            const routesCollectionRef = collection(docRef.ref, 'routes');
             const routesSnapshot = await getDocs(routesCollectionRef);
             const routes: Route[] = routesSnapshot.docs
               .map((routeDoc) => ({
                 id: routeDoc.id,
-                createdAt: routeDoc.data().createdAt.toDate(),
+                createdAt: routeDoc.data().createdAt?.toDate(),
                 geolocations: routeDoc.data().geolocations,
               }))
               .filter(
-                (route) => route.geolocations && route.geolocations.length > 0
+                (
+                  route
+                ): route is Route => // Type guard for filtering
+                  !!route.geolocations && route.geolocations.length > 0
               );
 
             return {
@@ -106,17 +110,52 @@ export const getUserActivities = async (
               status: data.status,
               routes,
             };
+          }
+          case ActivityTypes.Running: {
+            // Added case for Running
+            const routesCollectionRef = collection(docRef.ref, 'routes');
+            const routesSnapshot = await getDocs(routesCollectionRef);
+            const routes: Route[] = routesSnapshot.docs
+              .map((routeDoc) => ({
+                id: routeDoc.id,
+                createdAt: routeDoc.data().createdAt?.toDate(), // Handle potential undefined createdAt
+                geolocations: routeDoc.data().geolocations,
+              }))
+              .filter(
+                (
+                  route
+                ): route is Route => // Type guard for filtering
+                  !!route.geolocations && route.geolocations.length > 0
+              );
+
+            return {
+              ...baseActivity,
+              duration: data.duration,
+              distance: data.distance,
+              status: data.status,
+              routes,
+            };
+          }
           default:
-            throw new Error(`Unknown activity type: ${data.type}`);
+            // Consider handling unknown types more gracefully or logging them
+            console.warn(`Unknown activity type encountered: ${data.type}`);
+            // Return baseActivity or null/undefined if unknown types should be excluded
+            return baseActivity; // Or handle as needed
+          // throw new Error(`Unknown activity type: ${data.type}`);
         }
       })
     );
 
-    return (activities as unknown as ActivityType[]).sort(
+    // Filter out any potential null/undefined values if unknown types aren't returned
+    const validActivities = activities.filter(
+      Boolean
+    ) as unknown as ActivityType[];
+
+    return validActivities.sort(
       (a, b) => b.activityDate.getTime() - a.activityDate.getTime()
     );
   } catch (error) {
-    console.error('Error fetching activities:', error);
+    console.error('Error fetching user activities:', error);
     return [];
   }
 };

@@ -18,7 +18,11 @@ import {
 import { Switch } from '@/components/ui/switch';
 import { getMapLoadCount } from '@/lib/database/map/getMapLoadCount';
 import { incrementMapLoadCount } from '@/lib/database/map/incrementMapLoadCount';
-import { BaseActivityType, DrivingDataType } from '@/types/Activity';
+import {
+  BaseActivityType,
+  DrivingDataType,
+  RunningDataType,
+} from '@/types/Activity';
 import { MapPinOff } from 'lucide-react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -30,7 +34,9 @@ const MAX_MAP_LOADS = 50000;
 interface MapDialogProps {
   open: boolean;
   onClose: () => void;
-  activity: BaseActivityType & DrivingDataType;
+  activity:
+    | (BaseActivityType & DrivingDataType)
+    | (BaseActivityType & RunningDataType);
 }
 
 const MapDialog = ({ open, onClose, activity }: MapDialogProps) => {

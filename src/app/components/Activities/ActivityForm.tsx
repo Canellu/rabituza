@@ -2,6 +2,7 @@ import { ActivityType, ActivityTypes } from '@/types/Activity';
 import ClimbingForm from '../forms/ClimbingForm';
 import DrivingForm from '../forms/DrivingForm';
 import HangboardForm from '../forms/HangboardForm';
+import RunningForm from '../forms/RunningForm';
 import StretchingForm from '../forms/StretchingForm';
 import WorkoutForm from '../forms/WorkoutForm';
 
@@ -25,6 +26,8 @@ const ActivityForm = ({
       return <WorkoutForm initialData={selectedActivity} onClose={onClose} />;
     case ActivityTypes.Driving:
       return <DrivingForm initialData={selectedActivity} onClose={onClose} />;
+    case ActivityTypes.Running:
+      return <RunningForm initialData={selectedActivity} onClose={onClose} />;
     default:
       return null;
   }

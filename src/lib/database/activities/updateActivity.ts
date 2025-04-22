@@ -2,6 +2,7 @@ import {
   ActivityDataType,
   BaseActivityType,
   DrivingDataType,
+  RunningDataType, // Import RunningDataType
 } from '@/types/Activity';
 import {
   collection,
@@ -19,15 +20,22 @@ export async function updateActivity<
   const globalActivityRef = doc(db, 'activities', activityId);
   const userActivityRef = doc(db, `users/${userId}/activities`, activityId);
 
-  if (activityData.type === 'driving') {
-    const drivingData = activityData as DrivingDataType & BaseActivityType;
-    const { routes, ...activityDataWithoutRoutes } = drivingData;
+  // Check if the activity type is driving or running
+  if (activityData.type === 'driving' || activityData.type === 'running') {
+    // Use a union type for assertion
+    const activityWithRoutes = activityData as (
+      | DrivingDataType
+      | RunningDataType
+    ) &
+      BaseActivityType;
+    const { routes, ...activityDataWithoutRoutes } = activityWithRoutes;
 
-    // Handle routes as a subcollection
+    // Handle routes as a subcollection if they exist
     if (routes && routes.length > 0) {
       const globalRoutesRef = collection(globalActivityRef, 'routes');
       const userRoutesRef = collection(userActivityRef, 'routes');
 
+      // Assuming the update adds a single new route segment
       const newRoute = routes[0];
       const routeId = doc(collection(db, 'temp')).id;
 
@@ -54,7 +62,7 @@ export async function updateActivity<
     await updateDoc(globalActivityRef, updateData);
     await updateDoc(userActivityRef, updateData);
   } else {
-    // For non-driving activities, just update the activity data
+    // For other activities, just update the activity data
     const updateData = {
       ...activityData,
       updatedAt: serverTimestamp(),

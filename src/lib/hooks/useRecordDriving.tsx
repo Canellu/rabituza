@@ -2,7 +2,7 @@ import {
   clearAllLocations,
   estimateDrivingDataSize,
   getDBConnection,
-} from '@/lib/idb/driving';
+} from '@/lib/idb/activityLocations';
 import { GeoLocation } from '@/types/Activity';
 import { useRef, useState } from 'react';
 import { toast } from 'sonner';

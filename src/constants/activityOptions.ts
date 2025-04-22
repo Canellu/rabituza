@@ -2,6 +2,7 @@ import ClimbingForm from '@/app/components/forms/ClimbingForm';
 import DrivingForm from '@/app/components/forms/DrivingForm';
 import HangboardForm from '@/app/components/forms/HangboardForm';
 import RestForm from '@/app/components/forms/RestForm';
+import RunningForm from '@/app/components/forms/RunningForm'; // Import the new RunningForm
 import StretchingForm from '@/app/components/forms/StretchingForm';
 import SwimmingForm from '@/app/components/forms/SwimmingForm';
 import WinterSportForm from '@/app/components/forms/WinterSportForm';
@@ -9,7 +10,7 @@ import WorkoutForm from '@/app/components/forms/WorkoutForm';
 import ClimbingIcon from '@/app/components/icons/ClimbingIcon';
 import { ActivityTypes } from '@/types/Activity';
 import { Car, Dumbbell, Grab } from 'lucide-react';
-import { FaSnowboarding, FaSwimmer } from 'react-icons/fa';
+import { FaRunning, FaSnowboarding, FaSwimmer } from 'react-icons/fa';
 import { GiNightSleep } from 'react-icons/gi';
 import { GrYoga } from 'react-icons/gr';
 
@@ -40,6 +41,13 @@ const activityOptions = [
     label: 'Workout',
     Component: WorkoutForm,
     icon: Dumbbell,
+    group: ActivityGroups.PHYSICAL,
+  },
+  {
+    id: ActivityTypes.Running,
+    label: 'Running', // Changed label
+    Component: RunningForm, // Updated Component
+    icon: FaRunning,
     group: ActivityGroups.PHYSICAL,
   },
   {

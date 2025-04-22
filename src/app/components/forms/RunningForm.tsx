@@ -11,38 +11,35 @@ import {
   BaseActivityType,
   DistanceActivitySessionStatus,
   DistanceActivitySessionStatuses,
-  DrivingDataType,
-  DrivingPurpose,
-  DrivingPurposes,
-  TrafficCondition,
-  TrafficConditions,
-  WeatherCondition,
-  WeatherConditions,
+  RunningDataType,
 } from '@/types/Activity';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { ActivityRatings } from '../Activities/ActivityRatings';
 import DateTimePicker from '../DateTimePicker';
-import DrivingPurposeSelector from '../DrivingPurposeSelector';
 import NotesInput from '../NotesInput';
 import SaveButtonDrawer from '../SaveButtonDrawer';
-import SessionDurationSelector from '../SessionDurationSelector';
 import StatusSelector from '../StatusSelector';
-import TrafficConditionsSelector from '../TrafficConditionsSelector';
-import WeatherConditionsSelector from '../WeatherConditionsSelector';
 
-interface DrivingFormProps {
+interface RunningFormProps {
   onClose: () => void;
-  initialData?: BaseActivityType & DrivingDataType;
+  initialData?: BaseActivityType & RunningDataType;
 }
 
-const DrivingForm = ({ onClose, initialData }: DrivingFormProps) => {
+const RunningForm = ({ onClose, initialData }: RunningFormProps) => {
+  console.log(initialData);
   const userId = getSession();
   const queryClient = useQueryClient();
+
+  // Separate state for minutes and seconds
+  const initialMinutes = initialData?.duration
+    ? Math.floor(initialData.duration / 60)
+    : '';
+  const initialSeconds = initialData?.duration ? initialData.duration % 60 : '';
+
   const [status, setStatus] = useState<DistanceActivitySessionStatus>(
     initialData?.status || DistanceActivitySessionStatuses.inProgress
   );
-
   const [activityDate, setActivityDate] = useState<Date>(
     initialData?.activityDate || new Date()
   );
@@ -53,24 +50,19 @@ const DrivingForm = ({ onClose, initialData }: DrivingFormProps) => {
       enjoyment: 5,
     }
   );
-  const [purpose, setPurpose] = useState<DrivingPurpose>(
-    initialData?.purpose || DrivingPurposes.lesson
+
+  const [durationMinutes, setDurationMinutes] = useState<number | ''>(
+    initialMinutes
   );
-  const [duration, setDuration] = useState<number | ''>(
-    initialData?.duration || 45
-  );
-  const [weatherConditions, setWeatherConditions] = useState<WeatherCondition>(
-    initialData?.weatherConditions || WeatherConditions.sunny
-  );
-  const [trafficConditions, setTrafficConditions] = useState<TrafficCondition>(
-    initialData?.trafficConditions || TrafficConditions.lightTraffic
+  const [durationSeconds, setDurationSeconds] = useState<number | ''>(
+    initialSeconds
   );
   const [distance, setDistance] = useState(initialData?.distance || '');
   const [note, setNote] = useState<string>(initialData?.note || '');
 
   const { mutate, isPending } = useMutation({
     mutationFn: async (
-      data: DrivingDataType & Pick<BaseActivityType, 'ratings' | 'activityDate'>
+      data: RunningDataType & Pick<BaseActivityType, 'ratings' | 'activityDate'>
     ) => {
       if (!userId) throw new Error('User is not signed in');
       if (initialData?.id) {
@@ -94,20 +86,35 @@ const DrivingForm = ({ onClose, initialData }: DrivingFormProps) => {
   const handleSubmit = () => {
     if (!userId) return;
 
+    // Calculate total duration in seconds, default to 0 if inputs are empty
+    const totalDurationSeconds =
+      (Number(durationMinutes) || 0) * 60 + (Number(durationSeconds) || 0);
+
     const data = {
-      type: ActivityTypes.Driving,
+      type: ActivityTypes.Running,
       activityDate,
       ratings,
-      purpose,
-      duration: Number(duration),
-      weatherConditions,
-      trafficConditions,
+      // Save 0 if duration wasn't entered, otherwise save calculated value
+      duration: totalDurationSeconds,
+      // Save 0 if distance wasn't entered, otherwise save entered value
       distance: distance !== '' ? Number(distance) : 0,
-      status,
+      status: status,
       note,
     };
 
     mutate(data);
+  };
+
+  // Helper to handle input changes for numbers
+  const handleNumericChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    setter: React.Dispatch<React.SetStateAction<number | ''>>
+  ) => {
+    const value = e.target.value;
+    // Allow empty string or valid numbers
+    if (value === '' || /^\d+$/.test(value)) {
+      setter(value === '' ? '' : parseInt(value, 10));
+    }
   };
 
   return (
@@ -115,36 +122,53 @@ const DrivingForm = ({ onClose, initialData }: DrivingFormProps) => {
       <DateTimePicker date={activityDate} onDateChange={setActivityDate} />
       <ActivityRatings ratings={ratings} onChange={setRatings} />
 
-      <DrivingPurposeSelector purpose={purpose} onPurposeChange={setPurpose} />
-
-      <SessionDurationSelector
-        duration={duration}
-        onDurationChange={setDuration}
-        durations={[45, 60, 90, 120]}
-      />
-
-      <WeatherConditionsSelector
-        weatherCondition={weatherConditions}
-        onWeatherConditionChange={setWeatherConditions}
-      />
-
-      <TrafficConditionsSelector
-        trafficCondition={trafficConditions}
-        onTrafficConditionChange={setTrafficConditions}
-      />
-
+      {/* Duration Inputs */}
       <div className="space-y-1">
-        <Label className="text-sm">Distance (km)</Label>
+        <Label className="text-sm">Duration (Optional)</Label>{' '}
+        {/* Updated Label */}
+        <div className="flex items-center gap-2">
+          <div className="flex-1">
+            <Input
+              type="number"
+              inputMode="numeric"
+              value={durationMinutes}
+              placeholder="Minutes" // Keep placeholder
+              onChange={(e) => handleNumericChange(e, setDurationMinutes)}
+              className="mt-1 p-2 border rounded-md w-full"
+              min="0"
+            />
+          </div>
+          <span>:</span>
+          <div className="flex-1">
+            <Input
+              type="number"
+              inputMode="numeric"
+              value={durationSeconds}
+              placeholder="Seconds" // Keep placeholder
+              onChange={(e) => handleNumericChange(e, setDurationSeconds)}
+              className="mt-1 p-2 border rounded-md w-full"
+              min="0"
+              max="59"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Distance Input */}
+      <div className="space-y-1">
+        <Label className="text-sm">Distance (meters, Optional)</Label>{' '}
+        {/* Updated Label */}
         <Input
           type="text"
           inputMode="numeric"
           value={distance}
-          placeholder="Distance driven during trip/lesson"
+          placeholder="Distance ran" // Keep placeholder
           onChange={(e) => setDistance(e.currentTarget.value)}
           className="mt-1 p-2 border rounded-md w-full"
         />
       </div>
 
+      {/* Status Selector */}
       <StatusSelector status={status} onStatusChange={setStatus} />
 
       <NotesInput note={note} onNoteChange={setNote} />
@@ -158,4 +182,4 @@ const DrivingForm = ({ onClose, initialData }: DrivingFormProps) => {
   );
 };
 
-export default DrivingForm;
+export default RunningForm;
