@@ -43,7 +43,6 @@ const ActivitiesYear = ({ activities = [] }: ActivitiesYearProps) => {
     (_, i) => i * 2
   );
 
-  // Calculate additional statistics
   const totalActivities = monthlyData.reduce(
     (sum, month) => sum + month.activities,
     0
@@ -61,9 +60,9 @@ const ActivitiesYear = ({ activities = [] }: ActivitiesYearProps) => {
   return (
     <>
       <h2 className="text-xl font-semibold my-4 dark:text-stone-200">
-        Activity Distribution for {currentYear}
+        Activities for {currentYear}
       </h2>
-      <div className="overflow-auto border bg-gradient-to-b dark:border-transparent from-white to-emerald-50 dark:from-emerald-800 dark:to-emerald-950 rounded-md px-2">
+      <div className="overflow-auto border bg-gradient-to-b dark:border-none from-white to-emerald-50 dark:from-emerald-800 dark:to-emerald-950 rounded-md px-2">
         <ChartContainer config={chartConfig} className="h-[273px] w-[680px]">
           <BarChart data={monthlyData}>
             <defs>

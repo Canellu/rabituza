@@ -23,7 +23,7 @@ const ActivitiesList = ({
   return (
     <section className="space-y-3 w-full">
       <h2 className="flex flex-col -space-y-1">
-        <span className="text-stone-700 font-medium text-sm dark:text-stone-500">
+        <span className="text-stone-700 font-medium text-sm dark:text-stone-400">
           Activities for
         </span>
         <span className="text-emerald-800 text-lg font-semibold dark:text-emerald-500">

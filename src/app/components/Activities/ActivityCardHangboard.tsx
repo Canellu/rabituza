@@ -109,9 +109,9 @@ const ActivityCardHangboard = ({
             {activity.edges.map((edge, index) => (
               <div
                 key={index}
-                className="flex items-center justify-between bg-stone-50 rounded-md p-2 text-sm"
+                className="flex items-center justify-between bg-stone-50 dark:bg-stone-900 rounded-md p-2 text-sm"
               >
-                <span className="font-medium text-stone-700 dark:text-stone-500 dark:text-stone-500">
+                <span className="font-medium text-stone-700 dark:text-stone-500">
                   {edge.size} mm
                 </span>
                 <div className="flex gap-3 text-stone-600 dark:text-stone-300">

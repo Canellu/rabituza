@@ -17,15 +17,17 @@ interface StatBoxProps {
 const StatBox = ({ Icon, value, label }: StatBoxProps) => (
   <div
     className={cn(
-      'border aspect-square rounded-xl dark:border-stone-800 ',
-      'flex-col flex items-center justify-center gap-1'
+      'border rounded-lg bg-white dark:bg-stone-800 dark:border-transparent',
+      'flex items-center gap-2 p-2 flex-col justify-center text-center'
     )}
   >
-    <Icon className="size-6 text-primary" />
-    <span className="text-emerald-700 font-semibold inter text-xl">
-      {value}
-    </span>
-    <span className="text-xs text-stone-600">{label}</span>
+    <div className="bg-emerald-100 dark:bg-emerald-900 p-1.5 rounded-full">
+      <Icon className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+    </div>
+    <div>
+      <p className="text-stone-600 dark:text-stone-400 text-xs">{label}</p>
+      <p className="font-semibold text-lg">{value}</p>
+    </div>
   </div>
 );
 

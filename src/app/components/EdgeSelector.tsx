@@ -54,13 +54,13 @@ const EdgeSelector = ({ edges, setEdges }: EdgeSelectorProps) => {
           type="single"
           value={selectedEdgeSize ? selectedEdgeSize.toString() : ''}
           onValueChange={(value) => setSelectedEdgeSize(parseInt(value))}
-          className="flex bg-stone-50 border rounded-md p-1"
+          className="flex bg-stone-50 dark:bg-stone-800 dark:border-transparent border rounded-md p-1"
         >
           {DEFAULT_EDGE_SIZES.map((size) => (
             <ToggleGroupItem
               key={size}
               value={size.toString()}
-              className="data-[state=on]:bg-stone-200 h-7"
+              className="data-[state=on]:bg-stone-200 dark:data-[state=on]:bg-stone-700 h-7"
             >
               {size}
             </ToggleGroupItem>
@@ -73,11 +73,11 @@ const EdgeSelector = ({ edges, setEdges }: EdgeSelectorProps) => {
       </div>
 
       <AnimateHeight isOpen={edges.length > 0}>
-        <div className="space-y-4 bg-stone-50 border p-4 rounded-md">
+        <div className="space-y-4 bg-stone-50 dark:bg-stone-800 dark:border-transparent border p-4 rounded-md">
           {edges.map((edge, index) => (
             <div
               key={`edge-${index}`}
-              className="flex gap-3 p-3 border rounded-md flex-col bg-white"
+              className="flex gap-3 p-3 rounded-md flex-col bg-white dark:bg-stone-900 dark:border-transparent border"
             >
               <div className="flex justify-between items-center gap-2">
                 {edge.size} mm
@@ -92,7 +92,7 @@ const EdgeSelector = ({ edges, setEdges }: EdgeSelectorProps) => {
               </div>
               <div className="flex items-center justify-between gap-4 flex-wrap">
                 <div className="flex gap-1.5 items-center justify-center">
-                  <span className="text-sm font-medium text-stone-700 dark:text-stone-500 dark:text-stone-500">
+                  <span className="text-sm font-medium text-stone-700  dark:text-stone-400">
                     Sets
                   </span>
                   <Input
@@ -106,7 +106,7 @@ const EdgeSelector = ({ edges, setEdges }: EdgeSelectorProps) => {
                   />
                 </div>
                 <div className="flex gap-1.5 items-center justify-center">
-                  <span className="text-sm font-medium text-stone-700 dark:text-stone-500 dark:text-stone-500">
+                  <span className="text-sm font-medium text-stone-700  dark:text-stone-400">
                     Reps
                   </span>
                   <Input
@@ -120,7 +120,7 @@ const EdgeSelector = ({ edges, setEdges }: EdgeSelectorProps) => {
                   />
                 </div>
                 <div className="flex gap-1.5 items-center justify-center">
-                  <span className="text-sm font-medium text-stone-700 dark:text-stone-500 dark:text-stone-500">
+                  <span className="text-sm font-medium text-stone-700 dark:text-stone-400">
                     +kg
                   </span>
                   <Input
@@ -138,7 +138,7 @@ const EdgeSelector = ({ edges, setEdges }: EdgeSelectorProps) => {
               </div>
 
               <div className="flex gap-1.5 items-center justify-end">
-                <span className="text-sm font-medium text-stone-700 dark:text-stone-500 dark:text-stone-500">
+                <span className="text-sm font-medium text-stone-700  dark:text-stone-400">
                   Hang time per rep
                 </span>
                 <div className="relative">
@@ -153,7 +153,7 @@ const EdgeSelector = ({ edges, setEdges }: EdgeSelectorProps) => {
                     className="w-[72px] h-8 px-1.5 pr-9"
                     placeholder="0"
                   />
-                  <span className="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-stone-500">
+                  <span className="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-stone-400">
                     sec
                   </span>
                 </div>

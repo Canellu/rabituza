@@ -31,7 +31,6 @@ const AddActivities = () => {
     setIsOpen(true); // updated
   };
 
-  // Replace handleDrawerOpenChange with simpler function
   const handleOpenChange = (open: boolean) => {
     setIsOpen(open);
     if (!open) {
@@ -57,7 +56,10 @@ const AddActivities = () => {
         <DropdownMenuTrigger asChild>
           <Button variant="ghost">Add activity</Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-56">
+        <DropdownMenuContent
+          align="end"
+          className="w-56 dark:border-stone-700 dark:bg-stone-900"
+        >
           {Object.entries(groupedActivities).map(([group, activities]) => (
             <Fragment key={group}>
               <DropdownMenuLabel>{group}</DropdownMenuLabel>
@@ -82,7 +84,7 @@ const AddActivities = () => {
         <DialogContent className="max-w-lg w-[96%] h-[96dvh] overflow-y-auto rounded-lg flex flex-col p-0 py-6">
           <DialogHeader>
             <DialogTitle>
-              {activityOptions.find((e) => e.id === selectedActivity)?.label}
+              {activityOptions.find((e) => e.id === selectedActivity)?.label}{' '}
             </DialogTitle>
             <DialogDescription className="sr-only">
               Add Activity

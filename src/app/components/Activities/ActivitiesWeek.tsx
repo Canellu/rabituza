@@ -47,7 +47,7 @@ const ActivitiesWeek = ({
   };
 
   return (
-    <div className="flex justify-between border dark:border-transparent p-4 rounded-xl bg-gradient-to-b from-white to-emerald-50 dark:from-emerald-800 dark:to-emerald-950">
+    <div className="flex justify-between border dark:border-none p-4 rounded-xl bg-gradient-to-b from-white to-emerald-50 dark:from-emerald-800 dark:to-emerald-950">
       {Array.from({ length: 7 }, (_, i) => {
         const date = addDays(weekStart, i);
         const isTodayDate = isToday(date);

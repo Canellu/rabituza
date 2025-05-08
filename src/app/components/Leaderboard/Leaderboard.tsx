@@ -20,7 +20,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { endOfMonth, format, startOfMonth } from 'date-fns';
 import { Info } from 'lucide-react';
 import { useState } from 'react';
-import ActivityDistributionChart from './ActivityDistributionChart';
+import ActivityDistribution from './ActivityDistribution';
 import AverageRatings from './AverageRatings';
 import UserCard from './UserCard';
 import UserMonth from './UserMonth';
@@ -163,7 +163,7 @@ const Leaderboard = () => {
 
       {selectedUser && (
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="max-w-lg w-[96%] max-h-[96dvh] overflow-y-auto rounded-lg flex flex-col p-0 py-6">
+          <DialogContent className="max-w-lg w-[96%] max-h-[96dvh] overflow-y-auto rounded-lg flex flex-col p-0 py-6 bg-stone-50 dark:bg-stone-900">
             <DialogHeader>
               <DialogTitle className="first-letter:capitalize">
                 {selectedUser.user.username ||
@@ -171,15 +171,15 @@ const Leaderboard = () => {
                     ' ' +
                     selectedUser.user.last_name}
               </DialogTitle>
-              <DialogDescription className="text-sm text-stone-500">
+              <DialogDescription className="text-sm text-stone-400">
                 {selectedUser.user.email}
               </DialogDescription>
             </DialogHeader>
             <div className="flex-grow overflow-y-auto">
               <div className="h-full overflow-auto">
-                <div className="p-4 flex flex-col gap-8">
+                <div className="p-4 flex flex-col gap-6">
                   <AverageRatings statistics={selectedUser.statistics} />
-                  <ActivityDistributionChart
+                  <ActivityDistribution
                     activities={selectedUser.user.activities}
                   />
                   <UserMonth user={selectedUser.user} />

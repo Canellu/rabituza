@@ -63,7 +63,7 @@ const Activities = () => {
     );
   }
   return (
-    <div className="p-6 h-full space-y-10">
+    <div className="p-6 h-full space-y-6">
       <section className="space-y-4">
         <Tabs
           value={selectedTab}

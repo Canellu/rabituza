@@ -82,7 +82,7 @@ const ActivitiesMonth = ({
         selected={selectedDate}
         onSelect={(date) => date && onDateSelect(date)}
         onMonthChange={(date) => setSelectedMonth(format(date, 'MMMM yyyy'))}
-        className="rounded-md border dark:border-transparent w-full flex items-center justify-center bg-gradient-to-b from-white to-emerald-50 dark:from-emerald-900 dark:to-emerald-950 py-5"
+        className="rounded-md border dark:border-none w-full flex items-center justify-center bg-gradient-to-b from-white to-emerald-50 dark:from-emerald-900 dark:to-emerald-950 py-5"
         showOutsideDays={false}
         weekStartsOn={1}
         fromDate={new Date(currentYear, 0, 1)}
@@ -148,8 +148,8 @@ const ActivitiesMonth = ({
           icon={CalendarDays}
           title="Month Total"
           value={selectedMonthActivities.length}
-          iconColor="text-emerald-600 dark:text-emerald-400"
-          iconBgColor="bg-emerald-100 dark:bg-emerald-900"
+          iconColor="text-blue-600 dark:text-blue-400"
+          iconBgColor="bg-blue-100 dark:bg-blue-900"
           compact
         />
         {activeActivityTypes.map(([type, count]) => {
