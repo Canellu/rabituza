@@ -127,7 +127,7 @@ const ActivityCardWorkout = ({
                 </h3>
                 {exercises.map((exercise, index) => (
                   <div key={index} className="space-y-1.5">
-                    <span className="font-medium text-stone-700 dark:text-stone-500">
+                    <span className="font-medium text-stone-700 dark:text-stone-400">
                       {
                         WORKOUT_EXERCISES[
                           exercise.name as keyof typeof WORKOUT_EXERCISES

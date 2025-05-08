@@ -61,7 +61,7 @@ const StretchGroup = ({
   onStretchChange,
 }: StretchGroupProps) => (
   <div>
-    <h3 className="font-medium text-stone-700 dark:text-stone-500 mb-4">
+    <h3 className="font-medium text-stone-700 dark:text-stone-400 mb-4">
       {title}
     </h3>
     <div className="grid grid-cols-2 gap-y-1.5 gap-x-2">

@@ -10,7 +10,7 @@ const SplashScreen = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsVisible(false);
-    }, 1300);
+    }, 130000);
 
     return () => clearTimeout(timer);
   }, []);
@@ -22,7 +22,7 @@ const SplashScreen = () => {
       initial={{ opacity: 1 }}
       animate={{ opacity: 0 }}
       transition={{ duration: 0.3, delay: 1, ease: easeOut }}
-      className="fixed inset-0 flex items-center justify-center bg-stone-50 min-h-[100dvh] z-[999]"
+      className="fixed inset-0 flex items-center justify-center bg-stone-50 dark:bg-stone-900 min-h-[100dvh] z-[999]"
     >
       <div className="flex flex-col items-center justify-center pb-52">
         <motion.div
@@ -38,7 +38,7 @@ const SplashScreen = () => {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.2, ease: easeInOut }}
-          className="mt-5 text-3xl font-bold text-stone-800"
+          className="mt-5 text-3xl font-bold text-stone-800 dark:text-stone-300"
         >
           Rabituza
         </motion.h1>

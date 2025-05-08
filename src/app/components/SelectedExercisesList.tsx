@@ -118,7 +118,7 @@ const SelectedExercisesList = ({
                 >
                   <div className="flex items-center gap-2 justify-between w-full">
                     <div className="flex gap-1.5 items-center justify-center">
-                      <span className="text-sm font-medium text-stone-700 dark:text-stone-500 dark:text-stone-500">
+                      <span className="text-sm font-medium text-stone-700 dark:text-stone-400">
                         Sets
                       </span>
                       <Input
@@ -188,7 +188,7 @@ const SelectedExercisesList = ({
                     ) : (
                       <>
                         <div className="flex gap-1.5 items-center justify-center">
-                          <span className="text-sm font-medium text-stone-700 dark:text-stone-500 dark:text-stone-500">
+                          <span className="text-sm font-medium text-stone-700 dark:text-stone-400">
                             Reps
                           </span>
                           <Input

@@ -27,13 +27,13 @@ const UserCard = ({
         'p-4 bg-white shadow',
         isFirst &&
           'bg-emerald-50 border-emerald-200 dark:!border-emerald-700 py-5 border-2 shadow-emerald-300/20 dark:shadow-emerald-500/10 shadow-xl',
-        'relative overflow-hidden dark:bg-emerald-50/10 dark:border-transparent'
+        'relative overflow-hidden dark:bg-stone-800 dark:border-transparent'
       )}
       onClick={() => onSelect()}
     >
       <span
         className={cn(
-          'font-bold text-stone-700 tracking-tight dark:text-stone-300',
+          'font-bold text-stone-700 tracking-tight dark:text-stone-200',
           isFirst && 'text-emerald-700 text-lg dark:text-emerald-400'
         )}
       >
@@ -58,7 +58,7 @@ const UserCard = ({
 
           <span
             className={cn(
-              'line-clamp-1 text-xs text-stone-500 ',
+              'line-clamp-1 text-xs text-stone-500 dark:text-stone-400 ',
               isFirst && 'text-emerald-600'
             )}
           >

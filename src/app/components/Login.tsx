@@ -83,7 +83,7 @@ const Login = () => {
         <section className="flex items-center justify-center flex-col gap-12 p-4">
           <Label
             htmlFor="username"
-            className="text-xl max-w-48 text-center text-stone-700"
+            className="text-xl max-w-48 text-center text-stone-700 dark:text-stone-300"
           >
             Enter your email or username
           </Label>
@@ -129,7 +129,7 @@ const Login = () => {
           </Button>
           <Label
             htmlFor="code"
-            className="text-xl max-w-48 text-center text-stone-700"
+            className="text-xl max-w-48 text-center text-stone-700 dark:text-stone-300"
           >
             Enter code provided
           </Label>
@@ -167,7 +167,7 @@ const Login = () => {
 
           <Button
             onClick={handleVerifyCode}
-            className="from-primary to-primary/70 via-primary/90 bg-gradient-to-b text-stone-700"
+            className="from-primary to-primary/70 via-primary/90 bg-gradient-to-b text-stone-900"
             disabled={loading} // Disable button while loading
           >
             {loading && <Spinner color="text-stone-700" />}

@@ -114,7 +114,7 @@ const Menu = () => {
             className={cn(
               'bg-transparent border-none rounded-none px-4 py-3 transition duration-200 ease items-center justify-center flex flex-col text-xs w-24 text-stone-500',
               'data-[state=active]:bg-transparent data-[state=active]:shadow-sm',
-              'data-[state=active]:text-primary',
+              'data-[state=active]:text-primary dark:data-[state=active]:text-primary',
               '[&[data-state=active]_span]:text-stone-50'
             )}
             onClick={() => handleTabPress(tab.value)}
