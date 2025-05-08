@@ -3,9 +3,9 @@ import { Label } from '@/components/ui/label'; // Import Label from shadcn
 import { Switch } from '@/components/ui/switch'; // Import Switch from shadcn
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'; // Import ToggleGroup components
 import { updateActivity } from '@/lib/database/activities/updateActivity';
-import useRecordDriving, {
+import useRecordGeolocation, {
   RecordingStates,
-} from '@/lib/hooks/useRecordDriving';
+} from '@/lib/hooks/useRecordGeolocation';
 import { getAllLocationsFromDB } from '@/lib/idb/activityLocations';
 import { cn } from '@/lib/utils';
 import bytesToText from '@/lib/utils/bytesToText';
@@ -51,7 +51,7 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
     setMinInterval,
     isIntervalEnabled,
     setIsIntervalEnabled,
-  } = useRecordDriving();
+  } = useRecordGeolocation();
 
   const [showResetModal, setShowResetModal] = useState(false);
   const [showSaveModal, setShowSaveModal] = useState(false);

@@ -1,6 +1,6 @@
 import {
   clearAllLocations,
-  estimateDrivingDataSize,
+  estimateGeolocationDataSize,
   getDBConnection,
 } from '@/lib/idb/activityLocations';
 import { GeoLocation } from '@/types/Activity';
@@ -21,7 +21,7 @@ export type RecordingState =
 
 const MIN_INTERVAL_MS = 1000; // Minimum interval of 1 seconds, dont record datapoints any faster
 
-const useRecordDriving = () => {
+const useRecordGeolocation = () => {
   const [locations, setLocations] = useState<GeoLocation[]>([]);
   const [dataSize, setDataSize] = useState<number>(0);
   const [isResetting, setIsResetting] = useState<boolean>(false);
@@ -66,7 +66,7 @@ const useRecordDriving = () => {
   };
   const updateDataSize = async () => {
     try {
-      const size = await estimateDrivingDataSize();
+      const size = await estimateGeolocationDataSize();
       setDataSize(size);
     } catch (error) {
       console.error('Failed to estimate storage size:', error);
@@ -272,4 +272,4 @@ const useRecordDriving = () => {
   };
 };
 
-export default useRecordDriving;
+export default useRecordGeolocation;

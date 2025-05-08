@@ -36,7 +36,7 @@ export const getDBConnection = async (): Promise<IDBPDatabase> => {
   return await initDB();
 };
 
-export const estimateDrivingDataSize = async (): Promise<number> => {
+export const estimateGeolocationDataSize = async (): Promise<number> => {
   const db = await getDBConnection();
   const tx = db.transaction('locations', 'readonly');
   const store = tx.objectStore('locations');
