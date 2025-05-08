@@ -9,7 +9,10 @@ import {
 } from '@/components/ui/dialog';
 import activityOptions from '@/constants/activityOptions';
 import { CARD_ANIMATION_CONFIG } from '@/constants/animationConfig';
-import { WORKOUT_EXERCISES } from '@/constants/workoutExercises';
+import {
+  DurationExercise,
+  WORKOUT_EXERCISES,
+} from '@/constants/workoutExercises';
 import { deleteActivity } from '@/lib/database/activities/deleteActivity';
 import { cn } from '@/lib/utils';
 import { getSession } from '@/lib/utils/userSession';
@@ -122,47 +125,89 @@ const ActivityCardWorkout = ({
           <div className="space-y-4">
             {Object.entries(groupedExercises).map(([group, exercises]) => (
               <div key={group} className="space-y-2">
-                <h3 className="text-sm font-medium text-stone-500 dark:text-stone-400">
+                <h3 className="font-medium text-stone-600 dark:text-stone-300">
                   {group}
                 </h3>
-                {exercises.map((exercise, index) => (
-                  <div key={index} className="space-y-1.5">
-                    <span className="font-medium text-stone-700 dark:text-stone-400">
-                      {
-                        WORKOUT_EXERCISES[
-                          exercise.name as keyof typeof WORKOUT_EXERCISES
-                        ].name
-                      }
-                    </span>
-                    {exercise.setGroups?.map((setGroup, setIndex) => (
-                      <div
-                        key={setIndex}
-                        className="flex items-center justify-end bg-stone-50 rounded-md p-2 text-sm dark:bg-stone-900"
-                      >
-                        <div className="flex gap-3 text-stone-600 dark:text-stone-300">
-                          <span>
-                            {setGroup.sets}{' '}
-                            {setGroup.sets === 1 ? 'set' : 'sets'}
-                          </span>
-                          {'duration' in setGroup ? (
-                            <span>{setGroup.duration} sec</span>
-                          ) : (
-                            <span>
-                              {setGroup.reps}{' '}
-                              {setGroup.reps === 1 ? 'rep' : 'reps'}
-                            </span>
-                          )}
-                          {typeof setGroup.weight === 'number' && (
-                            <span>
-                              {setGroup.weight > 0 && '+'}
-                              {setGroup.weight.toString()} kg
-                            </span>
-                          )}
-                        </div>
+                <div className="space-y-3">
+                  {exercises.map((exercise, index) => (
+                    <div
+                      key={index}
+                      className="bg-stone-50 rounded-lg p-3 dark:bg-stone-900"
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-medium text-stone-700 dark:text-stone-300">
+                          {
+                            WORKOUT_EXERCISES[
+                              exercise.name as keyof typeof WORKOUT_EXERCISES
+                            ].name
+                          }
+                        </span>
                       </div>
-                    ))}
-                  </div>
-                ))}
+                      <div
+                        className={cn(
+                          'grid gap-1.5',
+                          (exercise.setGroups?.length || 0) >= 4
+                            ? 'grid-cols-2'
+                            : 'grid-cols-1'
+                        )}
+                      >
+                        {exercise.setGroups
+                          ?.map((setGroup, setIndex) => ({
+                            setGroup,
+                            col: Math.floor(setIndex / 4),
+                            row: setIndex % 4,
+                          }))
+                          .sort((a, b) => a.row - b.row || a.col - b.col)
+                          .map(({ setGroup }, setIndex) => (
+                            <div
+                              key={setIndex}
+                              className="flex items-center gap-2 text-sm text-stone-700 font-medium dark:text-stone-400 bg-stone-200 dark:bg-stone-800 px-3 py-1.5 rounded"
+                            >
+                              <div className="flex items-center gap-1.5 w-full">
+                                <span className="bg-stone-100 dark:bg-stone-900 px-2 py-0.5 rounded text-xs font-medium min-w-[4ch] inline-block text-center">
+                                  {setGroup.sets} ×
+                                </span>
+                                {'duration' in setGroup ? (
+                                  <span>
+                                    {setGroup.duration}
+                                    {(
+                                      WORKOUT_EXERCISES[
+                                        exercise.name
+                                      ] as DurationExercise
+                                    ).hasDuration
+                                      ? (
+                                          WORKOUT_EXERCISES[
+                                            exercise.name
+                                          ] as DurationExercise
+                                        ).durationUnit === 'minutes'
+                                        ? 'min'
+                                        : 'sec'
+                                      : 'sec'}
+                                  </span>
+                                ) : (
+                                  <div className="flex items-center gap-4">
+                                    <span className="min-w-[2ch] text-right">
+                                      {setGroup.reps}
+                                    </span>
+                                    {typeof setGroup.weight === 'number' && (
+                                      <span className="font-medium text-stone-700 dark:text-stone-300 min-w-[4.5ch] text-right">
+                                        {setGroup.weight > 0
+                                          ? `+${setGroup.weight}`
+                                          : setGroup.weight}
+                                        <span className="text-xs ml-0.5">
+                                          kg
+                                        </span>
+                                      </span>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             ))}
           </div>

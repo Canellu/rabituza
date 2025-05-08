@@ -6,21 +6,21 @@ export const WORKOUT_EXERCISE_GROUPS = {
   CARDIO: 'Cardio',
 } as const;
 
-type BaseExercise = {
+export type BaseExercise = {
   name: string;
   group: (typeof WORKOUT_EXERCISE_GROUPS)[keyof typeof WORKOUT_EXERCISE_GROUPS];
 };
 
-type DurationExercise = BaseExercise & {
+export type DurationExercise = BaseExercise & {
   hasDuration: true;
   durationUnit: 'minutes' | 'seconds';
 };
 
-type RegularExercise = BaseExercise & {
+export type RegularExercise = BaseExercise & {
   hasDuration?: false;
 };
 
-type WorkoutExercise = DurationExercise | RegularExercise;
+export type WorkoutExercise = DurationExercise | RegularExercise;
 
 export const WORKOUT_EXERCISES: Record<string, WorkoutExercise> = {
   benchPress: { name: 'Bench Press', group: WORKOUT_EXERCISE_GROUPS.PUSH },

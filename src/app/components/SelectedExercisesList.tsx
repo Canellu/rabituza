@@ -150,7 +150,7 @@ const SelectedExercisesList = ({
 
                     {hasDuration(exercise.name) ? (
                       <div className="flex gap-1.5 items-center justify-end">
-                        <Clock className="size-4 text-stone-700" />
+                        <Clock className="size-4 text-stone-700 dark:text-stone-400" />
                         <div className="relative">
                           <Input
                             type="text"
@@ -220,7 +220,7 @@ const SelectedExercisesList = ({
                       </>
                     )}
                     <div className="flex gap-1.5 items-center justify-center">
-                      <Weight className="size-4 text-stone-700" />
+                      <Weight className="size-4 text-stone-700 dark:text-stone-400" />
                       <div className="relative">
                         <Input
                           type="text"
