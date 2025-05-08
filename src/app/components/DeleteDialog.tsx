@@ -1,5 +1,12 @@
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 interface DeleteDialogProps {
   open: boolean;
@@ -11,9 +18,12 @@ const DeleteDialog = ({ open, onClose, onConfirm }: DeleteDialogProps) => (
   <Dialog open={open} onOpenChange={onClose}>
     <DialogContent className="max-w-80 rounded-md">
       <DialogHeader>
-        <DialogTitle className="text-stone-700">Delete Activity</DialogTitle>
+        <DialogTitle className="text-stone-700 dark:text-stone-300">
+          Delete Activity
+        </DialogTitle>
         <DialogDescription>
-          Are you sure you want to delete this activity? This action cannot be undone.
+          Are you sure you want to delete this activity? This action cannot be
+          undone.
         </DialogDescription>
       </DialogHeader>
       <DialogFooter className="flex gap-4 flex-row items-center justify-center">

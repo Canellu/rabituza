@@ -314,7 +314,7 @@ const MapDialog = ({ open, onClose, activity }: MapDialogProps) => {
               ) : (
                 <div
                   ref={mapContainerRef}
-                  className="w-full h-[350px] rounded-md border"
+                  className="w-full h-[350px] rounded-md border dark:border-transparent"
                 />
               )}
 

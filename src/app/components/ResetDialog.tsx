@@ -1,5 +1,12 @@
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 interface ResetDialogProps {
   open: boolean;
@@ -11,7 +18,9 @@ const ResetDialog = ({ open, onClose, onConfirm }: ResetDialogProps) => (
   <Dialog open={open} onOpenChange={onClose}>
     <DialogContent className="max-w-80 rounded-md">
       <DialogHeader>
-        <DialogTitle className="text-stone-700">Reset Recording</DialogTitle>
+        <DialogTitle className="text-stone-700 dark:text-stone-300">
+          Reset Recording
+        </DialogTitle>
         <DialogDescription className="flex flex-col gap-1">
           <span>Recorded data will be discarded.</span>
           <span>Are you sure you want to reset the recording?</span>

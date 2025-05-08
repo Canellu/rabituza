@@ -33,7 +33,7 @@ const SavedRoutesList = ({ routes = [] }: SavedRoutesListProps) => {
           return (
             <div
               key={route.id}
-              className="flex flex-col border rounded-md text-sm"
+              className="flex flex-col border rounded-md text-sm dark:border-stone-700"
             >
               <div className="flex items-center justify-between px-4 py-2">
                 <span>Route {index + 1}</span>
@@ -50,7 +50,7 @@ const SavedRoutesList = ({ routes = [] }: SavedRoutesListProps) => {
               </div>
 
               <div>
-                <div className="grid grid-cols-3 bg-secondary px-4 py-2 border-t text-stone-700">
+                <div className="grid grid-cols-3 bg-secondary px-4 py-2 border-t text-stone-700 dark:bg-stone-900 rounded-b-sm dark:border-t-stone-700 dark:text-stone-400">
                   <div className="flex items-center justify-start gap-2">
                     <Crosshair className="size-4" />
                     {avgAccuracy.toFixed(2)}m

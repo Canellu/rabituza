@@ -22,7 +22,9 @@ const SaveDialog = ({ open, onClose, onConfirm }: SaveDialogProps) => (
       hideCloseButton={true}
     >
       <DialogHeader>
-        <DialogTitle className="text-stone-700">Save Recording</DialogTitle>
+        <DialogTitle className="text-stone-700 dark:text-stone-300">
+          Save Recording
+        </DialogTitle>
         <DialogDescription>
           Recording stopped, do you want to save the recorded session?
         </DialogDescription>

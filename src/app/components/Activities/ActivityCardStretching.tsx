@@ -102,7 +102,7 @@ const ActivityCardStretching = ({
             </span>
           </div>
 
-          <div className="text-sm text-stone-600">
+          <div className="text-sm text-stone-600 dark:text-stone-300">
             Duration: {activity.duration} minutes
           </div>
 
@@ -116,7 +116,7 @@ const ActivityCardStretching = ({
             {activity.stretches.map((stretch, idx) => (
               <span
                 key={idx}
-                className="px-2 py-0.5 border flex items-center justify-center rounded-md text-xs bg-stone-50 font-medium text-stone-700 dark:text-stone-400 dark:bg-stone-700  dark:border-stone-600"
+                className="px-2 py-0.5 border flex items-center justify-center rounded-md text-xs bg-stone-50 font-medium text-stone-700 dark:text-stone-400 dark:bg-stone-900  dark:border-stone-900"
               >
                 {stretch}
               </span>
@@ -129,7 +129,7 @@ const ActivityCardStretching = ({
         <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
           <DialogContent className="max-w-80 rounded-md">
             <DialogHeader>
-              <DialogTitle className="text-stone-700">
+              <DialogTitle className="text-stone-700 dark:text-stone-300">
                 Delete Activity
               </DialogTitle>
               <DialogDescription>

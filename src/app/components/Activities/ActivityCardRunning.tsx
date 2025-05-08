@@ -148,7 +148,7 @@ const ActivityCardRunning = ({
                 <div className="flex items-end justify-between">
                   <div className="flex items-center gap-1 flex-wrap">
                     {/* Duration */}
-                    <p className="px-2 py-0.5 border flex items-center justify-center rounded-md text-xs bg-stone-50 font-medium text-stone-700 dark:text-stone-400 dark:bg-stone-700  dark:border-stone-800">
+                    <p className="px-2 py-0.5 border flex items-center justify-center rounded-md text-xs bg-stone-50 font-medium text-stone-700 dark:text-stone-400 dark:bg-stone-900  dark:border-stone-800">
                       {formatDuration(
                         calculateTotalRouteDuration(activity.routes)
                       )}
@@ -156,13 +156,13 @@ const ActivityCardRunning = ({
                     {/* Distance */}
                     {activity.distance !== undefined &&
                       activity.distance > 0 && (
-                        <p className="capitalize px-2 py-0.5 border flex items-center justify-center rounded-md text-xs bg-stone-50 font-medium text-stone-700 dark:text-stone-400 dark:bg-stone-700  dark:border-stone-800">
+                        <p className="capitalize px-2 py-0.5 border flex items-center justify-center rounded-md text-xs bg-stone-50 font-medium text-stone-700 dark:text-stone-400 dark:bg-stone-900  dark:border-stone-800">
                           {(activity.distance / 1000).toFixed(2)} km
                         </p>
                       )}
                     {/* Pace */}
                     {pace !== null && (
-                      <p className="capitalize px-2 py-0.5 border flex items-center justify-center rounded-md text-xs bg-stone-50 font-medium text-stone-700 dark:text-stone-400 dark:bg-stone-700  dark:border-stone-800">
+                      <p className="capitalize px-2 py-0.5 border flex items-center justify-center rounded-md text-xs bg-stone-50 font-medium text-stone-700 dark:text-stone-400 dark:bg-stone-900  dark:border-stone-800">
                         {formatPace(pace)}
                       </p>
                     )}
@@ -197,7 +197,7 @@ const ActivityCardRunning = ({
                 </div>
 
                 {/* Route summary section */}
-                <div className="bg-stone-100 p-2 rounded-md mt-3 text-sm text-stone-700 dark:bg-stone-700 dark:text-stone-300">
+                <div className="bg-stone-100 p-2 rounded-md mt-3 text-sm text-stone-700 dark:bg-stone-900 dark:text-stone-300">
                   {activity.routes && activity.routes.length > 0 ? (
                     <div className="flex flex-col gap-1">
                       <div className="flex items-center justify-between">

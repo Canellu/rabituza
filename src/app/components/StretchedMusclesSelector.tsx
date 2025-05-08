@@ -24,7 +24,7 @@ const StretchedMusclesSelector = ({
   };
 
   return (
-    <div className="flex flex-col gap-4 p-4 bg-stone-50 border rounded-md">
+    <div className="flex flex-col gap-4 p-4 bg-stone-50 border rounded-md dark:bg-stone-800 dark:border-transparent">
       <StretchGroup
         title="Upper Body"
         stretches={UPPER_BODY_STRETCHES}
@@ -61,7 +61,7 @@ const StretchGroup = ({
   onStretchChange,
 }: StretchGroupProps) => (
   <div>
-    <h3 className="font-medium text-stone-700 dark:text-stone-400 mb-4">
+    <h3 className="font-medium text-stone-700 dark:text-stone-300 mb-2">
       {title}
     </h3>
     <div className="grid grid-cols-2 gap-y-1.5 gap-x-2">
@@ -74,7 +74,7 @@ const StretchGroup = ({
           />
           <Label
             htmlFor={stretch}
-            className="font-normal w-full px-2 pt-1.5 pb-1 max-w-none whitespace-nowrap"
+            className="font-normal w-full px-2 pt-1.5 pb-1 max-w-none whitespace-nowrap dark:text-stone-400 text-sm"
           >
             {stretch}
           </Label>

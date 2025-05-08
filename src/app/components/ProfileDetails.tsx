@@ -424,7 +424,7 @@ const ProfileDetails = ({ user }: { user?: User }) => {
                 <div
                   className={cn(
                     isBio
-                      ? 'text-secondary-foreground whitespace-pre-line p-4 border rounded-md bg-stone-50 dark:bg-stone-700 dark:border-transparent shadow-inner'
+                      ? 'text-secondary-foreground whitespace-pre-line p-4 border rounded-md bg-stone-50 dark:bg-stone-900 dark:border-transparent shadow-inner'
                       : 'text-emerald-700 dark:text-emerald-400 font-medium text-right',
                     key !== 'username' && 'first-letter:capitalize'
                   )}
@@ -433,7 +433,7 @@ const ProfileDetails = ({ user }: { user?: User }) => {
                 </div>
               </div>
               {index < array.length - 1 && (
-                <Separator className="dark:bg-stone-700" />
+                <Separator className="dark:bg-stone-900" />
               )}
             </Fragment>
           );

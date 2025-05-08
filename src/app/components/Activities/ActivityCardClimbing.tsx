@@ -110,7 +110,7 @@ const ActivityCardClimbing = ({
           </div>
 
           <div className="flex justify-between text-sm text-muted-foreground capitalize gap-3 items-center">
-            <p className="font-medium border px-2 py-1 text-stone-700 text-nowrap rounded-md bg-stone-50 dark:bg-stone-700 dark:text-stone-300 dark:border-transparent">
+            <p className="font-medium border px-2 py-1 text-stone-700 text-nowrap rounded-md bg-stone-50 dark:bg-stone-900 dark:text-stone-300 dark:border-transparent">
               {activity.gym}
             </p>
             <div className="flex flex-wrap gap-1.5">

@@ -22,7 +22,9 @@ const EndSessionDialog = ({ open, onClose, onConfirm }: EndSessionDialog) => (
       hideCloseButton={true}
     >
       <DialogHeader>
-        <DialogTitle className="text-stone-700">End Session</DialogTitle>
+        <DialogTitle className="text-stone-700 dark:text-stone-300">
+          End Session
+        </DialogTitle>
         <DialogDescription>
           Once session is ended, you can no longer record routes.
         </DialogDescription>

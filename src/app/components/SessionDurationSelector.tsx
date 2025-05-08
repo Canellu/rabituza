@@ -29,13 +29,13 @@ const SessionDurationSelector = ({
           type="single"
           value={duration ? duration.toString() : ''}
           onValueChange={handleDurationToggle}
-          className="flex bg-stone-50 border rounded-md p-1 grow"
+          className="flex bg-stone-50 dark:bg-stone-800 dark:border-transparent border rounded-md p-1 grow"
         >
           {durations.map((time) => (
             <ToggleGroupItem
               key={time}
               value={time.toString()}
-              className="data-[state=on]:bg-stone-200 h-7 w-full"
+              className="data-[state=on]:bg-stone-200 dark:data-[state=on]:bg-stone-700 h-7 w-full"
             >
               {time}
             </ToggleGroupItem>

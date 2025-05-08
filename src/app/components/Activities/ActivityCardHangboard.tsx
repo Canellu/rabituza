@@ -134,7 +134,7 @@ const ActivityCardHangboard = ({
         <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
           <DialogContent className="max-w-80 rounded-md">
             <DialogHeader>
-              <DialogTitle className="text-stone-700">
+              <DialogTitle className="text-stone-700 dark:text-stone-300">
                 Delete Activity
               </DialogTitle>
               <DialogDescription>

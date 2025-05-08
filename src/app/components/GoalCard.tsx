@@ -120,7 +120,7 @@ const GoalCard = ({
           {onCheck && (
             <Checkbox
               className={cn(
-                'size-5 bg-white dark:bg-stone-700',
+                'size-5 bg-white dark:bg-stone-900',
                 'data-[state=checked]:bg-emerald-100 data-[state=checked]:text-emerald-700 data-[state=checked]:border-emerald-100',
                 'dark:data-[state=checked]:border-transparent dark:data-[state=checked]:bg-emerald-800 dark:data-[state=checked]:text-emerald-400'
               )}

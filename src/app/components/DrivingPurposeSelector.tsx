@@ -19,17 +19,17 @@ const DrivingPurposeSelector = ({
         onValueChange={(value) => {
           if (value) onPurposeChange(value as DrivingPurpose);
         }}
-        className="grid grid-cols-2 bg-stone-50 border rounded-md p-1"
+        className="grid grid-cols-2 bg-stone-50 border rounded-md p-1 dark:bg-stone-800 dark:border-transparent"
       >
         <ToggleGroupItem
           value={DrivingPurposes.lesson}
-          className="data-[state=on]:bg-stone-200 capitalize px-2 py-1 h-8"
+          className="data-[state=on]:bg-stone-200 dark:data-[state=on]:bg-stone-700 capitalize px-2 py-1 h-8"
         >
           Lesson
         </ToggleGroupItem>
         <ToggleGroupItem
           value={DrivingPurposes.leisure}
-          className="data-[state=on]:bg-stone-200 capitalize px-2 py-1 h-8"
+          className="data-[state=on]:bg-stone-200 dark:data-[state=on]:bg-stone-700 capitalize px-2 py-1 h-8"
         >
           Leisure
         </ToggleGroupItem>

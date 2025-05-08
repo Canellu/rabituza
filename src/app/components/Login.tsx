@@ -170,7 +170,7 @@ const Login = () => {
             className="from-primary to-primary/70 via-primary/90 bg-gradient-to-b text-stone-900"
             disabled={loading} // Disable button while loading
           >
-            {loading && <Spinner color="text-stone-700" />}
+            {loading && <Spinner color="text-stone-700 dark:text-stone-300" />}
             {loading ? 'Verifying...' : 'Verify Code'}
           </Button>
         </section>

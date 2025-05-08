@@ -74,7 +74,7 @@ const DateTimePicker = ({
               row: 'flex w-full mt-2 space-x-1.5',
             }}
             disabled={disableFutureDates ? { after: new Date() } : undefined}
-            className="items-center flex w-full justify-center rounded-md border bg-white dark:bg-stone-700 dark:border-transparent"
+            className="items-center flex w-full justify-center rounded-md border bg-white dark:bg-stone-900 dark:border-transparent"
           />
           <div className="flex items-center justify-between">
             <div className="flex gap-2 items-center justfiy-between">

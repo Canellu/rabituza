@@ -180,7 +180,7 @@ interface RatingValueProps {
 
 function RatingValue({ value }: RatingValueProps) {
   return (
-    <span className="text-sm font-medium rounded-md bg-white dark:bg-stone-700 dark:border-transparent dark:text-stone-200 size-6 border grid place-items-center">
+    <span className="text-sm font-medium rounded-md bg-white dark:bg-stone-900 dark:border-transparent dark:text-stone-200 size-6 border grid place-items-center">
       {value}
     </span>
   );

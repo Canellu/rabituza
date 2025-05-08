@@ -161,7 +161,7 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
       className={cn(
         'p-4 rounded-lg bg-white dark:bg-stone-800',
         'flex flex-col gap-3 border-2 border-transparent transition-all duration-500',
-        (isRecording || isPaused) && 'border-green-600'
+        (isRecording || isPaused) && 'border-emerald-600'
       )}
     >
       <ActivityCardHeader activity={activity} />
@@ -171,13 +171,13 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
           type="single"
           value={minInterval.toString()}
           onValueChange={(value) => setMinInterval(Number(value))}
-          className="flex flex-grow justify-evenly gap-1 border bg-stone-50 rounded-md p-1 dark:bg-stone-700"
+          className="flex flex-grow justify-evenly gap-1 border bg-stone-50 rounded-md p-1 dark:bg-stone-900 dark:border-transparent"
         >
           {['500', '1000', '2000', '3000', '5000'].map((interval) => (
             <ToggleGroupItem
               key={interval}
               value={interval}
-              className="data-[state=on]:bg-stone-200 px-2 py-1 h-8 flex-grow"
+              className="data-[state=on]:bg-stone-200 px-2 py-1 h-8 flex-grow dark:data-[state=on]:bg-stone-700"
               disabled={!isIntervalEnabled}
             >
               {Number(interval) >= 1000
@@ -192,7 +192,7 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
         />
       </div>
 
-      <div className="items-center flex justify-center gap-4 my-4">
+      <div className="items-center flex justify-center gap-4 py-4 border rounded-md dark:border-stone-700">
         <Button
           onClick={startRecording}
           size="icon"
@@ -236,7 +236,7 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
 
             isRecording &&
               locations.length > 0 &&
-              'bg-green-500 text-green-800 font-semibold '
+              'bg-emerald-800 text-emerald-400 font-semibold '
           )}
         >
           {isStartingRecording && (
@@ -255,7 +255,7 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
         </div>
         <div
           className={cn(
-            'flex flex-col bg-secondary text-stone-700 dark:text-stone-300'
+            'flex flex-col bg-secondary text-stone-700 dark:text-stone-300 dark:bg-stone-900'
           )}
         >
           {locations.length === 0 && (
@@ -265,7 +265,7 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
           )}
           {locations.length > 0 && (
             <>
-              <div className="flex items-center justify-between px-4 py-2 border-t">
+              <div className="flex items-center justify-between px-4 py-2 border-t dark:border-t-stone-800">
                 <span>
                   {locations.length} point{locations.length > 1 ? 's' : ''}{' '}
                   recorded
@@ -274,7 +274,7 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
                   {dataAmount} {dataUnit}
                 </span>
               </div>
-              <div className="flex items-center justify-around px-4 py-2 border-t ">
+              <div className="flex items-center justify-around px-4 py-2 border-t dark:border-t-stone-800">
                 <span>{formatTime(new Date(locations[0].timestamp))}</span>
                 <span>-</span>
                 <span>
@@ -283,7 +283,7 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
                   )}
                 </span>
               </div>
-              <div className="px-4 py-2 border-t flex items-center justify-between">
+              <div className="px-4 py-2 border-t flex items-center justify-between dark:border-t-stone-800">
                 <div className="flex items-center justify-center gap-2">
                   <Crosshair className="size-5" /> {currentAccuracy.toFixed(1)}m
                 </div>
