@@ -6,7 +6,23 @@ export const WORKOUT_EXERCISE_GROUPS = {
   CARDIO: 'Cardio',
 } as const;
 
-export const WORKOUT_EXERCISES = {
+type BaseExercise = {
+  name: string;
+  group: (typeof WORKOUT_EXERCISE_GROUPS)[keyof typeof WORKOUT_EXERCISE_GROUPS];
+};
+
+type DurationExercise = BaseExercise & {
+  hasDuration: true;
+  durationUnit: 'minutes' | 'seconds';
+};
+
+type RegularExercise = BaseExercise & {
+  hasDuration?: false;
+};
+
+type WorkoutExercise = DurationExercise | RegularExercise;
+
+export const WORKOUT_EXERCISES: Record<string, WorkoutExercise> = {
   benchPress: { name: 'Bench Press', group: WORKOUT_EXERCISE_GROUPS.PUSH },
   inclineBenchPress: {
     name: 'Incline Bench Press',
@@ -55,16 +71,19 @@ export const WORKOUT_EXERCISES = {
     name: 'Treadmill',
     group: WORKOUT_EXERCISE_GROUPS.CARDIO,
     hasDuration: true,
+    durationUnit: 'minutes',
   },
   elliptical: {
     name: 'Elliptical',
     group: WORKOUT_EXERCISE_GROUPS.CARDIO,
     hasDuration: true,
+    durationUnit: 'minutes',
   },
   stationaryBike: {
     name: 'Stationary Bike',
     group: WORKOUT_EXERCISE_GROUPS.CARDIO,
     hasDuration: true,
+    durationUnit: 'minutes',
   },
   cableCrunch: { name: 'Cable Crunch', group: WORKOUT_EXERCISE_GROUPS.CORE },
   machineRotation: {
@@ -84,11 +103,13 @@ export const WORKOUT_EXERCISES = {
     name: 'Deadhang',
     group: WORKOUT_EXERCISE_GROUPS.PULL,
     hasDuration: true,
+    durationUnit: 'seconds',
   },
   handstand: {
     name: 'Handstand',
     group: WORKOUT_EXERCISE_GROUPS.PUSH,
     hasDuration: true,
+    durationUnit: 'seconds',
   },
   pullUp: {
     name: 'Pull Up',
@@ -114,6 +135,7 @@ export const WORKOUT_EXERCISES = {
     name: 'Tuck Planche Hold',
     group: WORKOUT_EXERCISE_GROUPS.PUSH,
     hasDuration: true,
+    durationUnit: 'seconds',
   },
   declinePushUp: {
     name: 'Decline Push Up',
@@ -151,6 +173,7 @@ export const WORKOUT_EXERCISES = {
     name: 'Plank',
     group: WORKOUT_EXERCISE_GROUPS.CORE,
     hasDuration: true,
+    durationUnit: 'seconds',
   },
   abWheel: {
     name: 'Ab Wheel',
@@ -160,6 +183,7 @@ export const WORKOUT_EXERCISES = {
     name: 'L Sit',
     group: WORKOUT_EXERCISE_GROUPS.CORE,
     hasDuration: true,
+    durationUnit: 'seconds',
   },
   sitUp: {
     name: 'Sit Up',

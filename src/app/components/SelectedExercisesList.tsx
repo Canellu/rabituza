@@ -89,20 +89,15 @@ const SelectedExercisesList = ({
   return (
     <div className="space-y-2">
       {exercises.map((exercise, exerciseIndex) => {
-        console.log(exercise);
+        const exerciseConfig = WORKOUT_EXERCISES[exercise.name];
+        console.log(exerciseConfig);
         return (
           <div
             key={`${exercise.name}-${exerciseIndex}`}
             className="flex gap-2 p-3 border rounded-md flex-col bg-stone-50"
           >
             <div className="flex justify-between items-center gap-2">
-              <span>
-                {
-                  WORKOUT_EXERCISES[
-                    exercise.name as unknown as keyof typeof WORKOUT_EXERCISES
-                  ].name
-                }
-              </span>
+              <span>{WORKOUT_EXERCISES[exercise.name].name}</span>
               <Button
                 variant="ghost"
                 size="icon"
@@ -151,9 +146,7 @@ const SelectedExercisesList = ({
                       />
                     </div>
 
-                    {hasDuration(
-                      exercise.name as unknown as keyof typeof WORKOUT_EXERCISES
-                    ) ? (
+                    {hasDuration(exercise.name) ? (
                       <div className="flex gap-1.5 items-center justify-end">
                         <Clock className="size-4 text-stone-700" />
                         <div className="relative">
@@ -183,7 +176,10 @@ const SelectedExercisesList = ({
                             placeholder="0"
                           />
                           <span className="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-stone-500">
-                            sec
+                            {exerciseConfig.hasDuration &&
+                            exerciseConfig.durationUnit === 'minutes'
+                              ? 'min'
+                              : 'sec'}
                           </span>
                         </div>
                       </div>
