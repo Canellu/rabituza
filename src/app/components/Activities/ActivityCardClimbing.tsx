@@ -19,6 +19,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { motion } from 'framer-motion';
 import { Trash2 } from 'lucide-react';
+import { useTheme } from 'next-themes';
 import { useState } from 'react';
 
 interface ActivityCardClimbingProps {
@@ -35,7 +36,8 @@ const ActivityCardClimbing = ({
   const queryClient = useQueryClient();
   const userId = getSession();
   const Icon = activityOptions.find((opt) => opt.id === activity.type)?.icon;
-
+  const { theme } = useTheme();
+  const dark = theme === 'dark';
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const { mutate: deleteActivityMutation } = useMutation({
@@ -78,7 +80,9 @@ const ActivityCardClimbing = ({
           <Trash2 className="text-secondary" />
         </div>
         <motion.div
-          className={cn('border rounded-xl p-4 space-y-3 bg-white relative')}
+          className={cn(
+            'border rounded-xl p-4 space-y-3 bg-white relative dark:border-transparent dark:bg-stone-800'
+          )}
           drag="x"
           dragDirectionLock
           dragConstraints={{ left: -250, right: 0 }}
@@ -95,7 +99,7 @@ const ActivityCardClimbing = ({
               {Icon && (
                 <Icon className="text-white size-6 rounded-md bg-emerald-500 p-1" />
               )}
-              <span className="text-lg font-semibold inter text-stone-700">
+              <span className="text-lg font-semibold inter text-stone-700 dark:text-stone-200">
                 {activityOptions.find((opt) => opt.id === activity.type)?.label}
               </span>
             </div>
@@ -106,7 +110,7 @@ const ActivityCardClimbing = ({
           </div>
 
           <div className="flex justify-between text-sm text-muted-foreground capitalize gap-3 items-center">
-            <p className="font-medium border px-2 py-1 text-stone-700 text-nowrap rounded-md bg-stone-50">
+            <p className="font-medium border px-2 py-1 text-stone-700 text-nowrap rounded-md bg-stone-50 dark:bg-stone-700 dark:text-stone-300 dark:border-transparent">
               {activity.gym}
             </p>
             <div className="flex flex-wrap gap-1.5">
@@ -130,8 +134,8 @@ const ActivityCardClimbing = ({
                     key={idx}
                     className={cn(
                       'size-6 border flex items-center font-bold justify-center rounded-full text-sm',
-                      getGradeColor(grade.grade).text,
-                      getGradeColor(grade.grade).bg
+                      getGradeColor(grade.grade, dark).text,
+                      getGradeColor(grade.grade, dark).bg
                     )}
                   >
                     {grade.count}
@@ -141,7 +145,7 @@ const ActivityCardClimbing = ({
           </div>
 
           {activity.note && (
-            <p className="text-sm text-stone-600 line-clamp-5 whitespace-pre-line">
+            <p className="text-sm text-stone-600 line-clamp-5 whitespace-pre-line dark:text-stone-200">
               {activity.note}
             </p>
           )}

@@ -82,7 +82,7 @@ const MealCard = ({ meal, onEdit }: MealCardProps) => {
           <Trash2 className="text-secondary" />
         </div>
         <motion.div
-          className="border rounded-xl p-4 space-y-3 bg-white relative"
+          className="border rounded-xl p-4 space-y-3 bg-white relative dark:bg-stone-700 dark:border-transparent dark:bg-stone-800 dark:border-transparent"
           drag="x"
           dragDirectionLock
           dragConstraints={{ left: -250, right: 0 }}
@@ -109,8 +109,8 @@ const MealCard = ({ meal, onEdit }: MealCardProps) => {
                 key={item.name}
                 className={cn(
                   'flex items-center justify-between',
-                  'bg-stone-50 rounded-md px-2.5 py-1.5 text-xs border',
-                  'text-stone-700'
+                  'bg-stone-50 dark:bg-stone-700 dark:border-transparent rounded-md px-2.5 py-1.5 text-xs border',
+                  'text-stone-700 dark:text-stone-300'
                 )}
               >
                 {item.name}
@@ -124,9 +124,11 @@ const MealCard = ({ meal, onEdit }: MealCardProps) => {
               {nutrients.map((nutrient) => (
                 <div
                   key={nutrient.label}
-                  className="space-x-1 text-[10px] rounded-full bg-stone-50 border px-2 py-1"
+                  className="space-x-1 text-[10px] rounded-full bg-stone-50 border px-2 py-1 dark:bg-stone-800 dark:border-stone-700"
                 >
-                  <span className="text-stone-500">{nutrient.label}</span>
+                  <span className="text-stone-500 dark:text-stone-300">
+                    {nutrient.label}
+                  </span>
                   <span className="font-medium">
                     {nutrient.value > 0 ? `${nutrient.value.toFixed(1)}g` : '-'}
                   </span>

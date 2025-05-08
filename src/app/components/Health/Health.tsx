@@ -99,8 +99,8 @@ const Health = () => {
             ))}
           </div>
         ) : (
-          <div className="border p-4 bg-white rounded-xl">
-            <span className="text-sm font-medium text-stone-600 ">
+          <div className="border p-4 bg-white rounded-xl dark:bg-stone-800 dark:border-transparent">
+            <span className="text-sm font-medium text-stone-600 dark:text-stone-200">
               No meals added on this date
             </span>
           </div>

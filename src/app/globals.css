@@ -41,25 +41,25 @@ body {
   }
 
   .dark {
-    --background: 20 14.3% 4.1%;
+    --background: 24, 10%, 10%;
     --foreground: 0 0% 95%;
-    --card: 24 9.8% 10%;
+    --card: 220 43% 11%;
     --card-foreground: 0 0% 95%;
     --popover: 0 0% 9%;
     --popover-foreground: 0 0% 95%;
-    --primary: 142.1 70.6% 45.3%;
+    --primary: 142, 76%, 36%;
     --primary-foreground: 144.9 80.4% 10%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 30, 6%, 25%;
+    --secondary-foreground: 60, 5%, 96%;
     --muted: 0 0% 15%;
     --muted-foreground: 240 5% 64.9%;
     --accent: 12 6.5% 15.1%;
     --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 85.7% 97.3%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 142.4 71.8% 29.2%;
+    --border: 0, 0%, 15%;
+    --input: 0, 0%, 15%;
+    --ring: 0, 0%, 15%;
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
@@ -94,7 +94,7 @@ body {
   }
 
   .custom-popup .mapboxgl-popup-content {
-    @apply px-3 py-1 rounded-md text-sm tracking-wide border shadow;
+    @apply px-3 py-1 rounded-md text-sm tracking-wide border shadow dark:text-stone-800;
   }
 
   .custom-popup .mapboxgl-popup-close-button,

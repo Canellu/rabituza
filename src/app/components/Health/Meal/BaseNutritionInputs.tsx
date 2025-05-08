@@ -77,7 +77,7 @@ const BaseNutritionInputs = ({
   return (
     <div
       className={cn(
-        'grid grid-cols-7 gap-2 border rounded-md p-4 bg-white',
+        'grid grid-cols-7 gap-2 border rounded-md p-4 bg-white dark:bg-stone-800 dark:border-transparent',
         className
       )}
     >

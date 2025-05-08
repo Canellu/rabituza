@@ -110,7 +110,7 @@ const WorkoutExerciseSelector = ({
 
   return (
     <>
-      <div className={cn()}>
+      <div className={cn('')}>
         <div className="relative">
           <div className="flex items-center justify-center absolute top-0 left-0 h-full aspect-square">
             <Search className="size-4 text-stone-400" />
@@ -124,7 +124,7 @@ const WorkoutExerciseSelector = ({
               if (e.target.value.length > 2) setIsSearching(true);
               handleSearch(e.target.value);
             }}
-            className={cn('px-9')}
+            className={cn('px-9 dark:focus-within:!bg-stone-800')}
           />
           {searchText.length > 0 && (
             <Button
@@ -138,7 +138,7 @@ const WorkoutExerciseSelector = ({
           )}
         </div>
 
-        <div className="max-h-[270px] overflow-y-auto border rounded-md mt-1 overscroll-contain relative">
+        <div className="max-h-[270px] overflow-y-auto border rounded-md mt-1 overscroll-contain relative dark:border-stone-800 dark:bg-stone-800">
           {isSearching && (
             <div
               className={cn(
@@ -157,16 +157,16 @@ const WorkoutExerciseSelector = ({
                   exerciseKey as keyof typeof WORKOUT_EXERCISES
                 )
               }
-              className="p-2 cursor-pointer hover:bg-gray-100 select-none"
+              className="p-2 cursor-pointer hover:bg-stone-100 dark:hover:bg-stone-700 select-none"
             >
               <div className="flex flex-col">
-                <span>{exercise.name}</span>
+                <span className="dark:text-stone-200">{exercise.name}</span>
                 <span className="text-sm text-stone-400">{exercise.group}</span>
               </div>
             </div>
           ))}
           {!!searchResults.length && (
-            <div className="px-2 py-1 text-xs text-muted-foreground sticky bottom-0 border-t bg-stone-50 w-full">
+            <div className="px-2 py-1 text-xs text-muted-foreground sticky bottom-0 border-t bg-stone-50 w-full dark:bg-stone-800 dark:border-t-stone-600">
               {searchResults.length} result
               {searchResults.length > 1 ? 's' : ''} found
             </div>

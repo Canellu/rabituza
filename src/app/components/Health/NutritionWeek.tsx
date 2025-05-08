@@ -46,7 +46,7 @@ const NutritionWeek = ({ entries = [], targets = [] }: NutritionWeekProps) => {
   const weekStart = startOfWeek(today, { weekStartsOn: 1 });
 
   return (
-    <div className="flex justify-between border p-4 rounded-md bg-gradient-to-b from-white to-emerald-50">
+    <div className="flex justify-between border p-4 rounded-md bg-gradient-to-b from-white to-emerald-50 dark:from-emerald-700 dark:to-emerald-800">
       {Array.from({ length: 7 }, (_, i) => {
         const date = addDays(weekStart, i);
         const isCurrentDay = isToday(date);

@@ -26,6 +26,7 @@ import {
 import { MapPinOff } from 'lucide-react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import { useTheme } from 'next-themes';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Spinner from '../Spinner';
 import RouteStatistics from './RouteStatistics';
@@ -48,6 +49,7 @@ const MapDialog = ({ open, onClose, activity }: MapDialogProps) => {
   const [mapLoadError, setMapLoadError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isMapLoaded, setIsMapLoaded] = useState(false);
+  const { theme } = useTheme();
 
   const sortedRoutes = activity.routes?.slice().sort((a, b) => {
     const aLastTimestamp =
@@ -210,7 +212,10 @@ const MapDialog = ({ open, onClose, activity }: MapDialogProps) => {
 
         const map = new mapboxgl.Map({
           container: mapContainerRef.current,
-          style: 'mapbox://styles/mapbox/streets-v12',
+          style:
+            theme === 'dark'
+              ? 'mapbox://styles/mapbox/dark-v11'
+              : 'mapbox://styles/mapbox/streets-v12',
           center: [10.7522, 59.9139],
           zoom: 10,
         });
@@ -313,7 +318,7 @@ const MapDialog = ({ open, onClose, activity }: MapDialogProps) => {
                 />
               )}
 
-              <div className="flex items-center justify-between border rounded-md p-2 bg-stone-50">
+              <div className="flex items-center justify-between border rounded-md p-2 bg-stone-50 dark:bg-stone-800 dark:border-transparent">
                 <Label className="text-sm">Route Smoothing</Label>
                 <Switch
                   checked={isSmoothing}

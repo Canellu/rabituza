@@ -59,7 +59,7 @@ const Menu = () => {
               'sticky top-0 inset-x-0 z-50',
               'px-6 h-16',
               'flex items-center',
-              'border-b bg-stone-50'
+              'border-b bg-stone-50 dark:bg-stone-900 dark:border-b-stone-800 '
             )}
           >
             <div
@@ -69,7 +69,7 @@ const Menu = () => {
             >
               <h1
                 className={cn(
-                  'font-bold text-2xl text-stone-800 flex items-center gap-2'
+                  'font-bold text-2xl text-stone-800 dark:text-stone-200 flex items-center gap-2'
                 )}
               >
                 {tab.title}
@@ -104,7 +104,7 @@ const Menu = () => {
       <TabsList
         className={cn(
           'fixed inset-x-0 bottom-0 min-h-max flex items-center justify-around pb-5 pt-0 rounded-none z-50',
-          'bg-stone-900'
+          'bg-stone-900 dark:bg-stone-950'
         )}
       >
         {tabs.map((tab) => (

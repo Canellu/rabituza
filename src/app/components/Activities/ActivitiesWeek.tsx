@@ -47,10 +47,10 @@ const ActivitiesWeek = ({
   };
 
   return (
-    <div className="flex justify-between border p-4 rounded-xl bg-gradient-to-b from-white to-emerald-50">
+    <div className="flex justify-between border dark:border-transparent p-4 rounded-xl bg-gradient-to-b from-white to-emerald-50 dark:from-emerald-800 dark:to-emerald-950">
       {Array.from({ length: 7 }, (_, i) => {
         const date = addDays(weekStart, i);
-        const isCurrentDay = isToday(date);
+        const isTodayDate = isToday(date);
         const isSelected =
           date.toLocaleDateString() === selectedDate.toLocaleDateString();
         const hasActivityForDay = hasActivity(date);
@@ -63,7 +63,7 @@ const ActivitiesWeek = ({
             className="flex flex-col items-center gap-3 cursor-pointer"
             onClick={() => onDateSelect(date)}
           >
-            <div className="text-sm font-medium text-stone-600">
+            <div className="text-sm font-medium text-stone-600 dark:text-stone-200">
               {format(date, 'EEE')}
             </div>
             <div className="relative">
@@ -71,9 +71,11 @@ const ActivitiesWeek = ({
                 className={cn(
                   'size-9 rounded-full flex items-center justify-center transition-colors',
                   'select-none',
-                  hasActivityForDay && 'bg-primary/40 font-semibold',
-                  isCurrentDay && 'border-2 border-primary/40',
-                  isSelected && 'border-2 border-primary'
+                  hasActivityForDay && 'bg-primary/40 dark:bg-emerald-900',
+                  isTodayDate &&
+                    'border-2 border-primary/40 dark:border-primary',
+                  isSelected &&
+                    'border-2 border-primary dark:border-emerald-600'
                 )}
               >
                 <span className="text-sm font-medium">{format(date, 'd')}</span>

@@ -51,7 +51,7 @@ const DateTimePicker = ({
         className={cn(
           'w-full justify-start text-left font-normal text-base rounded-md',
           !date && 'text-muted-foreground',
-          calendarOpen && 'bg-stone-50'
+          calendarOpen && 'bg-stone-50 dark:bg-stone-800'
         )}
         onClick={() => setCalendarOpen((prev) => !prev)}
       >
@@ -59,7 +59,7 @@ const DateTimePicker = ({
         {format(date, 'do MMMM yyyy, HH:mm')}
       </Button>
       <AnimateHeight isOpen={calendarOpen} marginBottom={16}>
-        <div className="border bg-stone-50 rounded-md p-4 space-y-4">
+        <div className="border bg-stone-50 rounded-md p-4 space-y-4 dark:bg-stone-800 dark:border-transparent">
           <Calendar
             mode="single"
             weekStartsOn={1}
@@ -74,7 +74,7 @@ const DateTimePicker = ({
               row: 'flex w-full mt-2 space-x-1.5',
             }}
             disabled={disableFutureDates ? { after: new Date() } : undefined}
-            className="items-center flex w-full justify-center rounded-md border bg-white"
+            className="items-center flex w-full justify-center rounded-md border bg-white dark:bg-stone-700 dark:border-transparent"
           />
           <div className="flex items-center justify-between">
             <div className="flex gap-2 items-center justfiy-between">

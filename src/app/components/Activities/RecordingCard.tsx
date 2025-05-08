@@ -159,7 +159,7 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
   return (
     <div
       className={cn(
-        'p-4 rounded-lg',
+        'p-4 rounded-lg bg-white dark:bg-stone-800',
         'flex flex-col gap-3 border-2 border-transparent transition-all duration-500',
         (isRecording || isPaused) && 'border-green-600'
       )}
@@ -171,7 +171,7 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
           type="single"
           value={minInterval.toString()}
           onValueChange={(value) => setMinInterval(Number(value))}
-          className="flex flex-grow justify-evenly gap-1 border bg-stone-50 rounded-md p-1"
+          className="flex flex-grow justify-evenly gap-1 border bg-stone-50 rounded-md p-1 dark:bg-stone-700"
         >
           {['500', '1000', '2000', '3000', '5000'].map((interval) => (
             <ToggleGroupItem
@@ -229,7 +229,7 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
         </Button>
       </div>
 
-      <div className="border rounded-md overflow-hidden">
+      <div className="border rounded-md overflow-hidden dark:border-stone-700">
         <div
           className={cn(
             'flex items-center justify-center p-4',
@@ -240,7 +240,7 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
           )}
         >
           {isStartingRecording && (
-            <div className="flex items-center justify-center gap-2 text-sm text-stone-700">
+            <div className="flex items-center justify-center gap-2 text-sm text-stone-700 dark:text-stone-300">
               <Spinner size="size-4" color="text-stone-700" />
               <span>Initializing...</span>
             </div>
@@ -253,9 +253,13 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
             {getRecordingText()}
           </span>
         </div>
-        <div className={cn('flex flex-col bg-secondary text-stone-700 ')}>
+        <div
+          className={cn(
+            'flex flex-col bg-secondary text-stone-700 dark:text-stone-300'
+          )}
+        >
           {locations.length === 0 && (
-            <div className="flex items-center justify-center p-2 italic text-xs border-t">
+            <div className="flex items-center justify-center p-2 italic text-xs border-t dark:border-t-stone-600">
               <span>No location data recorded</span>
             </div>
           )}

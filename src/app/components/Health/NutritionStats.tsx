@@ -87,7 +87,9 @@ const NutritionStats = ({
             className={cn(
               'text-7xl font-semibold text-center ',
               'transition-colors duration-200 ease-in-out',
-              isOvereaten ? 'text-orange-500' : 'text-emerald-800'
+              isOvereaten
+                ? 'text-orange-500'
+                : 'text-emerald-800 dark:text-emerald-700'
             )}
           >
             <AnimatedValue value={todaysCalories} />
@@ -96,7 +98,9 @@ const NutritionStats = ({
             className={cn(
               'text-sm',
               'transition-colors duration-200 ease-in-out',
-              isOvereaten ? 'text-orange-600' : 'text-emerald-900'
+              isOvereaten
+                ? 'text-orange-600'
+                : 'text-emerald-900 dark:text-emerald-800'
             )}
           >
             {isOvereaten ? 'calories exceeding target' : 'remaining calories'}
@@ -131,15 +135,15 @@ const NutritionStats = ({
                 className={cn(
                   'flex flex-col gap-1 items-start',
                   'px-4 py-3 min-w-32',
-                  'border bg-white rounded-xl',
-                  'text-xs font-semibold'
+                  'border bg-white rounded-xl dark:border-transparent dark:bg-stone-800',
+                  'text-xs font-semibold dark:text-stone-200'
                 )}
               >
                 <p>{nutrient.label}</p>
-                <div className="text-stone-800 space-x-px mb-1">
+                <div className="text-stone-800 dark:text-stone-300 space-x-px mb-1">
                   <AnimatedValue value={isTargetDay ? nutrient.value : '-'} />
                   <span>/</span>
-                  <span className="text-stone-500">
+                  <span className="text-stone-500 dark:text-stone-400">
                     {isTargetDay ? `${String(targetValue)}g` : '-'}
                   </span>
                 </div>

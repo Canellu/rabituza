@@ -12,6 +12,7 @@ import BOULDERING_GYMS from '@/constants/boulderingGyms';
 import { cn } from '@/lib/utils';
 import getGradeColor from '@/lib/utils/getGradeColor';
 import { MapPin, Minus, Plus } from 'lucide-react';
+import { useTheme } from 'next-themes';
 import AnimateHeight from './AnimateHeight';
 
 interface BoulderingGradeSelectorProps {
@@ -27,6 +28,8 @@ export function BoulderingGradeSelector({
   onGymChange,
   onGradeCountChange,
 }: BoulderingGradeSelectorProps) {
+  const { theme } = useTheme();
+  const dark = theme === 'dark';
   return (
     <div className="space-y-2">
       <Select value={selectedGym} onValueChange={onGymChange}>
@@ -50,7 +53,7 @@ export function BoulderingGradeSelector({
       </Select>
 
       <AnimateHeight isOpen={!!selectedGym}>
-        <div className="space-y-4 border bg-stone-50 p-4 rounded-md">
+        <div className="space-y-4 border bg-stone-50 p-4 rounded-md dark:bg-stone-800 dark:border-transparent pb-2">
           {selectedGym &&
             BOULDERING_GYMS[selectedGym].grades.map((grade) => (
               <div
@@ -60,8 +63,8 @@ export function BoulderingGradeSelector({
                 <span
                   className={cn(
                     'font-medium text-md px-3 py-1.5 rounded-lg w-full border',
-                    getGradeColor(grade).text,
-                    getGradeColor(grade).bg
+                    getGradeColor(grade, dark).text,
+                    getGradeColor(grade, dark).bg
                   )}
                 >
                   {grade.charAt(0).toUpperCase() + grade.slice(1)}

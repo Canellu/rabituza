@@ -23,10 +23,10 @@ const ActivitiesList = ({
   return (
     <section className="space-y-3 w-full">
       <h2 className="flex flex-col -space-y-1">
-        <span className="text-stone-700 font-medium text-sm">
+        <span className="text-stone-700 font-medium text-sm dark:text-stone-500">
           Activities for
         </span>
-        <span className="text-emerald-800 text-lg font-semibold">
+        <span className="text-emerald-800 text-lg font-semibold dark:text-emerald-500">
           {format(selectedDate, 'EEEE, do MMMM')}
         </span>
       </h2>
@@ -105,8 +105,8 @@ const ActivitiesList = ({
         })}
 
         {activities?.length === 0 && (
-          <div className="border p-4 bg-white rounded-xl">
-            <span className="text-sm font-medium text-stone-600">
+          <div className="border p-4 bg-white rounded-xl dark:bg-stone-800 dark:border-transparent">
+            <span className="text-sm font-medium text-stone-600 dark:text-stone-200">
               No activities logged for this date
             </span>
           </div>

@@ -45,13 +45,15 @@ const Profile = () => {
         >
           <AvatarUpload user={user} />
           {(user?.username || user?.first_name || user?.last_name) && (
-            <div className="flex flex-col items-center gap-1 text-stone-800">
+            <div className="flex flex-col items-center gap-1 text-stone-800 dark:text-stone-200">
               <span className="text-xl font-semibold capitalize">
                 {user?.username
                   ? user?.username
                   : `${user?.first_name} ${user?.last_name}`}
               </span>
-              <span className="text-stone-500 text-xs">{user?.email}</span>
+              <span className="text-stone-500 text-xs dark:text-stone-400">
+                {user?.email}
+              </span>
             </div>
           )}
         </motion.div>
@@ -71,7 +73,7 @@ const Profile = () => {
       </Button>
 
       <p className="geist-mono text-xs text-stone-500 text-center w-full pb-6">
-        <span className="px-2 py-1 border rounded-md bg-gradient-to-b from-stone-50 to-stone-200 border-white shadow-inner">
+        <span className="px-2 py-1 border rounded-md bg-gradient-to-b from-stone-50 to-stone-200 border-white shadow-inner dark:from-stone-700 dark:to-stone-900 dark:border-stone-600 dark:text-stone-300">
           App version: 1.0.0
         </span>
       </p>

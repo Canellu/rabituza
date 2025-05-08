@@ -104,13 +104,13 @@ export const FoodSearch = ({
         !isSearching &&
         showNoResults &&
         searchResults.length === 0 && (
-          <div className="p-2 text-sm text-muted-foreground border bg-white rounded-md mt-1">
+          <div className="p-2 text-sm text-muted-foreground border bg-white dark:bg-stone-800 rounded-md mt-1">
             No results found.
           </div>
         )}
 
       {(!!searchResults.length || (value.length >= 2 && isSearching)) && (
-        <div className="max-h-[300px] overflow-y-auto border rounded-md mt-1 overscroll-contain relative">
+        <div className="max-h-[300px] overflow-y-auto border rounded-md mt-1 overscroll-contain relative dark:bg-stone-800 dark:border-transparent">
           {isSearching && (
             <div
               className={cn(
@@ -137,7 +137,7 @@ export const FoodSearch = ({
             </div>
           ))}
           {!!searchResults.length && (
-            <div className="px-2 py-1 text-xs text-muted-foreground sticky bottom-0 border-t bg-stone-50 w-full">
+            <div className="px-2 py-1 text-xs text-muted-foreground sticky bottom-0 border-t dark:border-t-stone-700 bg-stone-50 dark:bg-stone-800 w-full">
               {searchResults.length} result
               {searchResults.length > 1 ? 's' : ''} found
             </div>

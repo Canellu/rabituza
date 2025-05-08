@@ -53,7 +53,7 @@ const NutritionMonth = ({
   return (
     <Calendar
       mode="single"
-      className="rounded-xl border w-full flex items-center justify-center bg-gradient-to-b from-white to-emerald-50 py-5"
+      className="rounded-xl border w-full flex items-center justify-center bg-gradient-to-b from-white to-emerald-50 dark:from-emerald-900 dark:to-emerald-950 py-5 dark:border-transparent"
       showOutsideDays={false}
       weekStartsOn={1}
       fromDate={new Date(currentYear, 0, 1)}
@@ -64,7 +64,7 @@ const NutritionMonth = ({
         day: 'size-9 rounded-full relative',
         cell: 'size-9 text-center text-sm p-0 relative',
         head_cell:
-          'size-9 font-normal flex items-center justify-center text-stone-500',
+          'size-9 font-normal flex items-center justify-center text-stone-500 dark:text-stone-200',
         day_today: 'border-2 border-primary/50',
       }}
       components={{
@@ -92,17 +92,19 @@ const NutritionMonth = ({
                   'select-none duration-500',
                   isTargetDayDate &&
                     !hasMealForDay &&
-                    'border-2 border-stone-200',
+                    'border-2 border-stone-200 dark:bg-emerald-900 dark:border-transparent',
                   isTargetDayDate &&
                     hasMealForDay &&
                     exceedsTargetCalories &&
-                    'bg-orange-300',
+                    'bg-orange-300 dark:bg-emerald-600',
                   isTargetDayDate &&
                     hasMealForDay &&
                     !exceedsTargetCalories &&
-                    'bg-primary/50',
-                  isTodayDate && 'border-2 border-primary/40',
-                  isSelected && 'border-2 border-primary'
+                    'bg-primary/50 dark:bg-emerald-600',
+                  isTodayDate &&
+                    'border-2 border-primary/40 dark:border-primary',
+                  isSelected &&
+                    'border-2 border-primary dark:border-emerald-600'
                 )}
               >
                 {format(date, 'd')}

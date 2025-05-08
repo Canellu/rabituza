@@ -379,7 +379,7 @@ const ProfileDetails = ({ user }: { user?: User }) => {
   ].includes(selectedField || '');
 
   return (
-    <div className="flex flex-col py-4 rounded-lg border gap-2 bg-secondary w-full">
+    <div className="flex flex-col py-4 rounded-lg border gap-2 bg-secondary dark:bg-stone-800 w-full dark:border-transparent">
       {user &&
         Object.entries(user).map(([key, value], index, array) => {
           if (excludedFields.includes(key)) {
@@ -393,7 +393,9 @@ const ProfileDetails = ({ user }: { user?: User }) => {
 
           if (!value) {
             formattedValue = (
-              <span className="text-gray-500 italic font-normal">Add info</span>
+              <span className="text-gray-500 dark:text-gray-300 italic font-normal">
+                Add info
+              </span>
             );
           } else if (key === 'code') {
             formattedValue = <span className="tracking-wider">******</span>;
@@ -422,15 +424,17 @@ const ProfileDetails = ({ user }: { user?: User }) => {
                 <div
                   className={cn(
                     isBio
-                      ? 'text-secondary-foreground whitespace-pre-line p-4 border rounded-md bg-stone-50 shadow-inner'
-                      : 'text-emerald-700 font-medium text-right',
+                      ? 'text-secondary-foreground whitespace-pre-line p-4 border rounded-md bg-stone-50 dark:bg-stone-700 dark:border-transparent shadow-inner'
+                      : 'text-emerald-700 dark:text-emerald-400 font-medium text-right',
                     key !== 'username' && 'first-letter:capitalize'
                   )}
                 >
                   {formattedValue}
                 </div>
               </div>
-              {index < array.length - 1 && <Separator />}
+              {index < array.length - 1 && (
+                <Separator className="dark:bg-stone-700" />
+              )}
             </Fragment>
           );
         })}

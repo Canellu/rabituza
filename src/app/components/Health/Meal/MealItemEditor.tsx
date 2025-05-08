@@ -135,27 +135,27 @@ const MealItemEditor = ({
           <AccordionTrigger
             className={cn(
               '[&>svg]:h-4 [&>svg]:w-4 [&>svg]:text-stone-800 hover:no-underline ',
-              'text-start border rounded-md py-3 px-4 bg-white',
+              'text-start border rounded-md py-3 px-4 bg-white dark:bg-stone-700 dark:border-transparent',
               'data-[state=open]:rounded-b-none',
-              'data-[state=open]:bg-stone-200'
+              'data-[state=open]:bg-stone-200 dark:data-[state=open]:bg-stone-500'
             )}
           >
             <div className="flex flex-col items-start gap-1 grow pr-2">
               <div className="w-full">
                 {mealItem.calories > 0 && (
-                  <CardBadge className="whitespace-nowrap float-right">
+                  <CardBadge className="whitespace-nowrap float-right ">
                     {mealItem.calories} kcal
                   </CardBadge>
                 )}
                 <h2 className="text-sm leading-relaxed">
                   {mealItem.name || (
-                    <ForkKnife className="size-5 text-stone-700" />
+                    <ForkKnife className="size-5 text-stone-700 dark:text-stone-300" />
                   )}
                 </h2>
               </div>
             </div>
           </AccordionTrigger>
-          <AccordionContent className="border border-t-0 rounded-b-md p-4 bg-white flex flex-col gap-4">
+          <AccordionContent className="border border-t-0 rounded-b-md p-4 bg-white flex flex-col gap-4 dark:bg-stone-700 dark:border-transparent">
             {/* Input Mode selector */}
             <div className="space-y-1">
               <Label className="text-sm">Input mode</Label>
@@ -167,17 +167,17 @@ const MealItemEditor = ({
                     setInputMode(value as InputMode);
                   }
                 }}
-                className="grid grid-cols-2 bg-stone-50 border rounded-md p-1 grow"
+                className="grid grid-cols-2 bg-stone-50 dark:bg-stone-800 dark:border-transparent border rounded-md p-1 grow"
               >
                 <ToggleGroupItem
                   value={InputModes.MANUAL}
-                  className="data-[state=on]:bg-stone-200 capitalize min-h-max h-8"
+                  className="data-[state=on]:bg-stone-200 dark:data-[state=on]:bg-stone-700 capitalize min-h-max h-8"
                 >
                   Manual
                 </ToggleGroupItem>
                 <ToggleGroupItem
                   value={InputModes.SEARCH}
-                  className="data-[state=on]:bg-stone-200 capitalize min-h-max h-8"
+                  className="data-[state=on]:bg-stone-200 dark:data-[state=on]:bg-stone-700 capitalize min-h-max h-8"
                 >
                   Search
                 </ToggleGroupItem>

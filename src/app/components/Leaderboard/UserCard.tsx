@@ -26,15 +26,15 @@ const UserCard = ({
         'border rounded-xl border-stone-100',
         'p-4 bg-white shadow',
         isFirst &&
-          'bg-emerald-50 border-emerald-200 py-5 border-2 shadow-emerald-300/20 shadow-xl',
-        'relative overflow-hidden'
+          'bg-emerald-50 border-emerald-200 dark:!border-emerald-700 py-5 border-2 shadow-emerald-300/20 dark:shadow-emerald-500/10 shadow-xl',
+        'relative overflow-hidden dark:bg-emerald-50/10 dark:border-transparent'
       )}
       onClick={() => onSelect()}
     >
       <span
         className={cn(
-          'font-bold text-stone-700 tracking-tight',
-          isFirst && 'text-emerald-700 text-lg'
+          'font-bold text-stone-700 tracking-tight dark:text-stone-300',
+          isFirst && 'text-emerald-700 text-lg dark:text-emerald-400'
         )}
       >
         # {rank + 1}
@@ -49,8 +49,8 @@ const UserCard = ({
         <div>
           <p
             className={cn(
-              'first-letter:capitalize font-medium text-stone-700',
-              isFirst && 'text-emerald-700 font-semibold'
+              'first-letter:capitalize font-medium text-stone-700 dark:text-stone-200',
+              isFirst && 'text-emerald-700 font-semibold dark:text-emerald-400'
             )}
           >
             {user.username}
@@ -68,8 +68,8 @@ const UserCard = ({
       </div>
       <span
         className={cn(
-          'text-stone-700 text-sm font-medium text-end',
-          isFirst && 'text-emerald-700 font-bold text-lg'
+          'text-stone-700 text-sm font-medium text-end dark:text-stone-300',
+          isFirst && 'text-emerald-700 font-bold text-lg dark:text-emerald-400'
         )}
       >
         {user.score}

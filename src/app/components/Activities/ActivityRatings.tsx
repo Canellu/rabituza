@@ -68,9 +68,11 @@ function RatingDescription({
 }) {
   return (
     <div className="space-y-1.5">
-      <span className="text-stone-800 text-sm">{question}</span>
+      <span className="text-stone-800 text-sm dark:text-stone-300">
+        {question}
+      </span>
       <Separator />
-      <div className="flex flex-col font-medium gap-1 text-stone-700 text-xs">
+      <div className="flex flex-col font-medium gap-1 text-stone-700 dark:text-stone-400 text-xs">
         <span>0: {min}</span>
         <span>10: {max}</span>
       </div>
@@ -100,7 +102,7 @@ export function ActivityRatings({ ratings, onChange }: ActivityRatingsProps) {
         variant="outline"
         className={cn(
           'w-full justify-between text-left font-normal text-base rounded-md',
-          isOpen && 'bg-stone-50'
+          isOpen && 'bg-stone-50 dark:bg-stone-800 dark:border-transparent'
         )}
         onClick={() => setIsOpen((prev) => !prev)}
       >
@@ -128,7 +130,9 @@ export function ActivityRatings({ ratings, onChange }: ActivityRatingsProps) {
 
       <AnimateHeight isOpen={isOpen} marginBottom={16}>
         <div
-          className={cn('space-y-5 bg-stone-50 border p-4 pb-6 rounded-md ')}
+          className={cn(
+            'space-y-5 bg-stone-50 dark:bg-stone-800 dark:border-transparent border p-4 pb-6 rounded-md '
+          )}
         >
           {(
             Object.entries(RATING_CONFIG) as [
@@ -165,7 +169,7 @@ function RatingLabel({ icon: Icon, label }: RatingLabelProps) {
   return (
     <div className="flex items-center gap-2">
       <Icon className="size-4 text-emerald-600" />
-      <span className="">{label}</span>
+      <span className="dark:text-stone-200">{label}</span>
     </div>
   );
 }
@@ -176,7 +180,7 @@ interface RatingValueProps {
 
 function RatingValue({ value }: RatingValueProps) {
   return (
-    <span className="text-sm font-medium rounded-md bg-white size-6 border grid place-items-center">
+    <span className="text-sm font-medium rounded-md bg-white dark:bg-stone-700 dark:border-transparent dark:text-stone-200 size-6 border grid place-items-center">
       {value}
     </span>
   );

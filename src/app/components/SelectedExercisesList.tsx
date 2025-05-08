@@ -94,10 +94,12 @@ const SelectedExercisesList = ({
         return (
           <div
             key={`${exercise.name}-${exerciseIndex}`}
-            className="flex gap-2 p-3 border rounded-md flex-col bg-stone-50"
+            className="flex gap-2 p-3 border rounded-md flex-col bg-stone-50 dark:bg-stone-800 dark:border-transparent"
           >
             <div className="flex justify-between items-center gap-2">
-              <span>{WORKOUT_EXERCISES[exercise.name].name}</span>
+              <span className="dark:text-stone-200">
+                {WORKOUT_EXERCISES[exercise.name].name}
+              </span>
               <Button
                 variant="ghost"
                 size="icon"
@@ -116,7 +118,7 @@ const SelectedExercisesList = ({
                 >
                   <div className="flex items-center gap-2 justify-between w-full">
                     <div className="flex gap-1.5 items-center justify-center">
-                      <span className="text-sm font-medium text-stone-700">
+                      <span className="text-sm font-medium text-stone-700 dark:text-stone-500 dark:text-stone-500">
                         Sets
                       </span>
                       <Input
@@ -186,7 +188,7 @@ const SelectedExercisesList = ({
                     ) : (
                       <>
                         <div className="flex gap-1.5 items-center justify-center">
-                          <span className="text-sm font-medium text-stone-700">
+                          <span className="text-sm font-medium text-stone-700 dark:text-stone-500 dark:text-stone-500">
                             Reps
                           </span>
                           <Input

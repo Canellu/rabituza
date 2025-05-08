@@ -73,7 +73,7 @@ const ActivityCardHangboard = ({
           <Trash2 className="text-secondary" />
         </div>
         <motion.div
-          className="border rounded-xl p-4 space-y-3 bg-white relative"
+          className="border rounded-xl p-4 space-y-3 bg-white relative  dark:bg-stone-800 dark:border-transparent"
           drag="x"
           dragDirectionLock
           dragConstraints={{ left: -250, right: 0 }}
@@ -90,7 +90,7 @@ const ActivityCardHangboard = ({
               {Icon && (
                 <Icon className="text-white size-6 rounded-md bg-emerald-500 p-1" />
               )}
-              <span className="text-lg font-semibold inter text-stone-700">
+              <span className="text-lg font-semibold inter text-stone-700 dark:text-stone-200">
                 {activityOptions.find((opt) => opt.id === activity.type)?.label}
               </span>
             </div>
@@ -101,7 +101,7 @@ const ActivityCardHangboard = ({
           </div>
 
           {activity.note && (
-            <p className="text-sm text-stone-600 line-clamp-5 whitespace-pre-line">
+            <p className="text-sm text-stone-600 line-clamp-5 whitespace-pre-line dark:text-stone-200">
               {activity.note}
             </p>
           )}
@@ -111,10 +111,10 @@ const ActivityCardHangboard = ({
                 key={index}
                 className="flex items-center justify-between bg-stone-50 rounded-md p-2 text-sm"
               >
-                <span className="font-medium text-stone-700">
+                <span className="font-medium text-stone-700 dark:text-stone-500 dark:text-stone-500">
                   {edge.size} mm
                 </span>
-                <div className="flex gap-3 text-stone-600">
+                <div className="flex gap-3 text-stone-600 dark:text-stone-300">
                   <span>
                     {edge.sets} {edge.sets === 1 ? 'set' : 'sets'}
                   </span>

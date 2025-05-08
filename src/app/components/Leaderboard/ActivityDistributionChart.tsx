@@ -49,7 +49,7 @@ const ActivityDistributionChart = ({
       <div className="flex items-center justify-between w-full">
         <span className="text-lg font-medium">Activity Distribution</span>
       </div>
-      <div className="w-full border p-4 rounded-md">
+      <div className="w-full border p-4 rounded-md dark:border-stone-800">
         <ChartContainer config={chartConfig}>
           <BarChart
             data={chartData}

@@ -75,7 +75,7 @@ const ActivityCardStretching = ({
           <Trash2 className="text-secondary" />
         </div>
         <motion.div
-          className="border rounded-xl p-4 space-y-3 bg-white relative"
+          className="border rounded-xl p-4 space-y-3 bg-white relative dark:border-transparent dark:bg-stone-800 "
           drag="x"
           dragDirectionLock
           dragConstraints={{ left: -250, right: 0 }}
@@ -92,7 +92,7 @@ const ActivityCardStretching = ({
               {Icon && (
                 <Icon className="text-white size-6 rounded-md bg-emerald-500 p-1" />
               )}
-              <span className="text-lg font-semibold inter text-stone-700">
+              <span className="text-lg font-semibold inter text-stone-700 dark:text-stone-200">
                 {activityOptions.find((opt) => opt.id === activity.type)?.label}
               </span>
             </div>
@@ -107,7 +107,7 @@ const ActivityCardStretching = ({
           </div>
 
           {activity.note && (
-            <p className="text-sm text-stone-600 line-clamp-5 whitespace-pre-line">
+            <p className="text-sm text-stone-600 line-clamp-5 whitespace-pre-line dark:text-stone-200">
               {activity.note}
             </p>
           )}
@@ -116,7 +116,7 @@ const ActivityCardStretching = ({
             {activity.stretches.map((stretch, idx) => (
               <span
                 key={idx}
-                className="px-2 py-0.5 border flex items-center justify-center rounded-md text-xs bg-stone-50 font-medium text-stone-700"
+                className="px-2 py-0.5 border flex items-center justify-center rounded-md text-xs bg-stone-50 font-medium text-stone-700 dark:text-stone-400 dark:bg-stone-700  dark:border-stone-600"
               >
                 {stretch}
               </span>

@@ -442,7 +442,7 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
           commandProps?.onKeyDown?.(e);
         }}
         className={cn(
-          'h-auto overflow-visible bg-transparent',
+          'h-auto overflow-visible bg-transparent dark:bg-stone-800',
           commandProps?.className
         )}
         shouldFilter={
@@ -496,7 +496,7 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                     }}
                     onClick={() => handleUnselect(option)}
                   >
-                    <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
+                    <X className="h-3 w-3 text-muted-foreground hover:text-foreground dark:text-stone-700" />
                   </button>
                 </Badge>
               );
@@ -543,7 +543,7 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                 onChange?.(selected.filter((s) => s.fixed));
               }}
               className={cn(
-                'absolute right-0 h-6 w-6 p-0 border flex items-center justify-center',
+                'absolute right-0 h-6 w-6 p-0 border flex items-center justify-center rounded-sm dark:border-transparent',
                 (hideClearAllButton ||
                   disabled ||
                   selected.length < 1 ||
@@ -558,7 +558,7 @@ const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
         <div className="relative">
           {open && (
             <CommandList
-              className="absolute top-1 z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in"
+              className="absolute top-1 z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in dark:border-transparent"
               onMouseLeave={() => {
                 setOnScrollbar(false);
               }}

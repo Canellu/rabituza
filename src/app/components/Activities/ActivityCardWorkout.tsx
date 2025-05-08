@@ -86,7 +86,7 @@ const ActivityCardWorkout = ({
           <Trash2 className="text-secondary" />
         </div>
         <motion.div
-          className="border rounded-xl p-4 space-y-3 bg-white relative"
+          className="border rounded-xl p-4 space-y-3 bg-white relative dark:bg-stone-800 dark:border-transparent"
           drag="x"
           dragDirectionLock
           dragConstraints={{ left: -250, right: 0 }}
@@ -103,7 +103,7 @@ const ActivityCardWorkout = ({
               {Icon && (
                 <Icon className="text-white size-6 rounded-md bg-emerald-500 p-1" />
               )}
-              <span className="text-lg font-semibold inter text-stone-700">
+              <span className="text-lg font-semibold inter text-stone-700 dark:text-stone-200">
                 {activityOptions.find((opt) => opt.id === activity.type)?.label}
               </span>
             </div>
@@ -114,7 +114,7 @@ const ActivityCardWorkout = ({
           </div>
 
           {activity.note && (
-            <p className="text-sm text-stone-600 line-clamp-5 whitespace-pre-line">
+            <p className="text-sm text-stone-600 line-clamp-5 whitespace-pre-line dark:text-stone-200">
               {activity.note}
             </p>
           )}
@@ -122,10 +122,12 @@ const ActivityCardWorkout = ({
           <div className="space-y-4">
             {Object.entries(groupedExercises).map(([group, exercises]) => (
               <div key={group} className="space-y-2">
-                <h3 className="text-sm font-medium text-stone-500">{group}</h3>
+                <h3 className="text-sm font-medium text-stone-500 dark:text-stone-400">
+                  {group}
+                </h3>
                 {exercises.map((exercise, index) => (
                   <div key={index} className="space-y-1.5">
-                    <span className="font-medium text-stone-700">
+                    <span className="font-medium text-stone-700 dark:text-stone-500">
                       {
                         WORKOUT_EXERCISES[
                           exercise.name as keyof typeof WORKOUT_EXERCISES
@@ -135,9 +137,9 @@ const ActivityCardWorkout = ({
                     {exercise.setGroups?.map((setGroup, setIndex) => (
                       <div
                         key={setIndex}
-                        className="flex items-center justify-end bg-stone-50 rounded-md p-2 text-sm"
+                        className="flex items-center justify-end bg-stone-50 rounded-md p-2 text-sm dark:bg-stone-900"
                       >
-                        <div className="flex gap-3 text-stone-600">
+                        <div className="flex gap-3 text-stone-600 dark:text-stone-300">
                           <span>
                             {setGroup.sets}{' '}
                             {setGroup.sets === 1 ? 'set' : 'sets'}

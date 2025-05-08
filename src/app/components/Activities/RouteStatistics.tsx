@@ -106,12 +106,12 @@ const RouteStatistics = ({ routes }: RouteStatisticsProps) => {
   ];
 
   return (
-    <div className="bg-stone-50 p-4 rounded-lg space-y-2 border">
+    <div className="bg-stone-50 p-4 rounded-lg space-y-2 border dark:bg-stone-800 dark:text-stone-300 dark:border-transparent">
       <h3 className="font-semibold text-sm">Route Statistics</h3>
       <div className="grid grid-cols-2 gap-2 text-sm">
         {statItems.map((item) => (
           <div key={item.label}>
-            <p className="text-stone-500">{item.label}</p>
+            <p className="text-stone-500 dark:text-stone-400">{item.label}</p>
             <p className="font-medium">{item.value}</p>
           </div>
         ))}

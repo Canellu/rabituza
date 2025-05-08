@@ -102,7 +102,7 @@ const ActivityCardRunning = ({
     <>
       <ResizablePanel.Root
         value={showCard}
-        className="rounded-xl bg-white border"
+        className="rounded-xl bg-white dark:bg-stone-800 dark:border-transparent border"
       >
         <ResizablePanel.Content value="recording">
           <motion.div className="relative">
@@ -120,7 +120,9 @@ const ActivityCardRunning = ({
             </div>
 
             <motion.div
-              className={cn('rounded-xl p-4 space-y-3 bg-white relative')}
+              className={cn(
+                'rounded-xl p-4 space-y-3 bg-white relative dark:bg-stone-800 dark:border-transparent'
+              )}
               {...(!readOnly && {
                 drag: 'x',
                 dragDirectionLock: true,
@@ -146,7 +148,7 @@ const ActivityCardRunning = ({
                 <div className="flex items-end justify-between">
                   <div className="flex items-center gap-1 flex-wrap">
                     {/* Duration */}
-                    <p className="px-2 py-0.5 border flex items-center justify-center rounded-md text-xs bg-stone-50 font-medium text-stone-700">
+                    <p className="px-2 py-0.5 border flex items-center justify-center rounded-md text-xs bg-stone-50 font-medium text-stone-700 dark:text-stone-400 dark:bg-stone-700  dark:border-stone-800">
                       {formatDuration(
                         calculateTotalRouteDuration(activity.routes)
                       )}
@@ -154,13 +156,13 @@ const ActivityCardRunning = ({
                     {/* Distance */}
                     {activity.distance !== undefined &&
                       activity.distance > 0 && (
-                        <p className="capitalize px-2 py-0.5 border flex items-center justify-center rounded-md text-xs bg-stone-50 font-medium text-stone-700">
+                        <p className="capitalize px-2 py-0.5 border flex items-center justify-center rounded-md text-xs bg-stone-50 font-medium text-stone-700 dark:text-stone-400 dark:bg-stone-700  dark:border-stone-800">
                           {(activity.distance / 1000).toFixed(2)} km
                         </p>
                       )}
                     {/* Pace */}
                     {pace !== null && (
-                      <p className="capitalize px-2 py-0.5 border flex items-center justify-center rounded-md text-xs bg-stone-50 font-medium text-stone-700">
+                      <p className="capitalize px-2 py-0.5 border flex items-center justify-center rounded-md text-xs bg-stone-50 font-medium text-stone-700 dark:text-stone-400 dark:bg-stone-700  dark:border-stone-800">
                         {formatPace(pace)}
                       </p>
                     )}
@@ -195,7 +197,7 @@ const ActivityCardRunning = ({
                 </div>
 
                 {/* Route summary section */}
-                <div className="bg-stone-100 p-2 rounded-md mt-3 text-sm text-stone-700">
+                <div className="bg-stone-100 p-2 rounded-md mt-3 text-sm text-stone-700 dark:bg-stone-700 dark:text-stone-300">
                   {activity.routes && activity.routes.length > 0 ? (
                     <div className="flex flex-col gap-1">
                       <div className="flex items-center justify-between">
@@ -204,7 +206,7 @@ const ActivityCardRunning = ({
                           {activity.routes.length > 1 ? 's' : ''} saved
                         </span>
                       </div>
-                      <div className="flex items-center justify-between text-xs text-stone-500">
+                      <div className="flex items-center justify-between text-xs text-stone-400">
                         <span>
                           Total time:{' '}
                           <span className="tracking-wider">
@@ -214,7 +216,7 @@ const ActivityCardRunning = ({
                           </span>
                         </span>
                       </div>
-                      <div className="flex items-center justify-between text-xs text-stone-500">
+                      <div className="flex items-center justify-between text-xs text-stone-400">
                         <span>
                           Total distance:{' '}
                           <span className="tracking-wider">
@@ -227,7 +229,7 @@ const ActivityCardRunning = ({
                       </div>
                     </div>
                   ) : (
-                    <span className="text-stone-500">
+                    <span className="text-stone-500 dark:text-stone-400">
                       No routes recorded yet
                     </span>
                   )}

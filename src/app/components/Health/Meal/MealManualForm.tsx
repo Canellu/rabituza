@@ -95,7 +95,7 @@ const MealManualForm = ({
             <div
               className={cn(
                 'absolute top-1/2 -translate-y-1/2 right-0',
-                'border bg-stone-50 rounded-r-md',
+                'border bg-stone-50 dark:bg-stone-800 dark:border-transparent rounded-r-md',
                 'text-xs text-muted-foreground',
                 'flex items-center justify-center h-full',
                 'px-2',

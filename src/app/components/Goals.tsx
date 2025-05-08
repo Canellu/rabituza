@@ -191,7 +191,7 @@ const Goals = () => {
 
   return (
     <>
-      <div className="sticky top-0 z-10 py-4 flex items-center justify-between gap-2 bg-stone-50 px-6 ">
+      <div className="sticky top-0 z-10 py-4 flex items-center justify-between gap-2 bg-stone-50 px-6 dark:bg-stone-900">
         <Tabs
           value={activeTab}
           onValueChange={(value) => setActiveTab(value as TimePeriod)}
@@ -211,7 +211,9 @@ const Goals = () => {
             size="icon"
             variant="secondary"
             className={cn(
-              isOrdering ? 'shadow-inner !bg-stone-200 border-stone-300' : ''
+              isOrdering
+                ? 'shadow-inner !bg-stone-200 border-stone-300 dark:!bg-stone-800 dark:border-stone-700'
+                : 'dark:border-transparent'
             )}
             onClick={() => setIsOrdering((prev) => !prev)}
           >
@@ -222,7 +224,7 @@ const Goals = () => {
       <div className="px-6 relative flex flex-col gap-4 pb-10 min-h-full">
         {/* Display the goal counter */}
         {haveGoals && (
-          <div className="text-stone-700 geist-mono font-medium tracking-tight  px-4 py-2 text-center text-sm border rounded-md max-w-max place-self-center">
+          <div className="text-stone-700 geist-mono font-medium tracking-tight  px-4 py-2 text-center text-sm border rounded-md max-w-max place-self-center dark:border-stone-700 dark:text-stone-400">
             {completedGoals > 0 && (
               <span>
                 {completedGoals} of {totalGoals} goals completed
@@ -270,7 +272,7 @@ const Goals = () => {
         )}
 
         {!isLoading && !error && !haveGoals && (
-          <div className="text-stone-600 text-center p-4 mx-auto">
+          <div className="text-stone-600 dark:text-stone-400 text-center p-4 mx-auto">
             {activeTab === TimePeriod.Year &&
               `You have no goals for ${year} 🥲`}
             {activeTab === TimePeriod.Q1 &&

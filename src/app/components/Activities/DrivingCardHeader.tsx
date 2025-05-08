@@ -19,7 +19,7 @@ const DrivingCardHeader = ({
         {Icon && (
           <Icon className="text-white size-6 rounded-md bg-emerald-500 p-1" />
         )}
-        <span className="text-lg font-semibold inter text-stone-700">
+        <span className="text-lg font-semibold inter text-stone-700 dark:text-stone-200">
           {title}
         </span>
       </div>

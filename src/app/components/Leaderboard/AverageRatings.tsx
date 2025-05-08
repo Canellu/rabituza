@@ -17,7 +17,7 @@ interface StatBoxProps {
 const StatBox = ({ Icon, value, label }: StatBoxProps) => (
   <div
     className={cn(
-      'border aspect-square rounded-xl ',
+      'border aspect-square rounded-xl dark:border-stone-800 ',
       'flex-col flex items-center justify-center gap-1'
     )}
   >

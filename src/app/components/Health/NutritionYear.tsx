@@ -58,7 +58,7 @@ const NutritionYear = ({ entries = [] }: NutritionYearProps) => {
   );
 
   return (
-    <div className="overflow-auto border bg-gradient-to-b from-white to-emerald-50 rounded-md px-2 pt-10 pb-2">
+    <div className="overflow-auto border bg-gradient-to-b from-white to-emerald-50 dark:from-emerald-700 dark:to-emerald-800 rounded-md px-2 pt-10 pb-2">
       <ChartContainer config={chartConfig} className="h-[273px] w-[680px]">
         <BarChart data={monthlyData}>
           <defs>

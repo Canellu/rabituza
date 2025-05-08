@@ -21,13 +21,13 @@ const MealTypeSelector = ({
         onValueChange={(value) => {
           if (value) onMealTypeChange(value as MealType); // Prevent deselection
         }}
-        className="grid grid-cols-4 bg-stone-50 border rounded-md p-1"
+        className="grid grid-cols-4 bg-stone-50 border rounded-md p-1 dark:bg-stone-800 dark:border-transparent"
       >
         {Object.entries(MealTypes).map(([key, value]) => (
           <ToggleGroupItem
             key={value}
             value={value}
-            className="data-[state=on]:bg-stone-200 capitalize px-2 py-1 h-8"
+            className="data-[state=on]:bg-stone-200 dark:data-[state=on]:bg-stone-700 capitalize px-2 py-1 h-8"
           >
             {key}
           </ToggleGroupItem>

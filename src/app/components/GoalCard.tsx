@@ -57,8 +57,8 @@ const GoalCard = ({
           className={cn(
             'bg-gradient-to-tr',
             goal.status === GoalStatus.Completed
-              ? ' from-emerald-100 to-emerald-500 shadow-md ring-transparent'
-              : 'bg-white ring-stone-200 ',
+              ? ' from-emerald-100 to-emerald-500 shadow-md ring-transparent dark:from-emerald-800 dark:to-emerald-950'
+              : 'bg-white dark:bg-stone-800 ring-stone-200 dark:ring-transparent',
             'rounded-xl p-5 ring-1 flex flex-row gap-3 items-center w-full',
             'relative',
             isOrdering ? 'pl-3' : 'pl-5'
@@ -83,11 +83,20 @@ const GoalCard = ({
             )}
           />
           <div className="flex-grow">
-            <h2 className="text-lg font-semibold capitalize text-stone-800">
+            <h2 className="text-lg font-semibold capitalize text-stone-800 dark:text-stone-200">
               {goal.title}
             </h2>
-            <p className="text-stone-700 text-sm">{goal.description}</p>
-            <p className="text-stone-600 text-xs mt-1 italic">
+            <p className="text-stone-700 dark:text-stone-300 text-sm">
+              {goal.description}
+            </p>
+            <p
+              className={cn(
+                'text-stone-600 text-xs mt-1 italic',
+                goal.status === GoalStatus.Completed
+                  ? 'dark:text-stone-400'
+                  : 'dark:text-stone-500'
+              )}
+            >
               Category: {goal.category}
             </p>
             {goal.tags && goal.tags.length > 0 && (
@@ -96,9 +105,9 @@ const GoalCard = ({
                   <span
                     key={tag}
                     className={cn(
-                      ' text-stone-700 border text-xs px-2 py-1 rounded-full',
+                      ' text-stone-700 dark:text-stone-300 border text-xs px-2 py-1 rounded-full dark:border-stone-600/70',
                       goal.status === GoalStatus.Completed
-                        ? 'bg-white/30 backdrop-blur-sm border-white/20'
+                        ? 'bg-white/30 backdrop-blur-sm border-white/20 dark:bg-black/10'
                         : 'bg-secondary text-stone-700'
                     )}
                   >
@@ -111,8 +120,9 @@ const GoalCard = ({
           {onCheck && (
             <Checkbox
               className={cn(
-                'size-5 bg-white',
-                'data-[state=checked]:bg-emerald-100 data-[state=checked]:text-emerald-700 data-[state=checked]:border-emerald-100'
+                'size-5 bg-white dark:bg-stone-700',
+                'data-[state=checked]:bg-emerald-100 data-[state=checked]:text-emerald-700 data-[state=checked]:border-emerald-100',
+                'dark:data-[state=checked]:border-transparent dark:data-[state=checked]:bg-emerald-800 dark:data-[state=checked]:text-emerald-400'
               )}
               onClick={(e) => {
                 e.stopPropagation();

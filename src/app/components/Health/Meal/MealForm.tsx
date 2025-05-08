@@ -99,7 +99,7 @@ const MealForm = ({ initialMeal, onClose }: MealFormProps) => {
             onMealTypeChange={setMealType}
           />
 
-          <div className="bg-stone-50 rounded-md border p-4 flex flex-col gap-3">
+          <div className="bg-stone-50 rounded-md border p-4 flex flex-col gap-3 dark:bg-stone-800 dark:border-transparent">
             <div className="flex justify-between items-center">
               <h2 className="font-medium flex items-center gap-2">
                 Add items to meal

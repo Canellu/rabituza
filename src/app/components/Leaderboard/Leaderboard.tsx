@@ -138,7 +138,7 @@ const Leaderboard = () => {
           </PopoverContent>
         </Popover>
       </h2>
-      <div className="grid grid-cols-5 px-3 text-sm font-medium text-stone-500">
+      <div className="grid grid-cols-5 px-3 text-sm font-medium text-stone-500 dark:text-stone-400">
         <span>Rank</span>
         <span className="col-span-3">Username</span>
         <span className="text-end">Score</span>

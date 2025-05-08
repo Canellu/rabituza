@@ -36,8 +36,8 @@ const ToughestCountdown = () => {
   }, []);
 
   return (
-    <div className="flex flex-col gap-3 p-4 bg-gradient-to-tl to-60% from-emerald-400 to-emerald-900 rounded-xl">
-      <h2 className="text-2xl font-bold bg-gradient-to-b from-stone-300 to-stone-50 bg-clip-text text-transparent">
+    <div className="flex flex-col gap-3 p-4 bg-gradient-to-tl to-60% from-emerald-400 to-emerald-900 rounded-xl dark:to-emerald-900/50 dark:from-emerald-400/50">
+      <h2 className="text-2xl font-bold bg-gradient-to-b from-stone-300 to-stone-50 bg-clip-text text-transparent text-stone-400">
         Time until Race Day
       </h2>
       <div className="grid grid-cols-4 gap-2">
@@ -75,7 +75,7 @@ const DigitContainer = ({ children }: { children: ReactNode }) => {
 
 const Digit = ({ children }: { children: ReactNode }) => {
   return (
-    <div className="text-2xl text-stone-50 font-bold geist-mono">
+    <div className="text-2xl text-stone-50 font-bold geist-mono dark:text-stone-200">
       {children}
     </div>
   );
@@ -83,7 +83,7 @@ const Digit = ({ children }: { children: ReactNode }) => {
 
 const Subtext = ({ children }: { children: ReactNode }) => {
   return (
-    <div className="text-gray-100 tracking-wide text-[0.6rem] font-bold uppercase">
+    <div className="text-gray-100 tracking-wide text-[0.6rem] font-bold uppercase dark:text-gray-200">
       {children}
     </div>
   );

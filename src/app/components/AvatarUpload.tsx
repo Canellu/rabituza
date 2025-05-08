@@ -142,7 +142,7 @@ const AvatarUpload = ({ user }: AvatarUploadProps) => {
             onSubmit={handleUpload}
             className="flex flex-col items-center gap-4"
           >
-            <p className="text-sm text-stone-600 text-start w-full">
+            <p className="text-sm text-stone-600 dark:text-stone-400 text-start w-full">
               Maximum file size: 5MB
             </p>
 
@@ -153,7 +153,7 @@ const AvatarUpload = ({ user }: AvatarUploadProps) => {
               required
               accept="image/*"
               onChange={handleFileChange}
-              className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
+              className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none dark:border-transparent dark:bg-stone-800 dark:text-gray-300"
             />
 
             <div
