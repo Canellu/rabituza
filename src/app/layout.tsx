@@ -1,3 +1,4 @@
+import { Analytics } from '@vercel/analytics/react';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono, Inter } from 'next/font/google';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -92,6 +93,7 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased bg-stone-50 dark:bg-stone-900`}
       >
+        <Analytics />
         <Providers>
           <ProtectedRoute>
             <SplashScreen />
