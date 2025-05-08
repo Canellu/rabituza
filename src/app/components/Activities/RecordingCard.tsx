@@ -157,203 +157,220 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
   const { value: dataAmount, unit: dataUnit } = bytesToText(dataSize);
 
   return (
-    <div
-      className={cn(
-        'p-4 rounded-lg bg-white dark:bg-stone-800',
-        'flex flex-col gap-3 border-2 border-transparent transition-all duration-500',
-        (isRecording || isPaused) && 'border-emerald-600'
-      )}
-    >
-      <ActivityCardHeader activity={activity} />
-
-      <div className="flex items-center justify-between gap-2">
-        <ToggleGroup
-          type="single"
-          value={minInterval.toString()}
-          onValueChange={(value) => setMinInterval(Number(value))}
-          className="flex flex-grow justify-evenly gap-1 border bg-stone-50 rounded-md p-1 dark:bg-stone-900 dark:border-transparent"
-        >
-          {['500', '1000', '2000', '3000', '5000'].map((interval) => (
-            <ToggleGroupItem
-              key={interval}
-              value={interval}
-              className="data-[state=on]:bg-stone-200 px-2 py-1 h-8 flex-grow dark:data-[state=on]:bg-stone-700"
-              disabled={!isIntervalEnabled}
-            >
-              {Number(interval) >= 1000
-                ? (Number(interval) / 1000).toFixed(0)
-                : (Number(interval) / 1000).toFixed(1)}
-            </ToggleGroupItem>
-          ))}
-        </ToggleGroup>
-        <Switch
-          checked={isIntervalEnabled}
-          onCheckedChange={(checked) => setIsIntervalEnabled(checked)}
+    <>
+      {(isRecording || isPaused) && (
+        <div
+          className="fixed inset-0 bg-black/90 z-[999999]"
+          onClick={(e) => e.preventDefault()}
+          onTouchStart={(e) => e.preventDefault()}
+          onTouchMove={(e) => e.preventDefault()}
+          onWheel={(e) => e.preventDefault()}
         />
-      </div>
+      )}
+      <div
+        className={cn(
+          'p-4 rounded-lg bg-white dark:bg-stone-800',
+          'flex flex-col gap-3 border-2 border-transparent transition-all duration-500',
+          (isRecording || isPaused) && 'border-emerald-600'
+        )}
+      >
+        <ActivityCardHeader activity={activity} />
 
-      <div className="items-center flex justify-center gap-4 py-4 border rounded-md dark:border-stone-700">
-        <Button
-          onClick={startRecording}
-          size="icon"
-          variant="secondary"
-          disabled={isStartingRecording || isRecording || isStopped}
-        >
-          <div className="bg-destructive size-3.5 rounded-full" />
-        </Button>
-        <Button
-          onClick={pauseRecording}
-          size="icon"
-          variant="secondary"
-          disabled={!isRecording || isPaused}
-        >
-          <GiPauseButton className="text-stone-700" />
-        </Button>
-        <Button
-          onClick={stopRecording}
-          size="icon"
-          variant="secondary"
-          disabled={!isRecording && !isPaused}
-        >
-          <div className="bg-destructive size-3.5 rounded-sm" />
-        </Button>
-        <Button
-          onClick={() => setShowResetModal(true)}
-          size="icon"
-          variant="secondary"
-          disabled={
-            isResetting || isRecording || locations.length === 0 || isIdle
-          }
-        >
-          <RotateCcw />
-        </Button>
-      </div>
+        <div className="flex items-center justify-between gap-2">
+          <ToggleGroup
+            type="single"
+            value={minInterval.toString()}
+            onValueChange={(value) => setMinInterval(Number(value))}
+            className="flex flex-grow justify-evenly gap-1 border bg-stone-50 rounded-md p-1 dark:bg-stone-900 dark:border-transparent"
+          >
+            {['500', '1000', '2000', '3000', '5000'].map((interval) => (
+              <ToggleGroupItem
+                key={interval}
+                value={interval}
+                className="data-[state=on]:bg-stone-200 px-2 py-1 h-8 flex-grow dark:data-[state=on]:bg-stone-700"
+                disabled={!isIntervalEnabled}
+              >
+                {Number(interval) >= 1000
+                  ? (Number(interval) / 1000).toFixed(0)
+                  : (Number(interval) / 1000).toFixed(1)}
+              </ToggleGroupItem>
+            ))}
+          </ToggleGroup>
+          <Switch
+            checked={isIntervalEnabled}
+            onCheckedChange={(checked) => setIsIntervalEnabled(checked)}
+          />
+        </div>
 
-      <div className="border rounded-md overflow-hidden dark:border-stone-700">
         <div
           className={cn(
-            'flex items-center justify-center p-4',
-
-            isRecording &&
-              locations.length > 0 &&
-              'bg-emerald-800 text-emerald-400 font-semibold '
+            'items-center flex justify-center gap-4 py-4 border rounded-md dark:border-stone-700',
+            (isRecording || isPaused) && 'z-[999999]'
           )}
         >
-          {isStartingRecording && (
-            <div className="flex items-center justify-center gap-2 text-sm text-stone-700 dark:text-stone-300">
-              <Spinner size="size-4" color="text-stone-700" />
-              <span>Initializing...</span>
-            </div>
-          )}
-          <span
+          <Button
+            onClick={startRecording}
+            size="icon"
+            variant="secondary"
+            disabled={isStartingRecording || isRecording || isStopped}
+          >
+            <div className="bg-destructive size-3.5 rounded-full" />
+          </Button>
+          <Button
+            onClick={pauseRecording}
+            size="icon"
+            variant="secondary"
+            disabled={!isRecording || isPaused}
+          >
+            <GiPauseButton className="text-stone-700" />
+          </Button>
+          <Button
+            onClick={stopRecording}
+            size="icon"
+            variant="secondary"
+            disabled={!isRecording && !isPaused}
+          >
+            <div className="bg-destructive size-3.5 rounded-sm" />
+          </Button>
+          <Button
+            onClick={() => setShowResetModal(true)}
+            size="icon"
+            variant="secondary"
+            disabled={
+              isResetting || isRecording || locations.length === 0 || isIdle
+            }
+          >
+            <RotateCcw />
+          </Button>
+        </div>
+
+        <div className="border rounded-md overflow-hidden dark:border-stone-700">
+          <div
             className={cn(
-              (isStartingRecording || isRecording) && 'animate-pulse'
+              'flex items-center justify-center p-4',
+
+              isRecording &&
+                locations.length > 0 &&
+                'bg-emerald-800 text-emerald-400 font-semibold '
             )}
           >
-            {getRecordingText()}
-          </span>
-        </div>
-        <div
-          className={cn(
-            'flex flex-col bg-secondary text-stone-700 dark:text-stone-300 dark:bg-stone-900'
-          )}
-        >
-          {locations.length === 0 && (
-            <div className="flex items-center justify-center p-2 italic text-xs border-t dark:border-t-stone-600">
-              <span>No location data recorded</span>
-            </div>
-          )}
-          {locations.length > 0 && (
-            <>
-              <div className="flex items-center justify-between px-4 py-2 border-t dark:border-t-stone-800">
-                <span>
-                  {locations.length} point{locations.length > 1 ? 's' : ''}{' '}
-                  recorded
-                </span>
-                <span className="text-end">
-                  {dataAmount} {dataUnit}
-                </span>
+            {isStartingRecording && (
+              <div className="flex items-center justify-center gap-2 text-sm text-stone-700 dark:text-stone-300">
+                <Spinner size="size-4" color="text-stone-700" />
+                <span>Initializing...</span>
               </div>
-              <div className="flex items-center justify-around px-4 py-2 border-t dark:border-t-stone-800">
-                <span>{formatTime(new Date(locations[0].timestamp))}</span>
-                <span>-</span>
-                <span>
-                  {formatTime(
-                    new Date(locations[locations.length - 1].timestamp)
-                  )}
-                </span>
+            )}
+            <span
+              className={cn(
+                (isStartingRecording || isRecording) && 'animate-pulse'
+              )}
+            >
+              {getRecordingText()}
+            </span>
+          </div>
+          <div
+            className={cn(
+              'flex flex-col bg-secondary text-stone-700 dark:text-stone-300 dark:bg-stone-900'
+            )}
+          >
+            {locations.length === 0 && (
+              <div className="flex items-center justify-center p-2 italic text-xs border-t dark:border-t-stone-600">
+                <span>No location data recorded</span>
               </div>
-              <div className="px-4 py-2 border-t flex items-center justify-between dark:border-t-stone-800">
-                <div className="flex items-center justify-center gap-2">
-                  <Crosshair className="size-5" /> {currentAccuracy.toFixed(1)}m
+            )}
+            {locations.length > 0 && (
+              <>
+                <div className="flex items-center justify-between px-4 py-2 border-t dark:border-t-stone-800">
+                  <span>
+                    {locations.length} point{locations.length > 1 ? 's' : ''}{' '}
+                    recorded
+                  </span>
+                  <span className="text-end">
+                    {dataAmount} {dataUnit}
+                  </span>
                 </div>
-                <div className="flex items-center justify-center gap-2">
-                  <Gauge className="size-5" /> {(currentSpeed * 3.6).toFixed(1)}{' '}
-                  km/h
+                <div className="flex items-center justify-around px-4 py-2 border-t dark:border-t-stone-800">
+                  <span>{formatTime(new Date(locations[0].timestamp))}</span>
+                  <span>-</span>
+                  <span>
+                    {formatTime(
+                      new Date(locations[locations.length - 1].timestamp)
+                    )}
+                  </span>
                 </div>
-              </div>
-            </>
-          )}
+                <div className="px-4 py-2 border-t flex items-center justify-between dark:border-t-stone-800">
+                  <div className="flex items-center justify-center gap-2">
+                    <Crosshair className="size-5" />{' '}
+                    {currentAccuracy.toFixed(1)}m
+                  </div>
+                  <div className="flex items-center justify-center gap-2">
+                    <Gauge className="size-5" />{' '}
+                    {(currentSpeed * 3.6).toFixed(1)} km/h
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
         </div>
-      </div>
 
-      {activity.routes && activity.routes.length > 0 && (
-        <div className="space-y-1">
-          <Label className="text-sm">Saved Routes</Label>
-          <SavedRoutesList routes={activity.routes} />
-        </div>
-      )}
+        {activity.routes && activity.routes.length > 0 && (
+          <div className="space-y-1">
+            <Label className="text-sm">Saved Routes</Label>
+            <SavedRoutesList routes={activity.routes} />
+          </div>
+        )}
 
-      <div className="flex justify-between items-center gap-2 mt-4">
-        <Button
-          variant="secondary"
-          size="sm"
-          onClick={handleExit}
-          disabled={isResetting || isStartingRecording}
-        >
-          Exit
-        </Button>
-        {isStopped && locations.length > 0 && (
+        <div className="flex justify-between items-center gap-2 mt-4">
           <Button
+            variant="secondary"
             size="sm"
-            onClick={() => setShowSaveModal(true)}
+            onClick={handleExit}
             disabled={isResetting || isStartingRecording}
           >
-            Save Current Recording
+            Exit
           </Button>
-        )}
-        {isIdle && activity.routes && activity.routes.length > 0 && (
-          <Button
-            size="sm"
-            onClick={() => setShowEndSessionModal(true)}
-            disabled={isResetting || isStartingRecording}
-          >
-            End session
-          </Button>
-        )}
+          {isStopped && locations.length > 0 && (
+            <Button
+              size="sm"
+              onClick={() => setShowSaveModal(true)}
+              disabled={isResetting || isStartingRecording}
+            >
+              Save Current Recording
+            </Button>
+          )}
+          {isIdle && activity.routes && activity.routes.length > 0 && (
+            <Button
+              size="sm"
+              onClick={() => setShowEndSessionModal(true)}
+              disabled={isResetting || isStartingRecording}
+            >
+              End session
+            </Button>
+          )}
+        </div>
+
+        {/* Reset Dialog */}
+        <ResetDialog
+          open={showResetModal}
+          onClose={() => setShowResetModal(false)}
+          onConfirm={confirmResetRecording}
+        />
+
+        {/* Save Dialog */}
+        <SaveDialog
+          open={showSaveModal}
+          onClose={() => setShowSaveModal(false)}
+          onConfirm={handleConfirmSaveRecording}
+        />
+
+        {/* End Session Dialog */}
+        <EndSessionDialog
+          open={showEndSessionModal}
+          onClose={() => setShowEndSessionModal(false)}
+          onConfirm={handleConfirmEndSesson}
+        />
       </div>
-
-      {/* Reset Dialog */}
-      <ResetDialog
-        open={showResetModal}
-        onClose={() => setShowResetModal(false)}
-        onConfirm={confirmResetRecording}
-      />
-
-      {/* Save Dialog */}
-      <SaveDialog
-        open={showSaveModal}
-        onClose={() => setShowSaveModal(false)}
-        onConfirm={handleConfirmSaveRecording}
-      />
-
-      {/* End Session Dialog */}
-      <EndSessionDialog
-        open={showEndSessionModal}
-        onClose={() => setShowEndSessionModal(false)}
-        onConfirm={handleConfirmEndSesson}
-      />
-    </div>
+    </>
   );
 };
 
