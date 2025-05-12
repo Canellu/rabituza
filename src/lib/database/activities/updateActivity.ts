@@ -7,10 +7,9 @@ import {
 import {
   collection,
   doc,
-  getDocs,
   serverTimestamp,
+  setDoc,
   updateDoc,
-  writeBatch,
 } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 
@@ -31,46 +30,27 @@ export async function updateActivity<
     const { routes, ...activityDataWithoutRoutes } = activityWithRoutes;
 
     // Handle routes as a subcollection if they exist
-    if (routes) {
+    if (routes && routes.length > 0) {
       const globalRoutesRef = collection(globalActivityRef, 'routes');
       const userRoutesRef = collection(userActivityRef, 'routes');
 
-      // Get existing routes
-      const [globalRoutesSnap, userRoutesSnap] = await Promise.all([
-        getDocs(globalRoutesRef),
-        getDocs(userRoutesRef),
-      ]);
+      // Handle each new route that doesn't have an ID
+      for (const route of routes) {
+        if (!route.id || route.id === 'temp') {
+          const routeId = doc(collection(db, 'temp')).id;
+          const routeData = {
+            id: routeId,
+            geolocations: route.geolocations,
+            createdAt: serverTimestamp(),
+          };
 
-      const batch = writeBatch(db);
-
-      // Delete routes that are no longer in the routes array
-      const currentRouteIds = routes.map((route) => route.id);
-      globalRoutesSnap.docs.forEach((doc) => {
-        if (!currentRouteIds.includes(doc.id)) {
-          batch.delete(doc.ref);
+          // Add route to both locations with the same ID
+          await Promise.all([
+            setDoc(doc(globalRoutesRef, routeId), routeData),
+            setDoc(doc(userRoutesRef, routeId), routeData),
+          ]);
         }
-      });
-      userRoutesSnap.docs.forEach((doc) => {
-        if (!currentRouteIds.includes(doc.id)) {
-          batch.delete(doc.ref);
-        }
-      });
-
-      // Add new routes that don't have an ID yet
-      const newRoutes = routes.filter((route) => !route.id);
-      for (const route of newRoutes) {
-        const routeId = doc(collection(db, 'temp')).id;
-        const routeData = {
-          id: routeId,
-          geolocations: route.geolocations,
-          createdAt: serverTimestamp(),
-        };
-        batch.set(doc(globalRoutesRef, routeId), routeData);
-        batch.set(doc(userRoutesRef, routeId), routeData);
       }
-
-      // Commit all route changes
-      await batch.commit();
     }
 
     // Update main documents without routes
