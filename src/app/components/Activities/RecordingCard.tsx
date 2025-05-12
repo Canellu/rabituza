@@ -114,14 +114,15 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
       return;
     }
 
-    const { routes: _, ...activityWithoutRoutes } = activity;
+    const { routes: existingRoutes = [], ...activityWithoutRoutes } = activity;
 
     const updatedActivity = {
       ...activityWithoutRoutes,
       routes: [
+        ...existingRoutes,
         {
-          id: 'temp', // This will be replaced by Firestore
-          createdAt: new Date(), // This will be replaced by Firestore
+          id: crypto.randomUUID(), // Generate a unique ID
+          createdAt: new Date(), // Set current date
           geolocations: allLocations,
         },
       ],
