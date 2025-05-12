@@ -329,7 +329,7 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
         >
           <div
             className={cn(
-              'flex items-center justify-center p-4 text-stone-100',
+              'flex items-center justify-center p-4 text-stone-600 dark:text-stone-400',
               isRecording &&
                 locations.length > 0 &&
                 'bg-emerald-800 text-emerald-400 font-semibold'
