@@ -6,6 +6,7 @@ import {
 } from '@/types/Activity';
 import {
   collection,
+  deleteDoc,
   doc,
   serverTimestamp,
   setDoc,
@@ -30,13 +31,17 @@ export async function updateActivity<
     const { routes, ...activityDataWithoutRoutes } = activityWithRoutes;
 
     // Handle routes as a subcollection if they exist
-    if (routes && routes.length > 0) {
+    if (routes) {
       const globalRoutesRef = collection(globalActivityRef, 'routes');
       const userRoutesRef = collection(userActivityRef, 'routes');
 
-      // Handle each new route that doesn't have an ID
+      // Get existing route IDs to track which ones to delete
+      const existingRouteIds = new Set(routes.map((route) => route.id));
+
+      // Handle each route
       for (const route of routes) {
         if (!route.id || route.id === 'temp') {
+          // Handle new routes
           const routeId = doc(collection(db, 'temp')).id;
           const routeData = {
             id: routeId,
@@ -50,6 +55,20 @@ export async function updateActivity<
             setDoc(doc(userRoutesRef, routeId), routeData),
           ]);
         }
+      }
+
+      // Delete routes that are no longer in the routes array
+      const deletePromises = [];
+      for (const routeId of existingRouteIds) {
+        if (!routes.find((r) => r.id === routeId)) {
+          deletePromises.push(
+            deleteDoc(doc(globalRoutesRef, routeId)),
+            deleteDoc(doc(userRoutesRef, routeId))
+          );
+        }
+      }
+      if (deletePromises.length > 0) {
+        await Promise.all(deletePromises);
       }
     }
 
