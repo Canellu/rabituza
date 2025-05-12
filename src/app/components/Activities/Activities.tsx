@@ -113,7 +113,7 @@ const Activities = () => {
       )}
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="max-w-lg w-[96%] h-[96dvh] overflow-y-auto rounded-lg flex flex-col p-0 py-6">
+        <DialogContent className="max-w-lg w-[96%] h-[96dvh] overflow-y-auto rounded-lg flex flex-col p-0 py-6 dark:bg-stone-800 bg-stone-50">
           <DialogHeader>
             <DialogTitle>Edit Activity</DialogTitle>
             <DialogDescription className="sr-only">

@@ -4,11 +4,7 @@ import { deleteActivity } from '@/lib/database/activities/deleteActivity';
 // Assuming running routes might be stored similarly or not at all in IDB
 // import { deleteEntriesByDate } from '@/lib/idb/running'; // Adjust if needed
 import { cn } from '@/lib/utils';
-import {
-  calculateTotalDistance,
-  calculateTotalRouteDuration,
-  formatDuration,
-} from '@/lib/utils/geolocation';
+import { formatDuration } from '@/lib/utils/time';
 import { getSession } from '@/lib/utils/userSession';
 import {
   BaseActivityType,
@@ -17,7 +13,7 @@ import {
 } from '@/types/Activity';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { MapPin, Trash2 } from 'lucide-react';
+import { Map, MapPin, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import DeleteDialog from '../DeleteDialog';
@@ -25,6 +21,7 @@ import * as ResizablePanel from '../ResizablePanel';
 import ActivityCardHeader from './ActivityCardHeader';
 import MapDialog from './MapDialog';
 import RecordingCard from './RecordingCard';
+import SavedRoutesList from './SavedRoutesList';
 
 interface ActivityCardRunningProps {
   activity: BaseActivityType & RunningDataType;
@@ -88,7 +85,7 @@ const ActivityCardRunning = ({
   // Calculate pace if distance and duration are available
   const pace =
     activity.distance && activity.duration
-      ? (activity.duration * 60) / (activity.distance / 1000) // Pace in seconds per km
+      ? activity.duration / (activity.distance / 1000)
       : null;
 
   const formatPace = (paceInSeconds: number | null) => {
@@ -139,45 +136,58 @@ const ActivityCardRunning = ({
               <ActivityCardHeader activity={activity} />
 
               <div className="flex flex-col gap-2 text-sm">
-                {/* Display Running specific details */}
                 {activity.note && (
-                  <p className="text-sm text-stone-600 line-clamp-2">
+                  <p className="text-sm text-stone-600 line-clamp-2 dark:text-stone-300">
                     {activity.note}
                   </p>
                 )}
-                <div className="flex items-end justify-between">
-                  <div className="flex items-center gap-1 flex-wrap">
+
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <div className="flex items-center gap-1 shrink-0">
                     {/* Duration */}
-                    <p className="px-2 py-0.5 border flex items-center justify-center rounded-md text-xs bg-stone-50 font-medium text-stone-700 dark:text-stone-400 dark:bg-stone-900  dark:border-stone-800">
-                      {formatDuration(
-                        calculateTotalRouteDuration(activity.routes)
-                      )}
-                    </p>
+                    <div className="px-2 py-1 border flex flex-col items-center justify-center rounded-md text-xs bg-stone-50 dark:bg-stone-900 dark:border-stone-800">
+                      <span className="text-stone-500 dark:text-stone-400 text-[10px] mb-0.5">
+                        Duration
+                      </span>
+                      <span className="font-medium text-stone-700 dark:text-stone-300">
+                        {formatDuration(activity.duration)}
+                      </span>
+                    </div>
                     {/* Distance */}
                     {activity.distance !== undefined &&
                       activity.distance > 0 && (
-                        <p className="capitalize px-2 py-0.5 border flex items-center justify-center rounded-md text-xs bg-stone-50 font-medium text-stone-700 dark:text-stone-400 dark:bg-stone-900  dark:border-stone-800">
-                          {(activity.distance / 1000).toFixed(2)} km
-                        </p>
+                        <div className="px-2 py-1 border flex flex-col items-center justify-center rounded-md text-xs bg-stone-50 dark:bg-stone-900 dark:border-stone-800">
+                          <span className="text-stone-500 dark:text-stone-400 text-[10px] mb-0.5">
+                            Distance
+                          </span>
+                          <span className="font-medium text-stone-700 dark:text-stone-300">
+                            {(activity.distance / 1000).toFixed(2)} km
+                          </span>
+                        </div>
                       )}
                     {/* Pace */}
                     {pace !== null && (
-                      <p className="capitalize px-2 py-0.5 border flex items-center justify-center rounded-md text-xs bg-stone-50 font-medium text-stone-700 dark:text-stone-400 dark:bg-stone-900  dark:border-stone-800">
-                        {formatPace(pace)}
-                      </p>
+                      <div className="px-2 py-1 border flex flex-col items-center justify-center rounded-md text-xs bg-stone-50 dark:bg-stone-900 dark:border-stone-800">
+                        <span className="text-stone-500 dark:text-stone-400 text-[10px] mb-0.5">
+                          Pace
+                        </span>
+                        <span className="font-medium text-stone-700 dark:text-stone-300">
+                          {formatPace(pace)}
+                        </span>
+                      </div>
                     )}
                   </div>
 
                   {activity.status ===
                     DistanceActivitySessionStatuses.inProgress && (
                     <Button
-                      size="sm"
+                      size="icon"
                       onClick={(e) => {
                         e.stopPropagation();
                         setShowCard('recording');
                       }}
                     >
-                      <MapPin /> Record route
+                      <MapPin />
                     </Button>
                   )}
                   {activity.routes &&
@@ -186,54 +196,21 @@ const ActivityCardRunning = ({
                       DistanceActivitySessionStatuses.completed && (
                       <Button
                         size="icon"
+                        variant="secondary"
                         onClick={(e) => {
                           e.stopPropagation();
                           setIsMapDialogOpen(true);
                         }}
                       >
-                        <MapPin />
+                        <Map />
                       </Button>
                     )}
                 </div>
 
-                {/* Route summary section */}
-                <div className="bg-stone-100 p-2 rounded-md mt-3 text-sm text-stone-700 dark:bg-stone-900 dark:text-stone-300">
-                  {activity.routes && activity.routes.length > 0 ? (
-                    <div className="flex flex-col gap-1">
-                      <div className="flex items-center justify-between">
-                        <span>
-                          {activity.routes.length} route
-                          {activity.routes.length > 1 ? 's' : ''} saved
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between text-xs text-stone-400">
-                        <span>
-                          Total time:{' '}
-                          <span className="tracking-wider">
-                            {formatDuration(
-                              calculateTotalRouteDuration(activity.routes)
-                            )}
-                          </span>
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between text-xs text-stone-400">
-                        <span>
-                          Total distance:{' '}
-                          <span className="tracking-wider">
-                            {(
-                              calculateTotalDistance(activity.routes) / 1000
-                            ).toFixed(2)}{' '}
-                            km
-                          </span>
-                        </span>
-                      </div>
-                    </div>
-                  ) : (
-                    <span className="text-stone-500 dark:text-stone-400">
-                      No routes recorded yet
-                    </span>
-                  )}
-                </div>
+                {/* Use SavedRoutesList for consistent route display */}
+                {activity.routes && activity.routes.length > 0 && (
+                  <SavedRoutesList routes={activity.routes} />
+                )}
               </div>
             </motion.div>
           </motion.div>

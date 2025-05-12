@@ -9,8 +9,10 @@ import useRecordGeolocation, {
 import { getAllLocationsFromDB } from '@/lib/idb/activityLocations';
 import { cn } from '@/lib/utils';
 import bytesToText from '@/lib/utils/bytesToText';
+import { haversineDistance } from '@/lib/utils/geolocation'; // Updated import
 import { formatTime } from '@/lib/utils/time';
 import {
+  ActivityTypes,
   BaseActivityType,
   DistanceActivitySessionStatuses,
   DrivingDataType,
@@ -71,7 +73,7 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
       queryClient.invalidateQueries({
         queryKey: ['activities', activity.userId],
       });
-      console.log('Activity updated with new route');
+      console.log('Activity updated');
     },
     onError: (error) => {
       console.error('Failed to update activity:', error);
@@ -139,9 +141,63 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
   const handleConfirmEndSesson = async () => {
     const { routes: _, ...activityWithoutRoutes } = activity;
 
+    // Calculate total duration and distance from all routes
+    let totalDurationSeconds = 0;
+    let totalDistance = 0;
+
+    // Calculate from existing routes
+    if (activity.routes) {
+      // For driving, we need the first location of the first route and last location of the last route
+      if (activity.type === ActivityTypes.Driving) {
+        const firstRoute = activity.routes[0];
+        const lastRoute = activity.routes[activity.routes.length - 1];
+
+        if (firstRoute && lastRoute) {
+          const firstLocation = firstRoute.geolocations[0];
+          const lastLocation =
+            lastRoute.geolocations[lastRoute.geolocations.length - 1];
+
+          if (firstLocation && lastLocation) {
+            totalDurationSeconds = Math.floor(
+              (lastLocation.timestamp - firstLocation.timestamp) / 1000
+            );
+          }
+        }
+      } else {
+        // For non-driving activities, continue adding up durations from each route
+        activity.routes.forEach((route) => {
+          const firstLocation = route.geolocations[0];
+          const lastLocation =
+            route.geolocations[route.geolocations.length - 1];
+
+          if (firstLocation && lastLocation) {
+            totalDurationSeconds += Math.floor(
+              (lastLocation.timestamp - firstLocation.timestamp) / 1000
+            );
+          }
+        });
+      }
+
+      // Calculate total distance (same for all activity types)
+      activity.routes.forEach((route) => {
+        route.geolocations.forEach((location, index) => {
+          if (index === 0) return;
+          const prevLocation = route.geolocations[index - 1];
+          totalDistance += haversineDistance(
+            prevLocation.latitude,
+            prevLocation.longitude,
+            location.latitude,
+            location.longitude
+          );
+        });
+      });
+    }
+
     const updatedActivity = {
       ...activityWithoutRoutes,
       status: DistanceActivitySessionStatuses.completed,
+      duration: totalDurationSeconds, // Now we always set duration
+      distance: Math.round(totalDistance), // Round to nearest meter
     };
 
     mutate(updatedActivity);
@@ -152,6 +208,21 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
   const handleExit = () => {
     resetRecording();
     onExit();
+  };
+
+  const handleDeleteRoute = async (routeId: string) => {
+    if (!activity.routes || !activity.id) return;
+
+    const updatedRoutes = activity.routes.filter(
+      (route) => route.id !== routeId
+    );
+
+    const updatedActivity = {
+      ...activity,
+      routes: updatedRoutes,
+    };
+
+    mutate(updatedActivity);
   };
 
   const { value: dataAmount, unit: dataUnit } = bytesToText(dataSize);
@@ -205,14 +276,19 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
         <div
           className={cn(
             'items-center flex justify-center gap-4 py-4 border rounded-md dark:border-stone-700',
-            (isRecording || isPaused) && 'z-[999999]'
+            (isRecording || isPaused) &&
+              'z-[999999] bg-stone-50/10 dark:bg-stone-800'
           )}
         >
           <Button
             onClick={startRecording}
             size="icon"
             variant="secondary"
-            disabled={isStartingRecording || isRecording || isStopped}
+            disabled={
+              isStartingRecording ||
+              isRecording ||
+              (isStopped && locations.length > 0)
+            }
           >
             <div className="bg-destructive size-3.5 rounded-full" />
           </Button>
@@ -244,14 +320,19 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
           </Button>
         </div>
 
-        <div className="border rounded-md overflow-hidden dark:border-stone-700">
+        <div
+          className={cn(
+            'border rounded-md overflow-hidden dark:border-stone-700',
+            (isRecording || isPaused) &&
+              'z-[999999] bg-stone-50/10 dark:bg-stone-800'
+          )}
+        >
           <div
             className={cn(
-              'flex items-center justify-center p-4',
-
+              'flex items-center justify-center p-4 text-stone-100',
               isRecording &&
                 locations.length > 0 &&
-                'bg-emerald-800 text-emerald-400 font-semibold '
+                'bg-emerald-800 text-emerald-400 font-semibold'
             )}
           >
             {isStartingRecording && (
@@ -316,7 +397,10 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
         {activity.routes && activity.routes.length > 0 && (
           <div className="space-y-1">
             <Label className="text-sm">Saved Routes</Label>
-            <SavedRoutesList routes={activity.routes} />
+            <SavedRoutesList
+              routes={activity.routes}
+              onDeleteRoute={handleDeleteRoute}
+            />
           </div>
         )}
 

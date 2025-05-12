@@ -88,8 +88,6 @@ const Leaderboard = () => {
     return <p>Loading users...</p>;
   }
 
-  // const oneWeekAgo = subWeeks(new Date(), 1); // No longer needed for filtering
-
   const filteredUsers = users
     ?.filter((user) => {
       // Check if the user has any activities recorded for the current month

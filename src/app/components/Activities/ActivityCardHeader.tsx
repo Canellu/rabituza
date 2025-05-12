@@ -22,8 +22,8 @@ const ActivityCardHeader = ({ activity, title }: ActivityCardHeaderProps) => {
         {Icon && (
           <Icon className="text-white size-6 rounded-md bg-emerald-500 p-1" />
         )}
-        <span className="text-lg font-semibold inter text-stone-700 dark:text-stone-200">
-          {title}
+        <span className="text-lg font-semibold inter text-stone-700 dark:text-stone-200 capitalize">
+          {title || activity.type}
         </span>
       </div>
       <span className="text-sm text-muted-foreground">

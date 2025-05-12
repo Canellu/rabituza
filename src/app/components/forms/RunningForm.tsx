@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { createActivity } from '@/lib/database/activities/createActivity';
 import { updateActivity } from '@/lib/database/activities/updateActivity';
+import { calculateTotalDistance } from '@/lib/utils/geolocation';
 import { getSession } from '@/lib/utils/userSession';
 import {
   ActivityRatingsType,
@@ -16,6 +17,7 @@ import {
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
 import { ActivityRatings } from '../Activities/ActivityRatings';
+import SavedRoutesList from '../Activities/SavedRoutesList';
 import DateTimePicker from '../DateTimePicker';
 import NotesInput from '../NotesInput';
 import SaveButtonDrawer from '../SaveButtonDrawer';
@@ -29,49 +31,54 @@ interface RunningFormProps {
 const RunningForm = ({ onClose, initialData }: RunningFormProps) => {
   const userId = getSession();
   const queryClient = useQueryClient();
+  // Calculate distance from route if it exists
+  const calculateInitialDistance = () => {
+    if (initialData?.distance) {
+      return (initialData.distance / 1000).toFixed(2).toString();
+    }
+    if (initialData?.routes?.length) {
+      return (calculateTotalDistance(initialData.routes) / 1000)
+        .toFixed(2)
+        .toString();
+    }
+    return '';
+  };
 
-  // Calculate duration from route if it exists
+  // Calculate duration from routes if they exist
   const calculateInitialDuration = () => {
     if (initialData?.duration !== undefined) {
       return initialData.duration;
     }
     if (initialData?.routes?.length) {
-      let totalDurationMs = 0;
-      initialData.routes.forEach((route) => {
-        const start = route.geolocations[0]?.timestamp ?? 0;
-        const end =
-          route.geolocations[route.geolocations.length - 1]?.timestamp ?? 0;
-        if (start && end) {
-          totalDurationMs += end - start;
+      const totalDurationMs = initialData.routes.reduce((total, route) => {
+        const firstLocation = route.geolocations[0];
+        const lastLocation = route.geolocations[route.geolocations.length - 1];
+        if (firstLocation?.timestamp && lastLocation?.timestamp) {
+          return (
+            total +
+            (new Date(lastLocation.timestamp).getTime() -
+              new Date(firstLocation.timestamp).getTime())
+          );
         }
-      });
-      return Math.floor(totalDurationMs / 1000); // Convert milliseconds to seconds
+        return total;
+      }, 0);
+      return Math.floor(totalDurationMs / 1000); // Convert to seconds
     }
-    return 0;
-  };
-
-  // Calculate distance from route if it exists
-  const calculateInitialDistance = () => {
-    if (initialData?.distance) {
-      return initialData.distance.toString();
-    }
-    return '';
+    return undefined;
   };
 
   // Separate state for minutes and seconds using calculated duration
-  const initialDuration = initialData ? calculateInitialDuration() : undefined;
-  const initialMinutes =
-    initialDuration !== undefined && initialDuration !== 0
-      ? Math.floor(initialDuration / 60)
-      : initialDuration === 0
-      ? 0
-      : '';
-  const initialSeconds =
-    initialDuration !== undefined && initialDuration !== 0
-      ? initialDuration % 60
-      : initialDuration === 0
-      ? 0
-      : '';
+  const initialMinutes = () => {
+    const duration = calculateInitialDuration();
+    if (duration === undefined) return '';
+    return Math.floor(duration / 60);
+  };
+
+  const initialSeconds = () => {
+    const duration = calculateInitialDuration();
+    if (duration === undefined) return '';
+    return duration % 60;
+  };
 
   const [status, setStatus] = useState<DistanceActivitySessionStatus>(
     initialData?.status || DistanceActivitySessionStatuses.inProgress
@@ -87,11 +94,13 @@ const RunningForm = ({ onClose, initialData }: RunningFormProps) => {
     }
   );
 
+  const [routes, setRoutes] = useState(initialData?.routes || []);
+
   const [durationMinutes, setDurationMinutes] = useState<number | ''>(
-    initialMinutes
+    initialMinutes()
   );
   const [durationSeconds, setDurationSeconds] = useState<number | ''>(
-    initialSeconds
+    initialSeconds()
   );
   const [distance, setDistance] = useState(calculateInitialDistance());
   const [note, setNote] = useState<string>(initialData?.note || '');
@@ -119,6 +128,12 @@ const RunningForm = ({ onClose, initialData }: RunningFormProps) => {
     },
   });
 
+  const handleDeleteRoute = (routeId: string) => {
+    setRoutes((currentRoutes) =>
+      currentRoutes.filter((route) => route.id !== routeId)
+    );
+  };
+
   const handleSubmit = () => {
     if (!userId) return;
 
@@ -132,12 +147,12 @@ const RunningForm = ({ onClose, initialData }: RunningFormProps) => {
       activityDate,
       ratings,
       duration: totalDurationSeconds >= 0 ? totalDurationSeconds : 0,
-      distance: distance !== '' ? Number(distance) : 0,
+      distance: distance !== '' ? Number(distance) * 1000 : 0, // Convert km to meters for storage
       status,
       note,
-      routes: initialData?.routes || [],
+      routes,
     };
-    console.log(initialData?.routes);
+
     mutate(data);
   };
 
@@ -173,6 +188,7 @@ const RunningForm = ({ onClose, initialData }: RunningFormProps) => {
               onChange={(e) => handleNumericChange(e, setDurationMinutes)}
               className="mt-1 p-2 border rounded-md w-full pr-9"
               min="0"
+              readOnly={initialData?.routes && initialData.routes.length > 0}
             />
             <span className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 mt-px">
               min
@@ -189,6 +205,7 @@ const RunningForm = ({ onClose, initialData }: RunningFormProps) => {
               className="mt-1 p-2 border rounded-md w-full pr-9"
               min="0"
               max="59"
+              readOnly={initialData?.routes && initialData.routes.length > 0}
             />
             <span className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 mt-px">
               sec
@@ -199,7 +216,7 @@ const RunningForm = ({ onClose, initialData }: RunningFormProps) => {
 
       {/* Distance Input */}
       <div className="space-y-1">
-        <Label className="text-sm">Distance (meters)</Label>
+        <Label className="text-sm">Distance (km)</Label>
         <Input
           type="text"
           inputMode="numeric"
@@ -207,8 +224,17 @@ const RunningForm = ({ onClose, initialData }: RunningFormProps) => {
           placeholder="Distance ran"
           onChange={(e) => setDistance(e.currentTarget.value)}
           className="mt-1 p-2 border rounded-md w-full"
+          readOnly={initialData?.routes && initialData.routes.length > 0}
         />
       </div>
+
+      {/* Add Saved Routes Display */}
+      {routes.length > 0 && (
+        <div className="space-y-1">
+          <Label className="text-sm">Saved Routes</Label>
+          <SavedRoutesList routes={routes} onDeleteRoute={handleDeleteRoute} />
+        </div>
+      )}
 
       {/* Status Selector */}
       <StatusSelector status={status} onStatusChange={setStatus} />

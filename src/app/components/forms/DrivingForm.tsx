@@ -22,6 +22,7 @@ import {
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { ActivityRatings } from '../Activities/ActivityRatings';
+import SavedRoutesList from '../Activities/SavedRoutesList';
 import DateTimePicker from '../DateTimePicker';
 import DrivingPurposeSelector from '../DrivingPurposeSelector';
 import NotesInput from '../NotesInput';
@@ -65,8 +66,12 @@ const DrivingForm = ({ onClose, initialData }: DrivingFormProps) => {
   const [trafficConditions, setTrafficConditions] = useState<TrafficCondition>(
     initialData?.trafficConditions || TrafficConditions.lightTraffic
   );
-  const [distance, setDistance] = useState(initialData?.distance || '');
+  const [distance, setDistance] = useState(
+    initialData?.distance ? (initialData.distance / 1000).toString() : ''
+  );
   const [note, setNote] = useState<string>(initialData?.note || '');
+
+  const [routes, setRoutes] = useState(initialData?.routes || []);
 
   const { mutate, isPending } = useMutation({
     mutationFn: async (
@@ -91,6 +96,12 @@ const DrivingForm = ({ onClose, initialData }: DrivingFormProps) => {
     },
   });
 
+  const handleDeleteRoute = (routeId: string) => {
+    setRoutes((currentRoutes) =>
+      currentRoutes.filter((route) => route.id !== routeId)
+    );
+  };
+
   const handleSubmit = () => {
     if (!userId) return;
 
@@ -102,9 +113,10 @@ const DrivingForm = ({ onClose, initialData }: DrivingFormProps) => {
       duration: Number(duration),
       weatherConditions,
       trafficConditions,
-      distance: distance !== '' ? Number(distance) : 0,
+      distance: distance !== '' ? Number(distance) * 1000 : 0, // Convert km to meters. DB saved in meters.
       status,
       note,
+      routes,
     };
 
     mutate(data);
@@ -144,6 +156,10 @@ const DrivingForm = ({ onClose, initialData }: DrivingFormProps) => {
           className="mt-1 p-2 border rounded-md w-full"
         />
       </div>
+
+      {routes.length > 0 && (
+        <SavedRoutesList routes={routes} onDeleteRoute={handleDeleteRoute} />
+      )}
 
       <StatusSelector status={status} onStatusChange={setStatus} />
 

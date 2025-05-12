@@ -102,7 +102,7 @@ export function ActivityRatings({ ratings, onChange }: ActivityRatingsProps) {
         variant="outline"
         className={cn(
           'w-full justify-between text-left font-normal text-base rounded-md',
-          isOpen && 'bg-stone-50 dark:bg-stone-800 dark:border-transparent'
+          isOpen && 'bg-stone-50 dark:bg-stone-950 dark:border-transparent'
         )}
         onClick={() => setIsOpen((prev) => !prev)}
       >
@@ -131,7 +131,7 @@ export function ActivityRatings({ ratings, onChange }: ActivityRatingsProps) {
       <AnimateHeight isOpen={isOpen} marginBottom={16}>
         <div
           className={cn(
-            'space-y-5 bg-stone-50 dark:bg-stone-800 dark:border-transparent border p-4 pb-6 rounded-md '
+            'space-y-5 bg-stone-50 dark:bg-stone-900 dark:border-transparent border p-4 pb-6 rounded-md '
           )}
         >
           {(

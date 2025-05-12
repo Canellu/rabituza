@@ -49,7 +49,7 @@ const MapDialog = ({ open, onClose, activity }: MapDialogProps) => {
   const [mapLoadError, setMapLoadError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isMapLoaded, setIsMapLoaded] = useState(false);
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
 
   const sortedRoutes = activity.routes?.slice().sort((a, b) => {
     const aLastTimestamp =
@@ -209,11 +209,10 @@ const MapDialog = ({ open, onClose, activity }: MapDialogProps) => {
 
         const accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN || '';
         mapboxgl.accessToken = accessToken;
-
         const map = new mapboxgl.Map({
           container: mapContainerRef.current,
           style:
-            theme === 'dark'
+            resolvedTheme === 'dark'
               ? 'mapbox://styles/mapbox/dark-v11'
               : 'mapbox://styles/mapbox/streets-v12',
           center: [10.7522, 59.9139],
