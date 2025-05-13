@@ -15,11 +15,15 @@ import * as ResizablePanel from '../ResizablePanel';
 interface SavedRoutesListProps {
   routes?: Route[];
   onDeleteRoute?: (routeId: string) => void;
+  activityId?: string;
+  userId?: string;
 }
 
 const SavedRoutesList = ({
   routes = [],
   onDeleteRoute,
+  activityId,
+  userId,
 }: SavedRoutesListProps) => {
   if (routes.length === 0) return null;
 

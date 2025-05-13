@@ -28,6 +28,7 @@ import SaveDialog from '../SaveDialog';
 import Spinner from '../Spinner';
 import ActivityCardHeader from './ActivityCardHeader';
 import SavedRoutesList from './SavedRoutesList';
+import { deleteRoutes } from '@/lib/database/activities/deleteRoutes';
 
 interface RecordingCardProps {
   activity:
@@ -213,6 +214,12 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
   const handleDeleteRoute = async (routeId: string) => {
     if (!activity.routes || !activity.id) return;
 
+    // First delete the route from Firestore
+    if (activity.userId) {
+      await deleteRoutes(activity.userId, activity.id, [routeId]);
+    }
+
+    // Then update the local state
     const updatedRoutes = activity.routes.filter(
       (route) => route.id !== routeId
     );

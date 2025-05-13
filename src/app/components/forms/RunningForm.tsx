@@ -3,6 +3,7 @@
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { createActivity } from '@/lib/database/activities/createActivity';
+import { deleteRoutes } from '@/lib/database/activities/deleteRoutes';
 import { updateActivity } from '@/lib/database/activities/updateActivity';
 import { calculateTotalDistance } from '@/lib/utils/geolocation';
 import { getSession } from '@/lib/utils/userSession';
@@ -110,6 +111,19 @@ const RunningForm = ({ onClose, initialData }: RunningFormProps) => {
       data: RunningDataType & Pick<BaseActivityType, 'ratings' | 'activityDate'>
     ) => {
       if (!userId) throw new Error('User is not signed in');
+
+      // Calculate deleted routes by comparing current routes with initial routes
+      if (initialData?.id && initialData.routes) {
+        const currentRouteIds = new Set(routes.map((r) => r.id));
+        const deletedRouteIds = initialData.routes
+          .filter((r) => r.id && !currentRouteIds.has(r.id))
+          .map((r) => r.id!);
+
+        if (deletedRouteIds.length > 0) {
+          await deleteRoutes(userId, initialData.id, deletedRouteIds);
+        }
+      }
+
       if (initialData?.id) {
         return updateActivity(userId, initialData.id, data);
       } else {
