@@ -1,21 +1,22 @@
-import {
-  ActivityDataType,
-  BaseActivityType,
-  DrivingDataType,
-  RunningDataType,
-} from '@/types/Activity';
-import {
-  collection,
+import { 
+  ActivityDataType, 
+  BaseActivityType, 
+  DrivingDataType, 
+  RunningDataType, 
+} from '@/types/Activity'; 
+import { 
+  collection, 
+  deleteDoc,
   doc,
   getDocs,
-  serverTimestamp,
-  updateDoc,
-  writeBatch,
-} from 'firebase/firestore';
-import { db } from '../firebaseConfig';
+  serverTimestamp, 
+  setDoc, 
+  updateDoc, 
+} from 'firebase/firestore'; 
+import { db } from '../firebaseConfig'; 
 
 export async function updateActivity<
-  T extends ActivityDataType &
+  T extends ActivityDataType & 
     Pick<BaseActivityType, 'ratings' | 'activityDate' | 'note'>
 >(userId: string, activityId: string, activityData: T) {
   const globalActivityRef = doc(db, 'activities', activityId);
@@ -30,47 +31,58 @@ export async function updateActivity<
       BaseActivityType;
     const { routes, ...activityDataWithoutRoutes } = activityWithRoutes;
 
+    const globalRoutesRef = collection(globalActivityRef, 'routes');
+    const userRoutesRef = collection(userActivityRef, 'routes');
+
+    // Get all existing routes from both collections
+    const [globalRoutesSnap, userRoutesSnap] = await Promise.all([
+      getDocs(globalRoutesRef),
+      getDocs(userRoutesRef),
+    ]);
+
+    // Create a set of existing route IDs
+    const existingRouteIds = new Set([
+      ...globalRoutesSnap.docs.map(doc => doc.id),
+      ...userRoutesSnap.docs.map(doc => doc.id),
+    ]);
+
     // Handle routes as a subcollection if they exist
-    if (routes) {
-      const globalRoutesRef = collection(globalActivityRef, 'routes');
-      const userRoutesRef = collection(userActivityRef, 'routes');
+    if (routes && routes.length > 0) {
+      // Handle each route
+      for (const route of routes) {
+        if (!route.id || route.id === 'temp') {
+          // Handle new routes
+          const routeId = doc(collection(db, 'temp')).id;
+          const routeData = {
+            id: routeId,
+            geolocations: route.geolocations,
+            createdAt: serverTimestamp(),
+          };
 
-      // Get existing routes
-      const [globalRoutesSnap, userRoutesSnap] = await Promise.all([
-        getDocs(globalRoutesRef),
-        getDocs(userRoutesRef),
-      ]);
-
-      const batch = writeBatch(db);
-
-      // Delete routes that are no longer in the routes array
-      const currentRouteIds = routes.map((route) => route.id);
-      globalRoutesSnap.docs.forEach((doc) => {
-        if (!currentRouteIds.includes(doc.id)) {
-          batch.delete(doc.ref);
+          // Add route to both locations with the same ID
+          await Promise.all([
+            setDoc(doc(globalRoutesRef, routeId), routeData),
+            setDoc(doc(userRoutesRef, routeId), routeData),
+          ]);
         }
-      });
-      userRoutesSnap.docs.forEach((doc) => {
-        if (!currentRouteIds.includes(doc.id)) {
-          batch.delete(doc.ref);
-        }
-      });
-
-      // Add new routes that don't have an ID yet
-      const newRoutes = routes.filter((route) => !route.id);
-      for (const route of newRoutes) {
-        const routeId = doc(collection(db, 'temp')).id;
-        const routeData = {
-          id: routeId,
-          geolocations: route.geolocations,
-          createdAt: serverTimestamp(),
-        };
-        batch.set(doc(globalRoutesRef, routeId), routeData);
-        batch.set(doc(userRoutesRef, routeId), routeData);
       }
+    }
 
-      // Commit all route changes
-      await batch.commit();
+    // Delete routes that are no longer in the routes array
+    const currentRouteIds = new Set(routes?.map(r => r.id) || []);
+    const deletePromises = [];
+
+    for (const routeId of existingRouteIds) {
+      if (!currentRouteIds.has(routeId)) {
+        deletePromises.push(
+          deleteDoc(doc(globalRoutesRef, routeId)),
+          deleteDoc(doc(userRoutesRef, routeId))
+        );
+      }
+    }
+
+    if (deletePromises.length > 0) {
+      await Promise.all(deletePromises);
     }
 
     // Update main documents without routes
