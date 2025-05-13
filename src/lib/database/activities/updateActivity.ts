@@ -64,7 +64,21 @@ export async function updateActivity<
             setDoc(doc(globalRoutesRef, routeId), routeData),
             setDoc(doc(userRoutesRef, routeId), routeData),
           ]);
+        } else if (!existingRouteIds.has(route.id)) {
+          // This is a new route with a predefined ID that doesn't exist in the DB yet
+          const routeData = {
+            id: route.id,
+            geolocations: route.geolocations,
+            createdAt: serverTimestamp(),
+          };
+
+          // Add route to both locations
+          await Promise.all([
+            setDoc(doc(globalRoutesRef, route.id), routeData),
+            setDoc(doc(userRoutesRef, route.id), routeData),
+          ]);
         }
+        // If the route exists and has an ID, we keep it as is
       }
     }
 
