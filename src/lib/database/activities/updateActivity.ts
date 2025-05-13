@@ -40,14 +40,15 @@ export async function updateActivity<
       getDocs(userRoutesRef),
     ]);
 
-    // Create a set of existing route IDs
-    const existingRouteIds = new Set([
-      ...globalRoutesSnap.docs.map(doc => doc.id),
-      ...userRoutesSnap.docs.map(doc => doc.id),
-    ]);
+    // Create a map of existing route IDs to their data
+    const existingRoutes = new Map(
+      globalRoutesSnap.docs.map(doc => [doc.id, doc.data()])
+    );
 
     // Handle routes as a subcollection if they exist
     if (routes && routes.length > 0) {
+      const savePromises = [];
+
       // Handle each route
       for (const route of routes) {
         if (!route.id || route.id === 'temp') {
@@ -60,12 +61,12 @@ export async function updateActivity<
           };
 
           // Add route to both locations with the same ID
-          await Promise.all([
+          savePromises.push(
             setDoc(doc(globalRoutesRef, routeId), routeData),
-            setDoc(doc(userRoutesRef, routeId), routeData),
-          ]);
-        } else if (!existingRouteIds.has(route.id)) {
-          // This is a new route with a predefined ID that doesn't exist in the DB yet
+            setDoc(doc(userRoutesRef, routeId), routeData)
+          );
+        } else if (!existingRoutes.has(route.id)) {
+          // This is a new route with a predefined ID
           const routeData = {
             id: route.id,
             geolocations: route.geolocations,
@@ -73,12 +74,17 @@ export async function updateActivity<
           };
 
           // Add route to both locations
-          await Promise.all([
+          savePromises.push(
             setDoc(doc(globalRoutesRef, route.id), routeData),
-            setDoc(doc(userRoutesRef, route.id), routeData),
-          ]);
+            setDoc(doc(userRoutesRef, route.id), routeData)
+          );
         }
-        // If the route exists and has an ID, we keep it as is
+        // If the route exists, we keep it as is
+      }
+
+      // Save all new routes in parallel
+      if (savePromises.length > 0) {
+        await Promise.all(savePromises);
       }
     }
 
@@ -86,7 +92,7 @@ export async function updateActivity<
     const currentRouteIds = new Set(routes?.map(r => r.id) || []);
     const deletePromises = [];
 
-    for (const routeId of existingRouteIds) {
+    for (const [routeId] of existingRoutes) {
       if (!currentRouteIds.has(routeId)) {
         deletePromises.push(
           deleteDoc(doc(globalRoutesRef, routeId)),
