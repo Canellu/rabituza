@@ -1,22 +1,21 @@
-import { 
-  ActivityDataType, 
-  BaseActivityType, 
-  DrivingDataType, 
-  RunningDataType, 
-} from '@/types/Activity'; 
-import { 
-  collection, 
+import {
+  ActivityDataType,
+  BaseActivityType,
+  DrivingDataType,
+  RunningDataType,
+} from '@/types/Activity';
+import {
+  collection,
   deleteDoc,
   doc,
-  getDocs,
-  serverTimestamp, 
-  setDoc, 
-  updateDoc, 
-} from 'firebase/firestore'; 
-import { db } from '../firebaseConfig'; 
+  serverTimestamp,
+  setDoc,
+  updateDoc,
+} from 'firebase/firestore';
+import { db } from '../firebaseConfig';
 
 export async function updateActivity<
-  T extends ActivityDataType & 
+  T extends ActivityDataType &
     Pick<BaseActivityType, 'ratings' | 'activityDate' | 'note'>
 >(userId: string, activityId: string, activityData: T) {
   const globalActivityRef = doc(db, 'activities', activityId);
@@ -31,23 +30,13 @@ export async function updateActivity<
       BaseActivityType;
     const { routes, ...activityDataWithoutRoutes } = activityWithRoutes;
 
-    const globalRoutesRef = collection(globalActivityRef, 'routes');
-    const userRoutesRef = collection(userActivityRef, 'routes');
-
-    // Get all existing routes from both collections
-    const [globalRoutesSnap, userRoutesSnap] = await Promise.all([
-      getDocs(globalRoutesRef),
-      getDocs(userRoutesRef),
-    ]);
-
-    // Create a map of existing route IDs to their data
-    const existingRoutes = new Map(
-      globalRoutesSnap.docs.map(doc => [doc.id, doc.data()])
-    );
-
     // Handle routes as a subcollection if they exist
-    if (routes && routes.length > 0) {
-      const savePromises = [];
+    if (routes) {
+      const globalRoutesRef = collection(globalActivityRef, 'routes');
+      const userRoutesRef = collection(userActivityRef, 'routes');
+
+      // Get existing route IDs to track which ones to delete
+      const existingRouteIds = new Set(routes.map((route) => route.id));
 
       // Handle each route
       for (const route of routes) {
@@ -61,48 +50,26 @@ export async function updateActivity<
           };
 
           // Add route to both locations with the same ID
-          savePromises.push(
+          await Promise.all([
             setDoc(doc(globalRoutesRef, routeId), routeData),
-            setDoc(doc(userRoutesRef, routeId), routeData)
-          );
-        } else if (!existingRoutes.has(route.id)) {
-          // This is a new route with a predefined ID
-          const routeData = {
-            id: route.id,
-            geolocations: route.geolocations,
-            createdAt: serverTimestamp(),
-          };
+            setDoc(doc(userRoutesRef, routeId), routeData),
+          ]);
+        }
+      }
 
-          // Add route to both locations
-          savePromises.push(
-            setDoc(doc(globalRoutesRef, route.id), routeData),
-            setDoc(doc(userRoutesRef, route.id), routeData)
+      // Delete routes that are no longer in the routes array
+      const deletePromises = [];
+      for (const routeId of existingRouteIds) {
+        if (!routes.find((r) => r.id === routeId)) {
+          deletePromises.push(
+            deleteDoc(doc(globalRoutesRef, routeId)),
+            deleteDoc(doc(userRoutesRef, routeId))
           );
         }
-        // If the route exists, we keep it as is
       }
-
-      // Save all new routes in parallel
-      if (savePromises.length > 0) {
-        await Promise.all(savePromises);
+      if (deletePromises.length > 0) {
+        await Promise.all(deletePromises);
       }
-    }
-
-    // Delete routes that are no longer in the routes array
-    const currentRouteIds = new Set(routes?.map(r => r.id) || []);
-    const deletePromises = [];
-
-    for (const [routeId] of existingRoutes) {
-      if (!currentRouteIds.has(routeId)) {
-        deletePromises.push(
-          deleteDoc(doc(globalRoutesRef, routeId)),
-          deleteDoc(doc(userRoutesRef, routeId))
-        );
-      }
-    }
-
-    if (deletePromises.length > 0) {
-      await Promise.all(deletePromises);
     }
 
     // Update main documents without routes
