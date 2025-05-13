@@ -30,15 +30,12 @@ export async function updateActivity<
       BaseActivityType;
 
     const { routes, ...activityDataWithoutRoutes } = activityWithRoutes;
+
     const globalRoutesRef = collection(globalActivityRef, 'routes');
     const userRoutesRef = collection(userActivityRef, 'routes');
 
-    // Fetch current routes in the database
-    const [globalRoutesSnap, userRoutesSnap] = await Promise.all([
-      getDocs(globalRoutesRef),
-      getDocs(userRoutesRef),
-    ]);
-
+    // Fetch all existing route docs to identify stale ones
+    const globalRoutesSnap = await getDocs(globalRoutesRef);
     const existingRouteIds = new Set(
       globalRoutesSnap.docs.map((doc) => doc.id)
     );
@@ -50,7 +47,6 @@ export async function updateActivity<
       for (const route of routes) {
         let routeId = route.id;
 
-        // If route ID is missing or temporary, generate new one
         if (!routeId || routeId === 'temp') {
           routeId = doc(collection(db, 'temp')).id;
         }
@@ -63,13 +59,11 @@ export async function updateActivity<
           createdAt: serverTimestamp(),
         };
 
-        // Only save if it's a new route (not in DB yet)
-        if (!existingRouteIds.has(routeId)) {
-          savePromises.push(
-            setDoc(doc(globalRoutesRef, routeId), routeData),
-            setDoc(doc(userRoutesRef, routeId), routeData)
-          );
-        }
+        // Always set the doc — this ensures it's saved
+        savePromises.push(
+          setDoc(doc(globalRoutesRef, routeId), routeData),
+          setDoc(doc(userRoutesRef, routeId), routeData)
+        );
       }
 
       if (savePromises.length > 0) {
@@ -77,7 +71,7 @@ export async function updateActivity<
       }
     }
 
-    // Identify and delete routes that are no longer present
+    // Delete routes no longer included
     const deletePromises: Promise<void>[] = [];
     for (const routeId of existingRouteIds) {
       if (!currentRouteIds.has(routeId)) {
@@ -102,7 +96,7 @@ export async function updateActivity<
       updateDoc(userActivityRef, updateData),
     ]);
   } else {
-    // Handle non-route-based activities
+    // Non-route activity
     const updateData = {
       ...activityData,
       updatedAt: serverTimestamp(),
