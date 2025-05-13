@@ -8,6 +8,7 @@ import {
   collection,
   deleteDoc,
   doc,
+  getDocs,
   serverTimestamp,
   setDoc,
   updateDoc,
@@ -21,71 +22,94 @@ export async function updateActivity<
   const globalActivityRef = doc(db, 'activities', activityId);
   const userActivityRef = doc(db, `users/${userId}/activities`, activityId);
 
-  // Check if the activity type is driving or running
   if (activityData.type === 'driving' || activityData.type === 'running') {
     const activityWithRoutes = activityData as (
       | DrivingDataType
       | RunningDataType
     ) &
       BaseActivityType;
+
     const { routes, ...activityDataWithoutRoutes } = activityWithRoutes;
+    const globalRoutesRef = collection(globalActivityRef, 'routes');
+    const userRoutesRef = collection(userActivityRef, 'routes');
 
-    // Handle routes as a subcollection if they exist
-    if (routes) {
-      const globalRoutesRef = collection(globalActivityRef, 'routes');
-      const userRoutesRef = collection(userActivityRef, 'routes');
+    // Fetch current routes in the database
+    const [globalRoutesSnap, userRoutesSnap] = await Promise.all([
+      getDocs(globalRoutesRef),
+      getDocs(userRoutesRef),
+    ]);
 
-      // Get existing route IDs to track which ones to delete
-      const existingRouteIds = new Set(routes.map((route) => route.id));
+    const existingRouteIds = new Set(
+      globalRoutesSnap.docs.map((doc) => doc.id)
+    );
 
-      // Handle each route
+    const currentRouteIds = new Set<string>();
+    const savePromises: Promise<void>[] = [];
+
+    if (routes && routes.length > 0) {
       for (const route of routes) {
-        if (!route.id || route.id === 'temp') {
-          // Handle new routes
-          const routeId = doc(collection(db, 'temp')).id;
-          const routeData = {
-            id: routeId,
-            geolocations: route.geolocations,
-            createdAt: serverTimestamp(),
-          };
+        let routeId = route.id;
 
-          // Add route to both locations with the same ID
-          await Promise.all([
-            setDoc(doc(globalRoutesRef, routeId), routeData),
-            setDoc(doc(userRoutesRef, routeId), routeData),
-          ]);
+        // If route ID is missing or temporary, generate new one
+        if (!routeId || routeId === 'temp') {
+          routeId = doc(collection(db, 'temp')).id;
         }
-      }
 
-      // Delete routes that are no longer in the routes array
-      const deletePromises = [];
-      for (const routeId of existingRouteIds) {
-        if (!routes.find((r) => r.id === routeId)) {
-          deletePromises.push(
-            deleteDoc(doc(globalRoutesRef, routeId)),
-            deleteDoc(doc(userRoutesRef, routeId))
+        currentRouteIds.add(routeId);
+
+        const routeData = {
+          id: routeId,
+          geolocations: route.geolocations,
+          createdAt: serverTimestamp(),
+        };
+
+        // Only save if it's a new route (not in DB yet)
+        if (!existingRouteIds.has(routeId)) {
+          savePromises.push(
+            setDoc(doc(globalRoutesRef, routeId), routeData),
+            setDoc(doc(userRoutesRef, routeId), routeData)
           );
         }
       }
-      if (deletePromises.length > 0) {
-        await Promise.all(deletePromises);
+
+      if (savePromises.length > 0) {
+        await Promise.all(savePromises);
       }
     }
 
-    // Update main documents without routes
+    // Identify and delete routes that are no longer present
+    const deletePromises: Promise<void>[] = [];
+    for (const routeId of existingRouteIds) {
+      if (!currentRouteIds.has(routeId)) {
+        deletePromises.push(
+          deleteDoc(doc(globalRoutesRef, routeId)),
+          deleteDoc(doc(userRoutesRef, routeId))
+        );
+      }
+    }
+
+    if (deletePromises.length > 0) {
+      await Promise.all(deletePromises);
+    }
+
+    // Update main activity documents
     const updateData = {
       ...activityDataWithoutRoutes,
       updatedAt: serverTimestamp(),
     };
-    await updateDoc(globalActivityRef, updateData);
-    await updateDoc(userActivityRef, updateData);
+    await Promise.all([
+      updateDoc(globalActivityRef, updateData),
+      updateDoc(userActivityRef, updateData),
+    ]);
   } else {
-    // For other activities, just update the activity data
+    // Handle non-route-based activities
     const updateData = {
       ...activityData,
       updatedAt: serverTimestamp(),
     };
-    await updateDoc(globalActivityRef, updateData);
-    await updateDoc(userActivityRef, updateData);
+    await Promise.all([
+      updateDoc(globalActivityRef, updateData),
+      updateDoc(userActivityRef, updateData),
+    ]);
   }
 }
