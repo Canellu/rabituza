@@ -24,6 +24,7 @@ export type WorkoutExercise = DurationExercise | RegularExercise;
 
 export const WORKOUT_EXERCISES: Record<string, WorkoutExercise> = {
   benchPress: { name: 'Bench Press', group: WORKOUT_EXERCISE_GROUPS.PUSH },
+  pecFly: { name: 'Pec Fly', group: WORKOUT_EXERCISE_GROUPS.PUSH },
   inclineBenchPress: {
     name: 'Incline Bench Press',
     group: WORKOUT_EXERCISE_GROUPS.PUSH,
