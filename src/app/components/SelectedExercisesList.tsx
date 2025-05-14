@@ -94,7 +94,7 @@ const SelectedExercisesList = ({
         return (
           <div
             key={`${exercise.name}-${exerciseIndex}`}
-            className="flex gap-2 p-3 border rounded-md flex-col bg-stone-50 dark:bg-stone-800 dark:border-transparent"
+            className="flex gap-2 p-3 border rounded-md flex-col bg-stone-50 dark:bg-stone-800 dark:border-stone-700"
           >
             <div className="flex justify-between items-center gap-2">
               <span className="dark:text-stone-200">
