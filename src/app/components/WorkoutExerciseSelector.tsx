@@ -138,7 +138,7 @@ const WorkoutExerciseSelector = ({
           )}
         </div>
 
-        <div className="max-h-[270px] overflow-y-auto border rounded-md mt-1 overscroll-contain relative dark:border-stone-800 dark:bg-stone-800">
+        <div className="max-h-[270px] overflow-y-auto border rounded-md mt-1 overscroll-contain relative dark:border-transparent dark:bg-stone-900">
           {isSearching && (
             <div
               className={cn(
@@ -157,7 +157,7 @@ const WorkoutExerciseSelector = ({
                   exerciseKey as keyof typeof WORKOUT_EXERCISES
                 )
               }
-              className="p-2 cursor-pointer hover:bg-stone-100 dark:hover:bg-stone-700 select-none"
+              className="p-2 cursor-pointer hover:bg-stone-100 dark:hover:bg-stone-700 select-none "
             >
               <div className="flex flex-col">
                 <span className="dark:text-stone-200">{exercise.name}</span>
