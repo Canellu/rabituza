@@ -146,7 +146,7 @@ const ActivityCardWorkout = ({
                       <div
                         className={cn(
                           'grid gap-1.5',
-                          (exercise.setGroups?.length || 0) >= 4
+                          (exercise.setGroups?.length || 0) >= 2
                             ? 'grid-cols-2'
                             : 'grid-cols-1'
                         )}
@@ -161,12 +161,19 @@ const ActivityCardWorkout = ({
                           .map(({ setGroup }, setIndex) => (
                             <div
                               key={setIndex}
-                              className="flex items-center gap-2 text-sm text-stone-700 font-medium dark:text-stone-400 bg-stone-200 dark:bg-stone-800 px-3 py-1.5 rounded"
+                              className={cn(
+                                'flex items-center gap-2 text-sm text-stone-700 font-medium dark:text-stone-400 bg-stone-200 dark:bg-stone-800 px-2 py-1.5 rounded',
+                                exercise.setGroups?.length < 2
+                                  ? 'max-w-[50%]'
+                                  : ''
+                              )}
                             >
                               <div className="flex items-center gap-1.5 w-full">
-                                <span className="bg-stone-100 dark:bg-stone-900 px-2 py-0.5 rounded text-xs font-medium min-w-[4ch] inline-block text-center">
-                                  {setGroup.sets} ×
-                                </span>
+                                <div className="">
+                                  <span className="bg-stone-100 dark:bg-stone-900 px-2 py-0.5 rounded text-xs font-medium min-w-[4ch] inline-block text-center whitespace-nowrap">
+                                    {setGroup.sets} ×
+                                  </span>
+                                </div>
                                 {'duration' in setGroup ? (
                                   <span>
                                     {setGroup.duration}
@@ -185,12 +192,12 @@ const ActivityCardWorkout = ({
                                       : 'sec'}
                                   </span>
                                 ) : (
-                                  <div className="flex items-center gap-4">
-                                    <span className="min-w-[2ch] text-right">
+                                  <div className="flex items-center gap-3 w-full">
+                                    <span className="min-w-[2ch]">
                                       {setGroup.reps}
                                     </span>
                                     {typeof setGroup.weight === 'number' && (
-                                      <span className="font-medium text-stone-700 dark:text-stone-300 min-w-[4.5ch] text-right">
+                                      <span className="font-medium text-stone-700 dark:text-stone-300 w-full text-right">
                                         {setGroup.weight > 0
                                           ? `+${setGroup.weight}`
                                           : setGroup.weight}
