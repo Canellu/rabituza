@@ -163,13 +163,13 @@ const Leaderboard = () => {
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogContent className="max-w-lg w-[96%] max-h-[96dvh] overflow-y-auto rounded-lg flex flex-col p-0 py-6 bg-stone-50 dark:bg-stone-900">
             <DialogHeader>
-              <DialogTitle className="first-letter:capitalize">
+              <DialogTitle className="first-letter:capitalize dark:text-stone-200">
                 {selectedUser.user.username ||
                   selectedUser.user.first_name +
                     ' ' +
                     selectedUser.user.last_name}
               </DialogTitle>
-              <DialogDescription className="text-sm text-stone-400">
+              <DialogDescription className="text-sm text-stone-600 dark:text-stone-400">
                 {selectedUser.user.email}
               </DialogDescription>
             </DialogHeader>
