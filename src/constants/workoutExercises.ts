@@ -42,6 +42,10 @@ export const WORKOUT_EXERCISES: Record<string, WorkoutExercise> = {
     name: 'Dumbbell Incline Bench Press',
     group: WORKOUT_EXERCISE_GROUPS.PUSH,
   },
+  overheadPress: {
+    name: 'Overhead Press',
+    group: WORKOUT_EXERCISE_GROUPS.PUSH,
+  },
   latPulldown: { name: 'Lat Pulldown', group: WORKOUT_EXERCISE_GROUPS.PULL },
   seatedRow: { name: 'Seated Row', group: WORKOUT_EXERCISE_GROUPS.PULL },
   bicepCurl: { name: 'Bicep Curl', group: WORKOUT_EXERCISE_GROUPS.PULL },
@@ -205,6 +209,7 @@ export const POPULAR_WORKOUT_EXERCISES = [
   'squat',
   'deadlift',
   'shoulderPress',
+  'overheadPress',
   'latPulldown',
   'bicepCurl',
   'pullUp',
