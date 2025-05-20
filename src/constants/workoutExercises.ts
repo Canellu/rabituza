@@ -124,6 +124,14 @@ export const WORKOUT_EXERCISES: Record<string, WorkoutExercise> = {
     name: 'Rear Deltoid Fly',
     group: WORKOUT_EXERCISE_GROUPS.PULL,
   },
+  bentOverBarbellRow: {
+    name: 'Bent over Barbell Row',
+    group: WORKOUT_EXERCISE_GROUPS.PULL,
+  },
+  cableFacePulls: {
+    name: 'Cable Face Pulls',
+    group: WORKOUT_EXERCISE_GROUPS.PULL,
+  },
   pushUp: {
     name: 'Push Up',
     group: WORKOUT_EXERCISE_GROUPS.PUSH,
