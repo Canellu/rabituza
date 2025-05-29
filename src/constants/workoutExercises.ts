@@ -210,6 +210,10 @@ export const WORKOUT_EXERCISES: Record<string, WorkoutExercise> = {
     name: 'Bird Dog',
     group: WORKOUT_EXERCISE_GROUPS.CORE,
   },
+  machineTricepExtension: {
+    name: 'Tricep Extension Machine',
+    group: WORKOUT_EXERCISE_GROUPS.PUSH,
+  },
 } as const;
 
 export const POPULAR_WORKOUT_EXERCISES = [
