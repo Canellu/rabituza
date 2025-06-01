@@ -24,12 +24,12 @@ const LengthSelector = ({
       <Label htmlFor="length" className="text-sm">
         Pool Length
       </Label>
-      <div className="flex gap-2">
+      <div className="flex gap-2 ">
         <ToggleGroup
           type="single"
           value={length ? length.toString() : ''}
           onValueChange={handleLengthToggle}
-          className="flex bg-stone-50 dark:bg-stone-800 dark:border-transparent border rounded-md p-1 grow"
+          className="flex bg-stone-50 border dark:border-transparent dark:bg-stone-900 rounded-md p-1 grow"
         >
           {lengths.map((length) => (
             <ToggleGroupItem

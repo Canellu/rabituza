@@ -42,7 +42,7 @@ const SelectedStrokesList = ({
         return (
           <div
             key={index}
-            className="border rounded-md p-4 space-y-3 relative  dark:bg-stone-800"
+            className="border rounded-md p-4 space-y-3 relative  dark:bg-stone-800 dark:border-stone-700"
           >
             <div className="flex justify-between items-start">
               <div>
@@ -67,7 +67,7 @@ const SelectedStrokesList = ({
                 <X className="w-4 h-4" />
               </Button>
             </div>
-            <Separator />
+            <Separator className="dark:bg-stone-700" />
 
             <div className="flex gap-4">
               <div className="flex gap-1.5 items-center justify-center">
