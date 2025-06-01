@@ -1,7 +1,8 @@
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label'; // Import Label from shadcn
-import { Switch } from '@/components/ui/switch'; // Import Switch from shadcn
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'; // Import ToggleGroup components
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { deleteRoutes } from '@/lib/database/activities/deleteRoutes';
 import { updateActivity } from '@/lib/database/activities/updateActivity';
 import useRecordGeolocation, {
   RecordingStates,
@@ -9,14 +10,13 @@ import useRecordGeolocation, {
 import { getAllLocationsFromDB } from '@/lib/idb/activityLocations';
 import { cn } from '@/lib/utils';
 import bytesToText from '@/lib/utils/bytesToText';
-import { haversineDistance } from '@/lib/utils/geolocation'; // Updated import
+import { haversineDistance } from '@/lib/utils/geolocation';
 import { formatTime } from '@/lib/utils/time';
 import {
   ActivityTypes,
   BaseActivityType,
   DistanceActivitySessionStatuses,
-  DrivingDataType,
-  RunningDataType,
+  RecordableActivityDataType,
 } from '@/types/Activity';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Crosshair, Gauge, RotateCcw } from 'lucide-react';
@@ -28,12 +28,9 @@ import SaveDialog from '../SaveDialog';
 import Spinner from '../Spinner';
 import ActivityCardHeader from './ActivityCardHeader';
 import SavedRoutesList from './SavedRoutesList';
-import { deleteRoutes } from '@/lib/database/activities/deleteRoutes';
 
 interface RecordingCardProps {
-  activity:
-    | (BaseActivityType & DrivingDataType)
-    | (BaseActivityType & RunningDataType);
+  activity: BaseActivityType & RecordableActivityDataType;
   onExit: () => void;
 }
 
@@ -64,9 +61,7 @@ const RecordingCard = ({ onExit, activity }: RecordingCardProps) => {
 
   const { mutate } = useMutation({
     mutationFn: async (
-      updatedActivity:
-        | (BaseActivityType & DrivingDataType)
-        | (BaseActivityType & RunningDataType)
+      updatedActivity: BaseActivityType & RecordableActivityDataType
     ) => {
       await updateActivity(activity.userId, activity.id, updatedActivity);
     },

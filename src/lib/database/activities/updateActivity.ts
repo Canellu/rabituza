@@ -3,6 +3,7 @@ import {
   BaseActivityType,
   DrivingDataType,
   RunningDataType,
+  SwimmingRecordingDataType,
 } from '@/types/Activity';
 import {
   collection,
@@ -22,10 +23,15 @@ export async function updateActivity<
   const userActivityRef = doc(db, `users/${userId}/activities`, activityId);
 
   // Check if the activity type is driving or running
-  if (activityData.type === 'driving' || activityData.type === 'running') {
+  if (
+    activityData.type === 'driving' ||
+    activityData.type === 'running' ||
+    (activityData.type === 'swimming' && activityData.location !== 'pool')
+  ) {
     const activityWithRoutes = activityData as (
       | DrivingDataType
       | RunningDataType
+      | SwimmingRecordingDataType
     ) &
       BaseActivityType;
     const { routes, ...activityDataWithoutRoutes } = activityWithRoutes;

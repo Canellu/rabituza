@@ -4,6 +4,7 @@ import DrivingForm from '../forms/DrivingForm';
 import HangboardForm from '../forms/HangboardForm';
 import RunningForm from '../forms/RunningForm';
 import StretchingForm from '../forms/StretchingForm';
+import SwimmingForm from '../forms/SwimmingForm';
 import WorkoutForm from '../forms/WorkoutForm';
 
 const ActivityForm = ({
@@ -28,6 +29,8 @@ const ActivityForm = ({
       return <DrivingForm initialData={selectedActivity} onClose={onClose} />;
     case ActivityTypes.Running:
       return <RunningForm initialData={selectedActivity} onClose={onClose} />;
+    case ActivityTypes.Swimming:
+      return <SwimmingForm initialData={selectedActivity} onClose={onClose} />;
     default:
       return null;
   }

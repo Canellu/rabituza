@@ -169,11 +169,9 @@ const ActivityCardWorkout = ({
                               )}
                             >
                               <div className="flex items-center gap-1.5 w-full">
-                                <div className="">
-                                  <span className="bg-stone-100 dark:bg-stone-900 px-2 py-0.5 rounded text-xs font-medium min-w-[4ch] inline-block text-center whitespace-nowrap">
-                                    {setGroup.sets} ×
-                                  </span>
-                                </div>
+                                <span className="bg-stone-100 dark:bg-stone-900 px-2 py-0.5 rounded text-xs font-medium min-w-[4ch] inline-block text-center whitespace-nowrap">
+                                  {setGroup.sets} ×
+                                </span>
                                 {'duration' in setGroup ? (
                                   <span>
                                     {setGroup.duration}

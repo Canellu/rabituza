@@ -1,23 +1,17 @@
 import { Button } from '@/components/ui/button';
 import { CARD_ANIMATION_CONFIG } from '@/constants/animationConfig';
 import { deleteActivity } from '@/lib/database/activities/deleteActivity';
-import { deleteEntriesByDate } from '@/lib/idb/activityLocations';
 import { cn } from '@/lib/utils';
-import formatTrafficCondition from '@/lib/utils/formatTrafficCondition';
-import {
-  calculateTotalDistance,
-  calculateTotalRouteDuration,
-  formatDuration,
-} from '@/lib/utils/geolocation';
+import { formatDuration } from '@/lib/utils/time';
 import { getSession } from '@/lib/utils/userSession';
 import {
   BaseActivityType,
   DistanceActivitySessionStatuses,
-  DrivingDataType,
+  SwimmingRecordingDataType,
 } from '@/types/Activity';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { Map, MapPin, Trash2 } from 'lucide-react';
+import { Map, MapPin, Trash2, Waves } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import DeleteDialog from '../DeleteDialog';
@@ -26,25 +20,26 @@ import ActivityCardHeader from './ActivityCardHeader';
 import MapDialog from './MapDialog';
 import RecordingCard from './RecordingCard';
 import SavedRoutesList from './SavedRoutesList';
-interface ActivityCardDrivingProps {
-  activity: BaseActivityType & DrivingDataType;
+
+interface ActivityCardSwimmingRecordingProps {
+  activity: BaseActivityType & SwimmingRecordingDataType;
   onEdit: () => void;
   readOnly?: boolean;
 }
 
-const ActivityCardDriving = ({
+const ActivityCardSwimmingRecording = ({
   activity,
   onEdit,
   readOnly = false,
-}: ActivityCardDrivingProps) => {
+}: ActivityCardSwimmingRecordingProps) => {
   const queryClient = useQueryClient();
   const userId = getSession();
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [showCard, setShowCard] = useState<'recording' | 'driving' | 'map'>(
-    'driving'
+  const [showCard, setShowCard] = useState<'recording' | 'swimming'>(
+    'swimming'
   );
-  const [isMapDialogOpen, setIsMapDialogOpen] = useState(false); // New state for map dialog
+  const [isMapDialogOpen, setIsMapDialogOpen] = useState(false);
 
   const { mutate: deleteActivityMutation } = useMutation({
     mutationFn: ({
@@ -59,6 +54,7 @@ const ActivityCardDriving = ({
     },
     onError: (error) => {
       console.error('Failed to delete activity:', error);
+      toast('Failed to delete activity. Please try again.');
     },
   });
 
@@ -70,19 +66,7 @@ const ActivityCardDriving = ({
 
   const confirmDelete = async () => {
     if (!userId || !activity.id) return;
-
     try {
-      const activityDate = new Date(activity.activityDate).toLocaleDateString();
-
-      // Try to delete IDB entries first
-      try {
-        await deleteEntriesByDate(activityDate);
-      } catch (idbError) {
-        console.error('Failed to delete local route data:', idbError);
-        // Continue with activity deletion even if IDB fails
-      }
-
-      // Delete the activity from Firestore
       deleteActivityMutation({ userId, activityId: activity.id });
       setShowDeleteDialog(false);
     } catch (error) {
@@ -92,7 +76,19 @@ const ActivityCardDriving = ({
   };
 
   const handleExit = () => {
-    setShowCard('driving');
+    setShowCard('swimming');
+  };
+
+  const pace =
+    activity.distance && activity.duration
+      ? activity.duration / (activity.distance / 1000)
+      : null;
+
+  const formatPace = (paceInSeconds: number | null) => {
+    if (paceInSeconds === null) return '-';
+    const minutes = Math.floor(paceInSeconds / 60);
+    const seconds = Math.round(paceInSeconds % 60);
+    return `${minutes}:${seconds.toString().padStart(2, '0')} /km`;
   };
 
   return (
@@ -106,7 +102,7 @@ const ActivityCardDriving = ({
             <RecordingCard activity={activity} onExit={handleExit} />
           </motion.div>
         </ResizablePanel.Content>
-        <ResizablePanel.Content value="driving">
+        <ResizablePanel.Content value="swimming">
           <motion.div
             className="relative"
             {...CARD_ANIMATION_CONFIG}
@@ -144,58 +140,63 @@ const ActivityCardDriving = ({
 
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <div className="flex items-center gap-1 shrink-0">
-                    {/* Duration */}
+                    <div className="px-2 py-1 border flex flex-col items-center justify-center rounded-md text-xs bg-stone-50 dark:bg-stone-900 dark:border-stone-800">
+                      <span className="text-stone-500 dark:text-stone-400 text-[10px] mb-0.5">
+                        Location
+                      </span>
+                      <span className="font-medium text-stone-700 dark:text-stone-300 flex items-center gap-1 capitalize">
+                        <Waves className="w-3 h-3" />
+                        {activity.location ?? 'Unknown'}
+                      </span>
+                    </div>
+
                     <div className="px-2 py-1 border flex flex-col items-center justify-center rounded-md text-xs bg-stone-50 dark:bg-stone-900 dark:border-stone-800">
                       <span className="text-stone-500 dark:text-stone-400 text-[10px] mb-0.5">
                         Duration
                       </span>
                       <span className="font-medium text-stone-700 dark:text-stone-300">
-                        {formatDuration(
-                          calculateTotalRouteDuration(activity.routes)
-                        )}
-                      </span>
-                    </div>
-                    {/* Distance */}
-                    <div className="px-2 py-1 border flex flex-col items-center justify-center rounded-md text-xs bg-stone-50 dark:bg-stone-900 dark:border-stone-800">
-                      <span className="text-stone-500 dark:text-stone-400 text-[10px] mb-0.5">
-                        Distance
-                      </span>
-                      <span className="font-medium text-stone-700 dark:text-stone-300">
-                        {(
-                          calculateTotalDistance(activity.routes || []) / 1000
-                        ).toFixed(2)}{' '}
-                        km
+                        {formatDuration(activity.duration)}
                       </span>
                     </div>
 
-                    {/* Traffic */}
-                    <div className="px-2 py-1 border flex flex-col items-center justify-center rounded-md text-xs bg-stone-50 dark:bg-stone-900 dark:border-stone-800">
-                      <span className="text-stone-500 dark:text-stone-400 text-[10px] mb-0.5">
-                        Traffic
-                      </span>
-                      <span className="font-medium text-stone-700 dark:text-stone-300 capitalize">
-                        {formatTrafficCondition(activity.trafficConditions)}
-                      </span>
-                    </div>
+                    {activity.distance !== undefined &&
+                      activity.distance > 0 && (
+                        <div className="px-2 py-1 border flex flex-col items-center justify-center rounded-md text-xs bg-stone-50 dark:bg-stone-900 dark:border-stone-800">
+                          <span className="text-stone-500 dark:text-stone-400 text-[10px] mb-0.5">
+                            Distance
+                          </span>
+                          <span className="font-medium text-stone-700 dark:text-stone-300">
+                            {(activity.distance / 1000).toFixed(2)} km
+                          </span>
+                        </div>
+                      )}
+
+                    {pace !== null && (
+                      <div className="px-2 py-1 border flex flex-col items-center justify-center rounded-md text-xs bg-stone-50 dark:bg-stone-900 dark:border-stone-800">
+                        <span className="text-stone-500 dark:text-stone-400 text-[10px] mb-0.5">
+                          Pace
+                        </span>
+                        <span className="font-medium text-stone-700 dark:text-stone-300">
+                          {formatPace(pace)}
+                        </span>
+                      </div>
+                    )}
                   </div>
 
-                  {!readOnly &&
-                    activity.status ===
-                      DistanceActivitySessionStatuses.inProgress && (
-                      <Button
-                        size="icon"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setShowCard('recording');
-                        }}
-                      >
-                        <MapPin />
-                      </Button>
-                    )}
-                  {activity.routes &&
-                    activity.routes.length > 0 &&
-                    activity.status ===
-                      DistanceActivitySessionStatuses.completed && (
+                  {activity.status ===
+                  DistanceActivitySessionStatuses.inProgress ? (
+                    <Button
+                      size="icon"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setShowCard('recording');
+                      }}
+                    >
+                      <MapPin />
+                    </Button>
+                  ) : (
+                    activity.routes &&
+                    activity.routes.length > 0 && (
                       <Button
                         size="icon"
                         variant="secondary"
@@ -206,7 +207,8 @@ const ActivityCardDriving = ({
                       >
                         <Map />
                       </Button>
-                    )}
+                    )
+                  )}
                 </div>
 
                 {activity.routes && activity.routes.length > 0 && (
@@ -218,7 +220,6 @@ const ActivityCardDriving = ({
         </ResizablePanel.Content>
       </ResizablePanel.Root>
 
-      {/* Delete Dialog */}
       {!readOnly && (
         <DeleteDialog
           open={showDeleteDialog}
@@ -227,14 +228,15 @@ const ActivityCardDriving = ({
         />
       )}
 
-      {/* Map Dialog */}
-      <MapDialog
-        open={isMapDialogOpen}
-        onClose={() => setIsMapDialogOpen(false)}
-        activity={activity}
-      />
+      {activity.routes && activity.routes.length > 0 && (
+        <MapDialog
+          open={isMapDialogOpen}
+          onClose={() => setIsMapDialogOpen(false)}
+          activity={activity}
+        />
+      )}
     </>
   );
 };
 
-export default ActivityCardDriving;
+export default ActivityCardSwimmingRecording;

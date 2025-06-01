@@ -112,7 +112,7 @@ const WorkoutExerciseSelector = ({
     <>
       <div className={cn('')}>
         <div className="relative">
-          <div className="flex items-center justify-center absolute top-0 left-0 h-full aspect-square">
+          <div className="flex items-center justify-center absolute top-0 left-0 h-full aspect-square ">
             <Search className="size-4 text-stone-400" />
           </div>
           <Input
@@ -138,7 +138,7 @@ const WorkoutExerciseSelector = ({
           )}
         </div>
 
-        <div className="max-h-[270px] overflow-y-auto border rounded-md mt-1 overscroll-contain relative dark:border-transparent dark:bg-stone-900">
+        <div className="max-h-[270px] overflow-y-auto border rounded-md mt-1 overscroll-contain relative dark:border-transparent dark:bg-stone-900 bg-white">
           {isSearching && (
             <div
               className={cn(

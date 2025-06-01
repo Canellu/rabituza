@@ -22,6 +22,7 @@ import {
   BaseActivityType,
   DrivingDataType,
   RunningDataType,
+  SwimmingRecordingDataType,
 } from '@/types/Activity';
 import { MapPinOff } from 'lucide-react';
 import mapboxgl from 'mapbox-gl';
@@ -37,6 +38,7 @@ interface MapDialogProps {
   onClose: () => void;
   activity:
     | (BaseActivityType & DrivingDataType)
+    | (BaseActivityType & SwimmingRecordingDataType)
     | (BaseActivityType & RunningDataType);
 }
 
@@ -246,7 +248,7 @@ const MapDialog = ({ open, onClose, activity }: MapDialogProps) => {
         mapRef.current = null;
       }
     };
-  }, [isDialogReady, sortedRoutes?.length]);
+  }, [isDialogReady, resolvedTheme, sortedRoutes?.length]);
 
   // Update routes when selectedRouteIndex changes
   useEffect(() => {
