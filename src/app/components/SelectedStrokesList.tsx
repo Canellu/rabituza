@@ -4,9 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { SWIMMING_STROKES } from '@/constants/swimmingStrokes';
+import { SwimmingStrokeItem } from '@/types/Activity';
 import { X } from 'lucide-react';
 import { Dispatch, SetStateAction } from 'react';
-import type { SwimmingStrokeItem } from './SwimmingStrokeSelector';
 
 interface SelectedStrokesListProps {
   strokes: SwimmingStrokeItem[];

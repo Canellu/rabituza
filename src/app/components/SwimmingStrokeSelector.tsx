@@ -2,8 +2,10 @@
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import type { SwimmingStrokeKey } from '@/constants/swimmingStrokes';
-import { SWIMMING_STROKES } from '@/constants/swimmingStrokes';
+import {
+  SWIMMING_STROKES,
+  SwimmingStrokeKey,
+} from '@/constants/swimmingStrokes';
 import { SwimmingStrokeItem } from '@/types/Activity';
 import { Loader2, Search, X } from 'lucide-react';
 import { Dispatch, SetStateAction, useState } from 'react';
