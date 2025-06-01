@@ -22,7 +22,7 @@ import {
   BaseActivityType,
   DrivingDataType,
   RunningDataType,
-  SwimmingPoolDataType,
+  SwimmingRecordingDataType,
 } from '@/types/Activity';
 import { MapPinOff } from 'lucide-react';
 import mapboxgl from 'mapbox-gl';
@@ -38,7 +38,7 @@ interface MapDialogProps {
   onClose: () => void;
   activity:
     | (BaseActivityType & DrivingDataType)
-    | (BaseActivityType & SwimmingPoolDataType)
+    | (BaseActivityType & SwimmingRecordingDataType)
     | (BaseActivityType & RunningDataType);
 }
 
