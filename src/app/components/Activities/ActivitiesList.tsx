@@ -5,6 +5,7 @@ import ActivityCardDriving from './ActivityCardDriving';
 import ActivityCardHangboard from './ActivityCardHangboard';
 import ActivityCardRunning from './ActivityCardRunning';
 import ActivityCardStretching from './ActivityCardStretching';
+import ActivityCardSwimming from './ActivityCardSwimming';
 import ActivityCardWorkout from './ActivityCardWorkout';
 
 type ActivitiesListProps = {
@@ -89,6 +90,16 @@ const ActivitiesList = ({
                   case ActivityTypes.Running:
                     return (
                       <ActivityCardRunning
+                        readOnly={readOnly}
+                        activity={activity}
+                        onEdit={() =>
+                          onEditActivity && onEditActivity(activity)
+                        }
+                      />
+                    );
+                  case ActivityTypes.Swimming:
+                    return (
+                      <ActivityCardSwimming
                         readOnly={readOnly}
                         activity={activity}
                         onEdit={() =>

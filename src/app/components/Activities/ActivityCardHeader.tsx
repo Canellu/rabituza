@@ -1,15 +1,9 @@
 import activityOptions from '@/constants/activityOptions';
-import {
-  BaseActivityType,
-  DrivingDataType,
-  RunningDataType,
-} from '@/types/Activity';
+import { ActivityDataType, BaseActivityType } from '@/types/Activity';
 import { format } from 'date-fns';
 
 interface ActivityCardHeaderProps {
-  activity:
-    | (BaseActivityType & DrivingDataType)
-    | (BaseActivityType & RunningDataType);
+  activity: BaseActivityType & ActivityDataType;
   title?: string;
 }
 

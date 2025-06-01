@@ -3,6 +3,7 @@ import {
   BaseActivityType,
   DrivingDataType,
   RunningDataType,
+  SwimmingRecordingDataType,
 } from '@/types/Activity';
 import {
   collection,
@@ -36,11 +37,18 @@ export async function createActivity<
   // Commit the batch for the main activity data
   await batch.commit();
 
-  const routes = (activityData as DrivingDataType | RunningDataType).routes;
+  const routes = (
+    activityData as
+      | DrivingDataType
+      | RunningDataType
+      | SwimmingRecordingDataType
+  ).routes;
 
   // Handle routes as a subcollection for both locations
   if (
-    (activityData.type === 'driving' || activityData.type === 'running') &&
+    (activityData.type === 'driving' ||
+      activityData.type === 'running' ||
+      (activityData.type === 'swimming' && activityData.location !== 'pool')) &&
     routes
   ) {
     const globalRoutesRef = collection(globalActivityRef, 'routes');

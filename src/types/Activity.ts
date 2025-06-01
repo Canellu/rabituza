@@ -1,3 +1,4 @@
+import { SwimmingStrokeKey } from '@/constants/swimmingStrokes';
 import { WORKOUT_EXERCISES } from '@/constants/workoutExercises';
 
 export const ActivityTypes = {
@@ -32,10 +33,6 @@ export type BaseActivityType = {
   activityDate: Date;
   ratings: ActivityRatingsType;
   note?: string;
-};
-
-export type ActivityMetaDataType = {
-  bodyWeight: number;
 };
 
 export type ClimbingDataType = {
@@ -97,9 +94,39 @@ export type WinterSportsDataType = {
   // Add winter sports-specific fields here
 };
 
-export type SwimmingDataType = {
+export const SwimmingLocations = {
+  pool: 'pool',
+  lake: 'lake',
+  sea: 'sea',
+  beach: 'beach',
+} as const;
+
+export type SwimmingLocationType =
+  (typeof SwimmingLocations)[keyof typeof SwimmingLocations];
+
+export type SwimmingStrokeItem = {
+  name: SwimmingStrokeKey;
+  sets: string;
+  duration?: string; // for drills
+  laps?: string;
+};
+
+export type SwimmingPoolDataType = {
   type: typeof ActivityTypes.Swimming;
-  // Add swimming specific fields here
+  duration: number; // Total seconds
+  distance?: number; // Optional: Total meters if user wants to override
+  location: typeof SwimmingLocations.pool;
+  poolLength: number; // e.g., 25 or 50
+  strokes: SwimmingStrokeItem[];
+};
+
+export type SwimmingRecordingDataType = {
+  type: typeof ActivityTypes.Swimming;
+  duration: number; // Total seconds
+  distance?: number; // Total meters
+  location: Exclude<SwimmingLocationType, typeof SwimmingLocations.pool>;
+  routes?: Route[];
+  status: DistanceActivitySessionStatus;
 };
 
 export type RunningDataType = {
@@ -168,9 +195,14 @@ export type DrivingDataType = {
   weatherConditions: WeatherCondition;
   trafficConditions: TrafficCondition;
   distance?: number;
-  routes?: Route[]; // Subcollection in Firestore
+  routes?: Route[];
   status: DistanceActivitySessionStatus;
 };
+
+export type RecordableActivityDataType =
+  | DrivingDataType
+  | RunningDataType
+  | SwimmingRecordingDataType;
 
 export type ActivityDataType =
   | ClimbingDataType
@@ -179,7 +211,8 @@ export type ActivityDataType =
   | HangboardDataType
   | RestDataType
   | WinterSportsDataType
-  | SwimmingDataType
+  | SwimmingRecordingDataType
+  | SwimmingPoolDataType
   | RunningDataType
   | DrivingDataType;
 

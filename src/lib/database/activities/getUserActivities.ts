@@ -136,6 +136,42 @@ export const getUserActivities = async (
               routes,
             };
           }
+          case ActivityTypes.Swimming:
+            if (data.location !== 'pool') {
+              const routesCollectionRef = collection(docRef.ref, 'routes');
+              const routesSnapshot = await getDocs(routesCollectionRef);
+              const routes: Route[] = routesSnapshot.docs
+                .map((routeDoc) => ({
+                  id: routeDoc.id,
+                  createdAt: routeDoc.data().createdAt?.toDate(),
+                  geolocations: routeDoc.data().geolocations,
+                }))
+                .filter(
+                  (
+                    route
+                  ): route is Route => // Type guard for filtering
+                    !!route.geolocations && route.geolocations.length > 0
+                );
+
+              return {
+                ...baseActivity,
+                duration: data.duration,
+                distance: data.distance,
+                status: data.status,
+                location: data.location,
+                routes,
+              };
+            }
+
+            return {
+              ...baseActivity,
+              duration: data.duration,
+              distance: data.distance,
+              status: data.status,
+              location: data.location,
+              poolLength: data.poolLength,
+              strokes: data.strokes,
+            };
           default:
             // Consider handling unknown types more gracefully or logging them
             console.warn(`Unknown activity type encountered: ${data.type}`);

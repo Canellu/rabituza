@@ -22,13 +22,13 @@ import { Fragment, useState } from 'react';
 
 const AddActivities = () => {
   const [selectedActivity, setSelectedActivity] = useState<string | null>(null);
-  const [isOpen, setIsOpen] = useState(false); // renamed from isDrawerOpen
+  const [isOpen, setIsOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const handleActivitySelect = (id: string) => {
     setSelectedActivity(id);
     setIsDropdownOpen(false);
-    setIsOpen(true); // updated
+    setIsOpen(true);
   };
 
   const handleOpenChange = (open: boolean) => {
@@ -40,7 +40,7 @@ const AddActivities = () => {
 
   const disabledActivities: Array<
     (typeof ActivityTypes)[keyof typeof ActivityTypes]
-  > = [ActivityTypes.WinterSports, ActivityTypes.Rest, ActivityTypes.Swimming];
+  > = [ActivityTypes.WinterSports, ActivityTypes.Rest];
 
   const groupedActivities = activityOptions.reduce((acc, activity) => {
     if (!acc[activity.group]) {
@@ -81,7 +81,7 @@ const AddActivities = () => {
       </DropdownMenu>
 
       <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-        <DialogContent className="max-w-lg w-[96%] h-[96dvh] overflow-y-auto rounded-lg flex flex-col p-0 py-6">
+        <DialogContent className="max-w-lg w-[96%] h-[96dvh] overflow-y-auto rounded-lg flex flex-col p-0 py-6 dark:bg-stone-800 bg-stone-50">
           <DialogHeader>
             <DialogTitle>
               {activityOptions.find((e) => e.id === selectedActivity)?.label}{' '}
