@@ -214,6 +214,22 @@ export const WORKOUT_EXERCISES: Record<string, WorkoutExercise> = {
     name: 'Tricep Extension Machine',
     group: WORKOUT_EXERCISE_GROUPS.PUSH,
   },
+  bridge: {
+    name: 'Bridge',
+    group: WORKOUT_EXERCISE_GROUPS.CORE,
+  },
+  clamshell: {
+    name: 'Clamshell',
+    group: WORKOUT_EXERCISE_GROUPS.LOWER,
+  },
+  punch: {
+    name: 'Punch',
+    group: WORKOUT_EXERCISE_GROUPS.PUSH,
+  },
+  jumpingJacks: {
+    name: 'Jumping Jacks',
+    group: WORKOUT_EXERCISE_GROUPS.CARDIO,
+  },
 } as const;
 
 export const POPULAR_WORKOUT_EXERCISES = [
